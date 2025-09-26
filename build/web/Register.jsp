@@ -52,7 +52,18 @@
 
     <!-- Form -->
     <div class="register-form">
-        <form action="RegisterServlet" method="post">
+        <!-- Hiển thị thông báo lỗi/thành công -->
+        <% String error = (String) request.getAttribute("error"); %>
+        <% if (error != null) { %>
+            <div class="alert alert-danger text-center"><%= error %></div>
+        <% } %>
+
+        <% String success = (String) request.getAttribute("successMessage"); %>
+        <% if (success != null) { %>
+            <div class="alert alert-success text-center"><%= success %></div>
+        <% } %>
+
+        <form action="register" method="post">
             <!-- Full Name -->
             <div class="mb-3">
                 <label class="form-label">Full name</label>
@@ -76,7 +87,9 @@
                 <label class="form-label">Phone</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-phone"></i></span>
-                    <input type="tel" name="phone" class="form-control" placeholder="Enter your phone" required>
+                    <input type="tel" name="phone" class="form-control"
+                           placeholder="Enter your phone (10 digits)"
+                           pattern="\d{10}" title="Phone number must be exactly 10 digits" required>
                 </div>
             </div>
 
@@ -106,11 +119,11 @@
 
             <!-- Submit -->
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary">Register </button>
+                <button type="submit" class="btn btn-primary">Register</button>
             </div>
 
             <!-- Login Link -->
-            <p class="text-center">Already have an account? 
+            <p class="text-center">Already have an account?
                 <a href="Login.jsp">Log in</a>
             </p>
         </form>

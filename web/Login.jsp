@@ -61,6 +61,16 @@
 <div class="login-container">
     <h3 class="text-center mb-2">Welcome Back</h3>
     <p class="text-center text-muted">Sign in to continue to your account</p>
+<!-- Hiển thị thông báo lỗi/thành công -->
+<% String error = (String) request.getAttribute("error"); %>
+<% if (error != null) { %>
+    <div class="alert alert-danger text-center"><%= error %></div>
+<% } %>
+
+<% String success = (String) request.getAttribute("successMessage"); %>
+<% if (success != null) { %>
+    <div class="alert alert-success text-center"><%= success %></div>
+<% } %>
 
     <form action="login" method="post">
         <!-- Email -->
