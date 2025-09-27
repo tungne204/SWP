@@ -105,7 +105,7 @@
 
         <!-- Google login -->
         <div class="d-grid mb-3">
-            <button type="button" class="btn btn-google">
+            <button type="button" class="btn btn-google" id="google-login-btn">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Google
             </button>
         </div>
@@ -120,5 +120,111 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Google OAuth JavaScript SDK -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// Google OAuth configuration
+window.onload = function () {
+    // Lấy Google Client ID từ server
+    fetch('google-config')
+        .then(response => response.json())
+        .then(data => {
+            if (data.configured && data.clientId) {
+                google.accounts.id.initialize({
+                    client_id: data.clientId,
+                    callback: handleCredentialResponse
+                });
+                
+                // Render Google Sign-In button
+                google.accounts.id.renderButton(
+                    document.getElementById("google-login-btn"),
+                    { 
+                        theme: "outline", 
+                        size: "large",
+                        width: "100%",
+                        text: "signin_with",
+                        shape: "rectangular"
+                    }
+                );
+            } else {
+                // Hiển thị thông báo cấu hình chưa hoàn tất
+                document.getElementById("google-login-btn").innerHTML = 
+                    '<i class="bi bi-exclamation-triangle"></i> Google Login chưa được cấu hình';
+                document.getElementById("google-login-btn").disabled = true;
+                document.getElementById("google-login-btn").style.opacity = "0.5";
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Google config:', error);
+            document.getElementById("google-login-btn").innerHTML = 
+                '<i class="bi bi-exclamation-triangle"></i> Lỗi cấu hình Google';
+            document.getElementById("google-login-btn").disabled = true;
+        });
+};
+
+// Handle Google OAuth response
+function handleCredentialResponse(response) {
+    // Decode JWT token
+    const responsePayload = decodeJwtResponse(response.credential);
+    
+    // Send to server for verification and login
+    fetch('google-oauth-callback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            credential: response.credential,
+            email: responsePayload.email,
+            name: responsePayload.name,
+            picture: responsePayload.picture
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect based on user role
+            window.location.href = data.redirectUrl;
+        } else {
+            // Show error message
+            showMessage(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('Đăng nhập thất bại. Vui lòng thử lại.', 'error');
+    });
+}
+
+// Decode JWT response
+function decodeJwtResponse(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+
+// Show message function
+function showMessage(message, type) {
+    const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert ${alertClass} text-center`;
+    messageDiv.textContent = message;
+    
+    // Insert after the form title
+    const container = document.querySelector('.login-container');
+    const title = container.querySelector('h3');
+    title.parentNode.insertBefore(messageDiv, title.nextSibling);
+    
+    // Remove message after 5 seconds
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
+}
+</script>
 </body>
 </html>
