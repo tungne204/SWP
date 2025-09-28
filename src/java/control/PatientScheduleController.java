@@ -6,7 +6,9 @@
 package control;
 
 import dao.AppointmentDAO;
+import dao.DoctorDAO;
 import entity.Appointment;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -25,6 +27,7 @@ import java.util.List;
  */
 public class PatientScheduleController extends HttpServlet {
    private AppointmentDAO appointmentDAO;
+    private DoctorDAO doctorDAO;
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -35,6 +38,11 @@ public class PatientScheduleController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
+        doctorDAO = new DoctorDAO();
+    }
+    
+    private int getDoctorIdByUserId(int userId) {
+        return doctorDAO.getDoctorIdByUserId(userId);
     }
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
@@ -65,13 +73,16 @@ public class PatientScheduleController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
          HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
+        User user = (User) session.getAttribute("acc");
         
-        // Check if doctor is logged in
-        if (doctorId == null) {
+        // Check if user is logged in and is a doctor
+        if (user == null || user.getRoleId() != 2) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        
+        // Get doctorId from Doctor table using user_id
+        int doctorId = getDoctorIdByUserId(user.getUserId());
         
         String filterType = request.getParameter("filter");
         String dateParam = request.getParameter("date");
@@ -108,7 +119,7 @@ public class PatientScheduleController extends HttpServlet {
         request.setAttribute("appointments", appointments);
         request.setAttribute("currentFilter", filterType);
         
-        request.getRequestDispatcher("/WEB-INF/views/doctor/patient-schedule.jsp")
+        request.getRequestDispatcher("/patient-schedule.jsp")
                 .forward(request, response);
     } 
 

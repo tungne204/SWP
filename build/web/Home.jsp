@@ -70,6 +70,12 @@
                             <li><a href="#departments">Departments</a></li>
                             <li><a href="#doctors">Doctors</a></li>
                             <li><a href="#contact">Contact</a></li>
+                            <li class="text-center mt-4">
+                                <a href="PatientScheduleController" class="btn btn-primary btn-lg">
+                                    Xem lịch hẹn bệnh nhân
+                                </a>
+                            </li>
+
                         </ul>
                         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                     </nav>

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AppointmentDAO {
     
-    public List<Appointment> getAppointmentsByDoctorId(int doctorId) {
+   public List<Appointment> getAppointmentsByDoctorId(int doctorId) {
         List<Appointment> appointments = new ArrayList<>();
         String sql = """
             SELECT a.appointment_id, a.patient_id, a.doctor_id, a.date_time, a.status,
