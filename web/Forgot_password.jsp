@@ -64,6 +64,18 @@
         <!-- Back to login -->
         <a href="Login.jsp" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
     </form>
+    <% if (request.getAttribute("error") != null) { %>
+    <div class="alert alert-danger mt-3">
+        <%= request.getAttribute("error") %>
+    </div>
+<% } %>
+
+<% if (request.getAttribute("message") != null) { %>
+    <div class="alert alert-success mt-3">
+        <%= request.getAttribute("message") %>
+    </div>
+<% } %>
+
 </div>
 
 <!-- Bootstrap JS -->
