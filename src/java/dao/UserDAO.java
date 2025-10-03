@@ -104,4 +104,58 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    // ✅ Lưu token reset vào DB
+public void saveResetToken(String email, String token) {
+    String sql = "UPDATE [User] SET reset_token = ?, reset_expiry = DATEADD(MINUTE, 30, GETDATE()) WHERE email = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, token);
+        ps.setString(2, email);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+// ✅ Tìm email theo token
+public String findEmailByToken(String token) {
+    String sql = "SELECT email FROM [User] WHERE reset_token = ? AND reset_expiry > GETDATE()";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, token);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getString("email");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+// ✅ Cập nhật mật khẩu
+public void updatePassword(String email, String newPassword) {
+    String sql = "UPDATE [User] SET password = ? WHERE email = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, newPassword);
+        ps.setString(2, email);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+// ✅ Xóa token sau khi dùng
+public void clearToken(String token) {
+    String sql = "UPDATE [User] SET reset_token = NULL, reset_expiry = NULL WHERE reset_token = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, token);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 }
