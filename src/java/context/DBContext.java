@@ -32,8 +32,9 @@ public class DBContext {
     private final String dbName     = "SWP02";
     private final String portNumber = "1433";
     private final String instance   = ""; // LEAVE THIS EMPTY IF YOUR SQL IS A SINGLE INSTANCE
-    private final String userID     = "sa";
-    private final String password   = "123";
+    private final String userID     = "SA";
+    private final String password   = "123456";
+    
     public static void main(String[] args) {
     try {
         Connection conn = new DBContext().getConnection();
