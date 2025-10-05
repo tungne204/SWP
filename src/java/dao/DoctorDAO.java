@@ -29,7 +29,7 @@ public class DoctorDAO extends DBContext {
                     return doctor;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -53,7 +53,7 @@ public class DoctorDAO extends DBContext {
                     return doctor;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -75,7 +75,7 @@ public class DoctorDAO extends DBContext {
                 doctor.setSpecialty(rs.getString("specialty"));
                 doctors.add(doctor);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return doctors;
@@ -92,7 +92,7 @@ public class DoctorDAO extends DBContext {
             ps.setString(2, doctor.getSpecialty());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -108,7 +108,7 @@ public class DoctorDAO extends DBContext {
             ps.setInt(2, doctorId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -27,7 +27,7 @@ public class PaymentDAO extends DBContext {
             ps.setDate(6, payment.getPaymentDate() != null ? new java.sql.Date(payment.getPaymentDate().getTime()) : null);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -43,7 +43,7 @@ public class PaymentDAO extends DBContext {
             ps.setInt(2, paymentId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +70,7 @@ public class PaymentDAO extends DBContext {
                     return payment;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -99,7 +99,7 @@ public class PaymentDAO extends DBContext {
                     payments.add(payment);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return payments;
@@ -128,7 +128,7 @@ public class PaymentDAO extends DBContext {
                     payments.add(payment);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return payments;
@@ -149,7 +149,7 @@ public class PaymentDAO extends DBContext {
                     return rs.getBigDecimal("total_revenue") != null ? rs.getBigDecimal("total_revenue") : BigDecimal.ZERO;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return BigDecimal.ZERO;

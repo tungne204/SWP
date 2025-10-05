@@ -33,7 +33,7 @@ public class PatientQueueDAO extends DBContext {
                 patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
                 queue.add(patientQueue);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return queue;
@@ -64,7 +64,7 @@ public class PatientQueueDAO extends DBContext {
                     queue.add(patientQueue);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return queue;
@@ -87,7 +87,7 @@ public class PatientQueueDAO extends DBContext {
             ps.setTimestamp(8, new java.sql.Timestamp(patientQueue.getUpdatedTime().getTime()));
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -103,7 +103,7 @@ public class PatientQueueDAO extends DBContext {
             ps.setInt(2, queueId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -119,7 +119,7 @@ public class PatientQueueDAO extends DBContext {
             ps.setInt(2, queueId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -133,7 +133,7 @@ public class PatientQueueDAO extends DBContext {
             
             ps.setInt(1, queueId);
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -162,7 +162,7 @@ public class PatientQueueDAO extends DBContext {
                     return patientQueue;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

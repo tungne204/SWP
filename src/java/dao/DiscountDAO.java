@@ -32,7 +32,7 @@ public class DiscountDAO extends DBContext {
                     return discount;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -58,7 +58,7 @@ public class DiscountDAO extends DBContext {
                     return discount;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -82,7 +82,7 @@ public class DiscountDAO extends DBContext {
                 discount.setValidTo(rs.getDate("valid_to"));
                 discounts.add(discount);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return discounts;
@@ -110,7 +110,7 @@ public class DiscountDAO extends DBContext {
                     discounts.add(discount);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return discounts;
@@ -129,7 +129,7 @@ public class DiscountDAO extends DBContext {
             ps.setDate(4, discount.getValidTo() != null ? new java.sql.Date(discount.getValidTo().getTime()) : null);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -148,7 +148,7 @@ public class DiscountDAO extends DBContext {
             ps.setInt(5, discount.getDiscountId());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -162,7 +162,7 @@ public class DiscountDAO extends DBContext {
             
             ps.setInt(1, discountId);
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

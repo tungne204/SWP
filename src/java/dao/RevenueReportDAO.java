@@ -25,7 +25,7 @@ public class RevenueReportDAO extends DBContext {
             ps.setBigDecimal(4, report.getTotalRevenue());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -50,7 +50,7 @@ public class RevenueReportDAO extends DBContext {
                     return report;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -77,7 +77,7 @@ public class RevenueReportDAO extends DBContext {
                     reports.add(report);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return reports;
@@ -105,7 +105,7 @@ public class RevenueReportDAO extends DBContext {
                     reports.add(report);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return reports;
@@ -122,7 +122,7 @@ public class RevenueReportDAO extends DBContext {
             ps.setInt(2, reportId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

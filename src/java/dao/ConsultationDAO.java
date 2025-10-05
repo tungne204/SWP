@@ -12,7 +12,7 @@ import java.util.List;
 public class ConsultationDAO extends DBContext {
 
     // Create a new consultation
-    public void createConsultation(Consultation consultation) {
+    public void createConsultation(Consultation consultation) throws Exception {
         String sql = "INSERT INTO Consultation (patient_id, doctor_id, queue_id, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
@@ -32,7 +32,7 @@ public class ConsultationDAO extends DBContext {
     }
 
     // Update consultation status
-    public void updateConsultationStatus(int consultationId, String status) {
+    public void updateConsultationStatus(int consultationId, String status) throws Exception {
         String sql = "UPDATE Consultation SET status = ? WHERE consultation_id = ?";
         
         try (Connection conn = getConnection();
@@ -58,7 +58,7 @@ public class ConsultationDAO extends DBContext {
             ps.setInt(2, consultationId);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -85,7 +85,7 @@ public class ConsultationDAO extends DBContext {
                     return consultation;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -114,7 +114,7 @@ public class ConsultationDAO extends DBContext {
                     consultations.add(consultation);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return consultations;
@@ -143,7 +143,7 @@ public class ConsultationDAO extends DBContext {
                     consultations.add(consultation);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return consultations;
@@ -172,7 +172,7 @@ public class ConsultationDAO extends DBContext {
                     consultations.add(consultation);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return consultations;

@@ -33,7 +33,7 @@ public class PatientDAO extends DBContext {
                     return patient;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -61,7 +61,7 @@ public class PatientDAO extends DBContext {
                     return patient;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -87,7 +87,7 @@ public class PatientDAO extends DBContext {
                 patient.setParentId(rs.getObject("parent_id", Integer.class));
                 patients.add(patient);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return patients;
@@ -108,7 +108,7 @@ public class PatientDAO extends DBContext {
             ps.setObject(6, patient.getParentId(), java.sql.Types.INTEGER);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -128,7 +128,7 @@ public class PatientDAO extends DBContext {
             ps.setInt(6, patient.getPatientId());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

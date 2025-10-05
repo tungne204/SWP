@@ -23,7 +23,7 @@ public class QueueConfigurationDAO extends DBContext {
             ps.setString(3, config.getDescription());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -47,7 +47,7 @@ public class QueueConfigurationDAO extends DBContext {
                     return config;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -70,7 +70,7 @@ public class QueueConfigurationDAO extends DBContext {
                 config.setDescription(rs.getString("description"));
                 configs.add(config);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return configs;
@@ -87,7 +87,7 @@ public class QueueConfigurationDAO extends DBContext {
             ps.setString(2, configKey);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -101,7 +101,7 @@ public class QueueConfigurationDAO extends DBContext {
             
             ps.setString(1, configKey);
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

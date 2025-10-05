@@ -32,7 +32,7 @@ public class TestResultDAO extends DBContext {
                     return testResult;
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -60,7 +60,7 @@ public class TestResultDAO extends DBContext {
                     testResults.add(testResult);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return testResults;
@@ -88,7 +88,7 @@ public class TestResultDAO extends DBContext {
                     testResults.add(testResult);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return testResults;
@@ -108,7 +108,7 @@ public class TestResultDAO extends DBContext {
             ps.setObject(5, testResult.getConsultationId(), java.sql.Types.INTEGER);
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -127,7 +127,7 @@ public class TestResultDAO extends DBContext {
             ps.setInt(5, testResult.getTestId());
             
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -141,7 +141,7 @@ public class TestResultDAO extends DBContext {
             
             ps.setInt(1, testId);
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
