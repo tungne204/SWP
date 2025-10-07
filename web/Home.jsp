@@ -64,7 +64,7 @@
 
                     <nav id="navmenu" class="navmenu">
                         <ul>
-                            <li><a href="#hero" class="active">Home<br></a></li>a
+                            <li><a href="#hero" class="active">Home<br></a></li>
                             <li><a href="#about">About</a></li>
                             <li><a href="#services">Services</a></li>
                             <li><a href="#departments">Departments</a></li>
@@ -80,7 +80,7 @@
                     <a class="cta-btn d-none d-sm-block" href="Login.jsp">Login</a>
                     <% } else { %>
                     <div class="dropdown ms-4">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu" 
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             Hello, <%= acc.getUsername() %>
                         </button>

@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/ChangePasswordServlet"})
+
 public class ChangePasswordServlet extends HttpServlet {
 
     @Override
@@ -18,6 +20,9 @@ public class ChangePasswordServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
+        User acc = (User) session.getAttribute("acc");
+
+        if (acc == null) {
         if (session == null || session.getAttribute("acc") == null) {
             response.sendRedirect("Login.jsp");
             return;
@@ -30,6 +35,11 @@ public class ChangePasswordServlet extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
+        UserDAO dao = new UserDAO();
+
+        // ✅ Check old password
+        if (!dao.checkPassword(acc.getEmail(), oldPassword)) {
+            request.setAttribute("error", "Current password is incorrect!");
         // Basic validations
         if (oldPassword == null || newPassword == null || confirmPassword == null
                 || oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
@@ -38,7 +48,9 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
+        // ✅ Check confirm new password
         if (!newPassword.equals(confirmPassword)) {
+            request.setAttribute("error", "New password and confirmation do not match!");
             request.setAttribute("error", "Mật khẩu xác nhận không khớp.");
             request.getRequestDispatcher("Change_password.jsp").forward(request, response);
             return;
@@ -56,6 +68,9 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
+        // ✅ Update new password
+        dao.updatePassword(acc.getEmail(), newPassword);
+        request.setAttribute("success", "Password updated successfully!");
         UserDAO userDAO = new UserDAO();
 
         // Verify old password
