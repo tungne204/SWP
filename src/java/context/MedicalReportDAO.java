@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MedicalReportDAO extends DBContext{
-       public List<MedicalReport> getAllByDoctorId(int doctorId) {
+       public List<MedicalReport> getAllByDoctorId(int doctorId) throws Exception {
         List<MedicalReport> list = new ArrayList<>();
         String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
                     "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
@@ -24,7 +24,7 @@ public class MedicalReportDAO extends DBContext{
                     "WHERE d.doctor_id = ? " +
                     "ORDER BY a.date_time DESC";
         
-        try (
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, doctorId);
@@ -49,7 +49,7 @@ public class MedicalReportDAO extends DBContext{
     }
 
     // Lấy medical report theo ID
-    public MedicalReport getById(int recordId) {
+    public MedicalReport getById(int recordId) throws Exception {
         String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
                     "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
                     "a.date_time as appointment_date " +
@@ -60,7 +60,7 @@ public class MedicalReportDAO extends DBContext{
                     "JOIN [User] u ON d.user_id = u.user_id " +
                     "WHERE mr.record_id = ?";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, recordId);
@@ -85,7 +85,7 @@ public class MedicalReportDAO extends DBContext{
     }
 
     // Lấy appointments chưa có medical report của doctor
-    public List<Appointment> getAppointmentsWithoutReport(int doctorId) {
+    public List<Appointment> getAppointmentsWithoutReport(int doctorId) throws Exception {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.appointment_id, p.full_name, a.date_time " +
                     "FROM Appointment a " +
@@ -94,7 +94,7 @@ public class MedicalReportDAO extends DBContext{
                     "AND NOT EXISTS (SELECT 1 FROM MedicalReport mr WHERE mr.appointment_id = a.appointment_id) " +
                     "ORDER BY a.date_time DESC";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, doctorId);
@@ -114,11 +114,11 @@ public class MedicalReportDAO extends DBContext{
     }
 
     // Thêm medical report mới
-    public boolean insert(MedicalReport mr) {
+    public boolean insert(MedicalReport mr) throws Exception {
         String sql = "INSERT INTO MedicalReport (appointment_id, diagnosis, prescription, test_request) " +
                     "VALUES (?, ?, ?, ?)";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, mr.getAppointmentId());
@@ -134,11 +134,11 @@ public class MedicalReportDAO extends DBContext{
     }
 
     // Cập nhật medical report
-    public boolean update(MedicalReport mr) {
+    public boolean update(MedicalReport mr) throws Exception {
         String sql = "UPDATE MedicalReport SET diagnosis = ?, prescription = ?, test_request = ? " +
                     "WHERE record_id = ?";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, mr.getDiagnosis());
@@ -154,10 +154,10 @@ public class MedicalReportDAO extends DBContext{
     }
 
     // Xóa medical report
-    public boolean delete(int recordId) {
+    public boolean delete(int recordId) throws Exception {
         String sql = "DELETE FROM MedicalReport WHERE record_id = ?";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, recordId);
