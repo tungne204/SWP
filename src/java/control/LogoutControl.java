@@ -15,7 +15,7 @@ public class LogoutControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        session.invalidate(); // xóa toàn bộ session
-        response.sendRedirect("Home.jsp"); // quay lại trang chủ
+        session.invalidate(); 
+        response.sendRedirect("Home.jsp"); 
     }
 }
