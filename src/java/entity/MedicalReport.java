@@ -5,22 +5,26 @@ public class MedicalReport {
     private int appointmentId;
     private String diagnosis;
     private String prescription;
-    private Boolean testRequest; // Boolean wrapper to allow null values
-    private Integer consultationId; // Integer wrapper to allow null values
+    private boolean testRequest;
+    
+    // Thông tin bổ sung từ join
+    private String patientName;
+    private String doctorName;
+    private String appointmentDate;
 
     public MedicalReport() {
     }
 
-    public MedicalReport(int recordId, int appointmentId, String diagnosis, String prescription, Boolean testRequest, Integer consultationId) {
+    public MedicalReport(int recordId, int appointmentId, String diagnosis, 
+                        String prescription, boolean testRequest) {
         this.recordId = recordId;
         this.appointmentId = appointmentId;
         this.diagnosis = diagnosis;
         this.prescription = prescription;
         this.testRequest = testRequest;
-        this.consultationId = consultationId;
     }
 
-    // Getter & Setter
+    // Getters and Setters
     public int getRecordId() {
         return recordId;
     }
@@ -53,19 +57,46 @@ public class MedicalReport {
         this.prescription = prescription;
     }
 
-    public Boolean getTestRequest() {
+    public boolean isTestRequest() {
         return testRequest;
     }
 
-    public void setTestRequest(Boolean testRequest) {
+    public void setTestRequest(boolean testRequest) {
         this.testRequest = testRequest;
     }
 
-    public Integer getConsultationId() {
-        return consultationId;
+    public String getPatientName() {
+        return patientName;
     }
 
-    public void setConsultationId(Integer consultationId) {
-        this.consultationId = consultationId;
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(String appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    @Override
+    public String toString() {
+        return "MedicalReport{" +
+                "recordId=" + recordId +
+                ", appointmentId=" + appointmentId +
+                ", diagnosis='" + diagnosis + '\'' +
+                ", prescription='" + prescription + '\'' +
+                ", testRequest=" + testRequest +
+                '}';
     }
 }
