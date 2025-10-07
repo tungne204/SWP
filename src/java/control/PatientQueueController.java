@@ -48,6 +48,9 @@ public class PatientQueueController extends HttpServlet {
             case "view":
                 viewWaitingScreen(request, response);
                 break;
+            case "public-view":
+                viewPublicWaitingScreen(request, response);
+                break;
             case "consultation":
                 viewConsultation(request, response);
                 break;
@@ -123,6 +126,42 @@ public class PatientQueueController extends HttpServlet {
         }
     }
 
+    // View the public waiting screen with all patients in queue (no authentication required)
+    private void viewPublicWaitingScreen(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            // Get all patients in queue ordered by priority and check-in time
+            List<PatientQueue> queue = patientQueueDAO.getAllPatientsInQueue();
+            
+            // Get patient details for each queue entry
+            List<Map<String, Object>> queueDetails = new ArrayList<>();
+            for (PatientQueue pq : queue) {
+                Map<String, Object> details = new HashMap<>();
+                details.put("queue", pq);
+                
+                // Get patient information
+                Patient patient = patientDAO.getPatientById(pq.getPatientId());
+                details.put("patient", patient);
+                
+                // Get appointment information if exists
+                if (pq.getAppointmentId() != null) {
+                    Appointment appointment = appointmentDAO.getAppointmentById(pq.getAppointmentId());
+                    details.put("appointment", appointment);
+                }
+                
+                queueDetails.add(details);
+            }
+            
+            request.setAttribute("queueDetails", queueDetails);
+            request.getRequestDispatcher("/patient-queue/public-waiting-screen.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+
+
     // View consultation details
     private void viewConsultation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -163,7 +202,31 @@ public class PatientQueueController extends HttpServlet {
         
         try {
             String patientType = request.getParameter("patientType"); // "walkin" or "booked"
-            int patientId = Integer.parseInt(request.getParameter("patientId"));
+            String patientIdStr = request.getParameter("patientId");
+            int patientId;
+            
+            if (patientIdStr == null || patientIdStr.trim().isEmpty()) {
+                // Handle walk-in patients without existing patient ID
+                // Create a new patient record first
+                Patient newPatient = new Patient();
+                newPatient.setFullName(request.getParameter("patientName"));
+                newPatient.setAddress(request.getParameter("patientPhone")); // Using address field for phone
+                // Set default values for required fields
+                newPatient.setUserId(0); // Use 0 to indicate no user ID
+                newPatient.setInsuranceInfo(""); // Empty insurance info
+                newPatient.setParentId(null); // No parent
+                newPatient.setDob(new Date()); // Set current date as default DOB
+                
+                // Save new patient and get the generated patient ID
+                patientId = patientDAO.createPatient(newPatient);
+                
+                // Check if patient creation was successful
+                if (patientId == -1) {
+                    throw new Exception("Failed to create patient record");
+                }
+            } else {
+                patientId = Integer.parseInt(patientIdStr);
+            }
             
             // Get the highest queue number to assign next number
             List<PatientQueue> allQueue = patientQueueDAO.getAllPatientsInQueue();

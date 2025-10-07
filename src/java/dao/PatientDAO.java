@@ -94,13 +94,13 @@ public class PatientDAO extends DBContext {
     }
 
     // Create a new patient
-    public void createPatient(Patient patient) {
+    public int createPatient(Patient patient) {
         String sql = "INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             
-            ps.setInt(1, patient.getUserId());
+            ps.setObject(1, patient.getUserId() > 0 ? patient.getUserId() : null, java.sql.Types.INTEGER);
             ps.setString(2, patient.getFullName());
             ps.setDate(3, patient.getDob() != null ? new java.sql.Date(patient.getDob().getTime()) : null);
             ps.setString(4, patient.getAddress());
@@ -108,9 +108,17 @@ public class PatientDAO extends DBContext {
             ps.setObject(6, patient.getParentId(), java.sql.Types.INTEGER);
             
             ps.executeUpdate();
+            
+            // Get the generated patient ID
+            try (var generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return -1; // Return -1 if failed to create patient
     }
 
     // Update patient information

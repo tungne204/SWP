@@ -13,6 +13,16 @@ public class Patient {
 
     public Patient() {
     }
+    
+    // Constructor for creating new patients without ID
+    public Patient(int userId, String fullName, Date dob, String address, String insuranceInfo, Integer parentId) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.dob = dob;
+        this.address = address;
+        this.insuranceInfo = insuranceInfo;
+        this.parentId = parentId;
+    }
 
     public Patient(int patientId, int userId, String fullName, Date dob, String address, String insuranceInfo, Integer parentId) {
         this.patientId = patientId;

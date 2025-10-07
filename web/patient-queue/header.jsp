@@ -57,7 +57,10 @@
                 </ul>
             </nav>
 
-            <% if (acc == null) { %>
+            <%
+            // Check if user is logged in
+            User acc = (User) session.getAttribute("acc");
+            if (acc == null) { %>
             <a class="hidden md:block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" href="<c:url value="/Login.jsp"/>">Login</a>
             <% } else { %>
             <div class="flex items-center mt-4 md:mt-0">
