@@ -13,11 +13,11 @@ import java.sql.DriverManager;
 public class DBContext {
      public Connection getConnection() throws Exception {
         String url = "jdbc:sqlserver://" + serverName + ":" + portNumber + "\\" + instance 
-                   + ";databaseName=" + dbName;
+                   + ";databaseName=" + dbName + ";encrypt=true;trustServerCertificate=true";
 
         if (instance == null || instance.trim().isEmpty()) {
             url = "jdbc:sqlserver://" + serverName + ":" + portNumber 
-                + ";databaseName=" + dbName;
+                + ";databaseName=" + dbName + ";encrypt=true;trustServerCertificate=true";
         }
 
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -50,5 +50,4 @@ public class DBContext {
         e.printStackTrace();
     }
 }
-
 }
