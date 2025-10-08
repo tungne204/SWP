@@ -133,6 +133,20 @@ public String findEmailByToken(String token) {
     return null;
 }
 
+// ✅ Kiểm tra mật khẩu cũ có đúng không
+public boolean checkPassword(String email, String oldPassword) {
+    String sql = "SELECT 1 FROM [User] WHERE email = ? AND password = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+        ps.setString(2, oldPassword);
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 // ✅ Cập nhật mật khẩu
 public void updatePassword(String email, String newPassword) {
     String sql = "UPDATE [User] SET password = ? WHERE email = ?";
