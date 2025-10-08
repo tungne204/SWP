@@ -29,6 +29,7 @@ public class PatientQueueDAO extends DBContext {
                 patientQueue.setQueueType(rs.getString("queue_type"));
                 patientQueue.setStatus(rs.getString("status"));
                 patientQueue.setPriority(rs.getInt("priority"));
+                patientQueue.setRoomNumber(rs.getString("room_number"));
                 patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
                 patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
                 queue.add(patientQueue);
@@ -59,6 +60,7 @@ public class PatientQueueDAO extends DBContext {
                     patientQueue.setQueueType(rs.getString("queue_type"));
                     patientQueue.setStatus(rs.getString("status"));
                     patientQueue.setPriority(rs.getInt("priority"));
+                    patientQueue.setRoomNumber(rs.getString("room_number"));
                     patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
                     patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
                     queue.add(patientQueue);
@@ -72,7 +74,7 @@ public class PatientQueueDAO extends DBContext {
 
     // Add patient to queue
     public void addPatientToQueue(PatientQueue patientQueue) {
-        String sql = "INSERT INTO PatientQueue (patient_id, appointment_id, queue_number, queue_type, status, priority, check_in_time, updated_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO PatientQueue (patient_id, appointment_id, queue_number, queue_type, status, priority, room_number, check_in_time, updated_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -83,8 +85,9 @@ public class PatientQueueDAO extends DBContext {
             ps.setString(4, patientQueue.getQueueType());
             ps.setString(5, patientQueue.getStatus());
             ps.setInt(6, patientQueue.getPriority());
-            ps.setTimestamp(7, new java.sql.Timestamp(patientQueue.getCheckInTime().getTime()));
-            ps.setTimestamp(8, new java.sql.Timestamp(patientQueue.getUpdatedTime().getTime()));
+            ps.setString(7, patientQueue.getRoomNumber());
+            ps.setTimestamp(8, new java.sql.Timestamp(patientQueue.getCheckInTime().getTime()));
+            ps.setTimestamp(9, new java.sql.Timestamp(patientQueue.getUpdatedTime().getTime()));
             
             ps.executeUpdate();
         } catch (Exception e) {
@@ -116,6 +119,22 @@ public class PatientQueueDAO extends DBContext {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, priority);
+            ps.setInt(2, queueId);
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Update patient queue room number
+    public void updatePatientQueueRoomNumber(int queueId, String roomNumber) {
+        String sql = "UPDATE PatientQueue SET room_number = ?, updated_time = GETDATE() WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, roomNumber);
             ps.setInt(2, queueId);
             
             ps.executeUpdate();
@@ -157,6 +176,7 @@ public class PatientQueueDAO extends DBContext {
                     patientQueue.setQueueType(rs.getString("queue_type"));
                     patientQueue.setStatus(rs.getString("status"));
                     patientQueue.setPriority(rs.getInt("priority"));
+                    patientQueue.setRoomNumber(rs.getString("room_number"));
                     patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
                     patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
                     return patientQueue;
