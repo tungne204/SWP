@@ -79,10 +79,19 @@
                     <% if (acc == null) { %>
                     <a class="cta-btn d-none d-sm-block" href="Login.jsp">Login</a>
                     <% } else { %>
-                    <span class="btn btn-outline-primary disabled ms-4 me-2">
-                        Hello, <%= acc.getUsername() %>
-                    </span>
-                    <a class="cta-btn d-none d-sm-block ms-2" href="logout">Logout</a>
+                   <div class="dropdown ms-4">
+    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu" 
+            data-bs-toggle="dropdown" aria-expanded="false">
+        Hello, <%= acc.getUsername() %>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="userMenu">
+        <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
+        <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="logout">Logout</a></li>
+    </ul>
+</div>
+
                     <% } %>
 
 
