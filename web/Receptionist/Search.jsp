@@ -1,7 +1,7 @@
 <%-- 
-    Document   : Search
+    Document   : Search Patient
     Created on : Oct 8, 2025, 5:37:36 PM
-    Author     : Admin
+    Author     : Kiên
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title> Search Patient</title>
     </head>
     <body>
         <h1>Hello World!</h1>
