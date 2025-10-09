@@ -134,17 +134,17 @@ public class PatientDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
     // Search patients by name, ID, or address
-    public List<Patient> searchPatients(String keyword) {
+
+    public List<Patient> searchPatients(String keyword) throws Exception {
         List<Patient> patients = new ArrayList<>();
-        String sql = """
-            SELECT * FROM Patient
-            WHERE CAST(patient_id AS NVARCHAR) LIKE ?
-               OR LOWER(full_name) LIKE LOWER(?)
-               OR LOWER(address) LIKE LOWER(?)
-            ORDER BY patient_id DESC
-            """;
+
+        String sql
+                = "SELECT * FROM Patient "
+                + "WHERE CAST(patient_id AS NVARCHAR) LIKE ? "
+                + "OR LOWER(full_name) LIKE LOWER(?) "
+                + "OR LOWER(address) LIKE LOWER(?) "
+                + "ORDER BY patient_id DESC";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
