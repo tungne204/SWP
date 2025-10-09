@@ -19,14 +19,14 @@ public class PatientSearchServlet extends HttpServlet {
         PatientDAO dao = new PatientDAO();
         List<Patient> list;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = dao.searchPatients(keyword);
-        } else {
-            list = dao.getAllPatients();
-        }
-
-        request.setAttribute("patients", list);
-        request.setAttribute("keyword", keyword);
-        request.getRequestDispatcher("patientSearch.jsp").forward(request, response);
+//        if (keyword != null && !keyword.trim().isEmpty()) {
+//            list = dao.searchPatients(keyword);
+//        } else {
+//            list = dao.getAllPatients();
+//        }
+//
+//        request.setAttribute("patients", list);
+//        request.setAttribute("keyword", keyword);
+//        request.getRequestDispatcher("patientSearch.jsp").forward(request, response);
     }
 }
