@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manage Appointments</title>
+    <title>Appointment List</title>
 </head>
 <body>
     <h2>Appointment List</h2>
