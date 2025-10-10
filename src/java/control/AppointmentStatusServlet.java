@@ -24,24 +24,18 @@ import jakarta.servlet.*;
 @WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/AppointmentStatusServlet"})
 public class AppointmentStatusServlet extends HttpServlet {
 
-    @Override
+     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-        String newStatus = request.getParameter("status");
+        boolean newStatus = Boolean.parseBoolean(request.getParameter("status"));
 
         AppointmentDAO dao = new AppointmentDAO();
-        boolean success = dao.updateAppointmentStatus(appointmentId, newStatus);
-
-        if (success) {
-            request.setAttribute("message", "Appointment status updated successfully!");
-        } else {
-            request.setAttribute("error", "Failed to update appointment status.");
-        }
+        dao.updateAppointmentStatus(appointmentId, newStatus);
 
         // Quay lại trang danh sách sau khi cập nhật
-        request.getRequestDispatcher("appointmentList.jsp").forward(request, response);
+        response.sendRedirect("ViewAppointmentServlet");
     }
 
 }
