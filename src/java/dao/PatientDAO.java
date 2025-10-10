@@ -93,6 +93,35 @@ public class PatientDAO extends DBContext {
         return patients;
     }
 
+    // Find existing patient by name and phone number (stored in address field)
+    public Patient findPatientByNameAndPhone(String fullName, String phoneNumber) {
+        String sql = "SELECT * FROM Patient WHERE full_name = ? AND address = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, fullName);
+            ps.setString(2, phoneNumber);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Patient patient = new Patient();
+                    patient.setPatientId(rs.getInt("patient_id"));
+                    patient.setUserId(rs.getInt("user_id"));
+                    patient.setFullName(rs.getString("full_name"));
+                    patient.setDob(rs.getDate("dob"));
+                    patient.setAddress(rs.getString("address"));
+                    patient.setInsuranceInfo(rs.getString("insurance_info"));
+                    patient.setParentId(rs.getObject("parent_id", Integer.class));
+                    return patient;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Create a new patient
     public int createPatient(Patient patient) {
         String sql = "INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id) VALUES (?, ?, ?, ?, ?, ?)";

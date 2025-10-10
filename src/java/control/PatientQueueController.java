@@ -207,25 +207,44 @@ public class PatientQueueController extends HttpServlet {
             
             if (patientIdStr == null || patientIdStr.trim().isEmpty()) {
                 // Handle walk-in patients without existing patient ID
-                // Create a new patient record first
-                Patient newPatient = new Patient();
-                newPatient.setFullName(request.getParameter("patientName"));
-                newPatient.setAddress(request.getParameter("patientPhone")); // Using address field for phone
-                // Set default values for required fields
-                newPatient.setUserId(0); // Use 0 to indicate no user ID
-                newPatient.setInsuranceInfo(""); // Empty insurance info
-                newPatient.setParentId(null); // No parent
-                newPatient.setDob(new Date()); // Set current date as default DOB
+                String patientName = request.getParameter("patientName");
+                String patientPhone = request.getParameter("patientPhone");
                 
-                // Save new patient and get the generated patient ID
-                patientId = patientDAO.createPatient(newPatient);
+                // Check if patient already exists by name and phone
+                Patient existingPatient = patientDAO.findPatientByNameAndPhone(patientName, patientPhone);
                 
-                // Check if patient creation was successful
-                if (patientId == -1) {
-                    throw new Exception("Failed to create patient record");
+                if (existingPatient != null) {
+                    // Patient already exists, use existing patient ID
+                    patientId = existingPatient.getPatientId();
+                } else {
+                    // Create a new patient record
+                    Patient newPatient = new Patient();
+                    newPatient.setFullName(patientName);
+                    newPatient.setAddress(patientPhone); // Using address field for phone
+                    // Set default values for required fields
+                    newPatient.setUserId(0); // Use 0 to indicate no user ID
+                    newPatient.setInsuranceInfo(""); // Empty insurance info
+                    newPatient.setParentId(null); // No parent
+                    newPatient.setDob(new Date()); // Set current date as default DOB
+                    
+                    // Save new patient and get the generated patient ID
+                    patientId = patientDAO.createPatient(newPatient);
+                    
+                    // Check if patient creation was successful
+                    if (patientId == -1) {
+                        throw new Exception("Failed to create patient record");
+                    }
                 }
             } else {
                 patientId = Integer.parseInt(patientIdStr);
+            }
+            
+            // Check if patient is already in queue today
+            if (patientQueueDAO.isPatientInQueueToday(patientId)) {
+                // Patient is already in queue today, redirect with message
+                request.getSession().setAttribute("errorMessage", "Patient is already checked in today and is in the queue.");
+                response.sendRedirect("checkin-form.jsp");
+                return;
             }
             
             // Get the highest queue number to assign next number
