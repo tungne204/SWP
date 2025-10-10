@@ -187,4 +187,24 @@ public class PatientQueueDAO extends DBContext {
         }
         return null;
     }
+    
+    // Check if patient is already in queue today
+    public boolean isPatientInQueueToday(int patientId) {
+        String sql = "SELECT COUNT(*) FROM PatientQueue WHERE patient_id = ? AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) AND status IN ('Waiting', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up')";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, patientId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
