@@ -12,10 +12,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.AppointmentDAO;
+import entity.Appointment;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.text.SimpleDateFormat;
+
 
 /**
- *
- * @author Admin
+ * Update appointment information
+ * @author Kiên
  */
 @WebServlet(name="UpdateAppointmentServlet", urlPatterns={"/UpdateAppointmentServlet"})
 public class UpdateAppointmentServlet extends HttpServlet {
