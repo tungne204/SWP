@@ -161,10 +161,12 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
     /**
      * Update appointment details (patient, doctor, date_time)
+     *
      * @param appointment
-     * @throws Exception 
+     * @throws Exception
      */
     public void updateAppointment(Appointment appointment) throws Exception {
         String sql = "UPDATE Appointment SET patient_id = ?, doctor_id = ?, date_time = ?, status = ? WHERE appointment_id = ?";
@@ -182,4 +184,20 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
+    /**
+     * Delete appointment by ID
+     * @param appointmentId
+     * @throws Exception 
+     */
+    public void deleteAppointment(int appointmentId) throws Exception {
+        String sql = "DELETE FROM Appointment WHERE appointment_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, appointmentId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
