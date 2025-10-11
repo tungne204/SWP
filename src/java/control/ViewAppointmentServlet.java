@@ -12,10 +12,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import dao.AppointmentDAO;
+import entity.Appointment;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.util.List;
 /**
  *
- * @author Admin
+ * @author Kiên
  */
 @WebServlet(name="ViewAppointmentServlet", urlPatterns={"/ViewAppointmentServlet"})
 public class ViewAppointmentServlet extends HttpServlet {
