@@ -12,10 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.AppointmentDAO;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 /**
  *
- * @author Admin
+ * @author Kiên
  */
 @WebServlet(name="DeleteAppointmentServlet", urlPatterns={"/DeleteAppointmentServlet"})
 public class DeleteAppointmentServlet extends HttpServlet {
