@@ -207,25 +207,44 @@ public class PatientQueueController extends HttpServlet {
             
             if (patientIdStr == null || patientIdStr.trim().isEmpty()) {
                 // Handle walk-in patients without existing patient ID
-                // Create a new patient record first
-                Patient newPatient = new Patient();
-                newPatient.setFullName(request.getParameter("patientName"));
-                newPatient.setAddress(request.getParameter("patientPhone")); // Using address field for phone
-                // Set default values for required fields
-                newPatient.setUserId(0); // Use 0 to indicate no user ID
-                newPatient.setInsuranceInfo(""); // Empty insurance info
-                newPatient.setParentId(null); // No parent
-                newPatient.setDob(new Date()); // Set current date as default DOB
+                String patientName = request.getParameter("patientName");
+                String patientPhone = request.getParameter("patientPhone");
                 
-                // Save new patient and get the generated patient ID
-                patientId = patientDAO.createPatient(newPatient);
+                // Check if patient already exists by name and phone
+                Patient existingPatient = patientDAO.findPatientByNameAndPhone(patientName, patientPhone);
                 
-                // Check if patient creation was successful
-                if (patientId == -1) {
-                    throw new Exception("Failed to create patient record");
+                if (existingPatient != null) {
+                    // Patient already exists, use existing patient ID
+                    patientId = existingPatient.getPatientId();
+                } else {
+                    // Create a new patient record
+                    Patient newPatient = new Patient();
+                    newPatient.setFullName(patientName);
+                    newPatient.setAddress(patientPhone); // Using address field for phone
+                    // Set default values for required fields
+                    newPatient.setUserId(0); // Use 0 to indicate no user ID
+                    newPatient.setInsuranceInfo(""); // Empty insurance info
+                    newPatient.setParentId(null); // No parent
+                    newPatient.setDob(new Date()); // Set current date as default DOB
+                    
+                    // Save new patient and get the generated patient ID
+                    patientId = patientDAO.createPatient(newPatient);
+                    
+                    // Check if patient creation was successful
+                    if (patientId == -1) {
+                        throw new Exception("Failed to create patient record");
+                    }
                 }
             } else {
                 patientId = Integer.parseInt(patientIdStr);
+            }
+            
+            // Check if patient is already in queue today
+            if (patientQueueDAO.isPatientInQueueToday(patientId)) {
+                // Patient is already in queue today, redirect with message
+                request.getSession().setAttribute("errorMessage", "Patient is already checked in today and is in the queue.");
+                response.sendRedirect("checkin-form.jsp");
+                return;
             }
             
             // Get the highest queue number to assign next number
@@ -286,8 +305,16 @@ public class PatientQueueController extends HttpServlet {
         try {
             int queueId = Integer.parseInt(request.getParameter("queueId"));
             
-            // Update patient queue status to "In Consultation"
+            // Assign consultation room (get from request or auto-assign)
+            String roomNumber = request.getParameter("roomNumber");
+            if (roomNumber == null || roomNumber.trim().isEmpty()) {
+                // Auto-assign next available room (Room 1-10)
+                roomNumber = getNextAvailableRoom();
+            }
+            
+            // Update patient queue status to "In Consultation" and assign room
             patientQueueDAO.updatePatientQueueStatus(queueId, "In Consultation");
+            patientQueueDAO.updatePatientQueueRoomNumber(queueId, roomNumber);
             
             // Get patient queue information
             PatientQueue patientQueue = patientQueueDAO.getPatientQueueById(queueId);
@@ -324,6 +351,29 @@ public class PatientQueueController extends HttpServlet {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
         }
+    }
+
+    // Get next available consultation room
+    private String getNextAvailableRoom() {
+        List<PatientQueue> inConsultation = patientQueueDAO.getPatientsByStatus("In Consultation");
+        Set<String> occupiedRooms = new HashSet<>();
+        
+        for (PatientQueue pq : inConsultation) {
+            if (pq.getRoomNumber() != null) {
+                occupiedRooms.add(pq.getRoomNumber());
+            }
+        }
+        
+        // Try rooms 1-10
+        for (int i = 1; i <= 10; i++) {
+            String room = "Room " + i;
+            if (!occupiedRooms.contains(room)) {
+                return room;
+            }
+        }
+        
+        // If all rooms occupied, assign to Room 1 anyway
+        return "Room 1";
     }
 
     // Request lab test during consultation
@@ -391,6 +441,9 @@ public class PatientQueueController extends HttpServlet {
         try {
             int queueId = Integer.parseInt(request.getParameter("queueId"));
             int consultationId = Integer.parseInt(request.getParameter("consultationId"));
+            
+            // Clear room number before completion
+            patientQueueDAO.updatePatientQueueRoomNumber(queueId, null);
             
             // Update patient queue status to "Completed"
             patientQueueDAO.updatePatientQueueStatus(queueId, "Completed");

@@ -10,13 +10,14 @@ public class PatientQueue {
     private String queueType; // 'Walk-in' or 'Booked'
     private String status; // 'Waiting', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up', 'Completed'
     private int priority; // For prioritization rules
+    private String roomNumber; // Consultation room number (e.g., "Room 1", "Room 2")
     private Date checkInTime;
     private Date updatedTime;
 
     public PatientQueue() {
     }
 
-    public PatientQueue(int queueId, int patientId, Integer appointmentId, int queueNumber, String queueType, String status, int priority, Date checkInTime, Date updatedTime) {
+    public PatientQueue(int queueId, int patientId, Integer appointmentId, int queueNumber, String queueType, String status, int priority, String roomNumber, Date checkInTime, Date updatedTime) {
         this.queueId = queueId;
         this.patientId = patientId;
         this.appointmentId = appointmentId;
@@ -24,6 +25,7 @@ public class PatientQueue {
         this.queueType = queueType;
         this.status = status;
         this.priority = priority;
+        this.roomNumber = roomNumber;
         this.checkInTime = checkInTime;
         this.updatedTime = updatedTime;
     }
@@ -83,6 +85,14 @@ public class PatientQueue {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
     public Date getCheckInTime() {

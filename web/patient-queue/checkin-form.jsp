@@ -197,6 +197,14 @@
                 <h5 class="text-xl font-semibold">Thông Tin Đăng Ký</h5>
             </div>
             <div class="p-6">
+                <!-- Error message display -->
+                <c:if test="${not empty sessionScope.errorMessage}">
+                    <div class="alert alert-danger mb-4" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                        <i class="fas fa-exclamation-triangle"></i> ${sessionScope.errorMessage}
+                    </div>
+                    <c:remove var="errorMessage" scope="session"/>
+                </c:if>
+                
                 <form action="<c:url value="/patient-queue"/>" method="post">
                     <input type="hidden" name="action" value="checkin">
                     
