@@ -482,6 +482,10 @@
                                     <div class="action-buttons" data-label="">
                                         <c:choose>
                                             <c:when test="${queueDetail.queue.status == 'Waiting'}">
+                                                <button type="button" class="action-btn btn-followup" onclick="markReady('${queueDetail.queue.queueId}')">
+                                                    <i class="fas fa-door-open"></i>
+                                                    Chuẩn Bị Khám
+                                                </button>
                                                 <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
                                                    class="action-btn btn-start">
                                                     <i class="fas fa-play"></i>
@@ -549,6 +553,31 @@
         setTimeout(function() {
             location.reload();
         }, 30000);
+    </script>
+
+    <script>
+        function markReady(queueId) {
+            try {
+                const roomNumber = prompt('Nhập phòng khám (tuỳ chọn):');
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'patient-queue?action=markReady';
+                const q = document.createElement('input');
+                q.type = 'hidden';
+                q.name = 'queueId';
+                q.value = queueId;
+                form.appendChild(q);
+                const r = document.createElement('input');
+                r.type = 'hidden';
+                r.name = 'roomNumber';
+                r.value = roomNumber || '';
+                form.appendChild(r);
+                document.body.appendChild(form);
+                form.submit();
+            } catch (e) {
+                alert('Không thể gửi yêu cầu chuẩn bị khám.');
+            }
+        }
     </script>
 </body>
 </html>
