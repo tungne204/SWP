@@ -230,13 +230,30 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="patientPhone" class="form-label">Số Điện Thoại</label>
-                            <input type="text" class="form-control" id="patientPhone" name="patientPhone" placeholder="Nhập số điện thoại">
+                            <label for="patientPhone" class="form-label">Số Điện Thoại Phụ Huynh</label>
+                            <input type="text" class="form-control" id="patientPhone" name="patientPhone" placeholder="Nhập số điện thoại phụ huynh">
+                            <p class="text-sm text-gray-500 mt-1">Số liên hệ của cha/mẹ hoặc người giám hộ.</p>
                         </div>
                         
                         <div class="form-group">
                             <label for="patientId" class="form-label">Mã Bệnh Nhân (nếu có)</label>
                             <input type="number" class="form-control" id="patientId" name="patientId" placeholder="Nhập mã bệnh nhân nếu đã có">
+                        </div>
+
+                        <!-- Các trường bổ sung để khớp với bảng Patient -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="dob" class="form-label">Ngày Sinh</label>
+                                <input type="date" class="form-control" id="dob" name="dob">
+                            </div>
+                            <div class="form-group">
+                                <label for="address" class="form-label">Địa Chỉ</label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành">
+                            </div>
+                            <div class="form-group md:col-span-2">
+                                <label for="insuranceInfo" class="form-label">Thông Tin Bảo Hiểm</label>
+                                <input type="text" class="form-control" id="insuranceInfo" name="insuranceInfo" placeholder="Số thẻ/nhà cung cấp (tùy chọn)">
+                            </div>
                         </div>
                     </div>
                     
@@ -256,7 +273,7 @@
                                 <div class="grid grid-cols-2 gap-2">
                                     <div><strong>Mã BN:</strong> <span id="displayPatientId">-</span></div>
                                     <div><strong>Họ Tên:</strong> <span id="displayPatientName">-</span></div>
-                                    <div><strong>SĐT:</strong> <span id="displayPatientPhone">-</span></div>
+                                    <div><strong>SĐT Phụ Huynh:</strong> <span id="displayPatientPhone">-</span></div>
                                     <div><strong>Mã Lịch Hẹn:</strong> <span id="displayAppointmentId">-</span></div>
                                 </div>
                                 <input type="hidden" id="hiddenPatientId" name="patientId">
@@ -271,6 +288,17 @@
                         </div>
                     </div>
                     
+                    <!-- Thông Tin Phụ Huynh (tối giản) -->
+                    <div id="pediatricSection" class="mt-6">
+                        <h6 class="font-semibold text-gray-800 mb-3">Thông Tin Phụ Huynh</h6>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="form-group md:col-span-2">
+                                <label for="guardianName" class="form-label">Tên Phụ Huynh/Người Giám Hộ (tùy chọn)</label>
+                                <input type="text" class="form-control" id="guardianName" name="guardianName" placeholder="Nhập tên phụ huynh/người giám hộ">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex gap-3">
                         <button type="submit" class="btn btn-primary flex-1">Đăng Ký</button>
                         <a href="patient-queue?action=view" class="btn btn-secondary flex-1 text-center">Quay Lại Danh Sách</a>
@@ -284,17 +312,17 @@
             <div class="card-header">
                 <h5 class="text-xl font-semibold">Hướng Dẫn Sử Dụng</h5>
             </div>
-            <div class="p-6">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Trực Tiếp</h6>
-                        <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                            <li>Nhập thông tin bệnh nhân (họ tên, số điện thoại)</li>
-                            <li>Nhập mã bệnh nhân nếu đã có trong hệ thống</li>
-                            <li>Ấn "Đăng Ký" để vào hàng đợi</li>
-                            <li>Bệnh nhân sẽ được sắp xếp theo thứ tự đến</li>
-                        </ul>
-                    </div>
+                    <div class="p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Trực Tiếp</h6>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                    <li>Nhập thông tin bệnh nhân (họ tên) và SĐT phụ huynh</li>
+                                    <li>Nhập mã bệnh nhân nếu đã có trong hệ thống</li>
+                                    <li>Ấn "Đăng Ký" để vào hàng đợi</li>
+                                    <li>Bệnh nhân sẽ được sắp xếp theo thứ tự đến</li>
+                                </ul>
+                            </div>
                     <div>
                         <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Đặt Lịch</h6>
                         <ul class="list-disc pl-5 space-y-2 text-gray-600">

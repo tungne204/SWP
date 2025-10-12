@@ -2,11 +2,11 @@ package control;
 
 import dao.*;
 import entity.*;
-import context.DBContext;
+import socket.PatientQueueWebSocket;
+import util.QueueUpdateUtil;
 
 import java.io.IOException;
 import java.util.*;
-import java.sql.Timestamp;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -75,6 +75,9 @@ public class PatientQueueController extends HttpServlet {
                 break;
             case "startConsultation":
                 startConsultation(request, response);
+                break;
+            case "markReady":
+                markReadyForExamination(request, response);
                 break;
             case "requestLabTest":
                 requestLabTest(request, response);
@@ -209,6 +212,9 @@ public class PatientQueueController extends HttpServlet {
                 // Handle walk-in patients without existing patient ID
                 String patientName = request.getParameter("patientName");
                 String patientPhone = request.getParameter("patientPhone");
+                String dobStr = request.getParameter("dob");
+                String addressInput = request.getParameter("address");
+                String insuranceInfoInput = request.getParameter("insuranceInfo");
                 
                 // Check if patient already exists by name and phone
                 Patient existingPatient = patientDAO.findPatientByNameAndPhone(patientName, patientPhone);
@@ -220,12 +226,28 @@ public class PatientQueueController extends HttpServlet {
                     // Create a new patient record
                     Patient newPatient = new Patient();
                     newPatient.setFullName(patientName);
-                    newPatient.setAddress(patientPhone); // Using address field for phone
+                    // Prefer actual address input; fallback to parent phone for legacy matching
+                    if (addressInput != null && !addressInput.trim().isEmpty()) {
+                        newPatient.setAddress(addressInput.trim());
+                    } else {
+                        newPatient.setAddress(patientPhone); // legacy: store phone in address if no address provided
+                    }
                     // Set default values for required fields
                     newPatient.setUserId(0); // Use 0 to indicate no user ID
-                    newPatient.setInsuranceInfo(""); // Empty insurance info
+                    newPatient.setInsuranceInfo(insuranceInfoInput != null ? insuranceInfoInput.trim() : "");
                     newPatient.setParentId(null); // No parent
-                    newPatient.setDob(new Date()); // Set current date as default DOB
+                    // Parse DOB from form if provided, else leave null
+                    if (dobStr != null && !dobStr.trim().isEmpty()) {
+                        try {
+                            java.sql.Date sqlDob = java.sql.Date.valueOf(dobStr.trim());
+                            newPatient.setDob(sqlDob);
+                        } catch (IllegalArgumentException ex) {
+                            // Invalid date format; keep DOB null to avoid bad data
+                            newPatient.setDob(null);
+                        }
+                    } else {
+                        newPatient.setDob(null);
+                    }
                     
                     // Save new patient and get the generated patient ID
                     patientId = patientDAO.createPatient(newPatient);
@@ -242,8 +264,8 @@ public class PatientQueueController extends HttpServlet {
             // Check if patient is already in queue today
             if (patientQueueDAO.isPatientInQueueToday(patientId)) {
                 // Patient is already in queue today, redirect with message
-                request.getSession().setAttribute("errorMessage", "Patient is already checked in today and is in the queue.");
-                response.sendRedirect("checkin-form.jsp");
+                request.getSession().setAttribute("errorMessage", "Bệnh nhân đã ở trong hàng chờ.");
+                response.sendRedirect(request.getContextPath() +"/patient-queue/checkin-form.jsp");
                 return;
             }
             
@@ -290,6 +312,15 @@ public class PatientQueueController extends HttpServlet {
             // Add patient to queue
             patientQueueDAO.addPatientToQueue(patientQueue);
             
+            // Broadcast WebSocket update for new patient in queue
+            try {
+                Patient patient = patientDAO.getPatientById(patientId);
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, patientQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("patient_added", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+            
             // Redirect to waiting screen
             response.sendRedirect("patient-queue?action=view");
         } catch (Exception e) {
@@ -315,6 +346,16 @@ public class PatientQueueController extends HttpServlet {
             // Update patient queue status to "In Consultation" and assign room
             patientQueueDAO.updatePatientQueueStatus(queueId, "In Consultation");
             patientQueueDAO.updatePatientQueueRoomNumber(queueId, roomNumber);
+            
+            // Broadcast WebSocket update for status change
+            try {
+                PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
+                Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
             
             // Get patient queue information
             PatientQueue patientQueue = patientQueueDAO.getPatientQueueById(queueId);
@@ -387,6 +428,16 @@ public class PatientQueueController extends HttpServlet {
             // Update patient queue status to "Awaiting Lab Results"
             patientQueueDAO.updatePatientQueueStatus(queueId, "Awaiting Lab Results");
             
+            // Broadcast WebSocket update for status change
+            try {
+                PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
+                Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+            
             // Update consultation status to "Lab Requested"
             consultationDAO.updateConsultationStatus(consultationId, "Lab Requested");
             
@@ -423,6 +474,16 @@ public class PatientQueueController extends HttpServlet {
             // Update patient queue status to "Ready for Follow-up"
             patientQueueDAO.updatePatientQueueStatus(consultation.getQueueId(), "Ready for Follow-up");
             
+            // Broadcast WebSocket update for status change
+            try {
+                PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(consultation.getQueueId());
+                Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+            
             // Increase priority for this patient to ensure they are seen next
             patientQueueDAO.updatePatientQueuePriority(consultation.getQueueId(), 2); // High priority
             
@@ -448,6 +509,16 @@ public class PatientQueueController extends HttpServlet {
             // Update patient queue status to "Completed"
             patientQueueDAO.updatePatientQueueStatus(queueId, "Completed");
             
+            // Broadcast WebSocket update for status change
+            try {
+                PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
+                Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+            
             // Update consultation status to "Completed"
             consultationDAO.updateConsultationStatus(consultationId, "Completed");
             consultationDAO.updateConsultationEndTime(consultationId, new Date());
@@ -455,6 +526,39 @@ public class PatientQueueController extends HttpServlet {
             // Remove patient from queue
             patientQueueDAO.removePatientFromQueue(queueId);
             
+            // Redirect to waiting screen
+            response.sendRedirect("patient-queue?action=view");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+
+    // Mark a patient as ready for examination and optionally set room number
+    private void markReadyForExamination(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int queueId = Integer.parseInt(request.getParameter("queueId"));
+            String roomNumber = request.getParameter("roomNumber");
+
+            // Update patient queue status to "Ready for Examination"
+            patientQueueDAO.updatePatientQueueStatus(queueId, "Ready for Examination");
+            
+            // Optionally assign room number if provided
+            if (roomNumber != null && roomNumber.trim().length() > 0) {
+                patientQueueDAO.updatePatientQueueRoomNumber(queueId, roomNumber.trim());
+            }
+
+            // Broadcast WebSocket update for status change
+            try {
+                PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
+                Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+
             // Redirect to waiting screen
             response.sendRedirect("patient-queue?action=view");
         } catch (Exception e) {
