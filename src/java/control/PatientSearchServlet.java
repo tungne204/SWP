@@ -9,17 +9,25 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Servlet handles View/Search Patient 
- * function For Receptionist module in SWP
- * system - Displays the entire patient list -
- * Search by name, ID, or address
+ * Servlet handles View/Search Patient function For Receptionist module in SWP
+ * system - Displays the entire patient list - Search by name, ID, or address
  *
  * URL: /PatientSearchServlet
+ *
+ * @author Kiên
  */
-
 @WebServlet("/Patient-Search")
 public class PatientSearchServlet extends HttpServlet {
+    // Khi người dùng gõ trực tiếp URL (GET)
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Hiển thị trang tìm kiếm rỗng
+        request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
+    }
+
+    // Khi người dùng nhấn "Search" (POST)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,24 +36,29 @@ public class PatientSearchServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String keyword = request.getParameter("keyword");
+
+        // ✅ Kiểm tra nếu người dùng chưa nhập gì
+        if (keyword == null || keyword.trim().isEmpty()) {
+            request.setAttribute("warning", "⚠️ Please enter patient name or ID before searching!");
+            request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
+            return; // dừng xử lý luôn
+        }
+
         PatientDAO dao = new PatientDAO();
         List<Patient> list;
 
         try {
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                list = dao.searchPatients(keyword);
-            } else {
-                list = dao.getAllPatients();
-            }
+            list = dao.searchPatients(keyword);
 
             request.setAttribute("patients", list);
             request.setAttribute("keyword", keyword);
-            request.getRequestDispatcher("Receptionist/Search.jsp").forward(request, response);
+            request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi khi tải dữ liệu bệnh nhân!");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
+
 }
