@@ -1,6 +1,37 @@
-/.kilocode/mcp.json
-/.idea/
-/.kilocode/
-/build/
-/dist/
-/out/
+# ============================
+# 🌐 NetBeans Java Web Project
+# ============================
+
+# Build directories (auto-generated)
+build/
+dist/
+out/
+nbproject/private/
+
+# Compiled class files
+*.class
+
+# IDE settings (NetBeans, IntelliJ, VSCode, etc.)
+.idea/
+.vscode/
+.kilocode/
+.kilocode/mcp.json
+
+# Log & temp files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Server deployment (Tomcat / GlassFish)
+*.war
+*.ear
+*.jar
+
+# Misc cache folders
+.DS_Store
+Thumbs.db
+
+# Maven or Gradle (if later added)
+target/
