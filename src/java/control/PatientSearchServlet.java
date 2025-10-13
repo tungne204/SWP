@@ -39,7 +39,6 @@ public class PatientSearchServlet extends HttpServlet {
 
         // ✅ Kiểm tra nếu người dùng chưa nhập gì
         if (keyword == null || keyword.trim().isEmpty()) {
-            request.setAttribute("warning", "⚠️ Please enter patient name or ID before searching!");
             request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
             return; // dừng xử lý luôn
         }
