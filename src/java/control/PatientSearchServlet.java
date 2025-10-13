@@ -39,7 +39,7 @@ public class PatientSearchServlet extends HttpServlet {
 
             request.setAttribute("patients", list);
             request.setAttribute("keyword", keyword);
-            request.getRequestDispatcher("patientSearch.jsp").forward(request, response);
+            request.getRequestDispatcher("Receptionist/Search.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

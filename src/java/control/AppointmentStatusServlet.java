@@ -24,7 +24,16 @@ import jakarta.servlet.*;
 @WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/AppointmentStatusServlet"})
 public class AppointmentStatusServlet extends HttpServlet {
 
+    // Xử lý yêu cầu GET (khi truy cập trực tiếp bằng URL)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Gọi lại doPost để xử lý tương tự
+        doPost(request, response);
+    }
+    
      @Override
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -40,10 +49,8 @@ public class AppointmentStatusServlet extends HttpServlet {
 
 }
 /**
- * Tạm thời để kiểu boolean ở class AppointmentDAO.java trong package dao
- * true: Confirmed (hoặc Completed) 
- * false: Pending (hoặc Canceled)
- * sau này sửa thành
+ * Tạm thời để kiểu boolean ở class AppointmentDAO.java trong package dao true:
+ * Confirmed (hoặc Completed) false: Pending (hoặc Canceled) sau này sửa thành
  * string vì còn nhiều trạng thái ví dụ:(Pending, Confirmed, Canceled,
  * Completed).
  *
