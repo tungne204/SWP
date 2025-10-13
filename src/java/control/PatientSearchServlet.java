@@ -16,11 +16,12 @@ import jakarta.servlet.http.*;
  *
  * URL: /PatientSearchServlet
  */
-@WebServlet("/PatientSearchServlet")
+
+@WebServlet("/Patient-Search")
 public class PatientSearchServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setCharacterEncoding("UTF-8");
