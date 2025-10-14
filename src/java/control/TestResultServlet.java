@@ -133,11 +133,11 @@ public class TestResultServlet extends HttpServlet {
             
             if (testResult != null) {
                 request.setAttribute("testResult", testResult);
-                request.getRequestDispatcher("test-result-detail.jsp").forward(request, response);
+                request.getRequestDispatcher("views/test-result-detail.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("message", "Không tìm thấy kết quả xét nghiệm!");
                 request.getSession().setAttribute("messageType", "error");
-                response.sendRedirect("views/test-result?action=list");
+                response.sendRedirect("test-result?action=list");
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
