@@ -3,10 +3,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manage Appointments</title>
+    <title>Appointments List</title>
 </head>
 <body>
-    <h2>Manage Appointments</h2>
+    <h2>Appointments List</h2>
     <hr>
 
     <table border="1" cellpadding="6" cellspacing="0">
