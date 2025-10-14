@@ -27,7 +27,7 @@ public class PatientSearchServlet extends HttpServlet {
         request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
     }
 
-    // Khi người dùng nhấn "Search" (POST)
+    // Khi người dùng nhấn "Search" tránh làm lộ thông tin nhạy cảm(Sensitive data) của khách hàng lên thanh URL (POST)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
