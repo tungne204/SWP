@@ -6,7 +6,7 @@
     <title>Manage Appointments</title>
 </head>
 <body>
-    <h2>Manage Appointments</h2>
+    <h2>Appointments List</h2>
     <hr>
 
     <table border="1" cellpadding="6" cellspacing="0">
