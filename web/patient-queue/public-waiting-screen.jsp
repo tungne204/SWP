@@ -191,23 +191,7 @@
             background: #f0f9ff;
             color: #0284c7;
         }
-        .wait-time {
-            background: #f8fafc;
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            margin-top: 15px;
-        }
-        .wait-time-label {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-        .wait-time-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -291,14 +275,11 @@
 
                 <!-- First pass: count today's active entries for stats -->
                 <c:forEach var="qd" items="${queueDetails}">
-                    <c:if test="${qd.queue.status != 'Completed' && qd.queue.checkInTime >= startOfToday}">
+                    <c:if test="${qd.queue.status != 'Completed' && qd.queue.status != 'In Consultation' && qd.queue.checkInTime >= startOfToday}">
                         <c:set var="activeQueueCount" value="${activeQueueCount + 1}"/>
                         <c:choose>
                             <c:when test="${qd.queue.status == 'Waiting'}">
                                 <c:set var="waitingCount" value="${waitingCount + 1}"/>
-                            </c:when>
-                            <c:when test="${qd.queue.status == 'In Consultation'}">
-                                <c:set var="consultingCount" value="${consultingCount + 1}"/>
                             </c:when>
                         </c:choose>
                     </c:if>
@@ -372,10 +353,6 @@
                                             <i class="fas fa-bell"></i>
                                             Sẵn Sàng Vào Khám
                                         </div>
-                                        <div class="wait-time">
-                                            <div class="wait-time-label">Vui lòng đến phòng khám khi được gọi</div>
-                                            <div class="wait-time-value">Đã sẵn sàng</div>
-                                        </div>
                                     </div>
                                 </c:if>
                             </c:forEach>
@@ -391,7 +368,7 @@
                         <div id="waitingTopGrid" class="queue-grid" data-aos="fade-up" data-aos-delay="200">
                             <c:set var="waitingIndex" value="0"/>
                             <c:forEach var="queueDetail" items="${queueDetails}">
-                                <c:if test="${queueDetail.queue.status != 'Completed' && queueDetail.queue.checkInTime >= startOfToday}">
+                                <c:if test="${queueDetail.queue.status != 'Completed' && queueDetail.queue.status != 'In Consultation' && queueDetail.queue.checkInTime >= startOfToday}">
                                     <c:if test="${queueDetail.queue.status == 'Waiting'}">
                                         <c:set var="waitingIndex" value="${waitingIndex + 1}"/>
                                         <c:if test="${waitingIndex <= 6}">
@@ -443,18 +420,7 @@
                                                     <i class="fas fa-clock"></i>
                                                     Đang Chờ
                                                 </div>
-                                                <div class="wait-time">
-                                                    <div class="wait-time-label">Thời gian chờ ước tính</div>
-                                                    <div class="wait-time-value">
-                                                        <c:set var="waitMinutes" value="${(waitingIndex - 1) * 15}"/>
-                                                        <c:choose>
-                                                            <c:when test="${waitMinutes <= 15}">5-15 phút</c:when>
-                                                            <c:when test="${waitMinutes <= 30}">15-30 phút</c:when>
-                                                            <c:when test="${waitMinutes <= 60}">30-60 phút</c:when>
-                                                            <c:otherwise>Hơn 1 giờ</c:otherwise>
-                                                        </c:choose>
-                                                    </div>
-                                                </div>
+
                                             </div>
                                         </c:if>
                                     </c:if>
@@ -470,7 +436,7 @@
                         </div>
 
                         <div class="table-responsive" data-aos="fade-up" data-aos-delay="200" style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                            <table class="table table-hover" style="margin: 0;">
+                            <table class="table table-hover" style="margin: 0; width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Tên Bệnh Nhân</th>
@@ -482,24 +448,10 @@
                                 <tbody id="waitingTableBody">
                                     <c:set var="waitingIndex2" value="0"/>
                                     <c:forEach var="queueDetail" items="${queueDetails}">
-                                        <c:if test="${queueDetail.queue.status != 'Completed' && queueDetail.queue.checkInTime >= startOfToday}">
-                                            <c:choose>
-                                                <c:when test="${queueDetail.queue.status == 'Waiting'}">
-                                                    <c:set var="waitingIndex2" value="${waitingIndex2 + 1}"/>
-                                                    <c:if test="${waitingIndex2 > 6}">
-                                                        <tr>
-                                                            <td>${queueDetail.patient.fullName}</td>
-                                                            <td>
-                                                                <span class="queue-type-badge ${queueDetail.queue.queueType == 'Walk-in' ? 'walk-in' : 'booked'}">
-                                                                    ${queueDetail.queue.queueType == 'Walk-in' ? 'Khám Trực Tiếp' : 'Đã Đặt Lịch'}
-                                                                </span>
-                                                            </td>
-                                                            <td><fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm"/></td>
-                                                            <td><span class="status-badge status-waiting" style="padding:6px 12px; font-size:12px;">Đang Chờ</span></td>
-                                                        </tr>
-                                                    </c:if>
-                                                </c:when>
-                                                <c:otherwise>
+                                        <c:if test="${queueDetail.queue.status != 'Completed' && queueDetail.queue.status != 'In Consultation' && queueDetail.queue.checkInTime >= startOfToday}">
+                                            <c:if test="${queueDetail.queue.status == 'Waiting'}">
+                                                <c:set var="waitingIndex2" value="${waitingIndex2 + 1}"/>
+                                                <c:if test="${waitingIndex2 > 6}">
                                                     <tr>
                                                         <td>${queueDetail.patient.fullName}</td>
                                                         <td>
@@ -508,25 +460,10 @@
                                                             </span>
                                                         </td>
                                                         <td><fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm"/></td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${queueDetail.queue.status == 'In Consultation'}">
-                                                                    <span class="status-badge status-in-consultation" style="padding:6px 12px; font-size:12px;">Đang Khám</span>
-                                                                </c:when>
-                                                                <c:when test="${queueDetail.queue.status == 'Awaiting Lab Results'}">
-                                                                    <span class="status-badge status-awaiting-lab" style="padding:6px 12px; font-size:12px;">Chờ Xét Nghiệm</span>
-                                                                </c:when>
-                                                                <c:when test="${queueDetail.queue.status == 'Ready for Follow-up'}">
-                                                                    <span class="status-badge status-ready-followup" style="padding:6px 12px; font-size:12px;">Sẵn Sàng Khám Lại</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="status-badge" style="padding:6px 12px; font-size:12px; background:#f1f5f9; color:#475569;">Khác</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
+                                                        <td><span class="status-badge status-waiting" style="padding:6px 12px; font-size:12px;">Đang Chờ</span></td>
                                                     </tr>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                </c:if>
+                                            </c:if>
                                         </c:if>
                                     </c:forEach>
                                 </tbody>
@@ -871,12 +808,15 @@
             const delta = { waiting: 0, consulting: 0, total: 0 };
             const catMap = {
                 'status-waiting': 'waiting',
-                'status-in-consultation': 'consulting',
+                // Note: 'status-in-consultation' removed from catMap since we don't display these patients
             };
             if (metaFrom && catMap[metaFrom.cls]) delta[catMap[metaFrom.cls]] -= 1;
             if (catMap[metaTo.cls]) delta[catMap[metaTo.cls]] += 1;
-            if (!fromStatus && toStatus !== 'Completed') delta.total += 1; // added
-            if (toStatus === 'Completed') delta.total -= 1; // removed
+            
+            // Update total count logic to exclude "In Consultation" patients
+            if (!fromStatus && toStatus !== 'Completed' && toStatus !== 'In Consultation') delta.total += 1; // added
+            if (toStatus === 'Completed' || toStatus === 'In Consultation') delta.total -= 1; // removed or hidden
+            if (fromStatus === 'In Consultation' && toStatus !== 'Completed') delta.total += 1; // re-appeared from consultation
 
             waitingEl.textContent = Math.max(0, (parseInt(waitingEl.textContent) || 0) + delta.waiting);
             consultEl.textContent = Math.max(0, (parseInt(consultEl.textContent) || 0) + delta.consulting);
@@ -889,7 +829,23 @@
             let card = hasQueueId
                 ? document.querySelector('.queue-card[data-queue-id="' + queue.queueId + '"]')
                 : document.querySelector('.queue-card[data-patient-id="' + pid + '"]');
+            
+            // Hide patients who are "In Consultation" for privacy
+            if (queue.status === 'In Consultation') {
+                if (card) {
+                    const prevStatus = card.getAttribute('data-status');
+                    card.remove();
+                    // remove any table row if exists
+                    removeRowByQueueId(card.getAttribute('data-queue-id'));
+                    updateStatsCounters(prevStatus, queue.status);
+                }
+                return;
+            }
+            
             if (!card) {
+                // Don't create new cards for "In Consultation" patients
+                if (queue.status === 'In Consultation') return;
+                
                 const newCard = createQueueCardElement(patient, queue);
                 const target = (queue.status === 'Ready for Examination') ? ensureReadyGrid() : ensureWaitingTopGrid();
                 insertCardSorted(target, newCard);

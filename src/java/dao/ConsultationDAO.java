@@ -12,11 +12,11 @@ import java.util.List;
 public class ConsultationDAO extends DBContext {
 
     // Create a new consultation
-    public void createConsultation(Consultation consultation) throws Exception {
+    public int createConsultation(Consultation consultation) throws Exception {
         String sql = "INSERT INTO Consultation (patient_id, doctor_id, queue_id, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             
             ps.setInt(1, consultation.getPatientId());
             ps.setInt(2, consultation.getDoctorId());
@@ -25,9 +25,24 @@ public class ConsultationDAO extends DBContext {
             ps.setTimestamp(5, consultation.getEndTime() != null ? new java.sql.Timestamp(consultation.getEndTime().getTime()) : null);
             ps.setString(6, consultation.getStatus());
             
-            ps.executeUpdate();
+            int affectedRows = ps.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Creating consultation failed, no rows affected.");
+            }
+            
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int consultationId = generatedKeys.getInt(1);
+                    consultation.setConsultationId(consultationId);
+                    return consultationId;
+                } else {
+                    throw new SQLException("Creating consultation failed, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -176,5 +191,33 @@ public class ConsultationDAO extends DBContext {
             e.printStackTrace();
         }
         return consultations;
+    }
+
+    // Get consultation by queue ID
+    public Consultation getConsultationByQueueId(int queueId) {
+        String sql = "SELECT TOP 1 * FROM Consultation WHERE queue_id = ? ORDER BY start_time DESC";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, queueId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Consultation consultation = new Consultation();
+                    consultation.setConsultationId(rs.getInt("consultation_id"));
+                    consultation.setPatientId(rs.getInt("patient_id"));
+                    consultation.setDoctorId(rs.getInt("doctor_id"));
+                    consultation.setQueueId(rs.getInt("queue_id"));
+                    consultation.setStartTime(rs.getTimestamp("start_time"));
+                    consultation.setEndTime(rs.getTimestamp("end_time"));
+                    consultation.setStatus(rs.getString("status"));
+                    return consultation;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

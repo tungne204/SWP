@@ -23,7 +23,7 @@
     String patientId = "BN001"; // This would come from database
     String queueNumber = "#005"; // Current queue number
     int positionInQueue = 5; // Current position
-    String estimatedWaitTime = "15-20 phút"; // Estimated wait time
+
     String assignedDoctor = "BS. Nguyễn Văn An"; // Assigned doctor
     String currentStatus = "waiting"; // waiting, in-consultation, ready
     String nextStep = "Vui lòng chờ đến lượt của bạn. Chúng tôi sẽ gọi tên khi đến lượt.";
@@ -165,25 +165,7 @@
                         </div>
                     </div>
 
-                    <!-- Wait Time Card -->
-                    <div class="status-card bg-white rounded-2xl p-6 shadow-xl">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Thời gian chờ dự kiến</h3>
-                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-clock text-green-600 text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl md:text-5xl font-bold text-green-600 mb-2">
-                                <%= estimatedWaitTime %>
-                            </div>
-                            <p class="text-gray-600">Ước tính thời gian chờ</p>
-                            <div class="mt-3 inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
-                                <i class="fas fa-hourglass-half mr-2"></i>
-                                Có thể thay đổi tùy tình hình
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <!-- Doctor Information Card -->

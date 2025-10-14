@@ -24,6 +24,7 @@ public class PatientQueueController extends HttpServlet {
     private ConsultationDAO consultationDAO;
     private TestResultDAO testResultDAO;
     private QueueConfigurationDAO queueConfigDAO;
+    private DoctorDAO doctorDAO;
 
     @Override
     public void init() throws ServletException {
@@ -33,6 +34,10 @@ public class PatientQueueController extends HttpServlet {
         consultationDAO = new ConsultationDAO();
         testResultDAO = new TestResultDAO();
         queueConfigDAO = new QueueConfigurationDAO();
+        doctorDAO = new DoctorDAO();
+        
+        // Ensure at least one doctor exists in the database
+        doctorDAO.ensureDefaultDoctorExists();
     }
 
     @Override
@@ -186,10 +191,10 @@ public class PatientQueueController extends HttpServlet {
                 request.setAttribute("appointment", appointment);
             }
             
-            // Get consultation information if exists
-            List<Consultation> consultations = consultationDAO.getConsultationsByPatientId(patient.getPatientId());
-            if (!consultations.isEmpty()) {
-                request.setAttribute("consultation", consultations.get(0)); // Get latest consultation
+            // Get consultation information for this specific queue entry
+            Consultation consultation = consultationDAO.getConsultationByQueueId(queueId);
+            if (consultation != null) {
+                request.setAttribute("consultation", consultation);
             }
             
             request.getRequestDispatcher("/patient-queue/consultation.jsp").forward(request, response);
@@ -264,7 +269,7 @@ public class PatientQueueController extends HttpServlet {
             // Check if patient is already in queue today
             if (patientQueueDAO.isPatientInQueueToday(patientId)) {
                 // Patient is already in queue today, redirect with message
-                request.getSession().setAttribute("errorMessage", "Bệnh nhân đã ở trong hàng chờ.");
+                request.getSession().setAttribute("errorMessage", "Benh nhan da o trong hang cho.");
                 response.sendRedirect(request.getContextPath() +"/patient-queue/checkin-form.jsp");
                 return;
             }
@@ -375,22 +380,42 @@ public class PatientQueueController extends HttpServlet {
                 }
             }
             
-            if (doctorId != null) {
-                consultation.setDoctorId(doctorId);
+            // If still no doctor ID found, get the first available doctor
+            if (doctorId == null) {
+                List<Doctor> doctors = doctorDAO.getAllDoctors();
+                if (!doctors.isEmpty()) {
+                    doctorId = doctors.get(0).getDoctorId();
+                } else {
+                    // No doctors in database - this is a critical error
+                    throw new IllegalStateException("No doctors found in database. Cannot create consultation.");
+                }
             }
+            
+            consultation.setDoctorId(doctorId);
             
             consultation.setQueueId(queueId);
             consultation.setStartTime(new Date());
             consultation.setStatus("In Progress");
             
-            // Save consultation
-            consultationDAO.createConsultation(consultation);
+            // Save consultation and get the generated ID
+            int consultationId = consultationDAO.createConsultation(consultation);
+            consultation.setConsultationId(consultationId);
             
             // Redirect to consultation page
             response.sendRedirect("patient-queue?action=consultation&queueId=" + queueId);
+        } catch (NumberFormatException e) {
+            System.err.println("Number format error in requestLabTest: " + e.getMessage());
+            request.setAttribute("errorMessage", "Lỗi định dạng số: Tham số không hợp lệ");
+            request.getRequestDispatcher("patient-queue?action=view").forward(request, response);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Parameter validation error in requestLabTest: " + e.getMessage());
+            request.setAttribute("errorMessage", "Lỗi tham số: " + e.getMessage());
+            request.getRequestDispatcher("patient-queue?action=view").forward(request, response);
         } catch (Exception e) {
+            System.err.println("Unexpected error in requestLabTest: " + e.getMessage());
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            request.setAttribute("errorMessage", "Da xay ra loi khi yeu cau xet nghiem");
+            request.getRequestDispatcher("patient-queue?action=view").forward(request, response);
         }
     }
 
@@ -422,8 +447,19 @@ public class PatientQueueController extends HttpServlet {
             throws ServletException, IOException {
         
         try {
-            int queueId = Integer.parseInt(request.getParameter("queueId"));
-            int consultationId = Integer.parseInt(request.getParameter("consultationId"));
+            // Validate queueId parameter
+            String queueIdParam = request.getParameter("queueId");
+            if (queueIdParam == null || queueIdParam.trim().isEmpty()) {
+                throw new IllegalArgumentException("Queue ID is required");
+            }
+            int queueId = Integer.parseInt(queueIdParam);
+            
+            // Validate consultationId parameter
+            String consultationIdParam = request.getParameter("consultationId");
+            if (consultationIdParam == null || consultationIdParam.trim().isEmpty()) {
+                throw new IllegalArgumentException("Consultation ID is required");
+            }
+            int consultationId = Integer.parseInt(consultationIdParam);
             
             // Update patient queue status to "Awaiting Lab Results"
             patientQueueDAO.updatePatientQueueStatus(queueId, "Awaiting Lab Results");
