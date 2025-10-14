@@ -112,4 +112,45 @@ public class DoctorDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    // Ensure at least one doctor exists in the database
+    public void ensureDefaultDoctorExists() {
+        List<Doctor> doctors = getAllDoctors();
+        if (doctors.isEmpty()) {
+            // Create a default user for the doctor
+            String userSql = "INSERT INTO [User] (username, password, email, phone, role_id, status) VALUES (?, ?, ?, ?, 2, 1)";
+            String doctorSql = "INSERT INTO Doctor (user_id, specialty) VALUES (?, ?)";
+            
+            try (Connection conn = getConnection()) {
+                // Insert default user
+                try (PreparedStatement userPs = conn.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    userPs.setString(1, "default_doctor");
+                    userPs.setString(2, "password123");
+                    userPs.setString(3, "doctor@hospital.com");
+                    userPs.setString(4, "0123456789");
+                    
+                    userPs.executeUpdate();
+                    
+                    // Get the generated user ID
+                    try (var generatedKeys = userPs.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int userId = generatedKeys.getInt(1);
+                            
+                            // Insert doctor record
+                            try (PreparedStatement doctorPs = conn.prepareStatement(doctorSql)) {
+                                doctorPs.setInt(1, userId);
+                                doctorPs.setString(2, "General Medicine");
+                                doctorPs.executeUpdate();
+                                
+                                System.out.println("Default doctor created successfully with user_id: " + userId);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Failed to create default doctor: " + e.getMessage());
+            }
+        }
+    }
 }

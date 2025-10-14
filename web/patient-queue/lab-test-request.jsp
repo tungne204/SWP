@@ -24,7 +24,7 @@
                         <p><strong>Mã Bệnh Nhân:</strong> ${patient.patientId}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType}</p>
+                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType == 'Walk-in' ? 'Khám Trực Tiếp' : 'Đã Đặt Lịch'}</p>
                         <p><strong>Trạng Thái:</strong> ${patientQueue.status}</p>
                     </div>
                 </div>
