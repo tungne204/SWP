@@ -793,9 +793,11 @@
             });
             // sort initial cards and enforce top limit
             const container = ensureWaitingTopGrid();
-            const sorted = Array.from(container.querySelectorAll('.queue-card')).sort(compareCards);
-            sorted.forEach(c => container.appendChild(c));
-            enforceWaitingTopLimit();
+            if (container) {
+                const sorted = Array.from(container.querySelectorAll('.queue-card')).sort(compareCards);
+                sorted.forEach(c => container.appendChild(c));
+                enforceWaitingTopLimit();
+            }
         }
 
         function updateStatsCounters(fromStatus, toStatus) {
@@ -879,8 +881,10 @@
         }
 
         // Initialize existing cards and WebSocket connection
-        bootstrapExistingCards();
-        connectWebSocket();
+        document.addEventListener('DOMContentLoaded', function() {
+            bootstrapExistingCards();
+            connectWebSocket();
+        });
 
         // Cleanup on page unload
         window.addEventListener('beforeunload', function() {

@@ -45,9 +45,12 @@
                 <h5>Thông Tin Xét Nghiệm</h5>
             </div>
             <div class="card-body">
-                <p><strong>Loại Xét Nghiệm:</strong> ${testResult.testType}</p>
-                <p><strong>Kết Quả:</strong> ${testResult.result}</p>
-                <p><strong>Ngày Thực Hiện:</strong> ${testResult.date}</p>
+                <p><strong>Loại Xét Nghiệm:</strong> ${testType}</p>
+                <p><strong>Kết Quả:</strong> ${testResult}</p>
+                <p><strong>Ngày Thực Hiện:</strong> ${testDate}</p>
+                <c:if test="${not empty technician}">
+                    <p><strong>Kỹ Thuật Viên:</strong> ${technician}</p>
+                </c:if>
             </div>
         </div>
         

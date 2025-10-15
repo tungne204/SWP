@@ -272,6 +272,19 @@
             box-shadow: 0px 4px 15px rgba(107, 114, 128, 0.3);
         }
         
+        .btn-lab {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+        }
+        
+        .btn-lab:hover {
+            background: linear-gradient(45deg, #7c3aed, #9333ea);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 15px rgba(139, 92, 246, 0.3);
+        }
+        
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -377,7 +390,7 @@
     </style>
 </head>
 <body>
-    <%@ include file="header.jsp" %>
+    <%@ include file="../patient-queue/header.jsp" %>
 
     <main class="main">
         <section class="section">
@@ -421,7 +434,7 @@
                     
                     <div class="stat-card">
                         <i class="fas fa-check-circle text-3xl mb-2 text-gray-500"></i>
-                        <span class="stat-number">${queueDetails.stream().filter(qd -> qd.queue.status == 'Completed').count()}</span>
+                        <span class="stat-number">${completedPatients.size()}</span>
                         <span class="stat-label">Hoàn Tất</span>
                     </div>
                 </div>
@@ -529,10 +542,11 @@
                                                 </a>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Awaiting Lab Results'}">
-                                                <button class="action-btn btn-disabled" disabled>
-                                                    <i class="fas fa-hourglass-half"></i>
-                                                    Chờ Kết Quả
-                                                </button>
+                                                <a href="patient-queue?action=lab-completion&queueId=${queueDetail.queue.queueId}"
+                                                   class="action-btn btn-lab">
+                                                    <i class="fas fa-flask"></i>
+                                                    Hoàn Tất XN
+                                                </a>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Ready for Examination'}">
                                                 <form action="patient-queue" method="post" style="display: inline;">

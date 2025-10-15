@@ -2,6 +2,7 @@ package control;
 
 import dao.*;
 import entity.*;
+import context.MedicalReportDAO;
 import socket.PatientQueueWebSocket;
 import util.QueueUpdateUtil;
 
@@ -25,6 +26,7 @@ public class PatientQueueController extends HttpServlet {
     private TestResultDAO testResultDAO;
     private QueueConfigurationDAO queueConfigDAO;
     private DoctorDAO doctorDAO;
+    private MedicalReportDAO medicalReportDAO;
 
     @Override
     public void init() throws ServletException {
@@ -35,6 +37,7 @@ public class PatientQueueController extends HttpServlet {
         testResultDAO = new TestResultDAO();
         queueConfigDAO = new QueueConfigurationDAO();
         doctorDAO = new DoctorDAO();
+        medicalReportDAO = new MedicalReportDAO();
         
         // Ensure at least one doctor exists in the database
         doctorDAO.ensureDefaultDoctorExists();
@@ -58,6 +61,12 @@ public class PatientQueueController extends HttpServlet {
                 break;
             case "consultation":
                 viewConsultation(request, response);
+                break;
+            case "lab-completion":
+                viewLabCompletionForm(request, response);
+                break;
+            case "completeVisit":
+                completeVisit(request, response);
                 break;
             default:
                 viewWaitingScreen(request, response);
@@ -126,8 +135,12 @@ public class PatientQueueController extends HttpServlet {
                 queueDetails.add(details);
             }
             
+            // Get completed patients for today's statistics
+            List<PatientQueue> completedPatients = patientQueueDAO.getPatientsByStatus("Completed");
+            
             request.setAttribute("queueDetails", queueDetails);
-            request.getRequestDispatcher("/patient-queue/waiting-screen.jsp").forward(request, response);
+            request.setAttribute("completedPatients", completedPatients);
+            request.getRequestDispatcher("/Receptionist/waiting-screen.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
@@ -161,7 +174,11 @@ public class PatientQueueController extends HttpServlet {
                 queueDetails.add(details);
             }
             
+            // Get completed patients for today's statistics
+            List<PatientQueue> completedPatients = patientQueueDAO.getPatientsByStatus("Completed");
+            
             request.setAttribute("queueDetails", queueDetails);
+            request.setAttribute("completedPatients", completedPatients);
             request.getRequestDispatcher("/patient-queue/public-waiting-screen.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,6 +215,40 @@ public class PatientQueueController extends HttpServlet {
             }
             
             request.getRequestDispatcher("/patient-queue/consultation.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+
+    // View lab test completion form
+    private void viewLabCompletionForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            int queueId = Integer.parseInt(request.getParameter("queueId"));
+            
+            // Get patient queue information
+            PatientQueue patientQueue = patientQueueDAO.getPatientQueueById(queueId);
+            if (patientQueue == null || !"Awaiting Lab Results".equals(patientQueue.getStatus())) {
+                response.sendRedirect("patient-queue?action=view&error=invalid_status");
+                return;
+            }
+            request.setAttribute("patientQueue", patientQueue);
+            
+            // Get patient information
+            Patient patient = patientDAO.getPatientById(patientQueue.getPatientId());
+            request.setAttribute("patient", patient);
+            
+            // Get consultation information for this specific queue entry
+            Consultation consultation = consultationDAO.getConsultationByQueueId(queueId);
+            if (consultation == null) {
+                response.sendRedirect("patient-queue?action=view&error=no_consultation");
+                return;
+            }
+            request.setAttribute("consultation", consultation);
+            
+            request.getRequestDispatcher("/patient-queue/lab-test-completion-form.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
@@ -501,8 +552,53 @@ public class PatientQueueController extends HttpServlet {
         try {
             int consultationId = Integer.parseInt(request.getParameter("consultationId"));
             
+            // Get test result data from form
+            String testType = request.getParameter("testType");
+            String testResult = request.getParameter("testResult");
+            String testDateStr = request.getParameter("testDate");
+            String technician = request.getParameter("technician");
+            String notes = request.getParameter("notes");
+            
             // Get consultation details
             Consultation consultation = consultationDAO.getConsultationById(consultationId);
+            
+            // Get patient queue to find appointment ID
+            PatientQueue patientQueue = patientQueueDAO.getPatientQueueById(consultation.getQueueId());
+            
+            // Get medical report by appointment ID to get record ID
+            MedicalReport medicalReport = null;
+            int recordId = 0;
+            if (patientQueue.getAppointmentId() != null) {
+                medicalReport = medicalReportDAO.getByAppointmentId(patientQueue.getAppointmentId());
+                if (medicalReport != null) {
+                    recordId = medicalReport.getRecordId();
+                }
+            }
+            
+            // Create and save test result
+            if (recordId > 0) {
+                TestResult testResultEntity = new TestResult();
+                testResultEntity.setRecordId(recordId);
+                testResultEntity.setTestType(testType);
+                testResultEntity.setResult(testResult + (notes != null && !notes.trim().isEmpty() ? " - Notes: " + notes : ""));
+                testResultEntity.setConsultationId(consultationId);
+                
+                // Parse test date
+                if (testDateStr != null && !testDateStr.trim().isEmpty()) {
+                    try {
+                        java.sql.Date testDate = java.sql.Date.valueOf(testDateStr);
+                        testResultEntity.setDate(testDate);
+                    } catch (IllegalArgumentException e) {
+                        // Use current date if parsing fails
+                        testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()));
+                    }
+                } else {
+                    testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()));
+                }
+                
+                // Save test result to database
+                testResultDAO.createTestResult(testResultEntity);
+            }
             
             // Update consultation status
             consultationDAO.updateConsultationStatus(consultationId, "Lab Completed");
@@ -523,8 +619,14 @@ public class PatientQueueController extends HttpServlet {
             // Increase priority for this patient to ensure they are seen next
             patientQueueDAO.updatePatientQueuePriority(consultation.getQueueId(), 2); // High priority
             
-            // Redirect to waiting screen
-            response.sendRedirect("patient-queue?action=view");
+            // Redirect to success page with patient and test information
+            request.setAttribute("patient", patientDAO.getPatientById(patientQueue.getPatientId()));
+            request.setAttribute("patientQueue", patientQueue);
+            request.setAttribute("testType", testType);
+            request.setAttribute("testResult", testResult);
+            request.setAttribute("testDate", testDateStr);
+            request.setAttribute("technician", technician);
+            request.getRequestDispatcher("patient-queue/lab-test-complete.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
