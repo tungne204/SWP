@@ -1,0 +1,36 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+}
+
+.card-body h6, .card-body h5 {
+  color: #212529;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.logo {
+  background-color: #fff;
+  border: 2px solid #ccc;
+}
+
+.navbar-nav .nav-link.active {
+  border-bottom: 3px solid #ff9800;
+  font-weight: 600;
+}
+
+.ratio {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
