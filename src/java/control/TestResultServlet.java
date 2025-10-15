@@ -96,7 +96,7 @@ public class TestResultServlet extends HttpServlet {
 
         List<TestResult> testResults = dao.getAllByDoctorId(doctorId);
         request.setAttribute("testResults", testResults);
-        request.getRequestDispatcher("views/test-result-list.jsp").forward(request, response);
+        request.getRequestDispatcher("doctor/test-result-list.jsp").forward(request, response);
     }
 
     // Xem test results của một medical record cụ thể
@@ -115,7 +115,7 @@ public class TestResultServlet extends HttpServlet {
             request.setAttribute("hasTestRequest", hasTestRequest);
             request.setAttribute("testCount", testCount);
             
-            request.getRequestDispatcher("views/test-result-by-record.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/test-result-by-record.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             response.sendRedirect("medical-report?action=list");
@@ -133,7 +133,7 @@ public class TestResultServlet extends HttpServlet {
             
             if (testResult != null) {
                 request.setAttribute("testResult", testResult);
-                request.getRequestDispatcher("views/test-result-detail.jsp").forward(request, response);
+                request.getRequestDispatcher("doctor/test-result-detail.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("message", "Không tìm thấy kết quả xét nghiệm!");
                 request.getSession().setAttribute("messageType", "error");
