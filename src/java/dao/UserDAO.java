@@ -90,7 +90,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    // ✅ Đăng ký user mới từ Google (mặc định role_id = 3 (Patient), status = 1)
+    // Dang ky user moi tu Google (mac dinh role_id = 3 (Patient), status = 1)
     public void registerGoogleUser(String username, String password, String email, String phone) {
         String sql = "INSERT INTO [User](username, password, email, phone, role_id, status) VALUES (?, ?, ?, ?, 3, 1)";
         try (Connection conn = getConnection();

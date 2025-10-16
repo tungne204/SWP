@@ -1,3 +1,10 @@
+/.kilocode/mcp.json
+/.idea/
+/.kilocode/
+/build/
+/dist/
+/out/
+/web/WEB-INF/classes/
 # ============================
 # 🌐 NetBeans Java Web Project
 # ============================

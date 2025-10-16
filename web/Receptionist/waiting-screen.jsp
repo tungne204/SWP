@@ -172,6 +172,11 @@
             color: #a855f7;
         }
         
+        .status-ready-exam {
+            background-color: #dcfdf4;
+            color: #059669;
+        }
+        
         .status-completed {
             background-color: #f3f4f6;
             color: #4b5563;
@@ -252,6 +257,32 @@
             color: white;
             opacity: 0.65;
             cursor: not-allowed;
+        }
+        
+        .btn-view {
+            background-color: #6b7280;
+            color: white;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-view:hover {
+            background-color: #4b5563;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        
+        .btn-lab {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+        }
+        
+        .btn-lab:hover {
+            background: linear-gradient(45deg, #7c3aed, #9333ea);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 15px rgba(139, 92, 246, 0.3);
         }
         
         .toolbar {
@@ -359,7 +390,7 @@
     </style>
 </head>
 <body>
-    <%@ include file="header.jsp" %>
+    <%@ include file="../patient-queue/header.jsp" %>
 
     <main class="main">
         <section class="section">
@@ -396,8 +427,14 @@
                     </div>
                     
                     <div class="stat-card">
+                        <i class="fas fa-door-open text-3xl mb-2 text-emerald-500"></i>
+                        <span class="stat-number">${queueDetails.stream().filter(qd -> qd.queue.status == 'Ready for Examination').count()}</span>
+                        <span class="stat-label">Sẵn Sàng Vào Khám</span>
+                    </div>
+                    
+                    <div class="stat-card">
                         <i class="fas fa-check-circle text-3xl mb-2 text-gray-500"></i>
-                        <span class="stat-number">${queueDetails.stream().filter(qd -> qd.queue.status == 'Completed').count()}</span>
+                        <span class="stat-number">${completedPatients.size()}</span>
                         <span class="stat-label">Hoàn Tất</span>
                     </div>
                 </div>
@@ -457,6 +494,7 @@
                                                 <c:when test="${queueDetail.queue.status == 'In Consultation'}">status-in-consultation</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Awaiting Lab Results'}">status-awaiting-lab</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Ready for Follow-up'}">status-ready-followup</c:when>
+                                                <c:when test="${queueDetail.queue.status == 'Ready for Examination'}">status-ready-exam</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Completed'}">status-completed</c:when>
                                             </c:choose>
                                         ">
@@ -465,6 +503,7 @@
                                                 <c:when test="${queueDetail.queue.status == 'In Consultation'}">Đang Khám</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Awaiting Lab Results'}">Chờ Xét Nghiệm</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Ready for Follow-up'}">Sẵn Sàng Khám Lại</c:when>
+                                                <c:when test="${queueDetail.queue.status == 'Ready for Examination'}">Sẵn Sàng Vào Khám</c:when>
                                                 <c:when test="${queueDetail.queue.status == 'Completed'}">Hoàn Tất</c:when>
                                                 <c:otherwise>${queueDetail.queue.status}</c:otherwise>
                                             </c:choose>
@@ -476,30 +515,48 @@
                                     </div>
                                     
                                     <div data-label="Loại: ">
-                                        <span class="queue-type">${queueDetail.queue.queueType}</span>
+                                        <span class="queue-type">${queueDetail.queue.queueType == 'Walk-in' ? 'Khám Trực Tiếp' : 'Đã Đặt Lịch'}</span>
                                     </div>
                                     
                                     <div class="action-buttons" data-label="">
                                         <c:choose>
                                             <c:when test="${queueDetail.queue.status == 'Waiting'}">
-                                                <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
-                                                   class="action-btn btn-start">
-                                                    <i class="fas fa-play"></i>
-                                                    Bắt Đầu Khám
-                                                </a>
+                                                <button type="button" class="action-btn btn-followup" onclick="markReady('${queueDetail.queue.queueId}')">
+                                                    <i class="fas fa-door-open"></i>
+                                                    Chuẩn Bị Khám
+                                                </button>
+                                                <form action="patient-queue" method="post" style="display: inline;">
+                                                    <input type="hidden" name="action" value="startConsultation">
+                                                    <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
+                                                    <button type="submit" class="action-btn btn-start">
+                                                        <i class="fas fa-play"></i>
+                                                        Bắt Đầu Khám
+                                                    </button>
+                                                </form>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'In Consultation'}">
                                                 <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
-                                                   class="action-btn btn-continue">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                    Tiếp Tục
+                                                   class="action-btn btn-view">
+                                                    <i class="fas fa-eye"></i>
+                                                    Xem Chi Tiết
                                                 </a>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Awaiting Lab Results'}">
-                                                <button class="action-btn btn-disabled" disabled>
-                                                    <i class="fas fa-hourglass-half"></i>
-                                                    Chờ Kết Quả
-                                                </button>
+                                                <a href="patient-queue?action=lab-completion&queueId=${queueDetail.queue.queueId}"
+                                                   class="action-btn btn-lab">
+                                                    <i class="fas fa-flask"></i>
+                                                    Hoàn Tất XN
+                                                </a>
+                                            </c:when>
+                                            <c:when test="${queueDetail.queue.status == 'Ready for Examination'}">
+                                                <form action="patient-queue" method="post" style="display: inline;">
+                                                    <input type="hidden" name="action" value="startConsultation">
+                                                    <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
+                                                    <button type="submit" class="action-btn btn-start">
+                                                        <i class="fas fa-play"></i>
+                                                        Bắt Đầu Khám
+                                                    </button>
+                                                </form>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Ready for Follow-up'}">
                                                 <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
@@ -545,10 +602,93 @@
             mirror: false
         });
         
-        // Auto-refresh every 30 seconds
+        // WebSocket connection for real-time updates
+        let websocket;
+        let reconnectInterval;
+        
+        function connectWebSocket() {
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = protocol + '//' + window.location.host + '/SWP/patient-queue-websocket';
+                websocket = new WebSocket(wsUrl);
+                
+                websocket.onopen = function(event) {
+                    console.log('WebSocket connected');
+                    if (reconnectInterval) {
+                        clearInterval(reconnectInterval);
+                        reconnectInterval = null;
+                    }
+                };
+                
+                websocket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleWebSocketMessage(data);
+                    } catch (e) {
+                        console.error('Error parsing WebSocket message:', e);
+                    }
+                };
+                
+                websocket.onclose = function(event) {
+                    console.log('WebSocket disconnected');
+                    // Attempt to reconnect every 5 seconds
+                    if (!reconnectInterval) {
+                        reconnectInterval = setInterval(connectWebSocket, 5000);
+                    }
+                };
+                
+                websocket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                };
+            } catch (e) {
+                console.error('Failed to connect WebSocket:', e);
+                // Fallback to page refresh if WebSocket fails
+                setTimeout(function() { location.reload(); }, 30000);
+            }
+        }
+        
+        function handleWebSocketMessage(data) {
+            if (data.type === 'queue_update') {
+                // Reload the page to get updated queue data
+                // In a more sophisticated implementation, we would update the DOM directly
+                location.reload();
+            } else if (data.type === 'connection') {
+                console.log('WebSocket connection status:', data.status);
+            }
+        }
+        
+        // Initialize WebSocket connection
+        connectWebSocket();
+        
+        // Fallback refresh every 5 minutes as backup
         setTimeout(function() {
             location.reload();
-        }, 30000);
+        }, 300000);
+    </script>
+
+    <script>
+        function markReady(queueId) {
+            try {
+                const roomNumber = prompt('Nhập phòng khám (tuỳ chọn):');
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'patient-queue?action=markReady';
+                const q = document.createElement('input');
+                q.type = 'hidden';
+                q.name = 'queueId';
+                q.value = queueId;
+                form.appendChild(q);
+                const r = document.createElement('input');
+                r.type = 'hidden';
+                r.name = 'roomNumber';
+                r.value = roomNumber || '';
+                form.appendChild(r);
+                document.body.appendChild(form);
+                form.submit();
+            } catch (e) {
+                alert('Không thể gửi yêu cầu chuẩn bị khám.');
+            }
+        }
     </script>
 </body>
 </html>

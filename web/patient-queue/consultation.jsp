@@ -27,7 +27,7 @@
                     <div class="col-md-6">
                         <p><strong>Địa Chỉ:</strong> ${patient.address}</p>
                         <p><strong>Thông Tin Bảo Hiểm:</strong> ${patient.insuranceInfo}</p>
-                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType}</p>
+                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType == 'Walk-in' ? 'Khám Trực Tiếp' : 'Đã Đặt Lịch'}</p>
                     </div>
                 </div>
             </div>

@@ -84,6 +84,42 @@ public class MedicalReportDAO extends DBContext{
         return null;
     }
 
+    // Lấy medical report theo appointment ID
+    public MedicalReport getByAppointmentId(int appointmentId) throws Exception {
+        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
+                    "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
+                    "a.date_time as appointment_date " +
+                    "FROM MedicalReport mr " +
+                    "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
+                    "JOIN Patient p ON a.patient_id = p.patient_id " +
+                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                    "JOIN [User] u ON d.user_id = u.user_id " +
+                    "WHERE mr.appointment_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, appointmentId);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                MedicalReport mr = new MedicalReport();
+                mr.setRecordId(rs.getInt("record_id"));
+                mr.setAppointmentId(rs.getInt("appointment_id"));
+                mr.setDiagnosis(rs.getString("diagnosis"));
+                mr.setPrescription(rs.getString("prescription"));
+                mr.setTestRequest(rs.getBoolean("test_request"));
+                mr.setPatientName(rs.getString("patient_name"));
+                mr.setDoctorName(rs.getString("doctor_name"));
+                mr.setAppointmentDate(rs.getString("appointment_date"));
+                return mr;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Lấy appointments chưa có medical report của doctor
     public List<Appointment> getAppointmentsWithoutReport(int doctorId) throws Exception {
         List<Appointment> list = new ArrayList<>();
