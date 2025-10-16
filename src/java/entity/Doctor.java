@@ -1,9 +1,11 @@
 package entity;
 
 public class Doctor {
+
     private int doctorId;
     private int userId;
     private String specialty;
+    private String username;
 
     public Doctor() {
     }
@@ -37,5 +39,13 @@ public class Doctor {
 
     public void setSpecialty(String specialty) {
         this.specialty = specialty;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
