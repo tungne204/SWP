@@ -23,7 +23,11 @@ public class PatientSearchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Hiển thị trang tìm kiếm rỗng
+        // Hiển thị trang danh sách Patient và tìm kiếm Patient
+        PatientDAO dao = new PatientDAO();
+        List<Patient> list = dao.getAllPatients();   // <-- Lấy toàn bộ danh sách bệnh nhân
+        request.setAttribute("patients", list);
+        request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
         request.getRequestDispatcher("/Receptionist/Search.jsp").forward(request, response);
     }
 
