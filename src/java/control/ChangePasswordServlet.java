@@ -8,7 +8,6 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/ChangePasswordServlet"})
-
 public class ChangePasswordServlet extends HttpServlet {
 
     @Override
@@ -45,7 +44,12 @@ public class ChangePasswordServlet extends HttpServlet {
 
         // ✅ Update new password
         dao.updatePassword(acc.getEmail(), newPassword);
-        request.setAttribute("success", "Password updated successfully!");
+
+        // ✅ Invalidate session sau khi đổi mật khẩu
+        session.invalidate();
+
+        // ✅ Forward về Change_password.jsp để hiển thị thông báo
+        request.setAttribute("success", "Password updated successfully! Please login again.");
         request.getRequestDispatcher("Change_password.jsp").forward(request, response);
     }
 }
