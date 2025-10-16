@@ -4,10 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientSearchServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/Receptionist/appointmentList.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/Receptionist/Search.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ViewAppointmentServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/Receptionist/View.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/PatientDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/context/DBContext.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/Search.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/appointmentList.jsp</file>
         </group>
     </open-files>
 </project-private>
