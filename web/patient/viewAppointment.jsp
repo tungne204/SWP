@@ -305,11 +305,17 @@
             
             // Get form data
             const formData = new FormData();
-            formData.append('appointmentId', appointmentId);
+            formData.append('appointmentId', appointmentId.toString());
             formData.append('patientId', document.getElementById('patientId_' + appointmentId)?.value || '');
             formData.append('doctorId', document.getElementById('doctorId_' + appointmentId)?.value || '');
             formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
             // Status removed - patients cannot change appointment status
+            
+            // Debug: Log form data
+            console.log('Sending form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
             
             // Send update request
             fetch('UpdateAppointmentServlet', {
@@ -349,7 +355,10 @@
         function deleteAppointment(appointmentId) {
             if (confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
                 const formData = new FormData();
-                formData.append('appointmentId', appointmentId);
+                formData.append('appointmentId', appointmentId.toString());
+                
+                // Debug: Log form data
+                console.log('Deleting appointment ID:', appointmentId);
                 
                 fetch('DeleteAppointmentServlet', {
                     method: 'POST',
