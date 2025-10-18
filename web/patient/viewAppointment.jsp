@@ -268,13 +268,7 @@
                                                     <input type="datetime-local" class="form-control" id="dateTime_${appointment.appointmentId}" 
                                                            data-datetime="<fmt:formatDate value='${appointment.dateTime}' pattern='yyyy-MM-dd HH:mm' />" required>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="status_${appointment.appointmentId}">Status:</label>
-                                                    <select class="form-control" id="status_${appointment.appointmentId}">
-                                                        <option value="true" ${appointment.status ? 'selected' : ''}>Active</option>
-                                                        <option value="false" ${!appointment.status ? 'selected' : ''}>Cancelled</option>
-                                                    </select>
-                                                </div>
+                                                <!-- Status field removed - patients cannot change appointment status -->
                                             </div>
                                         </div>
                                         <div class="text-end mt-3">
@@ -315,7 +309,7 @@
             formData.append('patientId', document.getElementById('patientId_' + appointmentId)?.value || '');
             formData.append('doctorId', document.getElementById('doctorId_' + appointmentId)?.value || '');
             formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
-            formData.append('status', document.getElementById('status_' + appointmentId).value);
+            // Status removed - patients cannot change appointment status
             
             // Send update request
             fetch('../UpdateAppointmentServlet', {
@@ -324,6 +318,15 @@
             })
             .then(response => {
                 if (response.ok) {
+                    return response.text();
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Update failed');
+                    });
+                }
+            })
+            .then(result => {
+                if (result === 'success') {
                     // Show success message
                     showMessage('Appointment updated successfully!', 'success');
                     // Hide edit form
@@ -333,12 +336,12 @@
                         window.location.reload();
                     }, 1500);
                 } else {
-                    throw new Error('Update failed');
+                    throw new Error(result || 'Update failed');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showMessage('Error updating appointment. Please try again.', 'error');
+                showMessage('Error updating appointment: ' + error.message, 'error');
             });
         }
         

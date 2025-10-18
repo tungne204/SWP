@@ -25,34 +25,92 @@ import java.text.SimpleDateFormat;
  */
 @WebServlet(name="UpdateAppointmentServlet", urlPatterns={"/UpdateAppointmentServlet"})
 public class UpdateAppointmentServlet extends HttpServlet {
-   @Override
+    
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("text/plain");
+        
         try {
-            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-            int patientId = Integer.parseInt(request.getParameter("patientId"));
-            int doctorId = Integer.parseInt(request.getParameter("doctorId"));
+            // Get parameters with validation
+            String appointmentIdStr = request.getParameter("appointmentId");
+            String patientIdStr = request.getParameter("patientId");
+            String doctorIdStr = request.getParameter("doctorId");
             String dateTimeStr = request.getParameter("dateTime");
-            boolean status = Boolean.parseBoolean(request.getParameter("status"));
-
+            
+            // Validate required parameters
+            if (appointmentIdStr == null || appointmentIdStr.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Appointment ID is required");
+                return;
+            }
+            
+            if (patientIdStr == null || patientIdStr.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Patient ID is required");
+                return;
+            }
+            
+            if (doctorIdStr == null || doctorIdStr.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Doctor ID is required");
+                return;
+            }
+            
+            if (dateTimeStr == null || dateTimeStr.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Date and time is required");
+                return;
+            }
+            
+            // Parse parameters
+            int appointmentId = Integer.parseInt(appointmentIdStr);
+            int patientId = Integer.parseInt(patientIdStr);
+            int doctorId = Integer.parseInt(doctorIdStr);
+            
+            // Parse datetime
             java.util.Date dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(dateTimeStr);
+            
+            // Validate datetime is in the future
+            if (dateTime.before(new java.util.Date())) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Appointment date must be in the future");
+                return;
+            }
 
-            Appointment appointment = new Appointment();
+            // Create appointment object (without status - patients can't change status)
+            entity.Appointment appointment = new entity.Appointment();
             appointment.setAppointmentId(appointmentId);
             appointment.setPatientId(patientId);
             appointment.setDoctorId(doctorId);
             appointment.setDateTime(dateTime);
-            appointment.setStatus(status);
+            // Don't set status - keep existing status
 
-            AppointmentDAO dao = new AppointmentDAO();
-            dao.updateAppointment(appointment);
+            // Update appointment
+            dao.AppointmentDAO dao = new dao.AppointmentDAO();
+            boolean updateResult = dao.updateAppointment(appointment);
+            
+            if (updateResult) {
+                response.getWriter().write("success");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Failed to update appointment");
+            }
 
-            response.sendRedirect("ViewAppointmentServlet");
-
+        } catch (NumberFormatException e) {
+            System.err.println("NumberFormatException in UpdateAppointmentServlet: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid number format");
+        } catch (java.text.ParseException e) {
+            System.err.println("ParseException in UpdateAppointmentServlet: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid date format");
         } catch (Exception e) {
+            System.err.println("Exception in UpdateAppointmentServlet: " + e.getMessage());
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Internal server error: " + e.getMessage());
         }
     }
 }
