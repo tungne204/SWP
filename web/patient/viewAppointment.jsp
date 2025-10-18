@@ -378,11 +378,12 @@
             
             // Create new alert
             const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
+            const alertClass = type === 'success' ? 'success' : 'danger';
+            const iconClass = type === 'success' ? 'check-circle' : 'exclamation-triangle';
+            alertDiv.className = 'alert alert-' + alertClass + ' alert-dismissible fade show';
+            alertDiv.innerHTML = 
+                '<i class="bi bi-' + iconClass + '"></i> ' + message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
             
             // Insert at the top of the container
             const container = document.querySelector('.container');
