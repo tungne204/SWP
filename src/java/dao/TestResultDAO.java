@@ -7,6 +7,7 @@ package dao;
 import context.DBContext;
 import entity.TestResult;
 import java.sql.*;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -200,5 +201,31 @@ public class TestResultDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // Tạo mới test result
+    public boolean createTestResult(TestResult testResult) {
+        String sql = "INSERT INTO TestResult (record_id, test_type, result, date, consultation_id) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, testResult.getRecordId());
+            ps.setString(2, testResult.getTestType());
+            ps.setString(3, testResult.getResult());
+            ps.setString(4, testResult.getDate());
+            
+            if (testResult.getConsultationId() != null) {
+                ps.setInt(5, testResult.getConsultationId());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
