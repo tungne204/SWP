@@ -312,7 +312,7 @@
             // Status removed - patients cannot change appointment status
             
             // Send update request
-            fetch('/UpdateAppointmentServlet', {
+            fetch('UpdateAppointmentServlet', {
                 method: 'POST',
                 body: formData
             })
@@ -351,7 +351,7 @@
                 const formData = new FormData();
                 formData.append('appointmentId', appointmentId);
                 
-                fetch('/DeleteAppointmentServlet', {
+                fetch('DeleteAppointmentServlet', {
                     method: 'POST',
                     body: formData
                 })
