@@ -41,7 +41,7 @@ public class AppointmentStatusServlet extends HttpServlet {
         dao.updateAppointmentStatus(appointmentId, newStatus);
 
         // Quay lại trang danh sách sau khi cập nhật
-        response.sendRedirect("ViewAppointmentServlet");
+        response.sendRedirect("Appointment-List");
     }
 
 }

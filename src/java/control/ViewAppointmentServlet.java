@@ -16,11 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Show appointment list for receptionist to change status
- * @author Kiên 
- * URL: /Appointment-List
+ *
+ * @author Kiên
+ *
+ * @URL: /Appointment-List
  *
  */
-
 @WebServlet("/Appointment-List")
 public class ViewAppointmentServlet extends HttpServlet {
 
