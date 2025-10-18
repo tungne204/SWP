@@ -15,6 +15,8 @@ import dao.AppointmentDAO;
 
 /**
  * Handling status change requests
+ * 
+ * URL: /Appointment-Status
  *
  * @author Kiên
  */
@@ -28,8 +30,8 @@ public class AppointmentStatusServlet extends HttpServlet {
         // Gọi lại doPost để xử lý tương tự
         doPost(request, response);
     }
-    
-     @Override
+
+    @Override
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
