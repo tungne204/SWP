@@ -11,6 +11,7 @@ import dao.DoctorDAO;
 import dao.ParentDAO;
 import dao.PatientDAO;
 import entity.Appointment;
+import entity.AppointmentDetailDTO;
 import entity.Doctor;
 import entity.Parent;
 import entity.Patient;
@@ -201,31 +202,21 @@ public class AppointmentServlet extends HttpServlet {
         }
         
         try {
-            // Get patient associated with this user
-            PatientDAO patientDAO = new PatientDAO();
-            Patient patient = patientDAO.getPatientByUserId(user.getUserId());
+            // Get detailed appointments for ALL patients of this user
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            List<AppointmentDetailDTO> appointmentDetails = appointmentDAO.getDetailedAppointmentsByUserId(user.getUserId());
             
-            if (patient != null) {
-                // Get appointments for this patient
-                AppointmentDAO appointmentDAO = new AppointmentDAO();
-                List<Appointment> appointments = appointmentDAO.getAppointmentsByPatientId(patient.getPatientId());
-                
-                // Get doctor information for each appointment
-                DoctorDAO doctorDAO = new DoctorDAO();
-                for (Appointment appointment : appointments) {
-                    Doctor doctor = doctorDAO.getDoctorById(appointment.getDoctorId());
-                    // You can add doctor info to appointment if needed
-                }
-                
-                request.setAttribute("appointments", appointments);
-                request.setAttribute("patient", patient);
+            request.setAttribute("appointmentDetails", appointmentDetails);
+            
+            if (appointmentDetails.isEmpty()) {
+                request.setAttribute("error", "Bạn chưa có lịch hẹn nào!");
             }
             
         } catch (Exception e) {
-            request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
             e.printStackTrace();
+            request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
         }
         
-        request.getRequestDispatcher("viewAppointments.jsp").forward(request, response);
+        request.getRequestDispatcher("/patient/viewAppointment.jsp").forward(request, response);
     }
 }

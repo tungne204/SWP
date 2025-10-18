@@ -87,6 +87,7 @@
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
                             <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
+                            <li><a class="dropdown-item" href="appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout">Logout</a></li>
                         </ul>
@@ -219,6 +220,7 @@
                 </div>
 
             </section><!-- /About Section -->
+
 
 
             <!-- Stats Section -->
@@ -364,7 +366,7 @@
                 <!-- Section Title -->
                 <div class="container section-title" data-aos="fade-up">
                     <h2>Appointment</h2>
-                    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+                    <p>Please fill in the information below to schedule your child’s appointment.</p>
                 </div><!-- End Section Title -->
 
                 <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -389,46 +391,59 @@
                     <% } %>
 
                     <% if (acc != null && acc.getRoleId() == 3) { %>
-                    <form action="appointment" method="post" role="form" >
+                    <form action="appointment" method="post" role="form">
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <input type="text" name="parentName" class="form-control" id="parentName" placeholder="Tên Bố/Mẹ" required="">
+                                <label for="parentName">Parent Name</label>
+                                <input type="text" name="parentName" class="form-control" id="parentName" placeholder="Enter parent’s full name" required>
                             </div>
                             <div class="col-md-6 form-group mt-3 mt-md-0">
-                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="CMND của bố mẹ" required="">
+                                <label for="parentId">Parent ID Number</label>
+                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="Enter parent’s ID number" required>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="childName" class="form-control" id="childName" placeholder="Tên con" required="">
+                                <label for="childName">Child’s Name</label>
+                                <input type="text" name="childName" class="form-control" id="childName" placeholder="Enter child’s full name" required>
                             </div>
                             <div class="col-md-6 form-group mt-3">
-                                <input type="date" name="childDob" class="form-control" id="childDob" placeholder="Ngày sinh của con" required="">
+                                <label for="childDob">Child’s Date of Birth</label>
+                                <input type="date" name="childDob" class="form-control" id="childDob" required>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="address" class="form-control" id="address" placeholder="Địa chỉ" required="">
+                                <label for="address">Address</label>
+                                <input type="text" name="address" class="form-control" id="address" placeholder="Enter address" required>
                             </div>
                             <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="insuranceInfo" class="form-control" id="insuranceInfo" placeholder="Thông tin bảo hiểm" required="">
+                                <label for="insuranceInfo">Insurance Information</label>
+                                <input type="text" name="insuranceInfo" class="form-control" id="insuranceInfo" placeholder="Enter insurance details" required>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
-                                <select name="doctorId" id="doctorId" class="form-select" required="">
-                                    <option value="">Chọn bác sĩ</option>
+                                <label for="doctorId">Select Doctor</label>
+                                <select name="doctorId" id="doctorId" class="form-select" required>
+                                    <option value="">Choose a doctor</option>
                                     <!-- Doctors will be loaded via JavaScript -->
                                 </select>
                             </div>
                             <div class="col-md-6 form-group mt-3">
-                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" placeholder="Ngày khám" required="">
+                                <label for="appointmentDate">Appointment Date</label>
+                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" required>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-12 form-group mt-3">
-                                <select name="appointmentTime" id="appointmentTime" class="form-select" required="">
-                                    <option value="">Chọn giờ khám</option>
+                                <label for="appointmentTime">Appointment Time</label>
+                                <select name="appointmentTime" id="appointmentTime" class="form-select" required>
+                                    <option value="">Choose a time</option>
                                     <option value="08:00">8:00 AM</option>
                                     <option value="09:00">9:00 AM</option>
                                     <option value="10:00">10:00 AM</option>
@@ -442,22 +457,25 @@
                         </div>
 
                         <div class="mt-3">
-                            <div class="loading">Loading</div>
                             <div class="error-message"></div>
-                            <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-                            <div class="text-center"><button type="submit">Đặt lịch</button></div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="cta-btn">Book Appointment</button>
+                            </div>
+
                         </div>
                     </form>
+
                     <% } else { %>
                     <div class="text-center">
-                        <h4>Để đặt lịch hẹn, vui lòng đăng nhập với tài khoản bệnh nhân</h4>
-                        <a href="Login.jsp" class="btn btn-primary">Đăng nhập</a>
+                        <h4>To make an appointment, please log in with a patient account.</h4>
+                        <a href="Login.jsp" class="btn btn-primary">Log In</a>
                     </div>
                     <% } %>
 
                 </div>
 
             </section><!-- /Appointment Section -->
+
 
             <!-- Departments Section -->
             <section id="departments" class="departments section">
@@ -1167,57 +1185,57 @@
         <!-- Appointment JS -->
         <script>
 // Load doctors when page loads
-document.addEventListener('DOMContentLoaded', function () {
-    loadDoctors();
-    setupDateValidation();
-});
-
-function loadDoctors() {
-    fetch('doctors')
-            .then(response => response.json())
-            .then(doctors => {
-                const doctorSelect = document.getElementById('doctorId');
-                doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
-
-                doctors.forEach(doctor => {
-    const option = document.createElement('option');
-    option.value = doctor.doctorId;
-    option.textContent = doctor.username + " - " + doctor.specialty; // 👈 hiển thị username + specialty
-    doctorSelect.appendChild(option);
-});
-
-            })
-            .catch(error => {
-                console.error('Error loading doctors:', error);
-                document.getElementById('doctorId').innerHTML = '<option value="">Lỗi tải danh sách bác sĩ</option>';
+            document.addEventListener('DOMContentLoaded', function () {
+                loadDoctors();
+                setupDateValidation();
             });
-}
 
-function setupDateValidation() {
-    const appointmentDateInput = document.getElementById('appointmentDate');
-    const childDobInput = document.getElementById('childDob');
+            function loadDoctors() {
+                fetch('doctors')
+                        .then(response => response.json())
+                        .then(doctors => {
+                            const doctorSelect = document.getElementById('doctorId');
+                            doctorSelect.innerHTML = '<option value="">Choose doctor</option>';
 
-    if (appointmentDateInput) {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+                            doctors.forEach(doctor => {
+                                const option = document.createElement('option');
+                                option.value = doctor.doctorId;
+                                option.textContent = doctor.username + " - " + doctor.specialty; // 👈 hiển thị username + specialty
+                                doctorSelect.appendChild(option);
+                            });
 
-        const year = tomorrow.getFullYear();
-        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-        const day = String(tomorrow.getDate()).padStart(2, '0');
+                        })
+                        .catch(error => {
+                            console.error('Error loading doctors:', error);
+                            document.getElementById('doctorId').innerHTML = '<option value="">Lỗi tải danh sách bác sĩ</option>';
+                        });
+            }
 
-        appointmentDateInput.min = `${year}-${month}-${day}`;
-                }
+            function setupDateValidation() {
+                const appointmentDateInput = document.getElementById('appointmentDate');
+                const childDobInput = document.getElementById('childDob');
 
-                if (childDobInput) {
+                if (appointmentDateInput) {
                     const today = new Date();
-                    const year = today.getFullYear();
-                    const month = String(today.getMonth() + 1).padStart(2, '0');
-                    const day = String(today.getDate()).padStart(2, '0');
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
 
-                    childDobInput.max = `${year}-${month}-${day}`;
+                    const year = tomorrow.getFullYear();
+                    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const day = String(tomorrow.getDate()).padStart(2, '0');
+
+                    appointmentDateInput.min = `${year}-${month}-${day}`;
                             }
-                        }
+
+                            if (childDobInput) {
+                                const today = new Date();
+                                const year = today.getFullYear();
+                                const month = String(today.getMonth() + 1).padStart(2, '0');
+                                const day = String(today.getDate()).padStart(2, '0');
+
+                                childDobInput.max = `${year}-${month}-${day}`;
+                                        }
+                                    }
         </script>
 
     </body>

@@ -3,30 +3,31 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/UserDAO.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/ParentDAO.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/AppointmentServlet.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/PatientQueueController.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/web/receptionist/View.jsp</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/MedicalReportServlet.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/entity/User.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/DoctorListServlet.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/web/Change_password.jsp</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/PatientSearchServlet.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/ChangePasswordServlet.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/DoctorDAO.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/PatientDAO.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/src/java/entity/Role.java</file>
-            <file>file:/D:/Tải/SWPchinh/SWP/web/WEB-INF/web.xml</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/AppointmentDAO.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/PatientQueueDAO.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/AppointmentStatusServlet.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/web/403.jsp</file>
             <file>file:/D:/Tải/SWPchinh/SWP/web/Home.jsp</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/context/DBContext.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/LoginControl.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/ParentDAO.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/PatientQueueController.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/MedicalReportServlet.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/entity/User.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/control/DoctorListServlet.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/web/Change_password.jsp</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/dao/PatientDAO.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/entity/Doctor.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/src/java/entity/Role.java</file>
+            <file>file:/D:/Tải/SWPchinh/SWP/web/WEB-INF/web.xml</file>
             <file>file:/D:/Tải/SWPchinh/SWP/src/java/util/MailUtil.java</file>
             <file>file:/D:/Tải/SWPchinh/SWP/web/Forgot_password.jsp</file>
-=======
->>>>>>> 18013c34200d9bb34152631e7271edd8e43bb4a5
         </group>
     </open-files>
 </project-private>
