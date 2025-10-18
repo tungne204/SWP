@@ -5,8 +5,8 @@
 
 package control;
 
-import dao.viewSchedule.AppointmentDAO;
-import entity.viewSchedule.Appointment;
+import dao.AppointmentDAO;
+import entity.Appointment;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
