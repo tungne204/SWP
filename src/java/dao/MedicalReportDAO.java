@@ -2,15 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package context;
+package dao;
 
 
+import context.DBContext;
 import entity.MedicalReport;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicalReportDAO extends DBContext{
+public class MedicalReportDAO extends DBContext {
        public List<MedicalReport> getAllByDoctorId(int doctorId) throws Exception {
         List<MedicalReport> list = new ArrayList<>();
         String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
