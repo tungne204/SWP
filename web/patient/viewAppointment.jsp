@@ -6,8 +6,8 @@
 <html>
 <head>
     <title>My Appointments</title>
-    <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <style>
         .appointment-card {
             border: 1px solid #dee2e6;
@@ -290,7 +290,7 @@
     </div>
     
     <!-- Bootstrap JS -->
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     
     <script>
         // Toggle edit form visibility
@@ -312,7 +312,7 @@
             // Status removed - patients cannot change appointment status
             
             // Send update request
-            fetch('../UpdateAppointmentServlet', {
+            fetch('/UpdateAppointmentServlet', {
                 method: 'POST',
                 body: formData
             })
@@ -351,7 +351,7 @@
                 const formData = new FormData();
                 formData.append('appointmentId', appointmentId);
                 
-                fetch('../DeleteAppointmentServlet', {
+                fetch('/DeleteAppointmentServlet', {
                     method: 'POST',
                     body: formData
                 })

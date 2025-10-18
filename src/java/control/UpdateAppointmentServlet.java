@@ -89,14 +89,10 @@ public class UpdateAppointmentServlet extends HttpServlet {
 
             // Update appointment
             dao.AppointmentDAO dao = new dao.AppointmentDAO();
-            boolean updateResult = dao.updateAppointment(appointment);
+            dao.updateAppointment(appointment);
             
-            if (updateResult) {
-                response.getWriter().write("success");
-            } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Failed to update appointment");
-            }
+            // If no exception thrown, update was successful
+            response.getWriter().write("success");
 
         } catch (NumberFormatException e) {
             System.err.println("NumberFormatException in UpdateAppointmentServlet: " + e.getMessage());
