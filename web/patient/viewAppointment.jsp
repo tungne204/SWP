@@ -53,6 +53,38 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        .action-buttons {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        .edit-form {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .edit-form.show {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 8px 12px;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -178,6 +210,83 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-warning btn-sm me-2" onclick="toggleEditForm(${appointment.appointmentId})">
+                                        <i class="bi bi-pencil"></i> Update
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteAppointment(${appointment.appointmentId})">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                                
+                                <!-- Edit Form -->
+                                <div id="editForm_${appointment.appointmentId}" class="edit-form">
+                                    <h6><i class="bi bi-pencil-square"></i> Edit Appointment</h6>
+                                    <form id="updateForm_${appointment.appointmentId}" onsubmit="updateAppointment(event, ${appointment.appointmentId})">
+                                        <!-- Hidden fields for IDs -->
+                                        <input type="hidden" id="patientId_${appointment.appointmentId}" value="${appointment.patientId}">
+                                        <input type="hidden" id="doctorId_${appointment.appointmentId}" value="${appointment.doctorId}">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="patientFullName_${appointment.appointmentId}">Patient Full Name:</label>
+                                                    <input type="text" class="form-control" id="patientFullName_${appointment.appointmentId}" 
+                                                           value="${appointment.patientFullName}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="patientDob_${appointment.appointmentId}">Date of Birth:</label>
+                                                    <input type="date" class="form-control" id="patientDob_${appointment.appointmentId}" 
+                                                           value="<fmt:formatDate value='${appointment.patientDob}' pattern='yyyy-MM-dd' />" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="patientAddress_${appointment.appointmentId}">Address:</label>
+                                                    <input type="text" class="form-control" id="patientAddress_${appointment.appointmentId}" 
+                                                           value="${appointment.patientAddress}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="patientInsuranceInfo_${appointment.appointmentId}">Insurance Info:</label>
+                                                    <input type="text" class="form-control" id="patientInsuranceInfo_${appointment.appointmentId}" 
+                                                           value="${appointment.patientInsuranceInfo}" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="parentName_${appointment.appointmentId}">Parent Name:</label>
+                                                    <input type="text" class="form-control" id="parentName_${appointment.appointmentId}" 
+                                                           value="${appointment.parentName}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="parentIdInfo_${appointment.appointmentId}">Parent ID:</label>
+                                                    <input type="text" class="form-control" id="parentIdInfo_${appointment.appointmentId}" 
+                                                           value="${appointment.parentIdInfo}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="dateTime_${appointment.appointmentId}">Date & Time:</label>
+                                                    <input type="datetime-local" class="form-control" id="dateTime_${appointment.appointmentId}" 
+                                                           data-datetime="<fmt:formatDate value='${appointment.dateTime}' pattern='yyyy-MM-dd HH:mm' />" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="status_${appointment.appointmentId}">Status:</label>
+                                                    <select class="form-control" id="status_${appointment.appointmentId}">
+                                                        <option value="true" ${appointment.status ? 'selected' : ''}>Active</option>
+                                                        <option value="false" ${!appointment.status ? 'selected' : ''}>Cancelled</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-end mt-3">
+                                            <button type="button" class="btn btn-secondary btn-sm me-2" onclick="toggleEditForm(${appointment.appointmentId})">
+                                                <i class="bi bi-x-circle"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="bi bi-check-circle"></i> Confirm Update
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </c:forEach>
@@ -188,5 +297,133 @@
     
     <!-- Bootstrap JS -->
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle edit form visibility
+        function toggleEditForm(appointmentId) {
+            const editForm = document.getElementById('editForm_' + appointmentId);
+            editForm.classList.toggle('show');
+        }
+        
+        // Update appointment
+        function updateAppointment(event, appointmentId) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData();
+            formData.append('appointmentId', appointmentId);
+            formData.append('patientId', document.getElementById('patientId_' + appointmentId)?.value || '');
+            formData.append('doctorId', document.getElementById('doctorId_' + appointmentId)?.value || '');
+            formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
+            formData.append('status', document.getElementById('status_' + appointmentId).value);
+            
+            // Send update request
+            fetch('../UpdateAppointmentServlet', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success message
+                    showMessage('Appointment updated successfully!', 'success');
+                    // Hide edit form
+                    toggleEditForm(appointmentId);
+                    // Reload page after a short delay
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error('Update failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Error updating appointment. Please try again.', 'error');
+            });
+        }
+        
+        // Delete appointment
+        function deleteAppointment(appointmentId) {
+            if (confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
+                const formData = new FormData();
+                formData.append('appointmentId', appointmentId);
+                
+                fetch('../DeleteAppointmentServlet', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showMessage('Appointment deleted successfully!', 'success');
+                        // Reload page after a short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        throw new Error('Delete failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error deleting appointment. Please try again.', 'error');
+                });
+            }
+        }
+        
+        // Show message function
+        function showMessage(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Create new alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert at the top of the container
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Sort appointments by ID (descending - newest first)
+        document.addEventListener('DOMContentLoaded', function() {
+            const appointmentCards = document.querySelectorAll('.appointment-card');
+            const container = document.querySelector('.col-12');
+            
+            // Convert to array and sort by appointment ID
+            const sortedCards = Array.from(appointmentCards).sort((a, b) => {
+                const idA = parseInt(a.querySelector('h5').textContent.match(/#(\d+)/)[1]);
+                const idB = parseInt(b.querySelector('h5').textContent.match(/#(\d+)/)[1]);
+                return idB - idA; // Descending order (newest first)
+            });
+            
+            // Re-append sorted cards
+            sortedCards.forEach(card => {
+                container.appendChild(card);
+            });
+            
+            // Convert datetime format for datetime-local inputs
+            const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+            datetimeInputs.forEach(input => {
+                const datetimeValue = input.getAttribute('data-datetime');
+                if (datetimeValue) {
+                    // Convert "yyyy-MM-dd HH:mm" to "yyyy-MM-ddTHH:mm" format
+                    const formattedValue = datetimeValue.replace(' ', 'T');
+                    input.value = formattedValue;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
