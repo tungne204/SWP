@@ -27,8 +27,7 @@ public class PatientSearchServlet extends HttpServlet {
         PatientDAO dao = new PatientDAO();
         List<Patient> list = dao.getAllPatients();   // <-- Lấy toàn bộ danh sách bệnh nhân
         request.setAttribute("patients", list);
-        request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
-        request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
+        request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
     }
 
     // Khi người dùng nhấn "Search" tránh làm lộ thông tin nhạy cảm(Sensitive data) của khách hàng lên thanh URL (POST)
@@ -43,7 +42,7 @@ public class PatientSearchServlet extends HttpServlet {
 
         // ✅ Kiểm tra nếu người dùng chưa nhập gì
         if (keyword == null || keyword.trim().isEmpty()) {
-            request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
+            request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
             return; // dừng xử lý luôn
         }
 
@@ -55,7 +54,7 @@ public class PatientSearchServlet extends HttpServlet {
 
             request.setAttribute("patients", list);
             request.setAttribute("keyword", keyword);
-            request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
+            request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

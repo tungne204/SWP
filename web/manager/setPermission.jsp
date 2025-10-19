@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.*, entity.setPermission.User, entity.Role"%>
+<%@page import="java.util.*, entity.User, entity.Role"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>

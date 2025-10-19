@@ -81,10 +81,11 @@ public class ParentDAO extends DBContext {
     return -1;
 }
 
-    // Update parent information
     public void updateParent(Parent parent) {
         String sql = "UPDATE Parent SET parentname = ?, id_info = ? WHERE parent_id = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
             ps.setString(1, parent.getParentname());
             ps.setString(2, parent.getIdInfo());
             ps.setInt(3, parent.getParentId());
@@ -96,6 +97,5 @@ public class ParentDAO extends DBContext {
             Logger.getLogger(ParentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
 }
-

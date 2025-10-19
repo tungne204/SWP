@@ -339,14 +339,19 @@
                                                 <div class="info-label">SĐT Phụ Huynh</div>
                                                 <div class="info-value">
                                                     <c:choose>
-                                                        <c:when test="${not empty queueDetail.patient.address}">${queueDetail.patient.address}</c:when>
+                                                        <c:when test="${not empty queueDetail.parent.idInfo}">${queueDetail.parent.idInfo}</c:when>
                                                         <c:otherwise>-</c:otherwise>
                                                     </c:choose>
                                                 </div>
                                             </div>
                                             <div class="info-item">
                                                 <div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>
-                                                <div class="info-value">-</div>
+                                                <div class="info-value">
+                                                    <c:choose>
+                                                        <c:when test="${not empty queueDetail.parent.parentname}">${queueDetail.parent.parentname}</c:when>
+                                                        <c:otherwise>-</c:otherwise>
+                                                    </c:choose>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="status-badge status-ready-exam">
@@ -403,17 +408,22 @@
                                                         </div>
                                                     </div>
                                                     <div class="info-item">
-                                                        <div class="info-label">SĐT Phụ Huynh</div>
+                                                        <div class="info-label">Số CCCD người giám hộ</div>
                                                         <div class="info-value">
                                                             <c:choose>
-                                                                <c:when test="${not empty queueDetail.patient.address}">${queueDetail.patient.address}</c:when>
+                                                                <c:when test="${not empty queueDetail.parent.idInfo}">${queueDetail.parent.idInfo}</c:when>
                                                                 <c:otherwise>-</c:otherwise>
                                                             </c:choose>
                                                         </div>
                                                     </div>
                                                     <div class="info-item">
                                                         <div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>
-                                                        <div class="info-value">-</div>
+                                                        <div class="info-value">
+                                                            <c:choose>
+                                                                <c:when test="${not empty queueDetail.parent.parentname}">${queueDetail.parent.parentname}</c:when>
+                                                                <c:otherwise>-</c:otherwise>
+                                                            </c:choose>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="status-badge status-waiting">
@@ -546,14 +556,14 @@
                         // 2) {type:'patient_added'|'status_changed'|'queue_stats', data:{...}}
                         if (data.type === 'queue_update') {
                             if (data.updateType === 'patient_added') {
-                                insertOrUpdateCard(data.data.patient, data.data.queue);
+                                insertOrUpdateCard(data.data.patient, data.data.queue, data.data.parent);
                             } else if (data.updateType === 'status_changed') {
-                                insertOrUpdateCard(data.data.patient, data.data.queue);
+                                insertOrUpdateCard(data.data.patient, data.data.queue, data.data.parent);
                             } else if (data.updateType === 'queue_stats') {
                                 updateStatsFromWebSocket(data.data);
                             }
                         } else if (data.type === 'patient_added' || data.type === 'status_changed') {
-                            insertOrUpdateCard(data.data.patient, data.data.queue);
+                            insertOrUpdateCard(data.data.patient, data.data.queue, data.data.parent);
                         } else if (data.type === 'queue_stats') {
                             updateStatsFromWebSocket(data.data);
                         }
@@ -633,7 +643,7 @@
             return grid || document.querySelector('#waitingTopGrid') || document.querySelector('.queue-grid');
         }
 
-        function createQueueCardElement(patient, queue) {
+        function createQueueCardElement(patient, queue, parent) {
             const meta = getStatusMeta(queue.status);
             const card = document.createElement('div');
             card.className = 'queue-card';
@@ -693,13 +703,14 @@
             info.appendChild(itemRoom);
             const item3 = document.createElement('div');
             item3.className = 'info-item';
-            const parentPhone = (patient && patient.address && String(patient.address).trim().length > 0) ? patient.address : '-';
-            item3.innerHTML = '<div class="info-label">SĐT Phụ Huynh</div>' +
+            const parentPhone = (parent && parent.idInfo && String(parent.idInfo).trim().length > 0) ? parent.idInfo : '-';
+            item3.innerHTML = '<div class="info-label">Số CCCD người giám hộ</div>' +
                 '<div class="info-value">' + parentPhone + '</div>';
             const item4 = document.createElement('div');
             item4.className = 'info-item';
+            const parentName = (parent && parent.parentname && String(parent.parentname).trim().length > 0) ? parent.parentname : '-';
             item4.innerHTML = '<div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>' +
-                '<div class="info-value">-</div>';
+                '<div class="info-value">' + parentName + '</div>';
             info.appendChild(item3);
             info.appendChild(item4);
 
@@ -825,7 +836,7 @@
             totalEl.textContent = Math.max(0, (parseInt(totalEl.textContent) || 0) + delta.total);
         }
 
-        function insertOrUpdateCard(patient, queue) {
+        function insertOrUpdateCard(patient, queue, parent) {
             const hasQueueId = queue.queueId && Number(queue.queueId) > 0;
             const pid = (patient && patient.patientId != null) ? patient.patientId : patient.id;
             let card = hasQueueId
@@ -848,7 +859,7 @@
                 // Don't create new cards for "In Consultation" patients
                 if (queue.status === 'In Consultation') return;
                 
-                const newCard = createQueueCardElement(patient, queue);
+                const newCard = createQueueCardElement(patient, queue, parent);
                 const target = (queue.status === 'Ready for Examination') ? ensureReadyGrid() : ensureWaitingTopGrid();
                 insertCardSorted(target, newCard);
                 if (target === ensureWaitingTopGrid()) enforceWaitingTopLimit();

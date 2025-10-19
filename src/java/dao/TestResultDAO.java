@@ -25,7 +25,7 @@ public class TestResultDAO extends DBContext {
                     "WHERE tr.record_id = ? " +
                     "ORDER BY tr.date DESC, tr.test_id ASC";
         
-        try (Connection conn = getConnection();  // ← try-with-resources
+        try (Connection conn = getConnection();  // try-with-resources
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, recordId);
@@ -148,7 +148,7 @@ public class TestResultDAO extends DBContext {
         return false;
     }
 
-    // Đếm số lượng test results của một record
+    // Count test results for a record
     public int countByRecordId(int recordId) {
         String sql = "SELECT COUNT(*) as total FROM TestResult WHERE record_id = ?";
         

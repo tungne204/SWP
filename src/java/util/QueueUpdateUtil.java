@@ -2,6 +2,7 @@ package util;
 
 import entity.Patient;
 import entity.PatientQueue;
+import entity.Parent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,9 +17,10 @@ public class QueueUpdateUtil {
      * Create JSON representation of a patient queue entry
      * @param patient The patient object
      * @param queue The queue object
+     * @param parent The parent object (can be null)
      * @return JSON string representation
      */
-    public static String createPatientQueueJson(Patient patient, PatientQueue queue) {
+    public static String createPatientQueueJson(Patient patient, PatientQueue queue, Parent parent) {
         StringBuilder json = new StringBuilder();
         json.append("{");
         
@@ -27,6 +29,17 @@ public class QueueUpdateUtil {
         json.append("\"id\":").append(patient.getPatientId()).append(",");
         json.append("\"fullName\":\"").append(escapeJson(patient.getFullName())).append("\",");
         json.append("\"address\":\"").append(escapeJson(patient.getAddress())).append("\"");
+        json.append("},");
+        
+        // Parent information
+        json.append("\"parent\":{");
+        if (parent != null) {
+            json.append("\"parentname\":\"").append(escapeJson(parent.getParentname())).append("\",");
+            json.append("\"idInfo\":\"").append(escapeJson(parent.getIdInfo())).append("\"");
+        } else {
+            json.append("\"parentname\":\"-\",");
+            json.append("\"idInfo\":\"-\"");
+        }
         json.append("},");
         
         // Queue information
