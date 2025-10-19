@@ -1,7 +1,7 @@
 /.kilocode/mcp.json
 /.idea/
 /.kilocode/
-/build/
+**/build/**
 /dist/
 /out/
 /web/WEB-INF/classes/
@@ -42,3 +42,4 @@ Thumbs.db
 
 # Maven or Gradle (if later added)
 target/
+

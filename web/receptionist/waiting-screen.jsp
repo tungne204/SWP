@@ -442,7 +442,7 @@
                 <!-- Toolbar -->
                 <div class="toolbar" data-aos="fade-up" data-aos-delay="200">
                     <div class="toolbar-left">
-                        <a href="<c:url value="/patient-queue/checkin-form.jsp"/>" class="toolbar-btn btn-add-patient">
+                        <a href="<c:url value="/receptionist/checkin-form"/>" class="toolbar-btn btn-add-patient">
                             <i class="fas fa-user-plus"></i>
                             Đăng Ký Bệnh Nhân
                         </a>
