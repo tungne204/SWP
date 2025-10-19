@@ -58,9 +58,10 @@
 
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="Home.jsp" class="logo d-flex align-items-center me-auto">
-                        <h1 class="sitename">Medilab</h1>
-                    </a>
+                    <a href="${pageContext.request.contextPath}/" class="logo d-flex align-items-center me-auto">
+    <h1 class="sitename">Medilab</h1>
+</a>
+
 
                     <nav id="navmenu" class="navmenu">
                         <ul>
@@ -77,7 +78,7 @@
                     <a class="cta-btn d-none d-sm-block" href="#appointment">Make an Appointment</a>
 
                     <% if (acc == null) { %>
-                    <a class="cta-btn d-none d-sm-block" href="Login.jsp">Login</a>
+                    <a class="cta-btn d-none d-sm-block" href="Login">Login</a>
                     <% } else { %>
                     <div class="dropdown ms-4">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu" 
@@ -86,8 +87,8 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
-                            <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
-                            <li><a class="dropdown-item" href="appointment">View My Appointments</a></li>
+                            <li><a class="dropdown-item" href="Change_password">Change Password</a></li>
+                            <li><a class="dropdown-item" href="patient-appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout">Logout</a></li>
                         </ul>
@@ -391,7 +392,7 @@
                     <% } %>
 
                     <% if (acc != null && acc.getRoleId() == 3) { %>
-                    <form action="appointment" method="post" role="form">
+                    <form action="patient-appointment" method="post" role="form">
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label for="parentName">Parent Name</label>
@@ -470,7 +471,7 @@
                     <% } else { %>
                     <div class="text-center">
                         <h4>To make an appointment, please log in with a patient account.</h4>
-                        <a href="Login.jsp" class="btn btn-primary">Log In</a>
+                        <a href="Login" class="btn btn-primary">Log In</a>
                     </div>
                     <% } %>
 

@@ -46,7 +46,7 @@
     <h4 class="mb-2">Forgot Password</h4>
     <p class="text-muted">Enter your email to reset your password</p>
 
-    <form action="ForgotPasswordServlet" method="post">
+    <form action="Forgot_password" method="post">
         <!-- Email -->
         <div class="mb-3 text-start">
             <label for="email" class="form-label">Email Address</label>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- Back to login -->
-        <a href="Login.jsp" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
+        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
     </form>
     <% if (request.getAttribute("error") != null) { %>
     <div class="alert alert-danger mt-3">

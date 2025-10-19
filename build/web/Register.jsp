@@ -63,7 +63,7 @@
             <div class="alert alert-success text-center"><%= success %></div>
         <% } %>
 
-        <form action="register" method="post">
+        <form action="Register" method="post">
             <!-- Full Name -->
             <div class="mb-3">
                 <label class="form-label">Full name</label>
@@ -124,7 +124,7 @@
 
             <!-- Login Link -->
             <p class="text-center">Already have an account?
-                <a href="Login.jsp">Log in</a>
+                <a href="Login">Log in</a>
             </p>
         </form>
     </div>

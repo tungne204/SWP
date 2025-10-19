@@ -72,7 +72,7 @@
     <div class="alert alert-success text-center"><%= success %></div>
 <% } %>
 
-    <form action="login" method="post">
+    <form action="Login" method="post">
         <!-- Email -->
         <div class="mb-3">
             <label for="email" class="form-label">Email Address</label>
@@ -92,7 +92,7 @@
         </div>
 
         <div class="d-flex justify-content-end mb-3">
-            <a href="Forgot_password.jsp" class="text-decoration-none">Forgot password?</a>
+            <a href="Forgot_password" class="text-decoration-none">Forgot password?</a>
         </div>
 
         <!-- Sign In button -->
@@ -111,8 +111,12 @@
         </div>
 
         <!-- Sign Up -->
-        <p class="text-center">Don't have an account? <a href="Register.jsp">Sign up</a></p>
-        <p class="text-center">Go back to home page <a href="Home.jsp">HOME</a></p>
+        <p class="text-center">Don't have an account? <a href="Register">Sign up</a></p>
+        <p class="text-center">
+  Go back to home page 
+  <a href="${pageContext.request.contextPath}/">HOME</a>
+</p>
+
     </form>
 </div>
 

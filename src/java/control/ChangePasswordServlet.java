@@ -7,8 +7,24 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/ChangePasswordServlet"})
+@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/Change_password"})
 public class ChangePasswordServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        HttpSession session = request.getSession(false);
+        User acc = (User) session.getAttribute("acc");
+
+        if (acc == null) {
+            response.sendRedirect("Login");
+            return;
+        }
+        
+        // Forward to Change_password.jsp
+        request.getRequestDispatcher("Change_password.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -18,7 +34,7 @@ public class ChangePasswordServlet extends HttpServlet {
         User acc = (User) session.getAttribute("acc");
 
         if (acc == null) {
-            response.sendRedirect("Login.jsp");
+            response.sendRedirect("Login");
             return;
         }
 

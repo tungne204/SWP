@@ -23,7 +23,7 @@
                     <h3>🔑 Change Password</h3>
                 </div>
                 <div class="card-body">
-                    <form action="${pageContext.request.contextPath}/ChangePasswordServlet" method="post">
+                    <form action="${pageContext.request.contextPath}/Change_password" method="post">
 
                         <div class="mb-3">
                             <label for="oldPassword" class="form-label">Current Password</label>
@@ -44,7 +44,7 @@
                             <div class="alert alert-success"><%= request.getAttribute("success") %></div>
                         <% } %>
                         <button type="submit" class="btn btn-primary w-100">Update Password</button>
-                        <a href="Login.jsp" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
+                        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
                     </form>
                 </div>
             </div>

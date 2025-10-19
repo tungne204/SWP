@@ -36,7 +36,7 @@
 
       <!-- Login / Dropdown -->
       <% if (acc == null) { %>
-        <a class="btn btn-light btn-sm fw-semibold" href="${pageContext.request.contextPath}/Login.jsp">Login</a>
+        <a class="btn btn-light btn-sm fw-semibold" href="${pageContext.request.contextPath}/Login">Login</a>
       <% } else { %>
         <div class="dropdown">
           <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button"
@@ -45,8 +45,8 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenu">
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/viewProfile.jsp">View Profile</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Change_password.jsp">Change Password</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/appointment">My Appointments</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Change_password">Change Password</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/patient-appointment">My Appointments</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger fw-semibold" href="${pageContext.request.contextPath}/logout">Logout</a></li>
           </ul>
