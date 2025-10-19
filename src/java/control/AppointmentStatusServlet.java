@@ -7,11 +7,14 @@ package control;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 import dao.AppointmentDAO;
+import jakarta.servlet.*;
 
 /**
  * Handling status change requests
@@ -20,7 +23,7 @@ import dao.AppointmentDAO;
  *
  * @author Kiên
  */
-@WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/Appointment-Status"})
+@WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/AppointmentStatusServlet"})
 public class AppointmentStatusServlet extends HttpServlet {
 
     // Xử lý yêu cầu GET (khi truy cập trực tiếp bằng URL)
@@ -43,7 +46,7 @@ public class AppointmentStatusServlet extends HttpServlet {
         dao.updateAppointmentStatus(appointmentId, newStatus);
 
         // Quay lại trang danh sách sau khi cập nhật
-        response.sendRedirect("Appointment-List");
+        response.sendRedirect("ViewAppointmentServlet");
     }
 
 }

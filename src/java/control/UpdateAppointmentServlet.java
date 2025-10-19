@@ -11,10 +11,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dao.AppointmentDAO;
-import entity.Appointment;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -73,8 +69,10 @@ public class UpdateAppointmentServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/Appointment-List");
             }
         } catch (Exception e) {
+            System.err.println("Exception in UpdateAppointmentServlet: " + e.getMessage());
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Internal server error: " + e.getMessage());
         }
     }
 }

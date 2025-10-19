@@ -4,33 +4,29 @@
  */
 package control;
 
-import dao.AppointmentDAO;
-import entity.Appointment;
 import java.io.IOException;
-import java.util.List;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.AppointmentDAO;
+import entity.Appointment;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.util.List;
 
 /**
- * Show appointment list for receptionist to change status
- *
+ * Display a list of all appointments
  * @author Kiên
- *
- * @URL: /Appointment-List
- *
  */
-@WebServlet("/Appointment-List")
+@WebServlet(name = "ViewAppointmentServlet", urlPatterns = {"/ViewAppointmentServlet"})
 public class ViewAppointmentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Chuyển về xử lý an toàn bằng POST
-        doPost(request, response);
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

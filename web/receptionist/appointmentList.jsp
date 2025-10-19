@@ -1,8 +1,3 @@
-<%-- 
-    Document   : View Appointment List and Chang Status
-    Created on : Oct 18, 2025, 9:16 PM
-    Author     : KiênPC
---%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>

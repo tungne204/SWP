@@ -2,6 +2,7 @@ package dao;
 
 import context.DBContext;
 import entity.Appointment;
+import entity.AppointmentDetailDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -206,10 +207,127 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
+     * Get detailed appointment information including Patient, Parent, and Doctor data
+     * @param userId - User ID to get all appointments for all patients of this user
+     * @return List of AppointmentDetailDTO
+     */
+    public List<AppointmentDetailDTO> getDetailedAppointmentsByUserId(int userId) {
+        List<AppointmentDetailDTO> appointments = new ArrayList<>();
+        String sql = "SELECT " +
+                     "a.appointment_id, a.date_time, a.status, " +
+                     "p.patient_id, p.full_name as patient_full_name, p.dob as patient_dob, " +
+                     "p.address as patient_address, p.insurance_info as patient_insurance_info, " +
+                     "pr.parent_id, pr.parentname, pr.id_info, " +
+                     "d.doctor_id, u.username as doctor_name, d.specialty " +
+                     "FROM Appointment a " +
+                     "JOIN Patient p ON a.patient_id = p.patient_id " +
+                     "LEFT JOIN Parent pr ON p.parent_id = pr.parent_id " +
+                     "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                     "JOIN [User] u ON d.user_id = u.user_id " +
+                     "WHERE p.user_id = ? " +
+                     "ORDER BY a.date_time DESC";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AppointmentDetailDTO appointmentDetail = new AppointmentDetailDTO();
+                    
+                    // Appointment info
+                    appointmentDetail.setAppointmentId(rs.getInt("appointment_id"));
+                    appointmentDetail.setDateTime(rs.getTimestamp("date_time"));
+                    appointmentDetail.setStatus(rs.getBoolean("status"));
+                    
+                    // Patient info
+                    appointmentDetail.setPatientId(rs.getInt("patient_id"));
+                    appointmentDetail.setPatientFullName(rs.getString("patient_full_name"));
+                    appointmentDetail.setPatientDob(rs.getDate("patient_dob"));
+                    appointmentDetail.setPatientAddress(rs.getString("patient_address"));
+                    appointmentDetail.setPatientInsuranceInfo(rs.getString("patient_insurance_info"));
+                    
+                    // Parent info
+                    appointmentDetail.setParentId(rs.getInt("parent_id"));
+                    appointmentDetail.setParentName(rs.getString("parentname"));
+                    appointmentDetail.setParentIdInfo(rs.getString("id_info"));
+                    
+                    // Doctor info
+                    appointmentDetail.setDoctorId(rs.getInt("doctor_id"));
+                    appointmentDetail.setDoctorName(rs.getString("doctor_name"));
+                    appointmentDetail.setDoctorSpecialty(rs.getString("specialty"));
+                    
+                    appointments.add(appointmentDetail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }
+
+    /**
+     * Get detailed appointment information for a specific patient ID
+     * @param patientId
+     * @return List of AppointmentDetailDTO
+     */
+    public List<AppointmentDetailDTO> getDetailedAppointmentsByPatientId(int patientId) {
+        List<AppointmentDetailDTO> appointments = new ArrayList<>();
+        String sql = "SELECT " +
+                     "a.appointment_id, a.date_time, a.status, " +
+                     "p.patient_id, p.full_name as patient_full_name, p.dob as patient_dob, " +
+                     "p.address as patient_address, p.insurance_info as patient_insurance_info, " +
+                     "pr.parent_id, pr.parentname, pr.id_info, " +
+                     "d.doctor_id, u.username as doctor_name, d.specialty " +
+                     "FROM Appointment a " +
+                     "JOIN Patient p ON a.patient_id = p.patient_id " +
+                     "LEFT JOIN Parent pr ON p.parent_id = pr.parent_id " +
+                     "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                     "JOIN [User] u ON d.user_id = u.user_id " +
+                     "WHERE a.patient_id = ? " +
+                     "ORDER BY a.date_time DESC";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AppointmentDetailDTO appointmentDetail = new AppointmentDetailDTO();
+                    
+                    // Appointment info
+                    appointmentDetail.setAppointmentId(rs.getInt("appointment_id"));
+                    appointmentDetail.setDateTime(rs.getTimestamp("date_time"));
+                    appointmentDetail.setStatus(rs.getBoolean("status"));
+                    
+                    // Patient info
+                    appointmentDetail.setPatientId(rs.getInt("patient_id"));
+                    appointmentDetail.setPatientFullName(rs.getString("patient_full_name"));
+                    appointmentDetail.setPatientDob(rs.getDate("patient_dob"));
+                    appointmentDetail.setPatientAddress(rs.getString("patient_address"));
+                    appointmentDetail.setPatientInsuranceInfo(rs.getString("patient_insurance_info"));
+                    
+                    // Parent info
+                    appointmentDetail.setParentId(rs.getInt("parent_id"));
+                    appointmentDetail.setParentName(rs.getString("parentname"));
+                    appointmentDetail.setParentIdInfo(rs.getString("id_info"));
+                    
+                    // Doctor info
+                    appointmentDetail.setDoctorId(rs.getInt("doctor_id"));
+                    appointmentDetail.setDoctorName(rs.getString("doctor_name"));
+                    appointmentDetail.setDoctorSpecialty(rs.getString("specialty"));
+                    
+                    appointments.add(appointmentDetail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }
+
+    /**
      * Delete appointment by ID
-     *
      * @param appointmentId
-     * @throws Exception
+     * @throws Exception 
      */
     public void deleteAppointment(int appointmentId) throws Exception {
         String sql = "DELETE FROM Appointment WHERE appointment_id = ?";
