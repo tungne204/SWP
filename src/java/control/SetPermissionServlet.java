@@ -5,9 +5,9 @@
 
 package control;
 
-import dao.setPermission.UserDAO;
+import dao.UserDAO;
 import entity.Role;
-import entity.setPermission.User;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;

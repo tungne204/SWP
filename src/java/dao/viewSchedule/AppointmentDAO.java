@@ -4,7 +4,7 @@
  */
 package dao.viewSchedule;
 import context.DBContext;
-import entity.viewSchedule.Appointment;
+import entity.Appointment;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

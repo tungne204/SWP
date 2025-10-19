@@ -7,8 +7,8 @@ package dao.setPermission;
 import context.DBContext;
 import java.sql.*;
 import java.util.*;
-import entity.setPermission.User;
 import entity.Role;
+import entity.User;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
