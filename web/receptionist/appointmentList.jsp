@@ -20,6 +20,12 @@
     <body class="bg-gray-50 min-h-screen text-gray-800">
         <div class="max-w-6xl mx-auto p-6">
             <h2 class="text-2xl font-bold mb-4 text-green-700">📋 Appointment Management</h2>
+            <!-- Hiển thị thông báo khi xóa thành công -->
+            <c:if test="${param.success eq 'deleted'}">
+                <div class="bg-green-100 text-green-800 px-4 py-2 mb-4 rounded-lg shadow-sm border border-green-200">
+                    ✅ Appointment deleted successfully!
+                </div>
+            </c:if>
 
             <c:if test="${empty appointments}">
                 <div class="text-center text-gray-500 mt-6">
@@ -76,7 +82,15 @@
                                             ✏️ Edit
                                         </button>
                                     </form>
-
+                                    <!-- Delete appointment -->
+                                    <form action="Appointment-Delete" method="post"
+                                          onsubmit="return confirm('❌ Are you sure you want to delete this appointment?');">
+                                        <input type="hidden" name="appointmentId" value="${a.appointmentId}">
+                                        <button type="submit"
+                                                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">
+                                            🗑 Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>
