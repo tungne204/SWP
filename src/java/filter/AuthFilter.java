@@ -60,15 +60,16 @@ public class AuthFilter implements Filter {
                     return;
                 }
             }
-        if (uri.contains("/patient/") && roleId != 3) {
-            res.sendRedirect(req.getContextPath() + "/403.jsp");
-            return;
-        }
-        if (uri.contains("/medical-assistant/") && roleId != 4) {
-            res.sendRedirect(req.getContextPath() + "/403.jsp");
-            return;
-        }
+            if (uri.contains("/patient/") && roleId != 3) {
+                res.sendRedirect(req.getContextPath() + "/403.jsp");
+                return;
+            }
+            if (uri.contains("/medical-assistant/") && roleId != 4) {
+                res.sendRedirect(req.getContextPath() + "/403.jsp");
+                return;
+            }
 
-        chain.doFilter(request, response);
+            chain.doFilter(request, response);
+        }
     }
 }
