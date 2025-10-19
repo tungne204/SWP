@@ -163,28 +163,25 @@ public class AppointmentDAO extends DBContext {
     }
 
     public List<Appointment> getAllAppointments() {
-    List<Appointment> list = new ArrayList<>();
-    String sql = "SELECT * FROM Appointment";
-    try (Connection conn = getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT * FROM Appointment";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        while (rs.next()) {
-            Appointment a = new Appointment();
-            a.setAppointmentId(rs.getInt("appointment_id"));
-            a.setPatientId(rs.getInt("patient_id"));
-            a.setDoctorId(rs.getInt("doctor_id"));
-            a.setDateTime(rs.getDate("date_time"));  // ✅ Đúng tên cột trong DB
-            a.setStatus(rs.getBoolean("status"));
-            list.add(a);
+            while (rs.next()) {
+                Appointment a = new Appointment();
+                a.setAppointmentId(rs.getInt("appointment_id"));
+                a.setPatientId(rs.getInt("patient_id"));
+                a.setDoctorId(rs.getInt("doctor_id"));
+                a.setDateTime(rs.getTimestamp("date_time"));
+                a.setStatus(rs.getBoolean("status"));
+                list.add(a);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
-
 
     /**
      * Update appointment details (patient, doctor, date_time)
