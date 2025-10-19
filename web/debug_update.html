@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug UpdateAppointmentServlet</title>
+</head>
+<body>
+    <h2>Debug UpdateAppointmentServlet</h2>
+    <form id="testForm">
+        <input type="hidden" id="appointmentId_1" value="1">
+        <input type="hidden" id="patientId_1" value="1">
+        <input type="hidden" id="parentId_1" value="1">
+        <input type="text" id="doctorId_1" value="1">
+        <input type="datetime-local" id="dateTime_1" value="2025-12-31T10:00">
+        <input type="text" id="patientFullName_1" value="Test Patient">
+        <input type="date" id="patientDob_1" value="2000-01-01">
+        <input type="text" id="patientAddress_1" value="Test Address">
+        <input type="text" id="patientInsuranceInfo_1" value="Test Insurance">
+        <input type="text" id="parentName_1" value="Test Parent">
+        <input type="text" id="parentIdInfo_1" value="Test ID">
+        <button type="button" onclick="testUpdate()">Test Update</button>
+    </form>
+
+    <script>
+        function testUpdate() {
+            const appointmentId = 1;
+            const formData = new FormData();
+            
+            // Ensure appointmentId is properly set
+            const appointmentIdValue = document.getElementById('appointmentId_' + appointmentId)?.value || appointmentId.toString();
+            formData.append('appointmentId', appointmentIdValue);
+            
+            formData.append('patientId', document.getElementById('patientId_' + appointmentId)?.value || '');
+            formData.append('parentId', document.getElementById('parentId_' + appointmentId)?.value || '');
+            formData.append('doctorId', document.getElementById('doctorId_' + appointmentId).value);
+            formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
+            
+            // Patient data
+            formData.append('patientFullName', document.getElementById('patientFullName_' + appointmentId).value);
+            formData.append('patientDob', document.getElementById('patientDob_' + appointmentId).value);
+            formData.append('patientAddress', document.getElementById('patientAddress_' + appointmentId).value);
+            formData.append('patientInsuranceInfo', document.getElementById('patientInsuranceInfo_' + appointmentId).value);
+            
+            // Parent data
+            formData.append('parentName', document.getElementById('parentName_' + appointmentId).value);
+            formData.append('parentIdInfo', document.getElementById('parentIdInfo_' + appointmentId).value);
+            
+            // Debug: Log form data
+            console.log('Sending update form data:');
+            console.log('appointmentId parameter:', appointmentId);
+            console.log('appointmentIdValue from form:', appointmentIdValue);
+            console.log('Hidden field value:', document.getElementById('appointmentId_' + appointmentId)?.value);
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+            
+            // Send update request
+            fetch('UpdateAppointmentServlet', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Update failed');
+                    });
+                }
+            })
+            .then(result => {
+                console.log('Update result:', result);
+                if (result === 'success') {
+                    alert('Update successful!');
+                } else {
+                    throw new Error(result || 'Update failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

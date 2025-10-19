@@ -6,8 +6,8 @@
 <html>
 <head>
     <title>My Appointments</title>
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <style>
         .appointment-card {
             border: 1px solid #dee2e6;
@@ -61,29 +61,50 @@
         .edit-form {
             display: none;
             background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 10px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
         }
         .edit-form.show {
             display: block;
         }
         .form-group {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .form-group label {
             font-weight: 500;
             color: #495057;
             margin-bottom: 5px;
+            display: block;
         }
         .form-control {
             border: 1px solid #ced4da;
             border-radius: 4px;
             padding: 8px 12px;
+            width: 100%;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
         .btn-sm {
-            padding: 5px 10px;
+            padding: 6px 12px;
             font-size: 0.875rem;
+        }
+        .edit-section {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+        .edit-section h6 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #dee2e6;
         }
     </style>
 </head>
@@ -223,54 +244,77 @@
                                 
                                 <!-- Edit Form -->
                                 <div id="editForm_${appointment.appointmentId}" class="edit-form">
-                                    <h6><i class="bi bi-pencil-square"></i> Edit Appointment</h6>
-                                    <form id="updateForm_${appointment.appointmentId}" onsubmit="updateAppointment(event, ${appointment.appointmentId})">
+                                    <h5><i class="bi bi-pencil-square"></i> Edit Appointment</h5>
+                                    <form id="updateForm_${appointment.appointmentId}" data-appointment-id="${appointment.appointmentId}" onsubmit="updateAppointment(event, this)">
                                         <!-- Hidden fields for IDs -->
-                                        <input type="hidden" id="patientId_${appointment.appointmentId}" value="${appointment.patientId}">
-                                        <input type="hidden" id="doctorId_${appointment.appointmentId}" value="${appointment.doctorId}">
+                                        <input type="hidden" name="appointmentId" id="appointmentId_${appointment.appointmentId}" value="${appointment.appointmentId}">
+                                        <input type="hidden" name="patientId" id="patientId_${appointment.appointmentId}" value="${appointment.patientId}">
+                                        <input type="hidden" name="parentId" id="parentId_${appointment.appointmentId}" value="${appointment.parentId}">
                                         
                                         <div class="row">
+                                            <!-- Appointment Details -->
                                             <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="patientFullName_${appointment.appointmentId}">Patient Full Name:</label>
-                                                    <input type="text" class="form-control" id="patientFullName_${appointment.appointmentId}" 
-                                                           value="${appointment.patientFullName}" required>
+                                                <div class="edit-section">
+                                                    <h6><i class="bi bi-calendar-event"></i> Appointment Details</h6>
+                                            <div class="form-group">
+                                                <label for="dateTime_${appointment.appointmentId}">Date & Time:</label>
+                                                <input type="datetime-local" name="dateTime" class="form-control" id="dateTime_${appointment.appointmentId}" 
+                                                       data-datetime="<fmt:formatDate value='${appointment.dateTime}' pattern='yyyy-MM-dd HH:mm' />" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="doctorId_${appointment.appointmentId}">Doctor:</label>
+                                                <select name="doctorId" class="form-control" id="doctorId_${appointment.appointmentId}" required>
+                                                    <option value="${appointment.doctorId}">${appointment.doctorName} - ${appointment.doctorSpecialty}</option>
+                                                    <!-- Other doctors will be loaded via JavaScript -->
+                                                </select>
+                                            </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="patientDob_${appointment.appointmentId}">Date of Birth:</label>
-                                                    <input type="date" class="form-control" id="patientDob_${appointment.appointmentId}" 
-                                                           value="<fmt:formatDate value='${appointment.patientDob}' pattern='yyyy-MM-dd' />" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="patientAddress_${appointment.appointmentId}">Address:</label>
-                                                    <input type="text" class="form-control" id="patientAddress_${appointment.appointmentId}" 
-                                                           value="${appointment.patientAddress}" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="patientInsuranceInfo_${appointment.appointmentId}">Insurance Info:</label>
-                                                    <input type="text" class="form-control" id="patientInsuranceInfo_${appointment.appointmentId}" 
-                                                           value="${appointment.patientInsuranceInfo}" required>
+                                                
+                                                <!-- Patient Information -->
+                                                <div class="edit-section">
+                                                    <h6><i class="bi bi-person"></i> Patient Information</h6>
+                                            <div class="form-group">
+                                                <label for="patientFullName_${appointment.appointmentId}">Full Name:</label>
+                                                <input type="text" name="patientFullName" class="form-control" id="patientFullName_${appointment.appointmentId}" 
+                                                       value="${appointment.patientFullName}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="patientDob_${appointment.appointmentId}">Date of Birth:</label>
+                                                <input type="date" name="patientDob" class="form-control" id="patientDob_${appointment.appointmentId}" 
+                                                       value="<fmt:formatDate value='${appointment.patientDob}' pattern='yyyy-MM-dd' />" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="patientAddress_${appointment.appointmentId}">Address:</label>
+                                                <input type="text" name="patientAddress" class="form-control" id="patientAddress_${appointment.appointmentId}" 
+                                                       value="${appointment.patientAddress}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="patientInsuranceInfo_${appointment.appointmentId}">Insurance Info:</label>
+                                                <input type="text" name="patientInsuranceInfo" class="form-control" id="patientInsuranceInfo_${appointment.appointmentId}" 
+                                                       value="${appointment.patientInsuranceInfo}" required>
+                                            </div>
                                                 </div>
                                             </div>
+                                            
+                                            <!-- Parent Information -->
                                             <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="parentName_${appointment.appointmentId}">Parent Name:</label>
-                                                    <input type="text" class="form-control" id="parentName_${appointment.appointmentId}" 
-                                                           value="${appointment.parentName}" required>
+                                                <div class="edit-section">
+                                                    <h6><i class="bi bi-person-badge"></i> Parent Information</h6>
+                                            <div class="form-group">
+                                                <label for="parentName_${appointment.appointmentId}">Parent Name:</label>
+                                                <input type="text" name="parentName" class="form-control" id="parentName_${appointment.appointmentId}" 
+                                                       value="${appointment.parentName}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="parentIdInfo_${appointment.appointmentId}">Parent ID:</label>
+                                                <input type="text" name="parentIdInfo" class="form-control" id="parentIdInfo_${appointment.appointmentId}" 
+                                                       value="${appointment.parentIdInfo}" required>
+                                            </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="parentIdInfo_${appointment.appointmentId}">Parent ID:</label>
-                                                    <input type="text" class="form-control" id="parentIdInfo_${appointment.appointmentId}" 
-                                                           value="${appointment.parentIdInfo}" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="dateTime_${appointment.appointmentId}">Date & Time:</label>
-                                                    <input type="datetime-local" class="form-control" id="dateTime_${appointment.appointmentId}" 
-                                                           data-datetime="<fmt:formatDate value='${appointment.dateTime}' pattern='yyyy-MM-dd HH:mm' />" required>
-                                                </div>
-                                                <!-- Status field removed - patients cannot change appointment status -->
                                             </div>
                                         </div>
+                                        
+                                        <!-- Form Actions -->
                                         <div class="text-end mt-3">
                                             <button type="button" class="btn btn-secondary btn-sm me-2" onclick="toggleEditForm(${appointment.appointmentId})">
                                                 <i class="bi bi-x-circle"></i> Cancel
@@ -290,29 +334,45 @@
     </div>
     
     <!-- Bootstrap JS -->
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     
     <script>
         // Toggle edit form visibility
         function toggleEditForm(appointmentId) {
             const editForm = document.getElementById('editForm_' + appointmentId);
             editForm.classList.toggle('show');
+            
+            // Load doctors when opening edit form
+            if (editForm.classList.contains('show')) {
+                loadDoctors(appointmentId);
+            }
         }
         
         // Update appointment
-        function updateAppointment(event, appointmentId) {
+        function updateAppointment(event, formElement) {
             event.preventDefault();
             
-            // Get form data
-            const formData = new FormData();
-            formData.append('appointmentId', appointmentId.toString());
-            formData.append('patientId', document.getElementById('patientId_' + appointmentId)?.value || '');
-            formData.append('doctorId', document.getElementById('doctorId_' + appointmentId)?.value || '');
-            formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
-            // Status removed - patients cannot change appointment status
+            // Extract appointmentId from form ID
+            const formId = formElement.id;
+            const appointmentId = formId.replace('updateForm_', '');
             
-            // Debug: Log form data
-            console.log('Sending form data:');
+            // Get form data - use URLSearchParams (like create form)
+            const formData = new URLSearchParams();
+            
+            // Add all form fields
+            formData.append('appointmentId', document.getElementById('appointmentId_' + appointmentId).value);
+            formData.append('patientId', document.getElementById('patientId_' + appointmentId).value);
+            formData.append('parentId', document.getElementById('parentId_' + appointmentId).value);
+            formData.append('doctorId', document.getElementById('doctorId_' + appointmentId).value);
+            formData.append('dateTime', document.getElementById('dateTime_' + appointmentId).value);
+            formData.append('patientFullName', document.getElementById('patientFullName_' + appointmentId).value);
+            formData.append('patientDob', document.getElementById('patientDob_' + appointmentId).value);
+            formData.append('patientAddress', document.getElementById('patientAddress_' + appointmentId).value);
+            formData.append('patientInsuranceInfo', document.getElementById('patientInsuranceInfo_' + appointmentId).value);
+            formData.append('parentName', document.getElementById('parentName_' + appointmentId).value);
+            formData.append('parentIdInfo', document.getElementById('parentIdInfo_' + appointmentId).value);
+            
+            console.log('URLSearchParams from form:');
             for (let [key, value] of formData.entries()) {
                 console.log(key + ': ' + value);
             }
@@ -320,6 +380,9 @@
             // Send update request
             fetch('UpdateAppointmentServlet', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formData
             })
             .then(response => {
@@ -354,7 +417,8 @@
         // Delete appointment
         function deleteAppointment(appointmentId) {
             if (confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-                const formData = new FormData();
+                // Use URLSearchParams (like update)
+                const formData = new URLSearchParams();
                 formData.append('appointmentId', appointmentId.toString());
                 
                 // Debug: Log form data
@@ -362,22 +426,36 @@
                 
                 fetch('DeleteAppointmentServlet', {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
                     body: formData
                 })
                 .then(response => {
+                    console.log('Delete response status:', response.status);
                     if (response.ok) {
+                        return response.text();
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text || 'Delete failed');
+                        });
+                    }
+                })
+                .then(result => {
+                    console.log('Delete result:', result);
+                    if (result === 'success') {
                         showMessage('Appointment deleted successfully!', 'success');
                         // Reload page after a short delay
                         setTimeout(() => {
                             window.location.reload();
                         }, 1500);
                     } else {
-                        throw new Error('Delete failed');
+                        throw new Error(result || 'Delete failed');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showMessage('Error deleting appointment. Please try again.', 'error');
+                    showMessage('Error deleting appointment: ' + error.message, 'error');
                 });
             }
         }
@@ -407,6 +485,38 @@
                     alertDiv.remove();
                 }
             }, 5000);
+        }
+        
+        // Load doctors for dropdown
+        function loadDoctors(appointmentId) {
+            fetch('doctors')
+            .then(response => response.json())
+            .then(doctors => {
+                const doctorSelect = document.getElementById('doctorId_' + appointmentId);
+                if (doctorSelect) {
+                    // Keep the current selected doctor as first option
+                    const currentOption = doctorSelect.querySelector('option[value="' + doctorSelect.value + '"]');
+                    doctorSelect.innerHTML = '';
+                    
+                    // Add current doctor first
+                    if (currentOption) {
+                        doctorSelect.appendChild(currentOption);
+                    }
+                    
+                    // Add other doctors
+                    doctors.forEach(doctor => {
+                        if (doctor.doctorId != doctorSelect.value) { // Don't add if already selected
+                            const option = document.createElement('option');
+                            option.value = doctor.doctorId;
+                            option.textContent = doctor.username + " - " + doctor.specialty;
+                            doctorSelect.appendChild(option);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading doctors:', error);
+            });
         }
         
         // Sort appointments by ID (descending - newest first)

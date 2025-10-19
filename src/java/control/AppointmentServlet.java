@@ -222,26 +222,43 @@ public class AppointmentServlet extends HttpServlet {
     }
     
     private void handlePatientGet(HttpServletRequest request, HttpServletResponse response, User user)
-            throws ServletException, IOException {
-        
-        try {
-            // Get detailed appointments for ALL patients of this user
-            dao.AppointmentDAO appointmentDAO = new dao.AppointmentDAO();
-            List<AppointmentDetailDTO> appointmentDetails = appointmentDAO.getDetailedAppointmentsByUserId(user.getUserId());
-            
-            request.setAttribute("appointmentDetails", appointmentDetails);
-            
-            if (appointmentDetails.isEmpty()) {
-                request.setAttribute("error", "Bạn chưa có lịch hẹn nào!");
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
+        throws ServletException, IOException {
+
+    String action = request.getParameter("action");
+    dao.AppointmentDAO appointmentDAO = new dao.AppointmentDAO();
+
+    try {
+        if ("edit".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            entity.Appointment appointment = appointmentDAO.getAppointmentById(id);
+            request.setAttribute("appointment", appointment);
+            request.getRequestDispatcher("/patient/editAppointment.jsp").forward(request, response);
+            return;
         }
-        
-        request.getRequestDispatcher("/patient/viewAppointment.jsp").forward(request, response);
+
+        if ("delete".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            appointmentDAO.deleteAppointment(id);
+            response.sendRedirect("appointment"); // load lại danh sách
+            return;
+        }
+
+        // --- mặc định: xem danh sách ---
+        List<AppointmentDetailDTO> appointmentDetails = appointmentDAO.getDetailedAppointmentsByUserId(user.getUserId());
+        request.setAttribute("appointmentDetails", appointmentDetails);
+
+        if (appointmentDetails.isEmpty()) {
+            request.setAttribute("error", "Bạn chưa có lịch hẹn nào!");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
     }
+
+        request.getRequestDispatcher("/patient/viewAppointment_new.jsp").forward(request, response);
+}
+
     
     // ========== DOCTOR FUNCTIONALITY (Other person's code) ==========
     private void handleDoctorPost(HttpServletRequest request, HttpServletResponse response, User user)

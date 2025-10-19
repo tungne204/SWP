@@ -58,7 +58,7 @@
 
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="index.jsp" class="logo d-flex align-items-center me-auto">
+                    <a href="Home.jsp" class="logo d-flex align-items-center me-auto">
                         <h1 class="sitename">Medilab</h1>
                     </a>
 
@@ -399,7 +399,8 @@
                             </div>
                             <div class="col-md-6 form-group mt-3 mt-md-0">
                                 <label for="parentId">Parent ID Number</label>
-                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="Enter parent’s ID number" required>
+                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="Enter parent's ID number" required maxlength="12" pattern="[0-9]{12}">
+                                <div class="invalid-feedback">Parent ID must be exactly 12 digits</div>
                             </div>
                         </div>
 
@@ -435,7 +436,8 @@
                             </div>
                             <div class="col-md-6 form-group mt-3">
                                 <label for="appointmentDate">Appointment Date</label>
-                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" required>
+                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" required min="">
+                                <div class="invalid-feedback">Appointment date must be in the future</div>
                             </div>
                         </div>
 
@@ -1212,6 +1214,86 @@
             }
 
             function setupDateValidation() {
+                // Set minimum date to tomorrow (not today)
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const minDate = tomorrow.toISOString().split('T')[0];
+                document.getElementById('appointmentDate').min = minDate;
+                
+                // Validate appointment date
+                document.getElementById('appointmentDate').addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to start of day
+                    
+                    if (selectedDate <= now) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Appointment date must be in the future (not today)');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate parent ID
+                document.getElementById('parentId').addEventListener('input', function() {
+                    const parentIdValue = this.value.trim();
+                    if (parentIdValue && !/^\d{12}$/.test(parentIdValue)) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Parent ID must be exactly 12 digits');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate form submission
+                document.querySelector('form[action="appointment"]').addEventListener('submit', function(e) {
+                    let isValid = true;
+                    
+                    // Validate parent ID
+                    const parentIdValue = document.getElementById('parentId').value.trim();
+                    if (!/^\d{12}$/.test(parentIdValue)) {
+                        document.getElementById('parentId').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    // Validate appointment date
+                    const appointmentDate = new Date(document.getElementById('appointmentDate').value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+                    
+                    if (appointmentDate <= now) {
+                        document.getElementById('appointmentDate').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        showValidationMessage('Please fix the validation errors before submitting');
+                    }
+                });
+            }
+            
+            function showValidationMessage(message) {
+                // Remove existing validation messages
+                const existingMessages = document.querySelectorAll('.validation-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create new validation message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger validation-message';
+                messageDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
+                
+                // Insert before form
+                const form = document.querySelector('form[action="appointment"]');
+                form.parentNode.insertBefore(messageDiv, form);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
                 const appointmentDateInput = document.getElementById('appointmentDate');
                 const childDobInput = document.getElementById('childDob');
 
