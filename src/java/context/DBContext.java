@@ -41,12 +41,12 @@ public class DBContext {
     try {
         Connection conn = new DBContext().getConnection();
         if (conn != null) {
-            System.out.println("✅ Kết nối thành công!");
+            System.out.println("Connection successful!");
         } else {
-            System.out.println("❌ Kết nối thất bại!");
+            System.out.println("Connection failed!");
         }
     } catch (Exception e) {
-        System.out.println("❌ Lỗi kết nối: " + e.getMessage());
+        System.out.println("Connection error: " + e.getMessage());
         e.printStackTrace();
     }
 }

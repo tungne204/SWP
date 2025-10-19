@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Bệnh Nhân</title>
+    <title>Đăng Ký Bệnh Nhân - Lễ Tân</title>
     <!-- Tailwind CSS -->
     <script src="<c:url value="/assets/vendor/tailwindv4/tailwind.min.js"/>"></script>
     <link href="<c:url value="/assets/vendor/fontawesome-free/css/all.min.css"/>" rel="stylesheet">
@@ -106,36 +106,6 @@
             margin-right: 8px;
         }
         
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .table th {
-            background-color: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .table-striped tr:nth-child(even) {
-            background-color: #f9fafb;
-        }
-        
-        .priority-booked {
-            background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
-        }
-        
         .search-section {
             background-color: #f0f9ff;
             border: 1px solid #bae6fd;
@@ -186,10 +156,20 @@
     </style>
 </head>
 <body>
-    <%@ include file="header.jsp" %>
-    
     <div class="form-container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Đăng Ký Bệnh Nhân</h1>
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Đăng Ký Bệnh Nhân</h1>
+                    <p class="text-gray-600 mt-2">Dành cho Lễ Tân - Quản lý hàng đợi bệnh nhân</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Xin chào, <strong>${sessionScope.acc.username}</strong></p>
+                    <p class="text-sm text-gray-500">Vai trò: Lễ Tân</p>
+                </div>
+            </div>
+        </div>
         
         <!-- Form đăng ký -->
         <div class="card">
@@ -205,7 +185,15 @@
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
                 
-                <form action="<c:url value="/patient-queue"/>" method="post">
+                <!-- Success message display -->
+                <c:if test="${not empty sessionScope.successMessage}">
+                    <div class="alert alert-success mb-4" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                        <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
+                    </div>
+                    <c:remove var="successMessage" scope="session"/>
+                </c:if>
+                
+                <form action="<c:url value="/receptionist/checkin-form"/>" method="post">
                     <input type="hidden" name="action" value="checkin">
                     
                     <div class="form-group">
@@ -225,22 +213,23 @@
                     <!-- Section for walk-in patients -->
                     <div id="walkinSection">
                         <div class="form-group">
-                            <label for="patientName" class="form-label">Họ Tên Bệnh Nhân</label>
-                            <input type="text" class="form-control" id="patientName" name="patientName" placeholder="Nhập họ tên bệnh nhân">
+                            <label for="patientName" class="form-label">Họ Tên Bệnh Nhân <span class="text-red-500">*</span></label>
+                            <input type="text" class="form-control" id="patientName" name="patientName" placeholder="Nhập họ tên bệnh nhân" required>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="patientPhone" class="form-label">Số Điện Thoại Phụ Huynh</label>
-                            <input type="text" class="form-control" id="patientPhone" name="patientPhone" placeholder="Nhập số điện thoại phụ huynh">
-                            <p class="text-sm text-gray-500 mt-1">Số liên hệ của cha/mẹ hoặc người giám hộ.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="patientId" class="form-label">Mã Bệnh Nhân (nếu có)</label>
-                            <input type="number" class="form-control" id="patientId" name="patientId" placeholder="Nhập mã bệnh nhân nếu đã có">
+                        <!-- Parent Information -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="parentName" class="form-label">Tên Phụ Huynh/Người Giám Hộ <span class="text-red-500">*</span></label>
+                                <input type="text" class="form-control" id="parentName" name="parentName" placeholder="Nhập tên phụ huynh" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="parentCccd" class="form-label">Số CCCD Phụ Huynh <span class="text-red-500">*</span></label>
+                                <input type="text" class="form-control" id="parentCccd" name="parentCccd" placeholder="Nhập số CCCD" required>
+                            </div>
                         </div>
 
-                        <!-- Các trường bổ sung để khớp với bảng Patient -->
+                        <!-- Các trường bổ sung -->
                         <div class="grid md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label for="dob" class="form-label">Ngày Sinh</label>
@@ -288,20 +277,15 @@
                         </div>
                     </div>
                     
-                    <!-- Thông Tin Phụ Huynh (tối giản) -->
-                    <div id="pediatricSection" class="mt-6">
-                        <h6 class="font-semibold text-gray-800 mb-3">Thông Tin Phụ Huynh</h6>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="form-group md:col-span-2">
-                                <label for="guardianName" class="form-label">Tên Phụ Huynh/Người Giám Hộ (tùy chọn)</label>
-                                <input type="text" class="form-control" id="guardianName" name="guardianName" placeholder="Nhập tên phụ huynh/người giám hộ">
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div class="flex gap-3">
-                        <button type="submit" class="btn btn-primary flex-1">Đăng Ký</button>
-                        <a href="patient-queue?action=view" class="btn btn-secondary flex-1 text-center">Quay Lại Danh Sách</a>
+                        <button type="submit" class="btn btn-primary flex-1">
+                            <i class="fas fa-user-plus"></i> Đăng Ký Bệnh Nhân
+                        </button>
+                        <a href="<c:url value="/receptionist/waiting-screen.jsp"/>" class="btn btn-secondary flex-1 text-center">
+                            <i class="fas fa-arrow-left"></i> Quay Lại
+                        </a>
                     </div>
                 </form>
             </div>
@@ -312,17 +296,17 @@
             <div class="card-header">
                 <h5 class="text-xl font-semibold">Hướng Dẫn Sử Dụng</h5>
             </div>
-                    <div class="p-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Trực Tiếp</h6>
-                                <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                                    <li>Nhập thông tin bệnh nhân (họ tên) và SĐT phụ huynh</li>
-                                    <li>Nhập mã bệnh nhân nếu đã có trong hệ thống</li>
-                                    <li>Ấn "Đăng Ký" để vào hàng đợi</li>
-                                    <li>Bệnh nhân sẽ được sắp xếp theo thứ tự đến</li>
-                                </ul>
-                            </div>
+            <div class="p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Trực Tiếp</h6>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                            <li>Nhập thông tin bệnh nhân (họ tên) và SĐT phụ huynh</li>
+                            <li>Nhập mã bệnh nhân nếu đã có trong hệ thống</li>
+                            <li>Ấn "Đăng Ký" để vào hàng đợi</li>
+                            <li>Bệnh nhân sẽ được sắp xếp theo thứ tự đến</li>
+                        </ul>
+                    </div>
                     <div>
                         <h6 class="font-semibold text-lg text-gray-800 mb-3">Bệnh Nhân Đặt Lịch</h6>
                         <ul class="list-disc pl-5 space-y-2 text-gray-600">

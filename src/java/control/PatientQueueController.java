@@ -27,6 +27,7 @@ public class PatientQueueController extends HttpServlet {
     private QueueConfigurationDAO queueConfigDAO;
     private DoctorDAO doctorDAO;
     private MedicalReportDAO medicalReportDAO;
+    private ParentDAO parentDAO;
 
     @Override
     public void init() throws ServletException {
@@ -38,6 +39,7 @@ public class PatientQueueController extends HttpServlet {
         queueConfigDAO = new QueueConfigurationDAO();
         doctorDAO = new DoctorDAO();
         medicalReportDAO = new MedicalReportDAO();
+        parentDAO = new ParentDAO();
         
         // Ensure at least one doctor exists in the database
         doctorDAO.ensureDefaultDoctorExists();
@@ -126,6 +128,12 @@ public class PatientQueueController extends HttpServlet {
                 Patient patient = patientDAO.getPatientById(pq.getPatientId());
                 details.put("patient", patient);
                 
+                // Get parent information if patient has a parent
+                if (patient.getParentId() != null) {
+                    Parent parent = parentDAO.getParentById(patient.getParentId());
+                    details.put("parent", parent);
+                }
+                
                 // Get appointment information if exists
                 if (pq.getAppointmentId() != null) {
                     Appointment appointment = appointmentDAO.getAppointmentById(pq.getAppointmentId());
@@ -140,7 +148,7 @@ public class PatientQueueController extends HttpServlet {
             
             request.setAttribute("queueDetails", queueDetails);
             request.setAttribute("completedPatients", completedPatients);
-            request.getRequestDispatcher("/Receptionist/waiting-screen.jsp").forward(request, response);
+            request.getRequestDispatcher("/receptionist/waiting-screen.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
@@ -164,6 +172,13 @@ public class PatientQueueController extends HttpServlet {
                 // Get patient information
                 Patient patient = patientDAO.getPatientById(pq.getPatientId());
                 details.put("patient", patient);
+                
+                // Get parent information if exists
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                details.put("parent", parent);
                 
                 // Get appointment information if exists
                 if (pq.getAppointmentId() != null) {
@@ -321,7 +336,7 @@ public class PatientQueueController extends HttpServlet {
             if (patientQueueDAO.isPatientInQueueToday(patientId)) {
                 // Patient is already in queue today, redirect with message
                 request.getSession().setAttribute("errorMessage", "Benh nhan da o trong hang cho.");
-                response.sendRedirect(request.getContextPath() +"/patient-queue/checkin-form.jsp");
+                response.sendRedirect(request.getContextPath() + "/receptionist/checkin-form");
                 return;
             }
             
@@ -371,7 +386,11 @@ public class PatientQueueController extends HttpServlet {
             // Broadcast WebSocket update for new patient in queue
             try {
                 Patient patient = patientDAO.getPatientById(patientId);
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, patientQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, patientQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("patient_added", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
@@ -407,7 +426,11 @@ public class PatientQueueController extends HttpServlet {
             try {
                 PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
                 Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
@@ -519,7 +542,11 @@ public class PatientQueueController extends HttpServlet {
             try {
                 PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
                 Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
@@ -610,7 +637,11 @@ public class PatientQueueController extends HttpServlet {
             try {
                 PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(consultation.getQueueId());
                 Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
@@ -651,7 +682,11 @@ public class PatientQueueController extends HttpServlet {
             try {
                 PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
                 Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
@@ -691,7 +726,11 @@ public class PatientQueueController extends HttpServlet {
             try {
                 PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(queueId);
                 Patient patient = patientDAO.getPatientById(updatedQueue.getPatientId());
-                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue);
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
                 PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
             } catch (Exception e) {
                 System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
