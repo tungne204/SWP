@@ -23,7 +23,10 @@ import entity.User;
     "/testResult",
     "/updateAppointment",
     "/deleteAppointment",
-    "/viewAppointment"
+    "/viewAppointment",
+    "/set-permission",
+    "/test-result",
+    "/medical-report"
 })
 public class ServletAuthFilter implements Filter {
     
@@ -83,12 +86,12 @@ public class ServletAuthFilter implements Filter {
      */
     private boolean hasPermission(String uri, int roleId) {
         // Patient servlets (role_id = 3)
-        if (uri.contains("/appointment") || uri.contains("/viewAppointment")) {
+        if (uri.contains("/viewAppointment")) {
             return roleId == 3; // Chỉ Patient
         }
         
         // Doctor servlets (role_id = 2)
-        if (uri.contains("/medicalReport") || uri.contains("/testResult")) {
+        if (uri.contains("/medicalReport") || uri.contains("/testResult") || uri.contains("/appointment")) {
             return roleId == 2; // Chỉ Doctor
         }
         
