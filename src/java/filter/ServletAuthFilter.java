@@ -18,9 +18,6 @@ import entity.User;
     "/resetPassword",
     "/doctors",
     "/patientSearch",
-    "/setPermission",
-    "/medicalReport",
-    "/testResult",
     "/updateAppointment",
     "/deleteAppointment",
     "/viewAppointment",
@@ -91,7 +88,7 @@ public class ServletAuthFilter implements Filter {
         }
         
         // Doctor servlets (role_id = 2)
-        if (uri.contains("/medicalReport") || uri.contains("/testResult") || uri.contains("/appointment")) {
+        if (uri.contains("/medical-report") || uri.contains("/test-result") || uri.contains("/appointment")) {
             return roleId == 2; // Chỉ Doctor
         }
         
@@ -101,7 +98,7 @@ public class ServletAuthFilter implements Filter {
         }
         
         // Manager servlets (role_id = 1)
-        if (uri.contains("/setPermission")) {
+        if (uri.contains("/set-permission")) {
             return roleId == 1; // Chỉ Manager
         }
         
