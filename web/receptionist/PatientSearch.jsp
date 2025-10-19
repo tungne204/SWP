@@ -99,7 +99,12 @@
                     ❌ No patient found for keyword "<strong>${keyword}</strong>".
                 </div>
             </c:if>
-
+            <br>
+            <!-- Nút quay lại Receptionist Dashboard -->
+            <a href="Receptionist-Dashboard"
+               class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-medium shadow-sm">
+                ⬅ Back to Dashboard
+            </a>
         </div>
 
         <!-- ✅ Kiểm tra không nhập gì (Frontend) -->
