@@ -1,7 +1,7 @@
 <%-- 
-    Document   : View Patient
-    Created on : Oct 8, 2025, 5:37:48 PM
-    Author     : Kiên
+    Document   : editAppointment
+    Created on : Oct 18, 2025, 8:24:53 PM
+    Author     : tungn
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Receptionist View All Patient</title>
+        <title>JSP Page</title>
     </head>
     <body>
         <h1>Hello World!</h1>

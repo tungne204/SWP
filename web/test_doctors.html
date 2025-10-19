@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Doctors Loading</title>
+</head>
+<body>
+    <h1>Test Doctors Loading</h1>
+    <select id="doctorId">
+        <option value="">Loading...</option>
+    </select>
+    
+    <script>
+        function loadDoctors() {
+            console.log('Loading doctors...');
+            fetch('./doctors')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(doctors => {
+                    console.log('Doctors loaded:', doctors);
+                    const doctorSelect = document.getElementById('doctorId');
+                    
+                    if (!doctorSelect) {
+                        console.error('Doctor select element not found!');
+                        return;
+                    }
+                    
+                    doctorSelect.innerHTML = '<option value="">Choose doctor</option>';
+
+                    if (doctors && doctors.length > 0) {
+                        doctors.forEach(doctor => {
+                            const option = document.createElement('option');
+                            option.value = doctor.doctorId;
+                            option.textContent = doctor.username + " - " + (doctor.specialty || 'General Medicine');
+                            doctorSelect.appendChild(option);
+                        });
+                        console.log('Doctors loaded successfully:', doctors.length, 'doctors');
+                    } else {
+                        doctorSelect.innerHTML = '<option value="">No doctors available</option>';
+                        console.warn('No doctors found in database');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading doctors:', error);
+                    const doctorSelect = document.getElementById('doctorId');
+                    if (doctorSelect) {
+                        doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                    }
+                });
+        }
+        
+        // Load doctors when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctors();
+        });
+    </script>
+</body>
+</html>

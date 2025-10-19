@@ -6,7 +6,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import entity.User;
 
-@WebFilter(urlPatterns = {"/doctor/*", "/receptionist/*", "/manager/*", "/patient-queue/*", "/medical-assistant/*"})
+@WebFilter(urlPatterns = {"/doctor/*", "/receptionist/*", "/manager/*", "/patient/*", "/patient-queue/*", "/medical-assistant/*"})
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -60,6 +60,9 @@ public class AuthFilter implements Filter {
                     return;
                 }
             }
+        if (uri.contains("/patient/") && roleId != 3) {
+            res.sendRedirect(req.getContextPath() + "/403.jsp");
+            return;
         }
         if (uri.contains("/medical-assistant/") && roleId != 4) {
             res.sendRedirect(req.getContextPath() + "/403.jsp");
