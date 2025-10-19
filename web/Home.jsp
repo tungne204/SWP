@@ -58,7 +58,7 @@
 
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="index.jsp" class="logo d-flex align-items-center me-auto">
+                    <a href="Home.jsp" class="logo d-flex align-items-center me-auto">
                         <h1 class="sitename">Medilab</h1>
                     </a>
 
@@ -87,6 +87,7 @@
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
                             <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
+                            <li><a class="dropdown-item" href="appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout">Logout</a></li>
                         </ul>
@@ -221,6 +222,7 @@
             </section><!-- /About Section -->
 
 
+
             <!-- Stats Section -->
             <section id="stats" class="stats section light-background">
 
@@ -266,96 +268,96 @@
 
             </section><!-- /Stats Section -->
 
-           <!-- Services Section -->
-<section id="services" class="services section">
+            <!-- Services Section -->
+            <section id="services" class="services section">
 
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Our Services</h2>
-        <p>Comprehensive pediatric healthcare services designed for your child’s health and well-being.</p>
-    </div><!-- End Section Title -->
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+                    <h2>Our Services</h2>
+                    <p>Comprehensive pediatric healthcare services designed for your child’s health and well-being.</p>
+                </div><!-- End Section Title -->
 
-    <div class="container">
+                <div class="container">
 
-        <div class="row gy-4">
+                    <div class="row gy-4">
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="service-item  position-relative">
-                    <div class="icon">
-                        <i class="fas fa-heartbeat"></i>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                            <div class="service-item  position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>General Pediatric Check-ups</h3>
+                                </a>
+                                <p>Regular health check-ups to monitor growth, development, and prevent common illnesses in children.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                            <div class="service-item position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-syringe"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>Vaccination Programs</h3>
+                                </a>
+                                <p>Complete immunization services to protect your child from preventable diseases and infections.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                            <div class="service-item position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-hospital-user"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>Newborn & Infant Care</h3>
+                                </a>
+                                <p>Specialized care and guidance for newborns and infants to ensure a healthy start in life.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                            <div class="service-item position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-dna"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>Allergy & Asthma Management</h3>
+                                </a>
+                                <p>Diagnosis and treatment for allergies, asthma, and other chronic conditions in children.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                            <div class="service-item position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-wheelchair"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>Emergency Pediatric Care</h3>
+                                </a>
+                                <p>Immediate medical attention for urgent health issues, injuries, and sudden illnesses in children.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                            <div class="service-item position-relative">
+                                <div class="icon">
+                                    <i class="fas fa-notes-medical"></i>
+                                </div>
+                                <a href="#" class="stretched-link">
+                                    <h3>Health Counseling for Families</h3>
+                                </a>
+                                <p>Guidance for parents on nutrition, mental health, and preventive care for a healthy childhood.</p>
+                            </div>
+                        </div><!-- End Service Item -->
+
                     </div>
-                    <a href="#" class="stretched-link">
-                        <h3>General Pediatric Check-ups</h3>
-                    </a>
-                    <p>Regular health check-ups to monitor growth, development, and prevent common illnesses in children.</p>
+
                 </div>
-            </div><!-- End Service Item -->
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="service-item position-relative">
-                    <div class="icon">
-                        <i class="fas fa-syringe"></i>
-                    </div>
-                    <a href="#" class="stretched-link">
-                        <h3>Vaccination Programs</h3>
-                    </a>
-                    <p>Complete immunization services to protect your child from preventable diseases and infections.</p>
-                </div>
-            </div><!-- End Service Item -->
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="service-item position-relative">
-                    <div class="icon">
-                        <i class="fas fa-hospital-user"></i>
-                    </div>
-                    <a href="#" class="stretched-link">
-                        <h3>Newborn & Infant Care</h3>
-                    </a>
-                    <p>Specialized care and guidance for newborns and infants to ensure a healthy start in life.</p>
-                </div>
-            </div><!-- End Service Item -->
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                <div class="service-item position-relative">
-                    <div class="icon">
-                        <i class="fas fa-dna"></i>
-                    </div>
-                    <a href="#" class="stretched-link">
-                        <h3>Allergy & Asthma Management</h3>
-                    </a>
-                    <p>Diagnosis and treatment for allergies, asthma, and other chronic conditions in children.</p>
-                </div>
-            </div><!-- End Service Item -->
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                <div class="service-item position-relative">
-                    <div class="icon">
-                        <i class="fas fa-wheelchair"></i>
-                    </div>
-                    <a href="#" class="stretched-link">
-                        <h3>Emergency Pediatric Care</h3>
-                    </a>
-                    <p>Immediate medical attention for urgent health issues, injuries, and sudden illnesses in children.</p>
-                </div>
-            </div><!-- End Service Item -->
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-                <div class="service-item position-relative">
-                    <div class="icon">
-                        <i class="fas fa-notes-medical"></i>
-                    </div>
-                    <a href="#" class="stretched-link">
-                        <h3>Health Counseling for Families</h3>
-                    </a>
-                    <p>Guidance for parents on nutrition, mental health, and preventive care for a healthy childhood.</p>
-                </div>
-            </div><!-- End Service Item -->
-
-        </div>
-
-    </div>
-
-</section><!-- /Services Section -->
+            </section><!-- /Services Section -->
 
 
             <!-- Appointment Section -->
@@ -364,171 +366,230 @@
                 <!-- Section Title -->
                 <div class="container section-title" data-aos="fade-up">
                     <h2>Appointment</h2>
-                    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+                    <p>Please fill in the information below to schedule your child’s appointment.</p>
                 </div><!-- End Section Title -->
 
                 <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-                    <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
+                    <% 
+                        String success = (String) request.getAttribute("success");
+                        String error = (String) request.getAttribute("error");
+                    %>
+
+                    <% if (success != null) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> <%= success %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
+
+                    <% if (error != null) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
+
+                    <% if (acc != null && acc.getRoleId() == 3) { %>
+                    <form action="appointment" method="post" role="form">
                         <div class="row">
-                            <div class="col-md-4 form-group">
-                                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+                            <div class="col-md-6 form-group">
+                                <label for="parentName">Parent Name</label>
+                                <input type="text" name="parentName" class="form-control" id="parentName" placeholder="Enter parent’s full name" required>
                             </div>
-                            <div class="col-md-4 form-group mt-3 mt-md-0">
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
-                            </div>
-                            <div class="col-md-4 form-group mt-3 mt-md-0">
-                                <input type="tel" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
+                            <div class="col-md-6 form-group mt-3 mt-md-0">
+                                <label for="parentId">Parent ID Number</label>
+                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="Enter parent's ID number" required maxlength="12" pattern="[0-9]{12}">
+                                <div class="invalid-feedback">Parent ID must be exactly 12 digits</div>
                             </div>
                         </div>
+
                         <div class="row">
-                            <div class="col-md-4 form-group mt-3">
-                                <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Appointment Date" required="">
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="childName">Child’s Name</label>
+                                <input type="text" name="childName" class="form-control" id="childName" placeholder="Enter child’s full name" required>
                             </div>
-                            <div class="col-md-4 form-group mt-3">
-                                <select name="department" id="department" class="form-select" required="">
-                                    <option value="">Select Department</option>
-                                    <option value="Department 1">Department 1</option>
-                                    <option value="Department 2">Department 2</option>
-                                    <option value="Department 3">Department 3</option>
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="childDob">Child’s Date of Birth</label>
+                                <input type="date" name="childDob" class="form-control" id="childDob" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="address">Address</label>
+                                <input type="text" name="address" class="form-control" id="address" placeholder="Enter address" required>
+                            </div>
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="insuranceInfo">Insurance Information</label>
+                                <input type="text" name="insuranceInfo" class="form-control" id="insuranceInfo" placeholder="Enter insurance details" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="doctorId">Select Doctor</label>
+                                <select name="doctorId" id="doctorId" class="form-select" required>
+                                    <option value="">Choose a doctor</option>
+                                    <!-- Doctors will be loaded via JavaScript -->
                                 </select>
                             </div>
-                            <div class="col-md-4 form-group mt-3">
-                                <select name="doctor" id="doctor" class="form-select" required="">
-                                    <option value="">Select Doctor</option>
-                                    <option value="Doctor 1">Doctor 1</option>
-                                    <option value="Doctor 2">Doctor 2</option>
-                                    <option value="Doctor 3">Doctor 3</option>
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="appointmentDate">Appointment Date</label>
+                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" required min="">
+                                <div class="invalid-feedback">Appointment date must be in the future</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 form-group mt-3">
+                                <label for="appointmentTime">Appointment Time</label>
+                                <select name="appointmentTime" id="appointmentTime" class="form-select" required>
+                                    <option value="">Choose a time</option>
+                                    <option value="08:00">8:00 AM</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="13:00">1:00 PM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-group mt-3">
-                            <textarea class="form-control" name="message" rows="5" placeholder="Message (Optional)"></textarea>
-                        </div>
                         <div class="mt-3">
-                            <div class="loading">Loading</div>
                             <div class="error-message"></div>
-                            <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-                            <div class="text-center"><button type="submit">Make an Appointment</button></div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="cta-btn">Book Appointment</button>
+                            </div>
+
                         </div>
                     </form>
+
+                    <% } else { %>
+                    <div class="text-center">
+                        <h4>To make an appointment, please log in with a patient account.</h4>
+                        <a href="Login.jsp" class="btn btn-primary">Log In</a>
+                    </div>
+                    <% } %>
 
                 </div>
 
             </section><!-- /Appointment Section -->
 
-         <!-- Departments Section -->
-<section id="departments" class="departments section">
 
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Departments</h2>
-        <p>Specialized pediatric departments dedicated to children’s health and well-being.</p>
-    </div><!-- End Section Title -->
+            <!-- Departments Section -->
+            <section id="departments" class="departments section">
 
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+                    <h2>Departments</h2>
+                    <p>Specialized pediatric departments dedicated to children’s health and well-being.</p>
+                </div><!-- End Section Title -->
 
-        <div class="row">
-            <div class="col-lg-3">
-                <ul class="nav nav-tabs flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active show" data-bs-toggle="tab" href="#departments-tab-1">General Pediatrics</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-2">Neonatology</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-3">Pediatric Nutrition</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-4">Pediatric Neurology</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-5">Pediatric Eye Care</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-lg-9 mt-4 mt-lg-0">
-                <div class="tab-content">
-                    
-                    <!-- General Pediatrics -->
-                    <div class="tab-pane active show" id="departments-tab-1">
-                        <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>General Pediatrics</h3>
-                                <p class="fst-italic">Comprehensive healthcare for children of all ages, from routine check-ups to preventive care.</p>
-                                <p>Our pediatricians focus on overall growth, development, and early detection of common childhood illnesses. We provide vaccinations, health screenings, and treatment for acute and chronic conditions.</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/departments-1.jpg" alt="General Pediatrics" class="img-fluid">
-                            </div>
+                <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <ul class="nav nav-tabs flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active show" data-bs-toggle="tab" href="#departments-tab-1">General Pediatrics</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-2">Neonatology</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-3">Pediatric Nutrition</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-4">Pediatric Neurology</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#departments-tab-5">Pediatric Eye Care</a>
+                                </li>
+                            </ul>
                         </div>
-                    </div>
+                        <div class="col-lg-9 mt-4 mt-lg-0">
+                            <div class="tab-content">
 
-                    <!-- Neonatology -->
-                    <div class="tab-pane" id="departments-tab-2">
-                        <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Neonatology</h3>
-                                <p class="fst-italic">Specialized care for newborns, including premature babies and infants with medical needs.</p>
-                                <p>Our neonatal team ensures the best start for your baby with advanced monitoring, early screenings, and parental guidance for infant care at home.</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/departments-2.jpg" alt="Neonatology" class="img-fluid">
-                            </div>
-                        </div>
-                    </div>
+                                <!-- General Pediatrics -->
+                                <div class="tab-pane active show" id="departments-tab-1">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>General Pediatrics</h3>
+                                            <p class="fst-italic">Comprehensive healthcare for children of all ages, from routine check-ups to preventive care.</p>
+                                            <p>Our pediatricians focus on overall growth, development, and early detection of common childhood illnesses. We provide vaccinations, health screenings, and treatment for acute and chronic conditions.</p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="assets/img/departments-1.jpg" alt="General Pediatrics" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Pediatric Nutrition -->
-                    <div class="tab-pane" id="departments-tab-3">
-                        <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Pediatric Nutrition</h3>
-                                <p class="fst-italic">Guidance and treatment for nutrition-related issues in children.</p>
-                                <p>We provide dietary counseling, weight management, and personalized meal plans to support healthy growth, address malnutrition, and prevent obesity in children.</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/departments-3.jpg" alt="Pediatric Nutrition" class="img-fluid">
-                            </div>
-                        </div>
-                    </div>
+                                <!-- Neonatology -->
+                                <div class="tab-pane" id="departments-tab-2">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>Neonatology</h3>
+                                            <p class="fst-italic">Specialized care for newborns, including premature babies and infants with medical needs.</p>
+                                            <p>Our neonatal team ensures the best start for your baby with advanced monitoring, early screenings, and parental guidance for infant care at home.</p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="assets/img/departments-2.jpg" alt="Neonatology" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Pediatric Neurology -->
-                    <div class="tab-pane" id="departments-tab-4">
-                        <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Pediatric Neurology</h3>
-                                <p class="fst-italic">Diagnosis and treatment of neurological conditions in children.</p>
-                                <p>Our specialists care for children with epilepsy, developmental delays, headaches, and other neurological disorders, combining expertise with compassionate support for families.</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/departments-4.jpg" alt="Pediatric Neurology" class="img-fluid">
-                            </div>
-                        </div>
-                    </div>
+                                <!-- Pediatric Nutrition -->
+                                <div class="tab-pane" id="departments-tab-3">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>Pediatric Nutrition</h3>
+                                            <p class="fst-italic">Guidance and treatment for nutrition-related issues in children.</p>
+                                            <p>We provide dietary counseling, weight management, and personalized meal plans to support healthy growth, address malnutrition, and prevent obesity in children.</p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="assets/img/departments-3.jpg" alt="Pediatric Nutrition" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Pediatric Eye Care -->
-                    <div class="tab-pane" id="departments-tab-5">
-                        <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Pediatric Eye Care</h3>
-                                <p class="fst-italic">Comprehensive eye examinations and treatments for children.</p>
-                                <p>From vision screenings to treatment for conditions such as lazy eye or myopia, our specialists ensure children’s visual health supports their learning and development.</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/departments-5.jpg" alt="Pediatric Eye Care" class="img-fluid">
+                                <!-- Pediatric Neurology -->
+                                <div class="tab-pane" id="departments-tab-4">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>Pediatric Neurology</h3>
+                                            <p class="fst-italic">Diagnosis and treatment of neurological conditions in children.</p>
+                                            <p>Our specialists care for children with epilepsy, developmental delays, headaches, and other neurological disorders, combining expertise with compassionate support for families.</p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="assets/img/departments-4.jpg" alt="Pediatric Neurology" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pediatric Eye Care -->
+                                <div class="tab-pane" id="departments-tab-5">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            <h3>Pediatric Eye Care</h3>
+                                            <p class="fst-italic">Comprehensive eye examinations and treatments for children.</p>
+                                            <p>From vision screenings to treatment for conditions such as lazy eye or myopia, our specialists ensure children’s visual health supports their learning and development.</p>
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="assets/img/departments-5.jpg" alt="Pediatric Eye Care" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
 
                 </div>
-            </div>
-        </div>
 
-    </div>
-
-</section><!-- /Departments Section -->
+            </section><!-- /Departments Section -->
 
             <!-- Doctors Section -->
             <section id="doctors" class="doctors section">
@@ -617,243 +678,243 @@
 
             </section><!-- /Doctors Section -->
 
-           <!-- Faq Section -->
-<section id="faq" class="faq section light-background">
+            <!-- Faq Section -->
+            <section id="faq" class="faq section light-background">
 
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Frequently Asked Questions</h2>
-        <p>Find answers to common questions from parents about our pediatric clinic.</p>
-    </div><!-- End Section Title -->
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find answers to common questions from parents about our pediatric clinic.</p>
+                </div><!-- End Section Title -->
 
-    <div class="container">
+                <div class="container">
 
-        <div class="row justify-content-center">
+                    <div class="row justify-content-center">
 
-            <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+                        <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
 
-                <div class="faq-container">
+                            <div class="faq-container">
 
-                    <div class="faq-item faq-active">
-                        <h3>What ages of children do you provide care for?</h3>
-                        <div class="faq-content">
-                            <p>We provide healthcare services for children from newborns to adolescents (0–18 years old), covering every stage of growth and development.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                    <div class="faq-item">
-                        <h3>Do you offer vaccination services?</h3>
-                        <div class="faq-content">
-                            <p>Yes, we provide a full range of vaccinations recommended for children according to national and international guidelines. Our doctors will guide parents on the vaccination schedule appropriate for each age.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                    <div class="faq-item">
-                        <h3>How can I book an appointment for my child?</h3>
-                        <div class="faq-content">
-                            <p>You can book an appointment online through our website, by phone, or directly at our clinic’s reception desk. We recommend booking in advance to minimize waiting time.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                    <div class="faq-item">
-                        <h3>What should I bring when visiting the clinic?</h3>
-                        <div class="faq-content">
-                            <p>Please bring your child’s health records, vaccination history, and any medical prescriptions or test results if available. This helps our pediatricians provide the best care.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                    <div class="faq-item">
-                        <h3>Do you handle emergency cases?</h3>
-                        <div class="faq-content">
-                            <p>Yes, we provide emergency pediatric care during working hours. For severe or life-threatening emergencies, we recommend calling your local emergency number immediately.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                    <div class="faq-item">
-                        <h3>How much does a pediatric consultation cost?</h3>
-                        <div class="faq-content">
-                            <p>Consultation fees vary depending on the type of service and specialist. Please contact our reception desk or check the pricing section on our website for more details.</p>
-                        </div>
-                        <i class="faq-toggle bi bi-chevron-right"></i>
-                    </div><!-- End Faq item-->
-
-                </div>
-
-            </div><!-- End Faq Column-->
-
-        </div>
-
-    </div>
-
-</section><!-- /Faq Section -->
-
-
-          <!-- Testimonials Section -->
-<section id="testimonials" class="testimonials section">
-
-    <div class="container">
-
-        <div class="row align-items-center">
-
-            <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
-                <h3>What Parents Say</h3>
-                <p>
-                    Families trust us to care for their children’s health. Here are some words from parents 
-                    about their experience at our pediatric clinic.
-                </p>
-            </div>
-
-            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
-
-                <div class="swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
-                        {
-                        "loop": true,
-                        "speed": 600,
-                        "autoplay": {
-                        "delay": 5000
-                        },
-                        "slidesPerView": "auto",
-                        "pagination": {
-                        "el": ".swiper-pagination",
-                        "type": "bullets",
-                        "clickable": true
-                        }
-                        }
-                    </script>
-                    <div class="swiper-wrapper">
-
-                        <!-- Testimonial 1 -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="d-flex">
-                                    <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img flex-shrink-0" alt="">
-                                    <div>
-                                        <h3>Emily Johnson</h3>
-                                        <h4>Mother of 2-year-old</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
+                                <div class="faq-item faq-active">
+                                    <h3>What ages of children do you provide care for?</h3>
+                                    <div class="faq-content">
+                                        <p>We provide healthcare services for children from newborns to adolescents (0–18 years old), covering every stage of growth and development.</p>
                                     </div>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>The doctors here are amazing with kids! My daughter felt safe and comfortable during her check-up. The staff is warm and professional.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
 
-                        <!-- Testimonial 2 -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="d-flex">
-                                    <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img flex-shrink-0" alt="">
-                                    <div>
-                                        <h3>Michael Carter</h3>
-                                        <h4>Father of 5-year-old</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
+                                <div class="faq-item">
+                                    <h3>Do you offer vaccination services?</h3>
+                                    <div class="faq-content">
+                                        <p>Yes, we provide a full range of vaccinations recommended for children according to national and international guidelines. Our doctors will guide parents on the vaccination schedule appropriate for each age.</p>
                                     </div>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>The vaccination service is excellent and well-organized. The doctors explained everything clearly, which gave us peace of mind.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
 
-                        <!-- Testimonial 3 -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="d-flex">
-                                    <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img flex-shrink-0" alt="">
-                                    <div>
-                                        <h3>Sophia Lee</h3>
-                                        <h4>Mother of twins</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
+                                <div class="faq-item">
+                                    <h3>How can I book an appointment for my child?</h3>
+                                    <div class="faq-content">
+                                        <p>You can book an appointment online through our website, by phone, or directly at our clinic’s reception desk. We recommend booking in advance to minimize waiting time.</p>
                                     </div>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>The clinic is very child-friendly. My twins loved the play area and felt calm during their visit. Thank you for your thoughtful care!</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
 
-                        <!-- Testimonial 4 -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="d-flex">
-                                    <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img flex-shrink-0" alt="">
-                                    <div>
-                                        <h3>David Smith</h3>
-                                        <h4>Father of 8-year-old</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
+                                <div class="faq-item">
+                                    <h3>What should I bring when visiting the clinic?</h3>
+                                    <div class="faq-content">
+                                        <p>Please bring your child’s health records, vaccination history, and any medical prescriptions or test results if available. This helps our pediatricians provide the best care.</p>
                                     </div>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>We visited in an emergency situation and the doctors acted quickly and professionally. Our son received excellent care.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
 
-                        <!-- Testimonial 5 -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="d-flex">
-                                    <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img flex-shrink-0" alt="">
-                                    <div>
-                                        <h3>Anna Brown</h3>
-                                        <h4>Mother of 10-year-old</h4>
-                                        <div class="stars">
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
+                                <div class="faq-item">
+                                    <h3>Do you handle emergency cases?</h3>
+                                    <div class="faq-content">
+                                        <p>Yes, we provide emergency pediatric care during working hours. For severe or life-threatening emergencies, we recommend calling your local emergency number immediately.</p>
                                     </div>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>The nutrition advice we received here helped improve my son’s health. I truly appreciate the care and support from the doctors.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
+
+                                <div class="faq-item">
+                                    <h3>How much does a pediatric consultation cost?</h3>
+                                    <div class="faq-content">
+                                        <p>Consultation fees vary depending on the type of service and specialist. Please contact our reception desk or check the pricing section on our website for more details.</p>
+                                    </div>
+                                    <i class="faq-toggle bi bi-chevron-right"></i>
+                                </div><!-- End Faq item-->
+
                             </div>
-                        </div><!-- End testimonial item -->
+
+                        </div><!-- End Faq Column-->
 
                     </div>
-                    <div class="swiper-pagination"></div>
+
                 </div>
 
-            </div>
+            </section><!-- /Faq Section -->
 
-        </div>
 
-    </div>
+            <!-- Testimonials Section -->
+            <section id="testimonials" class="testimonials section">
 
-</section><!-- /Testimonials Section -->
+                <div class="container">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
+                            <h3>What Parents Say</h3>
+                            <p>
+                                Families trust us to care for their children’s health. Here are some words from parents 
+                                about their experience at our pediatric clinic.
+                            </p>
+                        </div>
+
+                        <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+
+                            <div class="swiper init-swiper">
+                                <script type="application/json" class="swiper-config">
+                                    {
+                                    "loop": true,
+                                    "speed": 600,
+                                    "autoplay": {
+                                    "delay": 5000
+                                    },
+                                    "slidesPerView": "auto",
+                                    "pagination": {
+                                    "el": ".swiper-pagination",
+                                    "type": "bullets",
+                                    "clickable": true
+                                    }
+                                    }
+                                </script>
+                                <div class="swiper-wrapper">
+
+                                    <!-- Testimonial 1 -->
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <div class="d-flex">
+                                                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img flex-shrink-0" alt="">
+                                                <div>
+                                                    <h3>Emily Johnson</h3>
+                                                    <h4>Mother of 2-year-old</h4>
+                                                    <div class="stars">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>The doctors here are amazing with kids! My daughter felt safe and comfortable during her check-up. The staff is warm and professional.</span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div><!-- End testimonial item -->
+
+                                    <!-- Testimonial 2 -->
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <div class="d-flex">
+                                                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img flex-shrink-0" alt="">
+                                                <div>
+                                                    <h3>Michael Carter</h3>
+                                                    <h4>Father of 5-year-old</h4>
+                                                    <div class="stars">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>The vaccination service is excellent and well-organized. The doctors explained everything clearly, which gave us peace of mind.</span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div><!-- End testimonial item -->
+
+                                    <!-- Testimonial 3 -->
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <div class="d-flex">
+                                                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img flex-shrink-0" alt="">
+                                                <div>
+                                                    <h3>Sophia Lee</h3>
+                                                    <h4>Mother of twins</h4>
+                                                    <div class="stars">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>The clinic is very child-friendly. My twins loved the play area and felt calm during their visit. Thank you for your thoughtful care!</span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div><!-- End testimonial item -->
+
+                                    <!-- Testimonial 4 -->
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <div class="d-flex">
+                                                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img flex-shrink-0" alt="">
+                                                <div>
+                                                    <h3>David Smith</h3>
+                                                    <h4>Father of 8-year-old</h4>
+                                                    <div class="stars">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>We visited in an emergency situation and the doctors acted quickly and professionally. Our son received excellent care.</span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div><!-- End testimonial item -->
+
+                                    <!-- Testimonial 5 -->
+                                    <div class="swiper-slide">
+                                        <div class="testimonial-item">
+                                            <div class="d-flex">
+                                                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img flex-shrink-0" alt="">
+                                                <div>
+                                                    <h3>Anna Brown</h3>
+                                                    <h4>Mother of 10-year-old</h4>
+                                                    <div class="stars">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                <span>The nutrition advice we received here helped improve my son’s health. I truly appreciate the care and support from the doctors.</span>
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                        </div>
+                                    </div><!-- End testimonial item -->
+
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section><!-- /Testimonials Section -->
 
 
             <!-- Gallery Section -->
@@ -1122,6 +1183,198 @@
 
         <!-- Main JS File -->
         <script src="assets/js/main.js"></script>
+
+        <!-- Appointment JS -->
+        <script>
+// Load doctors when page loads
+            document.addEventListener('DOMContentLoaded', function () {
+                loadDoctors();
+                setupDateValidation();
+            });
+
+            function loadDoctors() {
+                console.log('Loading doctors...');
+                fetch('./doctors')
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(doctors => {
+                            console.log('Doctors loaded:', doctors);
+                            const doctorSelect = document.getElementById('doctorId');
+                            
+                            if (!doctorSelect) {
+                                console.error('Doctor select element not found!');
+                                return;
+                            }
+                            
+                            doctorSelect.innerHTML = '<option value="">Choose doctor</option>';
+
+                            if (doctors && doctors.length > 0) {
+                                doctors.forEach(doctor => {
+                                    const option = document.createElement('option');
+                                    option.value = doctor.doctorId;
+                                    option.textContent = doctor.username + " - " + (doctor.specialty || 'General Medicine');
+                                    doctorSelect.appendChild(option);
+                                });
+                                console.log('Doctors loaded successfully:', doctors.length, 'doctors');
+                            } else {
+                                doctorSelect.innerHTML = '<option value="">No doctors available</option>';
+                                console.warn('No doctors found in database');
+                            }
+
+                        })
+                        .catch(error => {
+                            console.error('Error loading doctors:', error);
+                            const doctorSelect = document.getElementById('doctorId');
+                            if (doctorSelect) {
+                                doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                            }
+                            
+                            // Show error message to user
+                            showErrorMessage('Unable to load doctors list. Please refresh the page or contact support.');
+                        });
+            }
+
+            function setupDateValidation() {
+                // Set minimum date to tomorrow (not today)
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const minDate = tomorrow.toISOString().split('T')[0];
+                document.getElementById('appointmentDate').min = minDate;
+                
+                // Validate appointment date
+                document.getElementById('appointmentDate').addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to start of day
+                    
+                    if (selectedDate <= now) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Appointment date must be in the future (not today)');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate parent ID
+                document.getElementById('parentId').addEventListener('input', function() {
+                    const parentIdValue = this.value.trim();
+                    if (parentIdValue && !/^\d{12}$/.test(parentIdValue)) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Parent ID must be exactly 12 digits');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate form submission
+                document.querySelector('form[action="appointment"]').addEventListener('submit', function(e) {
+                    let isValid = true;
+                    
+                    // Validate parent ID
+                    const parentIdValue = document.getElementById('parentId').value.trim();
+                    if (!/^\d{12}$/.test(parentIdValue)) {
+                        document.getElementById('parentId').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    // Validate appointment date
+                    const appointmentDate = new Date(document.getElementById('appointmentDate').value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+                    
+                    if (appointmentDate <= now) {
+                        document.getElementById('appointmentDate').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        showValidationMessage('Please fix the validation errors before submitting');
+                    }
+                });
+            }
+            
+            function showValidationMessage(message) {
+                // Remove existing validation messages
+                const existingMessages = document.querySelectorAll('.validation-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create new validation message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger validation-message';
+                messageDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
+                
+                // Insert before form
+                const form = document.querySelector('form[action="appointment"]');
+                form.parentNode.insertBefore(messageDiv, form);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+            
+            function showErrorMessage(message) {
+                // Remove existing error messages
+                const existingMessages = document.querySelectorAll('.error-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create new error message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger error-message';
+                messageDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
+                
+                // Insert at the top of appointment section
+                const appointmentSection = document.getElementById('appointment');
+                if (appointmentSection) {
+                    const container = appointmentSection.querySelector('.container');
+                    if (container) {
+                        container.insertBefore(messageDiv, container.firstChild);
+                    }
+                }
+                
+                // Auto remove after 10 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 10000);
+            }
+            
+            // Setup date inputs when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                const appointmentDateInput = document.getElementById('appointmentDate');
+                const childDobInput = document.getElementById('childDob');
+
+                if (appointmentDateInput) {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+
+                    const year = tomorrow.getFullYear();
+                    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const day = String(tomorrow.getDate()).padStart(2, '0');
+
+                    appointmentDateInput.min = `${year}-${month}-${day}`;
+                }
+
+                if (childDobInput) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+
+                    childDobInput.max = `${year}-${month}-${day}`;
+                }
+            });
+        </script>
 
     </body>
 

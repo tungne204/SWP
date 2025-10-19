@@ -28,6 +28,7 @@ public class PatientSearchServlet extends HttpServlet {
         List<Patient> list = dao.getAllPatients();   // <-- Lấy toàn bộ danh sách bệnh nhân
         request.setAttribute("patients", list);
         request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
+        request.getRequestDispatcher("/receptionist/Search.jsp").forward(request, response);
     }
 
     // Khi người dùng nhấn "Search" tránh làm lộ thông tin nhạy cảm(Sensitive data) của khách hàng lên thanh URL (POST)
