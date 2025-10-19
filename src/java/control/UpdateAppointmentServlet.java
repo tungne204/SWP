@@ -11,6 +11,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.AppointmentDAO;
+import entity.Appointment;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,14 +46,14 @@ public class UpdateAppointmentServlet extends HttpServlet {
             AppointmentDAO dao = new AppointmentDAO();
 
             if ("load".equals(action)) {
-                // Gửi form "Edit" -> load dữ liệu lên form
+                // Gửi form "Edit" → load dữ liệu lên form
                 int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
                 Appointment appointment = dao.getAppointmentById(appointmentId);
                 request.setAttribute("appointment", appointment);
                 request.getRequestDispatcher("/receptionist/updateAppointment.jsp").forward(request, response);
 
             } else if ("update".equals(action)) {
-                // Gửi form "Save Changes" -> cập nhật DB
+                // Gửi form "Save Changes" → cập nhật DB
                 int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
                 int patientId = Integer.parseInt(request.getParameter("patientId"));
                 int doctorId = Integer.parseInt(request.getParameter("doctorId"));
@@ -69,10 +73,8 @@ public class UpdateAppointmentServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/Appointment-List");
             }
         } catch (Exception e) {
-            System.err.println("Exception in UpdateAppointmentServlet: " + e.getMessage());
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Internal server error: " + e.getMessage());
+            response.sendRedirect("error.jsp");
         }
     }
-}
+} 
