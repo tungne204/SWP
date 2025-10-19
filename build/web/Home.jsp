@@ -58,7 +58,7 @@
 
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="index.jsp" class="logo d-flex align-items-center me-auto">
+                    <a href="Home.jsp" class="logo d-flex align-items-center me-auto">
                         <h1 class="sitename">Medilab</h1>
                     </a>
 
@@ -87,6 +87,7 @@
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
                             <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
+                            <li><a class="dropdown-item" href="appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout">Logout</a></li>
                         </ul>
@@ -219,6 +220,7 @@
                 </div>
 
             </section><!-- /About Section -->
+
 
 
             <!-- Stats Section -->
@@ -364,7 +366,7 @@
                 <!-- Section Title -->
                 <div class="container section-title" data-aos="fade-up">
                     <h2>Appointment</h2>
-                    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+                    <p>Please fill in the information below to schedule your child’s appointment.</p>
                 </div><!-- End Section Title -->
 
                 <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -398,6 +400,7 @@
                                 <input type="text" class="form-control" name="parentId" id="parentId" placeholder="CMND của bố mẹ" required="">
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
                                 <input type="text" name="childName" class="form-control" id="childName" placeholder="Tên con" required="">
@@ -442,7 +445,6 @@
                         </div>
 
                         <div class="mt-3">
-                            <div class="loading">Loading</div>
                             <div class="error-message"></div>
                             <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
                             <div class="text-center"><button type="submit">Đặt lịch</button></div>
@@ -452,6 +454,13 @@
                     <div class="text-center">
                         <h4>Để đặt lịch hẹn, vui lòng đăng nhập với tài khoản bệnh nhân</h4>
                         <a href="Login.jsp" class="btn btn-primary">Đăng nhập</a>
+                    </div>
+                    <% } %>
+
+                    <% } else { %>
+                    <div class="text-center">
+                        <h4>To make an appointment, please log in with a patient account.</h4>
+                        <a href="Login.jsp" class="btn btn-primary">Log In</a>
                     </div>
                     <% } %>
 

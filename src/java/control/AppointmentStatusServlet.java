@@ -23,7 +23,7 @@ import jakarta.servlet.*;
  *
  * @author Kiên
  */
-@WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/AppointmentStatusServlet"})
+@WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/Appointment-Status"})
 public class AppointmentStatusServlet extends HttpServlet {
 
     // Xử lý yêu cầu GET (khi truy cập trực tiếp bằng URL)
@@ -46,7 +46,7 @@ public class AppointmentStatusServlet extends HttpServlet {
         dao.updateAppointmentStatus(appointmentId, newStatus);
 
         // Quay lại trang danh sách sau khi cập nhật
-        response.sendRedirect("ViewAppointmentServlet");
+        response.sendRedirect("Appointment-List");
     }
 
 }
