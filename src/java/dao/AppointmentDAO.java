@@ -162,21 +162,42 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
+    public List<Appointment> getAllAppointments() {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT * FROM Appointment";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Appointment a = new Appointment();
+                a.setAppointmentId(rs.getInt("appointment_id"));
+                a.setPatientId(rs.getInt("patient_id"));
+                a.setDoctorId(rs.getInt("doctor_id"));
+                a.setDateTime(rs.getTimestamp("date_time"));
+                a.setStatus(rs.getBoolean("status"));
+                list.add(a);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     /**
      * Update appointment details (patient, doctor, date_time)
      *
      * @param appointment
      * @throws Exception
      */
-    public void updateAppointment(Appointment appointment) throws Exception {
+    public void updateAppointment(Appointment a) throws Exception {
         String sql = "UPDATE Appointment SET patient_id = ?, doctor_id = ?, date_time = ?, status = ? WHERE appointment_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, appointment.getPatientId());
-            ps.setInt(2, appointment.getDoctorId());
-            ps.setTimestamp(3, new java.sql.Timestamp(appointment.getDateTime().getTime()));
-            ps.setBoolean(4, appointment.isStatus());
-            ps.setInt(5, appointment.getAppointmentId());
+            ps.setInt(1, a.getPatientId());
+            ps.setInt(2, a.getDoctorId());
+            ps.setTimestamp(3, new java.sql.Timestamp(a.getDateTime().getTime()));
+            ps.setBoolean(4, a.isStatus());
+            ps.setInt(5, a.getAppointmentId());
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -186,8 +207,9 @@ public class AppointmentDAO extends DBContext {
 
     /**
      * Delete appointment by ID
+     *
      * @param appointmentId
-     * @throws Exception 
+     * @throws Exception
      */
     public void deleteAppointment(int appointmentId) throws Exception {
         String sql = "DELETE FROM Appointment WHERE appointment_id = ?";
