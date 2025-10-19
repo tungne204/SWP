@@ -673,7 +673,7 @@
             }
             
             // Send update request
-            fetch('UpdateAppointmentServlet', {
+            fetch('PatientUpdateAppointmentServlet', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -716,7 +716,7 @@
                 // Debug: Log form data
                 console.log('Deleting appointment ID:', appointmentId);
                 
-                fetch('DeleteAppointmentServlet', {
+                fetch('PatientDeleteAppointmentServlet', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'

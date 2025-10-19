@@ -1,4 +1,4 @@
-package control;
+package control.PatientControl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,27 +14,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-// Imports for Patient functionality (your code)
-import dao.DoctorDAO;
-import dao.ParentDAO;
-import dao.PatientDAO;
+// Imports for Patient functionality
+import dao.RolePatient.DoctorDAO;
+import dao.RolePatient.ParentDAO;
+import dao.RolePatient.PatientDAO;
+import dao.RolePatient.PatientAppointmentDAO;
 import entity.AppointmentDetailDTO;
 import entity.Doctor;
 import entity.Parent;
 import entity.Patient;
 import entity.User;
 
-@WebServlet(name = "AppointmentServlet", urlPatterns = {"/appointment1"})
-public class AppointmentServlet extends HttpServlet {
+/**
+ * Patient Appointment Servlet - Handles all patient-related appointment operations
+ * This servlet is specifically for patient functionality to avoid conflicts
+ */
+@WebServlet(name = "PatientAppointmentServlet", urlPatterns = {"/patient-appointment"})
+public class PatientAppointmentServlet extends HttpServlet {
     
-    // DAO for Doctor functionality
-    private dao.viewSchedule.AppointmentDAO doctorDao;
-
-    @Override
-    public void init() throws ServletException {
-        doctorDao = new dao.viewSchedule.AppointmentDAO();
-    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,14 +44,13 @@ public class AppointmentServlet extends HttpServlet {
         
         User user = (User) session.getAttribute("acc");
         
-        // Route based on user role
-        if (user.getRoleId() == 3) { // Patient role - your functionality
-            handlePatientPost(request, response, user);
-        } else if (user.getRoleId() == 2) { // Doctor role - other person's functionality
-            handleDoctorPost(request, response, user);
-        } else {
+        // Only allow patients (role_id = 3)
+        if (user.getRoleId() != 3) {
             response.sendRedirect("403.jsp");
+            return;
         }
+        
+        handlePatientPost(request, response, user);
     }
     
     @Override
@@ -69,17 +65,16 @@ public class AppointmentServlet extends HttpServlet {
         
         User user = (User) session.getAttribute("acc");
         
-        // Route based on user role
-        if (user.getRoleId() == 3) { // Patient role - your functionality
-            handlePatientGet(request, response, user);
-        } else if (user.getRoleId() == 2) { // Doctor role - other person's functionality
-            handleDoctorGet(request, response, user);
-        } else {
+        // Only allow patients (role_id = 3)
+        if (user.getRoleId() != 3) {
             response.sendRedirect("403.jsp");
+            return;
         }
+        
+        handlePatientGet(request, response, user);
     }
     
-    // ========== PATIENT FUNCTIONALITY (Your code) ==========
+    // ========== PATIENT FUNCTIONALITY ==========
     private void handlePatientPost(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
         
@@ -191,7 +186,7 @@ public class AppointmentServlet extends HttpServlet {
             }
             
             // Create appointment
-            dao.AppointmentDAO appointmentDAO = new dao.AppointmentDAO();
+            PatientAppointmentDAO appointmentDAO = new PatientAppointmentDAO();
             entity.Appointment appointment = new entity.Appointment();
             appointment.setPatientId(patientId);
             appointment.setDoctorId(doctorId);
@@ -224,180 +219,43 @@ public class AppointmentServlet extends HttpServlet {
     private void handlePatientGet(HttpServletRequest request, HttpServletResponse response, User user)
         throws ServletException, IOException {
 
-    String action = request.getParameter("action");
-    dao.AppointmentDAO appointmentDAO = new dao.AppointmentDAO();
+        String action = request.getParameter("action");
+        PatientAppointmentDAO appointmentDAO = new PatientAppointmentDAO();
 
-    try {
-        if ("edit".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            entity.Appointment appointment = appointmentDAO.getAppointmentById(id);
-            request.setAttribute("appointment", appointment);
-            request.getRequestDispatcher("/patient/editAppointment.jsp").forward(request, response);
-            return;
+        try {
+            if ("edit".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                entity.Appointment appointment = appointmentDAO.getAppointmentById(id);
+                request.setAttribute("appointment", appointment);
+                request.getRequestDispatcher("/patient/editAppointment.jsp").forward(request, response);
+                return;
+            }
+
+            if ("delete".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                appointmentDAO.deleteAppointment(id);
+                response.sendRedirect("patient-appointment"); // load lại danh sách
+                return;
+            }
+
+            // --- mặc định: xem danh sách ---
+            List<AppointmentDetailDTO> appointmentDetails = appointmentDAO.getDetailedAppointmentsByUserId(user.getUserId());
+            request.setAttribute("appointmentDetails", appointmentDetails);
+
+            if (appointmentDetails.isEmpty()) {
+                request.setAttribute("error", "Bạn chưa có lịch hẹn nào!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
         }
-
-        if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            appointmentDAO.deleteAppointment(id);
-            response.sendRedirect("appointment"); // load lại danh sách
-            return;
-        }
-
-        // --- mặc định: xem danh sách ---
-        List<AppointmentDetailDTO> appointmentDetails = appointmentDAO.getDetailedAppointmentsByUserId(user.getUserId());
-        request.setAttribute("appointmentDetails", appointmentDetails);
-
-        if (appointmentDetails.isEmpty()) {
-            request.setAttribute("error", "Bạn chưa có lịch hẹn nào!");
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách lịch hẹn: " + e.getMessage());
-    }
 
         request.getRequestDispatcher("/patient/viewAppointment_new.jsp").forward(request, response);
-}
-
-    
-    // ========== DOCTOR FUNCTIONALITY (Other person's code) ==========
-    private void handleDoctorPost(HttpServletRequest request, HttpServletResponse response, User user)
-            throws ServletException, IOException {
-        // Doctor POST functionality - currently just calls processRequest
-        processRequest(request, response);
-    }
-    
-    private void handleDoctorGet(HttpServletRequest request, HttpServletResponse response, User user)
-            throws ServletException, IOException {
-        
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
-
-        switch (action) {
-            case "list":
-                listAppointments(request, response);
-                break;
-            case "by-date":
-                listByDate(request, response);
-                break;
-            case "view":
-                viewAppointment(request, response);
-                break;
-            case "pending":
-                listPending(request, response);
-                break;
-            default:
-                listAppointments(request, response);
-                break;
-        }
-    }
-    
-    // Doctor methods (from other person's code)
-    private void listAppointments(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1; // Giá trị mặc định để test
-        }
-
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getAllByDoctorId(doctorId);
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("viewType", "all");
-        request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
-    }
-
-    // Hiển thị appointments theo ngày
-    private void listByDate(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1;
-        }
-
-        String date = request.getParameter("date");
-        if (date == null || date.isEmpty()) {
-            // Nếu không có date, redirect về list
-            response.sendRedirect("appointment?action=list");
-            return;
-        }
-
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getByDoctorAndDate(doctorId, date);
-        int count = doctorDao.countByDoctorAndDate(doctorId, date);
-        
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("selectedDate", date);
-        request.setAttribute("appointmentCount", count);
-        request.setAttribute("viewType", "by-date");
-        request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
-    }
-
-    // Xem chi tiết appointment
-    private void viewAppointment(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        try {
-            int appointmentId = Integer.parseInt(request.getParameter("id"));
-            
-            entity.viewSchedule.Appointment appointment = doctorDao.getById(appointmentId);
-            
-            if (appointment != null) {
-                request.setAttribute("appointment", appointment);
-                request.getRequestDispatcher("doctor/appointment-detail.jsp").forward(request, response);
-            } else {
-                request.getSession().setAttribute("message", "Không tìm thấy lịch hẹn!");
-                request.getSession().setAttribute("messageType", "error");
-                response.sendRedirect("appointment?action=list");
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            response.sendRedirect("appointment?action=list");
-        }
-    }
-
-    // Hiển thị appointments chưa khám (chưa có medical report)
-    private void listPending(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1;
-        }
-
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getPendingByDoctorId(doctorId);
-        request.setAttribute("appointments", appointments);
-        request.setAttribute("viewType", "pending");
-        request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
-    }
-    
-    // ========== COMMON METHODS ==========
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AppointmentServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AppointmentServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     @Override
     public String getServletInfo() {
-        return "Combined Appointment Servlet for both Patient and Doctor functionality";
+        return "Patient Appointment Servlet - Handles patient appointment operations";
     }
 }

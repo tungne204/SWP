@@ -6,8 +6,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(name = "RegisterControl", urlPatterns = {"/register"})
+@WebServlet(name = "RegisterControl", urlPatterns = {"/Register"})
 public class RegisterControl extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Check if user is already logged in
+        if (request.getSession(false) != null && request.getSession(false).getAttribute("acc") != null) {
+            response.sendRedirect("Home.jsp");
+            return;
+        }
+        
+        // Forward to Register.jsp
+        request.getRequestDispatcher("Register.jsp").forward(request, response);
+    }
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -58,9 +58,10 @@
 
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="Home.jsp" class="logo d-flex align-items-center me-auto">
-                        <h1 class="sitename">Medilab</h1>
-                    </a>
+                    <a href="${pageContext.request.contextPath}/" class="logo d-flex align-items-center me-auto">
+    <h1 class="sitename">Medilab</h1>
+</a>
+
 
                     <nav id="navmenu" class="navmenu">
                         <ul>
@@ -77,7 +78,7 @@
                     <a class="cta-btn d-none d-sm-block" href="#appointment">Make an Appointment</a>
 
                     <% if (acc == null) { %>
-                    <a class="cta-btn d-none d-sm-block" href="Login.jsp">Login</a>
+                    <a class="cta-btn d-none d-sm-block" href="Login">Login</a>
                     <% } else { %>
                     <div class="dropdown ms-4">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu" 
@@ -86,8 +87,8 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
-                            <li><a class="dropdown-item" href="Change_password.jsp">Change Password</a></li>
-                            <li><a class="dropdown-item" href="appointment">View My Appointments</a></li>
+                            <li><a class="dropdown-item" href="Change_password">Change Password</a></li>
+                            <li><a class="dropdown-item" href="patient-appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="logout">Logout</a></li>
                         </ul>
@@ -391,47 +392,61 @@
                     <% } %>
 
                     <% if (acc != null && acc.getRoleId() == 3) { %>
-                    <form action="appointment" method="post" role="form" >
+                    <form action="patient-appointment" method="post" role="form">
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <input type="text" name="parentName" class="form-control" id="parentName" placeholder="Tên Bố/Mẹ" required="">
+                                <label for="parentName">Parent Name</label>
+                                <input type="text" name="parentName" class="form-control" id="parentName" placeholder="Enter parent’s full name" required>
                             </div>
                             <div class="col-md-6 form-group mt-3 mt-md-0">
-                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="CMND của bố mẹ" required="">
+                                <label for="parentId">Parent ID Number</label>
+                                <input type="text" class="form-control" name="parentId" id="parentId" placeholder="Enter parent's ID number" required maxlength="12" pattern="[0-9]{12}">
+                                <div class="invalid-feedback">Parent ID must be exactly 12 digits</div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="childName" class="form-control" id="childName" placeholder="Tên con" required="">
+                                <label for="childName">Child’s Name</label>
+                                <input type="text" name="childName" class="form-control" id="childName" placeholder="Enter child’s full name" required>
                             </div>
                             <div class="col-md-6 form-group mt-3">
-                                <input type="date" name="childDob" class="form-control" id="childDob" placeholder="Ngày sinh của con" required="">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="address" class="form-control" id="address" placeholder="Địa chỉ" required="">
-                            </div>
-                            <div class="col-md-6 form-group mt-3">
-                                <input type="text" name="insuranceInfo" class="form-control" id="insuranceInfo" placeholder="Thông tin bảo hiểm" required="">
+                                <label for="childDob">Child’s Date of Birth</label>
+                                <input type="date" name="childDob" class="form-control" id="childDob" required>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-6 form-group mt-3">
-                                <select name="doctorId" id="doctorId" class="form-select" required="">
-                                    <option value="">Chọn bác sĩ</option>
+                                <label for="address">Address</label>
+                                <input type="text" name="address" class="form-control" id="address" placeholder="Enter address" required>
+                            </div>
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="insuranceInfo">Insurance Information</label>
+                                <input type="text" name="insuranceInfo" class="form-control" id="insuranceInfo" placeholder="Enter insurance details" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mt-3">
+                                <label for="doctorId">Select Doctor</label>
+                                <select name="doctorId" id="doctorId" class="form-select" required>
+                                    <option value="">Choose a doctor</option>
                                     <!-- Doctors will be loaded via JavaScript -->
                                 </select>
                             </div>
                             <div class="col-md-6 form-group mt-3">
-                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" placeholder="Ngày khám" required="">
+                                <label for="appointmentDate">Appointment Date</label>
+                                <input type="date" name="appointmentDate" class="form-control" id="appointmentDate" required min="">
+                                <div class="invalid-feedback">Appointment date must be in the future</div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-12 form-group mt-3">
-                                <select name="appointmentTime" id="appointmentTime" class="form-select" required="">
-                                    <option value="">Chọn giờ khám</option>
+                                <label for="appointmentTime">Appointment Time</label>
+                                <select name="appointmentTime" id="appointmentTime" class="form-select" required>
+                                    <option value="">Choose a time</option>
                                     <option value="08:00">8:00 AM</option>
                                     <option value="09:00">9:00 AM</option>
                                     <option value="10:00">10:00 AM</option>
@@ -446,27 +461,24 @@
 
                         <div class="mt-3">
                             <div class="error-message"></div>
-                            <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-                            <div class="text-center"><button type="submit">Đặt lịch</button></div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="cta-btn">Book Appointment</button>
+                            </div>
+
                         </div>
                     </form>
-                    <% } else { %>
-                    <div class="text-center">
-                        <h4>Để đặt lịch hẹn, vui lòng đăng nhập với tài khoản bệnh nhân</h4>
-                        <a href="Login.jsp" class="btn btn-primary">Đăng nhập</a>
-                    </div>
-                    <% } %>
 
                     <% } else { %>
                     <div class="text-center">
                         <h4>To make an appointment, please log in with a patient account.</h4>
-                        <a href="Login.jsp" class="btn btn-primary">Log In</a>
+                        <a href="Login" class="btn btn-primary">Log In</a>
                     </div>
                     <% } %>
 
                 </div>
 
             </section><!-- /Appointment Section -->
+
 
             <!-- Departments Section -->
             <section id="departments" class="departments section">
@@ -1176,46 +1188,182 @@
         <!-- Appointment JS -->
         <script>
 // Load doctors when page loads
-document.addEventListener('DOMContentLoaded', function () {
-    loadDoctors();
-    setupDateValidation();
-});
-
-function loadDoctors() {
-    fetch('doctors')
-            .then(response => response.json())
-            .then(doctors => {
-                const doctorSelect = document.getElementById('doctorId');
-                doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
-
-                doctors.forEach(doctor => {
-    const option = document.createElement('option');
-    option.value = doctor.doctorId;
-    option.textContent = doctor.username + " - " + doctor.specialty; // 👈 hiển thị username + specialty
-    doctorSelect.appendChild(option);
-});
-
-            })
-            .catch(error => {
-                console.error('Error loading doctors:', error);
-                document.getElementById('doctorId').innerHTML = '<option value="">Lỗi tải danh sách bác sĩ</option>';
+            document.addEventListener('DOMContentLoaded', function () {
+                loadDoctors();
+                setupDateValidation();
             });
-}
 
-function setupDateValidation() {
-    const appointmentDateInput = document.getElementById('appointmentDate');
-    const childDobInput = document.getElementById('childDob');
+            function loadDoctors() {
+                console.log('Loading doctors...');
+                fetch('./doctors')
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(doctors => {
+                            console.log('Doctors loaded:', doctors);
+                            const doctorSelect = document.getElementById('doctorId');
+                            
+                            if (!doctorSelect) {
+                                console.error('Doctor select element not found!');
+                                return;
+                            }
+                            
+                            doctorSelect.innerHTML = '<option value="">Choose doctor</option>';
 
-    if (appointmentDateInput) {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+                            if (doctors && doctors.length > 0) {
+                                doctors.forEach(doctor => {
+                                    const option = document.createElement('option');
+                                    option.value = doctor.doctorId;
+                                    option.textContent = doctor.username + " - " + (doctor.specialty || 'General Medicine');
+                                    doctorSelect.appendChild(option);
+                                });
+                                console.log('Doctors loaded successfully:', doctors.length, 'doctors');
+                            } else {
+                                doctorSelect.innerHTML = '<option value="">No doctors available</option>';
+                                console.warn('No doctors found in database');
+                            }
 
-        const year = tomorrow.getFullYear();
-        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-        const day = String(tomorrow.getDate()).padStart(2, '0');
+                        })
+                        .catch(error => {
+                            console.error('Error loading doctors:', error);
+                            const doctorSelect = document.getElementById('doctorId');
+                            if (doctorSelect) {
+                                doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                            }
+                            
+                            // Show error message to user
+                            showErrorMessage('Unable to load doctors list. Please refresh the page or contact support.');
+                        });
+            }
 
-        appointmentDateInput.min = `${year}-${month}-${day}`;
+            function setupDateValidation() {
+                // Set minimum date to tomorrow (not today)
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const minDate = tomorrow.toISOString().split('T')[0];
+                document.getElementById('appointmentDate').min = minDate;
+                
+                // Validate appointment date
+                document.getElementById('appointmentDate').addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to start of day
+                    
+                    if (selectedDate <= now) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Appointment date must be in the future (not today)');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate parent ID
+                document.getElementById('parentId').addEventListener('input', function() {
+                    const parentIdValue = this.value.trim();
+                    if (parentIdValue && !/^\d{12}$/.test(parentIdValue)) {
+                        this.classList.add('is-invalid');
+                        showValidationMessage('Parent ID must be exactly 12 digits');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                // Validate form submission
+                document.querySelector('form[action="appointment"]').addEventListener('submit', function(e) {
+                    let isValid = true;
+                    
+                    // Validate parent ID
+                    const parentIdValue = document.getElementById('parentId').value.trim();
+                    if (!/^\d{12}$/.test(parentIdValue)) {
+                        document.getElementById('parentId').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    // Validate appointment date
+                    const appointmentDate = new Date(document.getElementById('appointmentDate').value);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+                    
+                    if (appointmentDate <= now) {
+                        document.getElementById('appointmentDate').classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        showValidationMessage('Please fix the validation errors before submitting');
+                    }
+                });
+            }
+            
+            function showValidationMessage(message) {
+                // Remove existing validation messages
+                const existingMessages = document.querySelectorAll('.validation-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create new validation message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger validation-message';
+                messageDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
+                
+                // Insert before form
+                const form = document.querySelector('form[action="appointment"]');
+                form.parentNode.insertBefore(messageDiv, form);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+            
+            function showErrorMessage(message) {
+                // Remove existing error messages
+                const existingMessages = document.querySelectorAll('.error-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create new error message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger error-message';
+                messageDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
+                
+                // Insert at the top of appointment section
+                const appointmentSection = document.getElementById('appointment');
+                if (appointmentSection) {
+                    const container = appointmentSection.querySelector('.container');
+                    if (container) {
+                        container.insertBefore(messageDiv, container.firstChild);
+                    }
+                }
+                
+                // Auto remove after 10 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 10000);
+            }
+            
+            // Setup date inputs when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                const appointmentDateInput = document.getElementById('appointmentDate');
+                const childDobInput = document.getElementById('childDob');
+
+                if (appointmentDateInput) {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+
+                    const year = tomorrow.getFullYear();
+                    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const day = String(tomorrow.getDate()).padStart(2, '0');
+
+                    appointmentDateInput.min = `${year}-${month}-${day}`;
                 }
 
                 if (childDobInput) {
@@ -1225,8 +1373,8 @@ function setupDateValidation() {
                     const day = String(today.getDate()).padStart(2, '0');
 
                     childDobInput.max = `${year}-${month}-${day}`;
-                            }
-                        }
+                }
+            });
         </script>
 
     </body>

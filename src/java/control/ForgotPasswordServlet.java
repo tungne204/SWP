@@ -9,8 +9,17 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-@WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/ForgotPasswordServlet"})
+@WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/Forgot_password"})
 public class ForgotPasswordServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Forward to Forgot_password.jsp
+        request.getRequestDispatcher("Forgot_password.jsp").forward(request, response);
+    }
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -10,8 +10,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "LoginControl", urlPatterns = {"/login"})
+@WebServlet(name = "LoginControl", urlPatterns = {"/Login"})
 public class LoginControl extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Check if user is already logged in
+        if (request.getSession(false) != null && request.getSession(false).getAttribute("acc") != null) {
+            response.sendRedirect("Home.jsp");
+            return;
+        }
+        
+        // Forward to Login.jsp
+        request.getRequestDispatcher("Login.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
