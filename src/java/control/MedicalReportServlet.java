@@ -5,7 +5,7 @@
 
 package control;
 
-import context.MedicalReportDAO;
+import dao.MedicalReportDAO;
 import entity.MedicalReport;
 import java.io.IOException;
 import java.io.PrintWriter;

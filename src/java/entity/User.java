@@ -6,6 +6,7 @@ public class User {
     private String password;
     private String email;
     private String phone;
+    private String roleName;
     private int roleId; // tham chiếu Role
     private boolean status; // true = Active, false = Inactive
 
@@ -78,4 +79,6 @@ public class User {
     public void setStatus(boolean status) {
         this.status = status;
     }
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
 }

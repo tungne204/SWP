@@ -2,7 +2,7 @@ package control;
 
 import dao.*;
 import entity.*;
-import context.MedicalReportDAO;
+import dao.MedicalReportDAO;
 import socket.PatientQueueWebSocket;
 import util.QueueUpdateUtil;
 
@@ -587,13 +587,13 @@ public class PatientQueueController extends HttpServlet {
                 if (testDateStr != null && !testDateStr.trim().isEmpty()) {
                     try {
                         java.sql.Date testDate = java.sql.Date.valueOf(testDateStr);
-                        testResultEntity.setDate(testDate);
+                        testResultEntity.setDate(testDate.toString());
                     } catch (IllegalArgumentException e) {
                         // Use current date if parsing fails
-                        testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()));
+                        testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()).toString());
                     }
                 } else {
-                    testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()));
+                    testResultEntity.setDate(new java.sql.Date(System.currentTimeMillis()).toString());
                 }
                 
                 // Save test result to database
