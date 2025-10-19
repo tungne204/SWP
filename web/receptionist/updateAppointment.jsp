@@ -48,9 +48,11 @@
                 <!-- Date & Time -->
                 <div>
                     <label class="block text-sm font-medium text-gray-600">Date & Time</label>
+                    <fmt:formatDate value="${appointment.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="formattedDate" />
                     <input type="datetime-local" name="dateTime" 
-                           value="<fmt:formatDate value='${appointment.dateTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>" 
+                           value="${formattedDate}" 
                            class="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400" required>
+
                 </div>
 
                 <!-- Status -->

@@ -35,12 +35,21 @@ public class ViewAppointmentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Ngăn trình duyệt cache trang cũ
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
 
-        // Xử lý truy vấn danh sách Appointment
-        AppointmentDAO dao = new AppointmentDAO();
-        List<Appointment> list = dao.getAllAppointments();
+        try {
+            AppointmentDAO dao = new AppointmentDAO();
+            List<Appointment> list = dao.getAllAppointments();
 
-        request.setAttribute("appointments", list);
-        request.getRequestDispatcher("/receptionist/appointmentList.jsp").forward(request, response);
+            request.setAttribute("appointments", list);
+            request.getRequestDispatcher("/receptionist/appointmentList.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
     }
 }
