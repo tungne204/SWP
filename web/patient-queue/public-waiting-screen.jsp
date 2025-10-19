@@ -535,8 +535,9 @@
 
         function connectWebSocket() {
             try {
+                const contextPath = '${pageContext.request.contextPath}';
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = protocol + '//' + window.location.host + '/SWP/patient-queue-websocket';
+                const wsUrl = protocol + '//' + window.location.host + contextPath + '/patient-queue-websocket';
                 socket = new WebSocket(wsUrl);
 
                 socket.onopen = function(event) {
