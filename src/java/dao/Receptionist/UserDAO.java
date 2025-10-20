@@ -1,8 +1,8 @@
-package dao;
+package dao.Receptionist;
 
 import context.DBContext;
 import entity.Role;
-import entity.User;
+import entity.Receptionist.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class UserDAO extends DBContext {
 
-    // ✅ Login
+    // Login
     public User login(String email, String password) {
         String sql = "SELECT * FROM [User] WHERE email = ? AND password = ? AND status = 1";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -40,7 +40,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    // ✅ Check email tồn tại chưa
+    //Check email tồn tại chưa
     public boolean checkEmailExists(String email) {
         String sql = "SELECT 1 FROM [User] WHERE email = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -53,7 +53,7 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    // ✅ Thêm user mới (mặc định role_id = 3 (Patient), status = 1)
+    //Thêm user mới (mặc định role_id = 3 (Patient), status = 1)
     public void register(String username, String password, String email, String phone) {
         String sql = "INSERT INTO [User](username, password, email, phone, role_id, status) VALUES (?, ?, ?, ?, 3, 1)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-    // ✅ Tìm user theo email
+    //Tìm user theo email
     public User findByEmail(String email) {
         String sql = "SELECT * FROM [User] WHERE email = ? AND status = 1";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -105,7 +105,7 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    // ✅ Lưu token reset vào DB
+    //Lưu token reset vào DB
 
     public void saveResetToken(String email, String token) {
         String sql = "UPDATE [User] SET reset_token = ?, reset_expiry = DATEADD(MINUTE, 30, GETDATE()) WHERE email = ?";
@@ -118,7 +118,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-// ✅ Tìm email theo token
+//Tìm email theo token
     public String findEmailByToken(String token) {
         String sql = "SELECT email FROM [User] WHERE reset_token = ? AND reset_expiry > GETDATE()";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -133,7 +133,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-// ✅ Kiểm tra mật khẩu cũ có đúng không
+//Kiểm tra mật khẩu cũ có đúng không
     public boolean checkPassword(String email, String oldPassword) {
         String sql = "SELECT 1 FROM [User] WHERE email = ? AND password = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -146,7 +146,7 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-// ✅ Cập nhật mật khẩu
+//Cập nhật mật khẩu
 
     public void updatePassword(String email, String newPassword) {
         String sql = "UPDATE [User] SET password = ? WHERE email = ?";
@@ -159,7 +159,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-// ✅ Xóa token sau khi dùng
+//Xóa token sau khi dùng
     public void clearToken(String token) {
         String sql = "UPDATE [User] SET reset_token = NULL, reset_expiry = NULL WHERE reset_token = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -199,7 +199,7 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    // ✅ Lấy tất cả các vai trò (role)
+    //Lấy tất cả các vai trò (role)
     public List<Role> getAllRoles() {
         List<Role> list = new ArrayList<>();
         String sql = "SELECT * FROM [Role]";
@@ -222,7 +222,7 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    // ✅ Cập nhật role cho user
+    //Cập nhật role cho user
     public void updateUserRole(int userId, int roleId) {
         String sql = "UPDATE [User] SET role_id = ? WHERE user_id = ?";
 
@@ -239,8 +239,53 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public entity.Receptionist.User getUserByPatientId(int patientId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+// DÀNH CHO APPOINTMENT UPDATE
+    /**
+     * Lấy thông tin User dựa theo patientId (JOIN giữa User & Patient)
+     */
+    public User getUserByPatientId(int patientId) {
+        String sql = """
+            SELECT u.user_id, u.username, u.email, u.phone
+            FROM [User] u
+            JOIN Patient p ON u.user_id = p.user_id
+            WHERE p.patient_id = ?
+        """;
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
+                    return user;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    // === Cập nhật email cho user (dùng trong UpdateAppointmentServlet) ===
+
+    public void updateEmail(User user) {
+        String sql = "UPDATE [User] SET email = ? WHERE user_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user.getEmail());
+            ps.setInt(2, user.getUserId());
+            ps.executeUpdate();
+
+            System.out.println("✅ Updated email for user_id=" + user.getUserId());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Failed to update email in UserDAO: " + e.getMessage());
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    
 }
