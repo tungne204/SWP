@@ -1,0 +1,435 @@
+USE [master]
+GO
+/****** Object:  Database [SWP391]    Script Date: 9/26/2025 9:23:08 PM ******/
+CREATE DATABASE [SWP391]
+ 
+GO
+ALTER DATABASE [SWP391] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [SWP391] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [SWP391] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [SWP391] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [SWP391] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [SWP391] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [SWP391] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [SWP391] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [SWP391] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [SWP391] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [SWP391] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [SWP391] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [SWP391] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [SWP391] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [SWP391] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [SWP391] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [SWP391] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [SWP391] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [SWP391] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [SWP391] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [SWP391] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [SWP391] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [SWP391] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [SWP391] SET  MULTI_USER 
+GO
+ALTER DATABASE [SWP391] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [SWP391] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [SWP391] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [SWP391] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [SWP391] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [SWP391] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [SWP391] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [SWP391] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [SWP391]
+GO
+/****** Object:  Table [dbo].[Appointment]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Appointment](
+	[appointment_id] [int] IDENTITY(1,1) NOT NULL,
+	[patient_id] [int] NOT NULL,
+	[doctor_id] [int] NOT NULL,
+	[date_time] [datetime] NOT NULL,
+	[status] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[appointment_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Discount]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Discount](
+	[discount_id] [int] IDENTITY(1,1) NOT NULL,
+	[code] [nvarchar](50) NOT NULL,
+	[percentage] [decimal](5, 2) NOT NULL,
+	[valid_from] [date] NULL,
+	[valid_to] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[discount_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Doctor]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Doctor](
+	[doctor_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[specialty] [nvarchar](100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[doctor_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[MedicalReport]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MedicalReport](
+	[record_id] [int] IDENTITY(1,1) NOT NULL,
+	[appointment_id] [int] NOT NULL,
+	[diagnosis] [nvarchar](255) NULL,
+	[prescription] [nvarchar](255) NULL,
+	[test_request] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[record_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Parent]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Parent](
+	[parent_id] [int] IDENTITY(1,1) NOT NULL,
+	[parentname] [nvarchar](100) NOT NULL,
+	[id_info] [nvarchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[parent_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Patient]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Patient](
+	[patient_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[full_name] [nvarchar](100) NOT NULL,
+	[dob] [date] NULL,
+	[address] [nvarchar](255) NULL,
+	[insurance_info] [nvarchar](100) NULL,
+	[parent_id] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[patient_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Payment]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Payment](
+	[payment_id] [int] IDENTITY(1,1) NOT NULL,
+	[appointment_id] [int] NOT NULL,
+	[discount_id] [int] NULL,
+	[amount] [decimal](18, 2) NOT NULL,
+	[method] [nvarchar](50) NULL,
+	[status] [bit] NULL,
+	[payment_date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[payment_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[RevenueReport]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[RevenueReport](
+	[report_id] [int] IDENTITY(1,1) NOT NULL,
+	[manager_id] [int] NOT NULL,
+	[date_from] [date] NULL,
+	[date_to] [date] NULL,
+	[total_revenue] [decimal](18, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[report_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Role]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Role](
+	[role_id] [int] IDENTITY(1,1) NOT NULL,
+	[role_name] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[role_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TestResult]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TestResult](
+	[test_id] [int] IDENTITY(1,1) NOT NULL,
+	[record_id] [int] NOT NULL,
+	[test_type] [nvarchar](100) NULL,
+	[result] [nvarchar](255) NULL,
+	[date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[test_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[user_id] [int] IDENTITY(1,1) NOT NULL,
+	[username] [nvarchar](50) NOT NULL,
+	[password] [nvarchar](255) NOT NULL,
+	[email] [nvarchar](100) NULL,
+	[phone] [nvarchar](20) NULL,
+	[role_id] [int] NOT NULL,
+	[status] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PatientQueue]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PatientQueue](
+	[queue_id] [int] IDENTITY(1,1) NOT NULL,
+	[patient_id] [int] NOT NULL,
+	[appointment_id] [int] NULL,
+	[queue_number] [int] NOT NULL,
+	[queue_type] [nvarchar](20) NOT NULL, -- 'Walk-in' or 'Booked'
+	[status] [nvarchar](30) NOT NULL, -- 'Waiting', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up', 'Completed'
+	[priority] [int] NOT NULL DEFAULT 0, -- For prioritization rules
+	[check_in_time] [datetime] NOT NULL,
+	[updated_time] [datetime] NOT NULL DEFAULT GETDATE(),
+PRIMARY KEY CLUSTERED 
+(
+	[queue_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Consultation]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Consultation](
+	[consultation_id] [int] IDENTITY(1,1) NOT NULL,
+	[patient_id] [int] NOT NULL,
+	[doctor_id] [int] NOT NULL,
+	[queue_id] [int] NOT NULL,
+	[start_time] [datetime] NULL,
+	[end_time] [datetime] NULL,
+	[status] [nvarchar](30) NOT NULL, -- 'In Progress', 'Lab Requested', 'Completed'
+PRIMARY KEY CLUSTERED 
+(
+	[consultation_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[QueueConfiguration]    Script Date: 9/26/2025 9:23:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[QueueConfiguration](
+	[config_id] [int] IDENTITY(1,1) NOT NULL,
+	[config_key] [nvarchar](50) NOT NULL,
+	[config_value] [nvarchar](255) NOT NULL,
+	[description] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[config_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET IDENTITY_INSERT [dbo].[Role] ON 
+
+INSERT [dbo].[Role] ([role_id], [role_name]) VALUES (1, N'Admin')
+INSERT [dbo].[Role] ([role_id], [role_name]) VALUES (2, N'Doctor')
+INSERT [dbo].[Role] ([role_id], [role_name]) VALUES (4, N'MedicalAssistant')
+INSERT [dbo].[Role] ([role_id], [role_name]) VALUES (3, N'Patient')
+INSERT [dbo].[Role] ([role_id], [role_name]) VALUES (5, N'Receptionist')
+SET IDENTITY_INSERT [dbo].[Role] OFF
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [UQ__Discount__357D4CF9B929741A]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[Discount] ADD UNIQUE NONCLUSTERED 
+(
+	[code] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [UQ__Doctor__B9BE370E17B506C6]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[Doctor] ADD UNIQUE NONCLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [UQ__Patient__B9BE370ED8473D92]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[Patient] ADD UNIQUE NONCLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [UQ__Role__783254B1C3FEC0DC]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[Role] ADD UNIQUE NONCLUSTERED 
+(
+	[role_name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [UQ__User__AB6E616413824BF4]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[User] ADD UNIQUE NONCLUSTERED 
+(
+	[email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [UQ__User__F3DBC572B6AED63D]    Script Date: 9/26/2025 9:23:08 PM ******/
+ALTER TABLE [dbo].[User] ADD UNIQUE NONCLUSTERED 
+(
+	[username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Appointment] ADD  DEFAULT ((1)) FOR [status]
+GO
+ALTER TABLE [dbo].[Payment] ADD  DEFAULT ((0)) FOR [status]
+GO
+ALTER TABLE [dbo].[User] ADD  DEFAULT ((1)) FOR [status]
+GO
+ALTER TABLE [dbo].[Appointment]  WITH CHECK ADD FOREIGN KEY([doctor_id])
+REFERENCES [dbo].[Doctor] ([doctor_id])
+GO
+ALTER TABLE [dbo].[Appointment]  WITH CHECK ADD FOREIGN KEY([patient_id])
+REFERENCES [dbo].[Patient] ([patient_id])
+GO
+ALTER TABLE [dbo].[Doctor]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[User] ([user_id])
+GO
+ALTER TABLE [dbo].[MedicalReport]  WITH CHECK ADD FOREIGN KEY([appointment_id])
+REFERENCES [dbo].[Appointment] ([appointment_id])
+GO
+ALTER TABLE [dbo].[Patient]  WITH CHECK ADD FOREIGN KEY([parent_id])
+REFERENCES [dbo].[Parent] ([parent_id])
+GO
+ALTER TABLE [dbo].[Patient]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[User] ([user_id])
+GO
+ALTER TABLE [dbo].[Payment]  WITH CHECK ADD FOREIGN KEY([appointment_id])
+REFERENCES [dbo].[Appointment] ([appointment_id])
+GO
+ALTER TABLE [dbo].[Payment]  WITH CHECK ADD FOREIGN KEY([discount_id])
+REFERENCES [dbo].[Discount] ([discount_id])
+GO
+ALTER TABLE [dbo].[RevenueReport]  WITH CHECK ADD FOREIGN KEY([manager_id])
+REFERENCES [dbo].[User] ([user_id])
+GO
+ALTER TABLE [dbo].[TestResult]  WITH CHECK ADD FOREIGN KEY([record_id])
+REFERENCES [dbo].[MedicalReport] ([record_id])
+GO
+ALTER TABLE [dbo].[User]  WITH CHECK ADD FOREIGN KEY([role_id])
+REFERENCES [dbo].[Role] ([role_id])
+GO
+ALTER TABLE [dbo].[PatientQueue]  WITH CHECK ADD FOREIGN KEY([patient_id])
+REFERENCES [dbo].[Patient] ([patient_id])
+GO
+ALTER TABLE [dbo].[PatientQueue]  WITH CHECK ADD FOREIGN KEY([appointment_id])
+REFERENCES [dbo].[Appointment] ([appointment_id])
+GO
+ALTER TABLE [dbo].[Consultation]  WITH CHECK ADD FOREIGN KEY([patient_id])
+REFERENCES [dbo].[Patient] ([patient_id])
+GO
+ALTER TABLE [dbo].[Consultation]  WITH CHECK ADD FOREIGN KEY([doctor_id])
+REFERENCES [dbo].[Doctor] ([doctor_id])
+GO
+ALTER TABLE [dbo].[Consultation]  WITH CHECK ADD FOREIGN KEY([queue_id])
+REFERENCES [dbo].[PatientQueue] ([queue_id])
+GO
+ALTER TABLE [dbo].[MedicalReport] ADD [consultation_id] [int] NULL
+GO
+ALTER TABLE [dbo].[MedicalReport]  WITH CHECK ADD FOREIGN KEY([consultation_id])
+REFERENCES [dbo].[Consultation] ([consultation_id])
+GO
+ALTER TABLE [dbo].[TestResult] ADD [consultation_id] [int] NULL
+GO
+ALTER TABLE [dbo].[TestResult]  WITH CHECK ADD FOREIGN KEY([consultation_id])
+REFERENCES [dbo].[Consultation] ([consultation_id])
+GO
+USE [master]
+GO
+ALTER DATABASE [SWP391] SET  READ_WRITE 
+GO

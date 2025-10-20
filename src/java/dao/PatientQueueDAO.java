@@ -1,0 +1,230 @@
+package dao;
+
+import context.DBContext;
+import entity.PatientQueue;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PatientQueueDAO extends DBContext {
+
+    // Get all patients in queue ordered by priority and check-in time
+    public List<PatientQueue> getAllPatientsInQueue() {
+        List<PatientQueue> queue = new ArrayList<>();
+        // Modified query to get only today's patients with optimized sorting:
+        // 1. Priority status (urgent cases first) - priority DESC
+        // 2. Status priority (Ready for Examination, then Waiting, then others)
+        // 3. Arrival time (earliest first) - check_in_time ASC
+        String sql = "SELECT * FROM PatientQueue " +
+                    "WHERE CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) " +
+                    "AND status IN ('Waiting', 'Ready for Examination', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up') " +
+                    "ORDER BY " +
+                    "priority DESC, " +
+                    "CASE " +
+                    "  WHEN status = 'Ready for Examination' THEN 1 " +
+                    "  WHEN status = 'Waiting' THEN 2 " +
+                    "  WHEN status = 'Ready for Follow-up' THEN 3 " +
+                    "  WHEN status = 'In Consultation' THEN 4 " +
+                    "  WHEN status = 'Awaiting Lab Results' THEN 5 " +
+                    "  ELSE 6 " +
+                    "END, " +
+                    "check_in_time ASC";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                PatientQueue patientQueue = new PatientQueue();
+                patientQueue.setQueueId(rs.getInt("queue_id"));
+                patientQueue.setPatientId(rs.getInt("patient_id"));
+                patientQueue.setAppointmentId(rs.getObject("appointment_id", Integer.class));
+                patientQueue.setQueueNumber(rs.getInt("queue_number"));
+                patientQueue.setQueueType(rs.getString("queue_type"));
+                patientQueue.setStatus(rs.getString("status"));
+                patientQueue.setPriority(rs.getInt("priority"));
+                patientQueue.setRoomNumber(rs.getString("room_number"));
+                patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
+                patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
+                queue.add(patientQueue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return queue;
+    }
+
+    // Get patients by status (today only)
+    public List<PatientQueue> getPatientsByStatus(String status) {
+        List<PatientQueue> queue = new ArrayList<>();
+        String sql = "SELECT * FROM PatientQueue " +
+                    "WHERE status = ? " +
+                    "AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) " +
+                    "ORDER BY priority DESC, check_in_time ASC";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, status);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    PatientQueue patientQueue = new PatientQueue();
+                    patientQueue.setQueueId(rs.getInt("queue_id"));
+                    patientQueue.setPatientId(rs.getInt("patient_id"));
+                    patientQueue.setAppointmentId(rs.getObject("appointment_id", Integer.class));
+                    patientQueue.setQueueNumber(rs.getInt("queue_number"));
+                    patientQueue.setQueueType(rs.getString("queue_type"));
+                    patientQueue.setStatus(rs.getString("status"));
+                    patientQueue.setPriority(rs.getInt("priority"));
+                    patientQueue.setRoomNumber(rs.getString("room_number"));
+                    patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
+                    patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
+                    queue.add(patientQueue);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return queue;
+    }
+
+    // Add patient to queue
+    public void addPatientToQueue(PatientQueue patientQueue) {
+        String sql = "INSERT INTO PatientQueue (patient_id, appointment_id, queue_number, queue_type, status, priority, room_number, check_in_time, updated_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, patientQueue.getPatientId());
+            ps.setObject(2, patientQueue.getAppointmentId(), java.sql.Types.INTEGER);
+            ps.setInt(3, patientQueue.getQueueNumber());
+            ps.setString(4, patientQueue.getQueueType());
+            ps.setString(5, patientQueue.getStatus());
+            ps.setInt(6, patientQueue.getPriority());
+            ps.setString(7, patientQueue.getRoomNumber());
+            ps.setTimestamp(8, new java.sql.Timestamp(patientQueue.getCheckInTime().getTime()));
+            ps.setTimestamp(9, new java.sql.Timestamp(patientQueue.getUpdatedTime().getTime()));
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Update patient queue status
+    public void updatePatientQueueStatus(int queueId, String status) {
+        String sql = "UPDATE PatientQueue SET status = ?, updated_time = GETDATE() WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, status);
+            ps.setInt(2, queueId);
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Update patient queue priority
+    public void updatePatientQueuePriority(int queueId, int priority) {
+        String sql = "UPDATE PatientQueue SET priority = ?, updated_time = GETDATE() WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, priority);
+            ps.setInt(2, queueId);
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Update patient queue room number
+    public void updatePatientQueueRoomNumber(int queueId, String roomNumber) {
+        String sql = "UPDATE PatientQueue SET room_number = ?, updated_time = GETDATE() WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, roomNumber);
+            ps.setInt(2, queueId);
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Remove patient from queue
+    public void removePatientFromQueue(int queueId) {
+        String sql = "DELETE FROM PatientQueue WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, queueId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Get patient queue by ID
+    public PatientQueue getPatientQueueById(int queueId) {
+        String sql = "SELECT * FROM PatientQueue WHERE queue_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, queueId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    PatientQueue patientQueue = new PatientQueue();
+                    patientQueue.setQueueId(rs.getInt("queue_id"));
+                    patientQueue.setPatientId(rs.getInt("patient_id"));
+                    patientQueue.setAppointmentId(rs.getObject("appointment_id", Integer.class));
+                    patientQueue.setQueueNumber(rs.getInt("queue_number"));
+                    patientQueue.setQueueType(rs.getString("queue_type"));
+                    patientQueue.setStatus(rs.getString("status"));
+                    patientQueue.setPriority(rs.getInt("priority"));
+                    patientQueue.setRoomNumber(rs.getString("room_number"));
+                    patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
+                    patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
+                    return patientQueue;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    // Check if patient is already in queue today
+    public boolean isPatientInQueueToday(int patientId) {
+        String sql = "SELECT COUNT(*) FROM PatientQueue WHERE patient_id = ? AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) AND status IN ('Waiting', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up')";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, patientId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+}
