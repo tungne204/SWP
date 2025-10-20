@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package control;
 
 import dao.UserDAO;
@@ -21,36 +20,39 @@ import java.util.List;
  *
  * @author Quang Anh
  */
-@WebServlet(name="SetPermissionServlet", urlPatterns={"/set-permission"})
+@WebServlet(name = "SetPermissionServlet", urlPatterns = {"/set-permission"})
 public class SetPermissionServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SetPermissionServlet</title>");  
+            out.println("<title>Servlet SetPermissionServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SetPermissionServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet SetPermissionServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -58,17 +60,29 @@ public class SetPermissionServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         UserDAO dao = new UserDAO();
         List<User> users = dao.getAllUsersWithRole();
         List<Role> roles = dao.getAllRoles();
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
-        request.getRequestDispatcher("manager/setPermission.jsp").forward(request, response);
-    } 
+        String message = (String) request.getSession().getAttribute("message");
+        String alertType = (String) request.getSession().getAttribute("alertType");
 
-    /** 
+// Xóa sau khi hiển thị để không lặp lại
+        request.getSession().removeAttribute("message");
+        request.getSession().removeAttribute("alertType");
+
+        if (message != null) {
+            request.setAttribute("message", message);
+            request.setAttribute("alertType", alertType);
+        }
+        request.getRequestDispatcher("manager/setPermission.jsp").forward(request, response);
+    }
+
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -76,18 +90,32 @@ public class SetPermissionServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));
         int roleId = Integer.parseInt(request.getParameter("roleId"));
 
         UserDAO dao = new UserDAO();
-        dao.updateUserRole(userId, roleId);
+        boolean success = dao.updateUserRole(userId, roleId);
 
-        response.sendRedirect("set-permission");
+        if (success) {
+            request.setAttribute("message", "Cập nhật vai trò thành công ✅");
+            request.setAttribute("msgType", "success");
+        } else {
+            request.setAttribute("message", "Cập nhật vai trò thất bại ❌");
+            request.setAttribute("msgType", "error");
+        }
+
+        // Lấy lại danh sách users & roles để hiển thị
+        request.setAttribute("users", dao.getAllUsersWithRole());
+        request.setAttribute("roles", dao.getAllRoles());
+
+        // Forward trực tiếp đến JSP
+        request.getRequestDispatcher("manager/setPermission.jsp").forward(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

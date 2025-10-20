@@ -223,19 +223,22 @@ public class UserDAO extends DBContext {
     }
 
     // ✅ Cập nhật role cho user
-    public void updateUserRole(int userId, int roleId) {
+    public boolean updateUserRole(int userId, int roleId) {
         String sql = "UPDATE [User] SET role_id = ? WHERE user_id = ?";
-
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, roleId);
             ps.setInt(2, userId);
-            ps.executeUpdate();
+
+            int rowsAffected = ps.executeUpdate();  // Trả về số dòng bị ảnh hưởng
+            return rowsAffected > 0;  // Thành công nếu có ít nhất 1 dòng được cập nhật
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         } catch (Exception ex) {
             Logger.getLogger(dao.UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 
