@@ -1,78 +1,90 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%-- 
     Document   : Receptionist Dashboard
     Created on : Oct 18, 2025, 10:37:08 PM
     Author     : KiênPC
 --%>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Receptionist Dashboard | Clinic Manager</title>
+    <title>Receptionist Home | Medilab Clinic</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="flex bg-gray-50 text-gray-800 font-sans">
+<!--Dùng flex layout toàn trang -->
+<body class="bg-gradient-to-b from-blue-50 to-white text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-emerald-700 text-white flex flex-col justify-between fixed h-screen shadow-lg">
-        <div>
-            <!-- Logo + Title -->
-            <div class="flex items-center gap-3 p-6 border-b border-emerald-600">
-                <span class="text-3xl">🩺</span>
-                <div>
-                    <h2 class="text-lg font-bold leading-tight">Receptionist</h2>
-                    <p class="text-xs text-emerald-200">Clinic Manager</p>
-                </div>
+    <!--  Header -->
+    <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
             </div>
 
-            <!-- Navigation -->
-            <nav class="mt-6">
-                <a href="Patient-Search"
-                   class="flex items-center gap-2 py-3 px-6 hover:bg-emerald-600 transition-all duration-200">
-                    👶 <span>View/Search Patient</span>
+            <!-- Button group -->
+            <div class="flex items-center gap-3">
+                <a href="Receptionist-Dashboard"
+                   class="bg-white/20 text-white px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
+                    Home
                 </a>
-                <a href="Appointment-List"
-                   class="flex items-center gap-2 py-3 px-6 hover:bg-emerald-600 transition-all duration-200">
-                    📋 <span>Manage Appointments</span>
+                <a href="logout"
+                   class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
+                    Logout
                 </a>
-            </nav>
+            </div>
         </div>
+    </header>
 
-        <!-- Logout -->
-        <div class="p-6 border-t border-emerald-600">
-            <a href="logout.jsp"
-               class="flex justify-center items-center gap-2 bg-red-600 hover:bg-red-700 py-2 rounded-lg font-semibold transition">
-                🔒 Logout
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 ml-64 p-8">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-emerald-700 flex items-center gap-2">
-                <span>🏥</span> Receptionist Management System
+    <!--  Hero Section -->
+    <section class="pt-24 pb-10 text-center bg-gradient-to-r from-blue-100 to-blue-50 relative flex-shrink-0">
+        <div class="max-w-4xl mx-auto relative z-10 px-6">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3">
+                Welcome, Receptionist!
             </h1>
-            <span class="text-sm text-gray-500">v1.0 | Pediatric Clinic Manager</span>
-        </header>
-
-        <!-- Welcome Card -->
-        <section class="bg-white p-8 rounded-2xl shadow-md border border-emerald-100">
-            <h2 class="text-xl font-semibold mb-2 text-emerald-700">👋 Welcome, Receptionist!</h2>
-            <p class="text-gray-600 leading-relaxed">
-                Use the sidebar to manage <b>patient records</b> and <b>appointments</b>.  
-                You can <b>view</b>, <b>update</b>, or <b>delete</b> appointments as required.
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Manage patient profiles and appointments efficiently with our Medilab system.
             </p>
-        </section>
+        </div>
+        <img src="https://i.ibb.co/4MZ7hCm/doctor-bg.png"
+             alt="Doctor Background"
+             class="absolute right-0 top-0 h-full opacity-20 object-contain pointer-events-none" />
+    </section>
 
-        <!-- Footer -->
-        <footer class="mt-10 text-center text-gray-500 text-sm">
-            © 2025 Pediatric Clinic Manager | Designed by <span class="font-semibold text-emerald-700">Kiên</span>
-        </footer>
+    <!--  Quick Access Buttons -->
+    <main class="max-w-5xl mx-auto px-6 py-16 flex-grow">
+        <div class="grid md:grid-cols-2 gap-10">
+
+            <!-- View Patient Profile -->
+            <a href="Patient-Search"
+               class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
+                <h3 class="font-bold text-2xl text-gray-800 mb-2">View Patient</h3>
+                <p class="text-gray-600 max-w-sm">
+                    Easily search and view detailed information about your patients.
+                </p>
+            </a>
+
+            <!-- Manage Appointments -->
+            <a href="Appointment-List"
+               class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
+                <h3 class="font-bold text-2xl text-gray-800 mb-2">Manage Appointments</h3>
+                <p class="text-gray-600 max-w-sm">
+                    View, update, or delete appointments for patients in just a few clicks.
+                </p>
+            </a>
+
+        </div>
     </main>
+
+    <!--  Footer -->
+    <footer class="bg-blue-700 text-blue-100 py-6 mt-auto">
+        <div class="text-center text-sm">
+            © 2025 Medilab Pediatric Clinic | Designed by 
+            <span class="font-semibold text-white">Kiên</span>
+        </div>
+    </footer>
 
 </body>
 </html>

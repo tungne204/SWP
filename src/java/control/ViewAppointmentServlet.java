@@ -4,8 +4,8 @@
  */
 package control;
 
-import dao.AppointmentDAO;
-import entity.Appointment;
+import dao.Receptionist.AppointmentDAO;
+import entity.Receptionist.Appointment;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -15,12 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Show appointment list for receptionist to change status
+ * Servlet hiển thị danh sách lịch hẹn cho lễ tân (Receptionist) Cho phép xem
+ * thông tin bệnh nhân, bác sĩ và trạng thái khám bệnh.
+ *
+ * URL: /Appointment-List
  *
  * @author Kiên
- *
- * @URL: /Appointment-List
- *
  */
 @WebServlet("/Appointment-List")
 public class ViewAppointmentServlet extends HttpServlet {
@@ -28,14 +28,15 @@ public class ViewAppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Chuyển về xử lý an toàn bằng POST
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         doPost(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Ngăn trình duyệt cache trang cũ
+
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);

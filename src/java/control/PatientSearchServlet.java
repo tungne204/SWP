@@ -1,7 +1,7 @@
 package control;
 
-import dao.PatientDAO;
-import entity.Patient;
+import dao.Receptionist.PatientDAO;
+import entity.Receptionist.Patient;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.*;
@@ -9,58 +9,61 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Servlet handles View/Search Patient function For Receptionist module in SWP
- * system - Displays the entire patient list - Search by name, ID, or address
- *
- * URL: /PatientSearchServlet
+ * PatientSearchServlet:
+ * Xử lý chức năng xem và tìm kiếm bệnh nhân (Receptionist module)
+ * 
+ * - URL: /Patient-Search
  *
  * @author Kiên
  */
 @WebServlet("/Patient-Search")
 public class PatientSearchServlet extends HttpServlet {
-    // Khi người dùng gõ trực tiếp URL (GET)
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Hiển thị trang danh sách Patient và tìm kiếm Patient
-        PatientDAO dao = new PatientDAO();
-        List<Patient> list = dao.getAllPatients();   // <-- Lấy toàn bộ danh sách bệnh nhân
-        request.setAttribute("patients", list);
-        request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
+        // Gọi lại doPost để tránh trùng logic
+        doPost(request, response);
     }
 
-    // Khi người dùng nhấn "Search" tránh làm lộ thông tin nhạy cảm(Sensitive data) của khách hàng lên thanh URL (POST)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         String keyword = request.getParameter("keyword");
-
-        // ✅ Kiểm tra nếu người dùng chưa nhập gì
-        if (keyword == null || keyword.trim().isEmpty()) {
-            request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
-            return; // dừng xử lý luôn
-        }
+        keyword = (keyword != null) ? keyword.trim() : "";
 
         PatientDAO dao = new PatientDAO();
         List<Patient> list;
 
         try {
-            list = dao.searchPatients(keyword);
+            if (keyword.isEmpty()) {
+                // Không nhập gì → hiển thị toàn bộ danh sách
+                list = dao.getAllPatients();
+            } else {
+                // Có nhập từ khóa → tìm kiếm
+                list = dao.searchPatients(keyword);
 
-            request.setAttribute("patients", list);
+                // Nếu không tìm thấy → hiển thị thông báo
+                if (list == null || list.isEmpty()) {
+                    list = dao.getAllPatients();
+                    request.setAttribute("warning", "❌ Không tìm thấy bệnh nhân cho từ khóa \"" + keyword + "\".");
+                    keyword = ""; // reset ô input
+                }
+            }
+
+            // Gửi dữ liệu sang JSP
             request.setAttribute("keyword", keyword);
+            request.setAttribute("patients", list);
             request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi khi tải dữ liệu bệnh nhân!");
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi tải dữ liệu bệnh nhân!");
         }
     }
-
 }

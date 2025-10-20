@@ -4,77 +4,86 @@
  */
 package control;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import dao.Receptionist.AppointmentDAO;
+import entity.Receptionist.Appointment;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import dao.AppointmentDAO;
-import entity.Appointment;
-import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Update appointment information
- *
- * @author Kiên
+ * Servlet xử lý cập nhật thông tin lịch hẹn (Appointment) - Load form chỉnh sửa
+ * - Lưu thay đổi xuống database
  *
  * URL: /Appointment-Update
+ *
+ * @author Kiên
  */
 @WebServlet(name = "UpdateAppointmentServlet", urlPatterns = {"/Appointment-Update"})
 public class UpdateAppointmentServlet extends HttpServlet {
 
-    //Khi user gửi GET (hoặc gõ URL trực tiếp) → tự động gọi lại doPost()
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
     }
 
-    //Xử lý chính trong doPost
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            // Kiểm tra hành động người dùng gửi
-            String action = request.getParameter("action");
 
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        try {
+            String action = request.getParameter("action");
             AppointmentDAO dao = new AppointmentDAO();
 
-            if ("load".equals(action)) {
-                // Gửi form "Edit" → load dữ liệu lên form
+            // 1️⃣ Khi người dùng nhấn "Edit" → load dữ liệu ra form
+            if ("load".equalsIgnoreCase(action)) {
                 int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
                 Appointment appointment = dao.getAppointmentById(appointmentId);
+
+                if (appointment == null) {
+                    request.setAttribute("error", "Appointment not found!");
+                    request.getRequestDispatcher("/error.jsp").forward(request, response);
+                    return;
+                }
+
                 request.setAttribute("appointment", appointment);
                 request.getRequestDispatcher("/receptionist/updateAppointment.jsp").forward(request, response);
-
-            } else if ("update".equals(action)) {
-                // Gửi form "Save Changes" → cập nhật DB
+            } //Khi người dùng nhấn "Save Changes" -> cập nhật database
+            else if ("update".equalsIgnoreCase(action)) {
                 int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
                 int patientId = Integer.parseInt(request.getParameter("patientId"));
                 int doctorId = Integer.parseInt(request.getParameter("doctorId"));
                 String dateTimeStr = request.getParameter("dateTime");
                 boolean status = Boolean.parseBoolean(request.getParameter("status"));
 
+                // Chuyển định dạng ngày giờ HTML5 về dạng Date Java
                 Date dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(dateTimeStr);
 
-                Appointment appointment = new Appointment();
-                appointment.setAppointmentId(appointmentId);
-                appointment.setPatientId(patientId);
-                appointment.setDoctorId(doctorId);
-                appointment.setDateTime(dateTime);
-                appointment.setStatus(status);
-                dao.updateAppointment(appointment);
-                System.out.println(">>> [DEBUG] Update success for ID=" + appointmentId);
+                // Gán vào entity
+                Appointment ap = new Appointment();
+                ap.setAppointmentId(appointmentId);
+                ap.setPatientId(patientId);
+                ap.setDoctorId(doctorId);
+                ap.setDateTime(dateTime);
+                ap.setStatus(status);
+
+                // Cập nhật DB
+                dao.updateAppointment(ap);
+                System.out.println("[INFO] Appointment updated successfully, ID=" + appointmentId);
+
+                // Quay về danh sách
                 response.sendRedirect(request.getContextPath() + "/Appointment-List");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
         }
     }
-} 
+}
