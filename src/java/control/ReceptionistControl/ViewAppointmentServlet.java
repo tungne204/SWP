@@ -2,9 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package control.ReceptionistControl;
 
 import dao.Receptionist.AppointmentDAO;
+import dao.Receptionist.DoctorDAO;
+import dao.Receptionist.ParentDAO;
+import dao.Receptionist.PatientDAO;
+import dao.Receptionist.UserDAO;
 import entity.Receptionist.Appointment;
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +54,10 @@ public class ViewAppointmentServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            log("❌ Lỗi tại ViewAppointmentServlet: " + e.getMessage(), e);
+            // Gửi thông báo lỗi sang cùng trang JSP
+            request.setAttribute("errorMessage", "Không thể tải danh sách lịch hẹn. Vui lòng thử lại sau!");
+            request.getRequestDispatcher("/receptionist/appointmentList.jsp").forward(request, response);
         }
     }
 }

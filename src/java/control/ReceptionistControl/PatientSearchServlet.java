@@ -1,4 +1,4 @@
-package control;
+package control.ReceptionistControl;
 
 import dao.Receptionist.PatientDAO;
 import entity.Receptionist.Patient;
@@ -9,9 +9,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * PatientSearchServlet:
- * Xử lý chức năng xem và tìm kiếm bệnh nhân (Receptionist module)
- * 
+ * PatientSearchServlet: Xử lý chức năng xem và tìm kiếm bệnh nhân (Receptionist
+ * module)
+ *
  * - URL: /Patient-Search
  *
  * @author Kiên
@@ -35,23 +35,30 @@ public class PatientSearchServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String keyword = request.getParameter("keyword");
-        keyword = (keyword != null) ? keyword.trim() : "";
+
+        // Xử lý null, ký tự trắng hoặc khoảng trống
+        if (keyword == null || keyword.trim().isEmpty()) {
+            keyword = "";
+        } else {
+            keyword = keyword.trim();
+        }
 
         PatientDAO dao = new PatientDAO();
         List<Patient> list;
 
         try {
-            if (keyword.isEmpty()) {
-                // Không nhập gì → hiển thị toàn bộ danh sách
+            if (keyword.isBlank()) {
+                // Nếu ô tìm kiếm rỗng → hiển thị toàn bộ danh sách
                 list = dao.getAllPatients();
             } else {
-                // Có nhập từ khóa → tìm kiếm
+                // Có từ khóa → tìm kiếm
                 list = dao.searchPatients(keyword);
 
-                // Nếu không tìm thấy → hiển thị thông báo
+                // Nếu không tìm thấy → hiển thị thông báo + toàn bộ danh sách
                 if (list == null || list.isEmpty()) {
                     list = dao.getAllPatients();
-                    request.setAttribute("warning", "Không tìm thấy bệnh nhân cho từ khóa \"" + keyword + "\".");
+                    request.setAttribute("warning",
+                            "Không tìm thấy bệnh nhân cho từ khóa \"" + keyword + "\".");
                     keyword = ""; // reset ô input
                 }
             }

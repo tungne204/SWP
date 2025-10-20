@@ -150,7 +150,11 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
-    // Update appointment date and time
+    /**
+     * Update appointment date and time
+     * @param appointmentId
+     * @param dateTime 
+     */
     public void updateAppointmentDateTime(int appointmentId, java.util.Date dateTime) {
         String sql = "UPDATE Appointment SET date_time = ? WHERE appointment_id = ?";
 
@@ -173,19 +177,27 @@ public class AppointmentDAO extends DBContext {
             a.appointment_id,
             a.date_time,
             a.status,
+
+            -- Thông tin bệnh nhân
             p.full_name AS patient_name,
             FORMAT(p.dob, 'dd/MM/yyyy') AS patient_dob,
             p.address AS patient_address,
             p.insurance_info AS patient_insurance,
             pa.parentname AS parent_name,
-            u.username AS doctor_name,
+            up.email AS patient_email,
+            up.phone AS parent_phone,
+
+            -- Thông tin bác sĩ
+            ud.username AS doctor_name,
             d.specialty AS doctor_specialty
+
         FROM Appointment a
         LEFT JOIN Patient p ON a.patient_id = p.patient_id
         LEFT JOIN Parent pa ON p.parent_id = pa.parent_id
+        LEFT JOIN [User] up ON p.user_id = up.user_id       -- user của bệnh nhân
         LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id
-        LEFT JOIN [User] u ON d.user_id = u.user_id
-        ORDER BY a.appointment_id ASC 
+        LEFT JOIN [User] ud ON d.user_id = ud.user_id       -- user của bác sĩ
+        ORDER BY a.appointment_id ASC
     """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -196,12 +208,16 @@ public class AppointmentDAO extends DBContext {
                 a.setDateTime(rs.getTimestamp("date_time"));
                 a.setStatus(rs.getBoolean("status"));
 
-                // Thông tin chi tiết từ JOIN
+                // === Thông tin bệnh nhân ===
                 a.setPatientName(rs.getString("patient_name"));
                 a.setPatientDob(rs.getString("patient_dob"));
                 a.setPatientAddress(rs.getString("patient_address"));
                 a.setPatientInsurance(rs.getString("patient_insurance"));
                 a.setParentName(rs.getString("parent_name"));
+                a.setPatientEmail(rs.getString("patient_email"));
+                a.setParentPhone(rs.getString("parent_phone"));
+
+                // === Thông tin bác sĩ ===
                 a.setDoctorName(rs.getString("doctor_name"));
                 a.setDoctorSpecialty(rs.getString("doctor_specialty"));
 

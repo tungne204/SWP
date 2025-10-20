@@ -1,35 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity.Receptionist;
 
 import java.util.Date;
 
 /**
- *
+ * Entity Appointment - Kết hợp dữ liệu từ Appointment, Patient, User, Doctor, Parent, MedicalReport
+ * 
  * @author Kiên
  */
-
 public class Appointment {
     private int appointmentId;
     private int patientId;
     private int doctorId;
     private Date dateTime;
     private boolean status; // true = Active, false = Inactive
-    // Thông tin bổ sung từ join
+
+    // --- Thông tin bệnh nhân ---
     private String patientName;
     private String patientDob;
     private String patientAddress;
     private String patientInsurance;
     private String parentName;
+    private String patientEmail;   
+    private String parentPhone;   
+
+    // --- Thông tin bác sĩ ---
     private String doctorName;
     private String doctorSpecialty;
-    
-    // Thông tin medical report (nếu có)
+
+    // --- Thông tin hồ sơ bệnh án (nếu có) ---
     private boolean hasMedicalReport;
     private Integer recordId;
     private String diagnosis;
+    private String patientPhone;
+
     public Appointment() {
     }
 
@@ -41,7 +44,12 @@ public class Appointment {
         this.status = status;
     }
 
-    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, boolean status, String patientName, String patientDob, String patientAddress, String patientInsurance, String parentName, String doctorName, String doctorSpecialty, boolean hasMedicalReport, Integer recordId, String diagnosis) {
+    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, boolean status,
+            String patientName, String patientDob, String patientAddress, String patientInsurance,
+            String parentName, String patientEmail, String parentPhone,
+            String doctorName, String doctorSpecialty,
+            boolean hasMedicalReport, Integer recordId, String diagnosis) {
+
         this.appointmentId = appointmentId;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -52,133 +60,64 @@ public class Appointment {
         this.patientAddress = patientAddress;
         this.patientInsurance = patientInsurance;
         this.parentName = parentName;
+        this.patientEmail = patientEmail;
+        this.parentPhone = parentPhone;
         this.doctorName = doctorName;
         this.doctorSpecialty = doctorSpecialty;
         this.hasMedicalReport = hasMedicalReport;
         this.recordId = recordId;
         this.diagnosis = diagnosis;
     }
-    
 
-    // Getter & Setter
-    public int getAppointmentId() {
-        return appointmentId;
-    }
+    // --- Getter & Setter ---
+    public int getAppointmentId() { return appointmentId; }
+    public void setAppointmentId(int appointmentId) { this.appointmentId = appointmentId; }
 
-    public void setAppointmentId(int appointmentId) {
-        this.appointmentId = appointmentId;
-    }
+    public int getPatientId() { return patientId; }
+    public void setPatientId(int patientId) { this.patientId = patientId; }
 
-    public int getPatientId() {
-        return patientId;
-    }
+    public int getDoctorId() { return doctorId; }
+    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
-    }
+    public Date getDateTime() { return dateTime; }
+    public void setDateTime(Date dateTime) { this.dateTime = dateTime; }
 
-    public int getDoctorId() {
-        return doctorId;
-    }
+    public boolean isStatus() { return status; }
+    public void setStatus(boolean status) { this.status = status; }
 
-    public void setDoctorId(int doctorId) {
-        this.doctorId = doctorId;
-    }
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
 
-    public Date getDateTime() {
-        return dateTime;
-    }
+    public String getPatientDob() { return patientDob; }
+    public void setPatientDob(String patientDob) { this.patientDob = patientDob; }
 
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
-    }
+    public String getPatientAddress() { return patientAddress; }
+    public void setPatientAddress(String patientAddress) { this.patientAddress = patientAddress; }
 
-    public boolean isStatus() {
-        return status;
-    }
+    public String getPatientInsurance() { return patientInsurance; }
+    public void setPatientInsurance(String patientInsurance) { this.patientInsurance = patientInsurance; }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    public String getParentName() { return parentName; }
+    public void setParentName(String parentName) { this.parentName = parentName; }
 
-    public String getPatientName() {
-        return patientName;
-    }
+    public String getPatientEmail() { return patientEmail; }
+    public void setPatientEmail(String patientEmail) { this.patientEmail = patientEmail; }
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
+    public String getParentPhone() { return parentPhone; }
+    public void setParentPhone(String parentPhone) { this.parentPhone = parentPhone; }
 
-    public String getPatientDob() {
-        return patientDob;
-    }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
 
-    public void setPatientDob(String patientDob) {
-        this.patientDob = patientDob;
-    }
+    public String getDoctorSpecialty() { return doctorSpecialty; }
+    public void setDoctorSpecialty(String doctorSpecialty) { this.doctorSpecialty = doctorSpecialty; }
 
-    public String getPatientAddress() {
-        return patientAddress;
-    }
+    public boolean isHasMedicalReport() { return hasMedicalReport; }
+    public void setHasMedicalReport(boolean hasMedicalReport) { this.hasMedicalReport = hasMedicalReport; }
 
-    public void setPatientAddress(String patientAddress) {
-        this.patientAddress = patientAddress;
-    }
+    public Integer getRecordId() { return recordId; }
+    public void setRecordId(Integer recordId) { this.recordId = recordId; }
 
-    public String getPatientInsurance() {
-        return patientInsurance;
-    }
-
-    public void setPatientInsurance(String patientInsurance) {
-        this.patientInsurance = patientInsurance;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-    public String getDoctorName() {
-        return doctorName;
-    }
-
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
-    }
-
-    public String getDoctorSpecialty() {
-        return doctorSpecialty;
-    }
-
-    public void setDoctorSpecialty(String doctorSpecialty) {
-        this.doctorSpecialty = doctorSpecialty;
-    }
-
-    public boolean isHasMedicalReport() {
-        return hasMedicalReport;
-    }
-
-    public void setHasMedicalReport(boolean hasMedicalReport) {
-        this.hasMedicalReport = hasMedicalReport;
-    }
-
-    public Integer getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(Integer recordId) {
-        this.recordId = recordId;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-    
+    public String getDiagnosis() { return diagnosis; }
+    public void setDiagnosis(String diagnosis) { this.diagnosis = diagnosis; }
 }

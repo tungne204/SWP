@@ -12,6 +12,11 @@ package dao.Receptionist;
  * @author Kiên
  */
 import entity.Receptionist.Patient;
+import entity.Receptionist.Parent;
+import entity.Receptionist.User;
+import entity.Receptionist.Doctor;
+import entity.Receptionist.Appointment;
+import entity.Receptionist.Role;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,47 +81,59 @@ public class PatientDAO extends DBContext {
      */
     public List<Patient> searchPatients(String keyword) {
         List<Patient> list = new ArrayList<>();
+
         String sql = """
-            SELECT 
-                p.patient_id, 
-                p.full_name, 
-                p.address, 
-                p.insurance_info,
-                p.dob,                            -- Thêm ngày sinh
-                pa.parentname AS parent_name,
-                u.username AS doctor_name,
-                a.date_time AS appointment_date,
-                CASE WHEN a.status = 1 THEN N'Comfired' ELSE N'Pending' END AS status
-            FROM Patient p
-            LEFT JOIN Parent pa ON p.parent_id = pa.parent_id
-            LEFT JOIN Appointment a 
-                ON a.appointment_id = (
-                    SELECT TOP 1 appointment_id 
-                    FROM Appointment 
-                    WHERE patient_id = p.patient_id 
-                    ORDER BY date_time DESC
-                )
-            LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id
-            LEFT JOIN [User] u ON d.user_id = u.user_id
-            WHERE p.full_name LIKE ? OR CAST(p.patient_id AS NVARCHAR) LIKE ?
-            ORDER BY p.patient_id ASC
-        """;
+        SELECT 
+            p.patient_id, 
+            p.full_name, 
+            p.address, 
+            p.insurance_info,
+            p.dob,
+            pa.parentname AS parent_name,
+            pa.id_info AS parent_id,
+            u.email,
+            u.phone,
+            a.date_time AS appointment_date,
+            CASE WHEN a.status = 1 THEN N'Confirmed' ELSE N'Pending' END AS status
+        FROM Patient p
+        LEFT JOIN Parent pa ON p.parent_id = pa.parent_id
+        LEFT JOIN [User] u ON p.user_id = u.user_id
+        LEFT JOIN Appointment a 
+            ON a.appointment_id = (
+                SELECT TOP 1 appointment_id 
+                FROM Appointment 
+                WHERE patient_id = p.patient_id 
+                ORDER BY date_time DESC
+            )
+        WHERE 
+            p.full_name LIKE ? OR
+            CAST(p.patient_id AS NVARCHAR) LIKE ? OR
+            p.address LIKE ? OR
+            p.insurance_info LIKE ? OR
+            CONVERT(NVARCHAR, p.dob, 23) LIKE ? OR
+            pa.parentname LIKE ? OR
+            pa.id_info LIKE ? OR
+            u.email LIKE ? OR
+            u.phone LIKE ?
+        ORDER BY p.patient_id ASC
+    """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 1; i <= 9; i++) {
+                ps.setString(i, "%" + keyword + "%");
+            }
 
-            ps.setString(1, "%" + keyword + "%");
-            ps.setString(2, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Patient p = new Patient();
                 p.setPatientId(rs.getInt("patient_id"));
                 p.setFullName(rs.getString("full_name"));
                 p.setAddress(rs.getString("address"));
                 p.setInsuranceInfo(rs.getString("insurance_info"));
-                p.setDob(rs.getDate("dob")); // Thêm dob
+                p.setDob(rs.getDate("dob"));
                 p.setParentName(rs.getString("parent_name"));
-                p.setDoctorName(rs.getString("doctor_name"));
+                p.setEmail(rs.getString("email"));
+                p.setPhone(rs.getString("phone"));
                 p.setAppointmentDate(rs.getString("appointment_date"));
                 p.setStatus(rs.getString("status"));
                 list.add(p);
@@ -265,6 +282,21 @@ public class PatientDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getUserIdByPatientId(int patientId) {
+        String sql = "SELECT user_id FROM Patient WHERE patient_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // nếu không tìm thấy
     }
 
 }

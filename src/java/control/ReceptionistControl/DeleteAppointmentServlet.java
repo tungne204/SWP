@@ -1,4 +1,4 @@
-package control;
+package control.ReceptionistControl;
 
 import dao.AppointmentDAO;
 import jakarta.servlet.ServletException;

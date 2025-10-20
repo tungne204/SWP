@@ -66,7 +66,7 @@
                     placeholder="Enter patient name or ID..."
                     value="${keyword}"
                     class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
-                >
+                    >
                 <button type="submit"
                         class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold text-lg">
                     Search
@@ -81,9 +81,11 @@
                             <tr>
                                 <th class="px-6 py-4">Patient ID</th>
                                 <th class="px-6 py-4">Full Name</th>
-                                <th class="px-6 py-4">Date of Birth</th> <!-- NEW COLUMN -->
+                                <th class="px-6 py-4">Date of Birth</th> 
                                 <th class="px-6 py-4">Address</th>
                                 <th class="px-6 py-4">Insurance</th>
+                                <th class="px-6 py-4">Email</th> 
+                                <th class="px-6 py-4">Phone</th>
                                 <th class="px-6 py-4 text-center">Details</th>
                             </tr>
                         </thead>
@@ -92,9 +94,11 @@
                                 <tr class="hover:bg-blue-50">
                                     <td class="px-6 py-4 font-semibold">${p.patientId}</td>
                                     <td class="px-6 py-4">${p.fullName}</td>
-                                    <td class="px-6 py-4">${p.dob}</td> <!-- DISPLAY DOB -->
+                                    <td class="px-6 py-4">${p.dob}</td> 
                                     <td class="px-6 py-4">${p.address}</td>
                                     <td class="px-6 py-4">${p.insuranceInfo}</td>
+                                    <th class="px-6 py-4">Email</th> 
+                                    <th class="px-6 py-4">Phone</th> 
                                     <td class="px-6 py-4 text-center">
                                         <a href="Patient-Profile?id=${p.patientId}"
                                            class="bg-blue-500 text-white px-4 py-1.5 rounded-md hover:bg-blue-600 transition inline-flex items-center gap-1">
@@ -110,7 +114,7 @@
                 <p class="mt-6 text-gray-600 text-center">
                     Found <strong>${fn:length(patients)}</strong> result(s)
                     <c:if test="${not empty keyword}"> for keyword "<em>${keyword}</em>"</c:if>.
-                </p>
+                    </p>
             </c:if>
 
             <!-- ️ No input yet -->
@@ -128,11 +132,25 @@
             </c:if>
         </main>
 
-        <!--  Footer -->
-        <footer class="bg-blue-700 text-blue-100 py-6 mt-auto">
-            <div class="text-center text-sm">
-                © 2025 Medilab Pediatric Clinic | Designed by 
-                <span class="font-semibold text-white">Kien</span>
+        <!-- Footer -->
+        <footer class="bg-[#f7f9fc] text-gray-700 py-8 border-top border-gray-200 mt-5">
+            <div class="max-w-5xl mx-auto text-center space-y-3">
+                <h2 class="text-2xl fw-bold text-gray-800">Medilab</h2>
+                <p>FPT University, Hoa Lac Hi-Tech Park, Thach That, Hanoi</p>
+                <p>
+                    <strong>Phone:</strong> +84 987 654 321<br>
+                    <strong>Email:</strong> medilab.contact@gmail.com
+                </p>
+                <div class="d-flex justify-content-center gap-4 mt-4">
+                    <a href="#" class="text-blue-600 hover:text-blue-800 transition"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-pink-500 hover:text-pink-700 transition"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-blue-500 hover:text-blue-700 transition"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-blue-700 hover:text-blue-900 transition"><i class="fab fa-linkedin fa-lg"></i></a>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">
+                    © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
+                    Designed by BootstrapMade | Customized by Medilab Team
+                </p>
             </div>
         </footer>
 
@@ -160,38 +178,44 @@
             const modal = document.getElementById("detailModal");
             const modalContent = document.getElementById("modalContent");
 
-            // Prevent empty search
+            // ✅ Lấy keyword thật từ server (an toàn cho ký tự đặc biệt)
+            const keyword = `${"${keyword}"}`.trim(); // Cách này JSP render ra đúng giá trị thật
+            const isShowingAll = (keyword === ""); // true nếu đang ở chế độ hiển thị toàn bộ danh sách
+
+            // ✅ Chỉ cảnh báo khi đang ở chế độ lọc (đã có keyword cũ)
             form.addEventListener("submit", (e) => {
                 const value = input.value.trim();
-                if (value === "") {
+
+                if (value === "" && !isShowingAll) {
                     e.preventDefault();
                     alert("Please enter a patient name or ID to search!");
                     input.focus();
                 }
             });
 
-            // Open detail modal
-            function openModal(id, name, dob, address, insurance, parent, doctor, status, appointment) {
+            // === Modal ===
+            function openModal(id, name, dob, address, insurance, parentName, parentId, email, phone, status, appointment) {
                 modal.classList.remove("hidden");
                 modalContent.innerHTML = `
-                    <p><strong>ID:</strong> ${id}</p>
-                    <p><strong>Full Name:</strong> ${name}</p>
-                    <p><strong>Date of Birth:</strong> ${dob || '—'}</p> <!-- Show DOB -->
-                    <p><strong>Address:</strong> ${address}</p>
-                    <p><strong>Insurance:</strong> ${insurance}</p>
-                    <p><strong>Parent:</strong> ${parent || '—'}</p>
-                    <p><strong>Assigned Doctor:</strong> ${doctor || '—'}</p>
-                    <p><strong>Status:</strong> ${status || '—'}</p>
-                    <p><strong>Appointment:</strong> ${appointment || '—'}</p>
-                `;
+            <p><strong>ID:</strong> ${id || '—'}</p>
+            <p><strong>Full Name:</strong> ${name || '—'}</p>
+            <p><strong>Date of Birth:</strong> ${dob || '—'}</p>
+            <p><strong>Address:</strong> ${address || '—'}</p>
+            <p><strong>Insurance:</strong> ${insurance || '—'}</p>
+            <p><strong>Parent Name:</strong> ${parentName || '—'}</p>
+            <p><strong>Parent ID:</strong> ${parentId || '—'}</p>
+            <p><strong>Email:</strong> ${email || '—'}</p>
+            <p><strong>Phone:</strong> ${phone || '—'}</p>
+            <p><strong>Status:</strong> ${status || '—'}</p>
+            <p><strong>Appointment:</strong> ${appointment || '—'}</p>
+        `;
             }
 
-            // Close modal
             function closeModal() {
                 modal.classList.add("hidden");
             }
 
-            // Hide warning after 3s
+            // === Ẩn warning sau 3s ===
             if (warningBox) {
                 setTimeout(() => {
                     warningBox.style.opacity = "0";
@@ -200,6 +224,5 @@
                 }, 3000);
             }
         </script>
-
     </body>
 </html>
