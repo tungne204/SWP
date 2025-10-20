@@ -1,128 +1,137 @@
-<%-- 
-    Document   : PatientProfile
-    Created on : Oct 19, 2025, 10:28:11 PM
-    Author     : KiênPC
---%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Patient Profile | Medilab Clinic</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Profile | Medilab Clinic</title>
 
-    <body class="bg-gray-50 text-gray-800 font-sans text-[18px] leading-relaxed font-medium">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Header -->
-        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
-                <div class="flex items-center gap-3">
-                    <a href="Receptionist-Dashboard"
-                       class="bg-white/20 px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
-                        Home
-                    </a>
-                    <a href="logout"
-                       class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
-                        Logout
-                    </a>
+    <!-- Bootstrap 5.3 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        crossorigin="anonymous"
+    />
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"
+    ></script>
+
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/a2e0b7c6d6.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-[#f7f9fc] text-gray-800 font-sans text-[17px]">
+
+<header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
+        <span class="text-2xl fw-bold tracking-wide">Medilab Clinic</span>
+        <div class="d-flex gap-3">
+            <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">Home</a>
+            <a href="logout" class="btn btn-outline-light fw-semibold px-4 py-1">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-6xl mx-auto pt-32 pb-10 px-8">
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-center mb-10 text-gray-800">
+        Patient Profile
+        <div class="h-1 w-48 mx-auto bg-blue-500 mt-2 rounded-full"></div>
+    </h1>
+
+    <!-- Main Card -->
+    <div class="bg-white shadow-sm rounded-4 border border-blue-100 p-5">
+
+        <!-- Header Title -->
+        <div class="d-flex justify-between align-items-center mb-4">
+            <h2 class="fs-4 fw-bold text-primary d-flex align-items-center gap-2">
+                <i class="fa-regular fa-calendar text-blue-600"></i> Profile Details
+            </h2>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row gx-5">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <h5 class="fw-bold text-primary mb-2">Appointment Details</h5>
+
+                <!-- Status -->
+                <p class="mb-2 d-flex align-items-center gap-2">
+                    <strong>Status:</strong>
+                    <c:choose>
+                        <c:when test="${patient.status == 'Confirmed'}">
+                            <span class="badge bg-success px-3 py-2">APPROVED</span>
+                        </c:when>
+                        <c:when test="${patient.status == 'Pending'}">
+                            <span class="badge bg-warning text-dark px-3 py-2">PENDING</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="badge bg-danger px-3 py-2">REJECTED</span>
+                        </c:otherwise>
+                    </c:choose>
+                </p>
+
+                <p class="mb-1"><strong>Date & Time:</strong> ${patient.appointmentDate} at ${patient.appointmentTime}</p>
+                <p class="mb-4"><strong>Doctor:</strong> ${patient.doctorName} - ${patient.doctorSpecialty}</p>
+
+                <!-- Parent Info -->
+                <h5 class="fw-bold text-primary mb-2 mt-4">Parent Information</h5>
+                <div class="ms-2">
+                    <p class="mb-1"><strong>Parent Name:</strong> ${patient.parentName}</p>
+                    <p class="mb-1"><strong>Parent ID:</strong> ${patient.parentIdNumber}</p>
+                    <p class="mb-1"><strong>Email:</strong> ${patient.email}</p>
+                    <p class="mb-1"><strong>Phone:</strong> ${patient.phone}</p>
                 </div>
             </div>
-        </header>
 
-        <!-- Content -->
-        <main class="max-w-5xl mx-auto pt-28 pb-16 px-4">
-            <!-- Profile Information -->
-            <section class="bg-white p-8 rounded-2xl shadow-md mb-8 relative">
-                <h2 class="text-2xl font-semibold text-blue-700 mb-6">Patient Information</h2>
-
-                <!-- ✏️ Edit Profile Button -->
-                <a href="Update-Patient?pid=${patient.patientId}"
-                   class="absolute top-8 right-8 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition text-base font-semibold">
-                    ✏️ Edit Profile
-                </a>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 text-[18px]">
-                    <div>
-                        <p class="font-semibold text-gray-600">Patient ID:</p>
-                        <p>${patient.patientId}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Full name:</p>
-                        <p>${patient.fullName}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Date of Birth:</p> <!--New Field -->
-                        <p>${patient.dob}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Address:</p>
-                        <p>${patient.address}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Insurance:</p>
-                        <p>${patient.insuranceInfo}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Parent:</p>
-                        <p>${patient.parentName}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Doctor:</p>
-                        <p>${patient.doctorName}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Status:</p>
-                        <p>${patient.status}</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-600">Next medical appointment:</p>
-                        <p>${patient.appointmentDate}</p>
-                    </div>
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <h5 class="fw-bold text-primary mb-2">Patient Information</h5>
+                <div class="ms-2">
+                    <p class="mb-1"><strong>Full Name:</strong> ${patient.fullName}</p>
+                    <p class="mb-1"><strong>Date of Birth:</strong> ${patient.dob}</p>
+                    <p class="mb-1"><strong>Address:</strong> ${patient.address}</p>
+                    <p class="mb-1"><strong>Insurance:</strong> ${patient.insuranceInfo}</p>
                 </div>
-            </section>
-
-            <!-- Medical History -->
-            <section class="bg-white p-8 rounded-2xl shadow-md">
-                <h2 class="text-2xl font-semibold text-blue-700 mb-6">Medical History</h2>
-
-                <c:if test="${empty historyList}">
-                    <p class="text-gray-500 italic">No medical history available.</p>
-                </c:if>
-
-                <c:if test="${not empty historyList}">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-[17px] text-left border border-gray-200 rounded-lg">
-                            <thead class="bg-gray-100 text-gray-700">
-                                <tr>
-                                    <th class="px-5 py-3">📅 Examination Date</th>
-                                    <th class="px-5 py-3">💊 Diagnosis</th>
-                                    <th class="px-5 py-3">📝 Notes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach var="h" items="${historyList}">
-                                <tr class="border-t hover:bg-blue-50">
-                                    <td class="px-5 py-3">${h.date}</td>
-                                    <td class="px-5 py-3 font-semibold text-blue-700">${h.diagnosis}</td>
-                                    <td class="px-5 py-3">${h.notes}</td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:if>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-blue-700 text-blue-100 py-6 mt-10 text-[16px]">
-            <div class="text-center">
-                © 2025 Medilab Pediatric Clinic | Designed by 
-                <span class="font-semibold text-white">Kiên</span>
             </div>
-        </footer>
+        </div>
 
-    </body>
+        <!-- Buttons -->
+        <div class="d-flex justify-content-end gap-3 mt-5">
+            <a href="Update-Patient?pid=${patient.patientId}" 
+               class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                <i class="fa-regular fa-pen-to-square"></i> Update
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#f7f9fc] text-gray-700 py-8 border-top border-gray-200 mt-5">
+    <div class="max-w-5xl mx-auto text-center space-y-3">
+        <h2 class="text-2xl fw-bold text-gray-800">Medilab</h2>
+        <p>FPT University, Hoa Lac Hi-Tech Park, Thach That, Hanoi</p>
+        <p>
+            <strong>Phone:</strong> +84 987 654 321<br>
+            <strong>Email:</strong> medilab.contact@gmail.com
+        </p>
+        <div class="d-flex justify-content-center gap-4 mt-4">
+            <a href="#" class="text-blue-600 hover:text-blue-800 transition"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-pink-500 hover:text-pink-700 transition"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-blue-500 hover:text-blue-700 transition"><i class="fab fa-youtube fa-lg"></i></a>
+            <a href="#" class="text-blue-700 hover:text-blue-900 transition"><i class="fab fa-linkedin fa-lg"></i></a>
+        </div>
+        <p class="text-sm text-gray-500 mt-4">
+            © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
+            Designed by BootstrapMade | Customized by Medilab Team
+        </p>
+    </div>
+</footer>
+
+</body>
 </html>

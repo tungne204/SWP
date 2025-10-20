@@ -11,15 +11,14 @@ import java.io.IOException;
 import java.sql.Date;
 
 /**
- * Servlet xử lý hiển thị và cập nhật thông tin bệnh nhân
- * URL: /Update-Patient
- * 
+ * Servlet xử lý hiển thị và cập nhật thông tin bệnh nhân URL: /Update-Patient
+ *
  * @author Kiên
  */
 @WebServlet("/Update-Patient")
 public class UpdatePatientServlet extends HttpServlet {
 
-    // ✅ 1. Khi người dùng bấm "Edit Profile" → hiển thị form cập nhật
+    // 1. Khi người dùng bấm "Edit Profile" -> hiển thị form cập nhật
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,8 +32,8 @@ public class UpdatePatientServlet extends HttpServlet {
             Patient patient = dao.getPatientById(pid);
 
             if (patient == null) {
-                request.setAttribute("error", "Không tìm thấy bệnh nhân!");
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                // Nếu không tìm thấy bệnh nhân -> quay lại View Profile với thông báo lỗi
+                response.sendRedirect("Patient-Profile?pid=" + pid + "&error=notfound");
                 return;
             }
 
@@ -43,11 +42,11 @@ public class UpdatePatientServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("Patient-Profile?error=true");
         }
     }
 
-    // ✅ 2. Khi người dùng bấm "Update" → lưu thông tin mới vào database
+    // 2. Khi người dùng bấm "Update" -> lưu thông tin mới vào database
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -56,29 +55,45 @@ public class UpdatePatientServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
+            //Lấy dữ liệu từ form
             int id = Integer.parseInt(request.getParameter("patientId"));
             String fullName = request.getParameter("fullName");
             String address = request.getParameter("address");
             String insurance = request.getParameter("insuranceInfo");
-            String parent = request.getParameter("parentName");
-            String doctor = request.getParameter("doctorName");
-            String dobStr = request.getParameter("dob"); // Lấy ngày sinh từ form
+            String dobStr = request.getParameter("dob");
+            String parentName = request.getParameter("parentName");
+            String parentIdNumber = request.getParameter("parentIdNumber");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
 
             Date dob = null;
             if (dobStr != null && !dobStr.isEmpty()) {
-                dob = Date.valueOf(dobStr); // Chuyển String → java.sql.Date
+                dob = Date.valueOf(dobStr);
             }
+            // Gán vào đối tượng Patient
+            Patient p = new Patient();
+            p.setPatientId(id);
+            p.setFullName(fullName);
+            p.setAddress(address);
+            p.setInsuranceInfo(insurance);
+            p.setDob(dob);
+            p.setParentName(parentName);
+            p.setParentIdNumber(parentIdNumber);
+            p.setEmail(email);
+            p.setPhone(phone);
 
             //  Gọi DAO để cập nhật
             PatientDAO dao = new PatientDAO();
-            dao.updatePatient(id, fullName, address, insurance, parent, doctor, dob);
+            dao.updatePatient(p);
 
-            // Sau khi cập nhật → quay lại trang hồ sơ bệnh nhân
+            // Sau khi cập nhật -> quay lại trang hồ sơ bệnh nhân
             response.sendRedirect("Patient-Profile?pid=" + id + "&success=true");
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            // Nếu có lỗi thì quay lại trang profile và hiển thị thông báo lỗi
+            String pid = request.getParameter("patientId");
+            response.sendRedirect("Patient-Profile?pid=" + pid + "&error=true");
         }
     }
 }

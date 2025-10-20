@@ -51,7 +51,7 @@ public class PatientSearchServlet extends HttpServlet {
                 // Nếu không tìm thấy → hiển thị thông báo
                 if (list == null || list.isEmpty()) {
                     list = dao.getAllPatients();
-                    request.setAttribute("warning", "❌ Không tìm thấy bệnh nhân cho từ khóa \"" + keyword + "\".");
+                    request.setAttribute("warning", "Không tìm thấy bệnh nhân cho từ khóa \"" + keyword + "\".");
                     keyword = ""; // reset ô input
                 }
             }

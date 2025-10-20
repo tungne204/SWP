@@ -12,7 +12,8 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /**
- * Hiển thị thông tin chi tiết bệnh nhân URL: /Patient-Profile?id=...
+ * Hiển thị thông tin chi tiết bệnh nhân
+ * URL: /Patient-Profile
  *
  * @author Kiên
  */
@@ -22,7 +23,11 @@ public class PatientProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        doPost(request, response);
+    }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         if (id == null || id.isEmpty()) {
             response.sendRedirect("Patient-Search");
@@ -47,4 +52,5 @@ public class PatientProfileServlet extends HttpServlet {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
+    
 }

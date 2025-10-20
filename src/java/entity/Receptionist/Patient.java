@@ -18,6 +18,7 @@ public class Patient {
     private String phone;             // Số điện thoại của cha/mẹ
 
     private String doctorName;        // Bác sĩ phụ trách
+    private String doctorSpecialty;   // Chuyên khoa
     private String appointmentDate;   // Ngày khám
     private String appointmentTime;   // Giờ khám
     private String status;            // Trạng thái lịch hẹn
@@ -67,4 +68,9 @@ public class Patient {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getDoctorSpecialty() {return doctorSpecialty;}
+
+    public void setDoctorSpecialty(String doctorSpecialty) {this.doctorSpecialty = doctorSpecialty;}
+    
 }

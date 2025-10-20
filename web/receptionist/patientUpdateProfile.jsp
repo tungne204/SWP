@@ -5,105 +5,151 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Update Patient | Medilab Clinic</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Update Patient | Medilab Clinic</title>
 
-<body class="bg-gray-50 text-gray-800 font-sans text-[18px] leading-relaxed font-medium">
+        <!-- Tailwind + Bootstrap -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/a2e0b7c6d6.js" crossorigin="anonymous"></script>
+    </head>
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-        <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-            <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
-            <div class="flex items-center gap-3">
-                <a href="Receptionist-Dashboard"
-                   class="bg-white/20 px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
-                    Home
-                </a>
-                <a href="logout"
-                   class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
-                    Logout
-                </a>
+    <body class="bg-[#f7f9fc] text-gray-800 font-sans text-[17px]">
+        <!-- ===== HEADER ===== -->
+        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
+            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
+                <span class="text-2xl fw-bold tracking-wide">Medilab Clinic</span>
+                <div class="d-flex gap-3">
+                    <!-- Nút Home quay về Dashboard -->
+                    <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">
+                        <i class="fa-solid fa-house"></i> Home
+                    </a>
+                    <!-- Logout -->
+                    <a href="logout" class="btn btn-outline-light fw-semibold px-4 py-1">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Content -->
-    <main class="max-w-3xl mx-auto pt-28 pb-16 px-6">
-        <section class="bg-white p-8 rounded-2xl shadow-md">
-            <h2 class="text-2xl font-semibold text-blue-700 mb-6">🩺 Update Patient Information</h2>
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="max-w-6xl mx-auto pt-32 pb-10 px-8">
+            <h1 class="text-3xl font-bold text-center mb-10 text-gray-800">
+                Update Patient Information
+                <div class="h-1 w-56 mx-auto bg-blue-500 mt-2 rounded-full"></div>
+            </h1>
 
-            <form action="Update-Patient" method="post" class="space-y-6">
+            <!-- Update Form -->
+            <form action="Update-Patient" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
+
+                <!-- PATIENT INFO -->
+                <h4 class="text-blue-700 fw-bold mb-4">
+                    <i class="fa-regular fa-user text-blue-600"></i> Patient Information
+                </h4>
+                <div class="row gx-5">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Full Name</label>
+                        <input type="text" name="fullName" value="${patient.fullName}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Date of Birth</label>
+                        <input type="date" name="dob"
+                               value="<c:out value='${fn:substring(patient.dob, 0, 10)}'/>"
+                               class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Address</label>
+                        <input type="text" name="address" value="${patient.address}" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Insurance Info</label>
+                        <input type="text" name="insuranceInfo" value="${patient.insuranceInfo}" class="form-control">
+                    </div>
+                </div>
+
+                <!-- PARENT INFO -->
+                <h4 class="text-blue-700 fw-bold mt-5 mb-3">
+                    <i class="fa-regular fa-address-book text-blue-600"></i> Parent Information
+                </h4>
+                <div class="row gx-5">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Parent Name</label>
+                        <input type="text" name="parentName" value="${patient.parentName}" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Parent ID</label>
+                        <input type="text" name="parentIdNumber" value="${patient.parentIdNumber}" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" value="${patient.email}" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Phone</label>
+                        <input type="text" name="phone" value="${patient.phone}" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Hidden patient ID -->
                 <input type="hidden" name="patientId" value="${patient.patientId}">
 
-                <!-- Full Name -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Full Name:</label>
-                    <input type="text" name="fullName" value="${patient.fullName}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Date of Birth -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Date of Birth:</label>
-                    <input type="date" name="dob" value="${patient.dob}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Address -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Address:</label>
-                    <input type="text" name="address" value="${patient.address}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Insurance -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Insurance Info:</label>
-                    <input type="text" name="insuranceInfo" value="${patient.insuranceInfo}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Parent -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Parent Name:</label>
-                    <input type="text" name="parentName" value="${patient.parentName}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Doctor -->
-                <div>
-                    <label class="block text-gray-600 font-semibold mb-1">Doctor in Charge:</label>
-                    <input type="text" name="doctorName" value="${patient.doctorName}"
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex justify-end gap-4 mt-8">
-                    <a href="Patient-Profile?pid=${patient.patientId}"
-                       class="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition">
-                        Cancel
-                    </a>
-                    <button type="submit"
-                            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                        Update
+                <!-- BUTTONS -->
+                <div class="d-flex justify-content-end gap-3 mt-5">
+                    <!-- Save -->
+                    <button type="submit" class="btn btn-success d-flex align-items-center gap-2 px-4">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
                     </button>
+                    <!-- Cancel -->
+                    <a href="Patient-Profile?pid=${patient.patientId}" class="btn btn-secondary d-flex align-items-center gap-2 px-4">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </a>
                 </div>
             </form>
-        </section>
-    </main>
+        </main>
 
-    <!-- Footer -->
-    <footer class="bg-blue-700 text-blue-100 py-6 mt-10 text-[16px]">
-        <div class="text-center">
-            © 2025 Medilab Pediatric Clinic | Designed by 
-            <span class="font-semibold text-white">Kiên</span>
+        <!-- ===== FOOTER ===== -->
+        <footer class="bg-[#f7f9fc] text-gray-700 py-8 border-top border-gray-200 mt-5">
+            <div class="max-w-5xl mx-auto text-center space-y-3">
+                <h2 class="text-2xl fw-bold text-gray-800">Medilab</h2>
+                <p>FPT University, Hoa Lac Hi-Tech Park, Thach That, Hanoi</p>
+                <p><strong>Phone:</strong> +84 987 654 321<br>
+                    <strong>Email:</strong> medilab.contact@gmail.com</p>
+                <div class="d-flex justify-content-center gap-4 mt-4">
+                    <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-pink-500 hover:text-pink-700"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-blue-500 hover:text-blue-700"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-blue-700 hover:text-blue-900"><i class="fab fa-linkedin fa-lg"></i></a>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">
+                    © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
+                    Designed by BootstrapMade | Customized by Medilab Team
+                </p>
+            </div>
+        </footer>
+
+    </body>
+    <c:if test="${param.success == 'true'}">
+        <div class="alert alert-success text-center fw-semibold my-3" role="alert">
+            ✅ Update successful!
         </div>
-    </footer>
+    </c:if>
 
-</body>
+    <c:if test="${param.error == 'true'}">
+        <div class="alert alert-danger text-center fw-semibold my-3" role="alert">
+            ❌ Update failed. Please try again.
+        </div>
+    </c:if>
+
+    <c:if test="${param.error == 'notfound'}">
+        <div class="alert alert-warning text-center fw-semibold my-3" role="alert">
+            ⚠️ Patient not found!
+        </div>
+    </c:if>
+    
 </html>
