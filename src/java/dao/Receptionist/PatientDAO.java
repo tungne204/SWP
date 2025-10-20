@@ -150,7 +150,7 @@ public class PatientDAO extends DBContext {
         uDoctor.username AS doctor_name,
         FORMAT(a.date_time, 'dd/MM/yyyy') AS appointment_date,
         FORMAT(a.date_time, 'HH:mm') AS appointment_time,
-        CASE WHEN a.status = 1 THEN N'Đã xác nhận' ELSE N'Chưa xác nhận' END AS status
+        CASE WHEN a.status = 1 THEN N'Comfirmed' ELSE N'Pending' END AS status
     FROM Patient p
     LEFT JOIN Parent pa ON p.parent_id = pa.parent_id
     LEFT JOIN [User] uParent ON p.user_id = uParent.user_id
