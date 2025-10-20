@@ -24,7 +24,7 @@ import entity.Parent;
 import entity.Patient;
 import entity.User;
 
-@WebServlet(name = "AppointmentServlet", urlPatterns = {"/appointment1"})
+@WebServlet(name = "AppointmentServlet", urlPatterns = {"/appointment"})
 public class AppointmentServlet extends HttpServlet {
     
     // DAO for Doctor functionality
