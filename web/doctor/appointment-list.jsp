@@ -10,7 +10,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-        
+
         <style>
             :root {
                 --primary-color: #3fbbc0;
@@ -22,16 +22,16 @@
                 --danger-color: #dc3545;
                 --info-color: #17a2b8;
             }
-            
+
             * {
                 font-family: 'Roboto', sans-serif;
             }
-            
+
             body {
                 background-color: var(--light-bg);
                 color: #444444;
             }
-            
+
             /* Header Section */
             .header-section {
                 background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -40,19 +40,19 @@
                 margin-bottom: 2rem;
                 box-shadow: 0 4px 15px rgba(63, 187, 192, 0.3);
             }
-            
+
             .header-section h1 {
                 font-family: 'Poppins', sans-serif;
                 font-weight: 600;
                 font-size: 2.5rem;
                 margin-bottom: 0.5rem;
             }
-            
+
             .header-section p {
                 font-size: 1.1rem;
                 opacity: 0.95;
             }
-            
+
             /* Card Styling */
             .card {
                 border: none;
@@ -61,25 +61,25 @@
                 margin-bottom: 2rem;
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-            
+
             .card:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 5px 30px rgba(0, 0, 0, 0.12);
             }
-            
+
             .card-header {
                 background: var(--primary-color);
                 border: none;
                 border-radius: 10px 10px 0 0 !important;
                 padding: 1rem 1.5rem;
             }
-            
+
             .card-header h5, .card-header h6 {
                 font-family: 'Poppins', sans-serif;
                 font-weight: 500;
                 margin: 0;
             }
-            
+
             /* Alert Messages */
             .alert {
                 border: none;
@@ -87,19 +87,19 @@
                 padding: 1rem 1.25rem;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             }
-            
+
             .alert-success {
                 background-color: #d4edda;
                 color: #155724;
                 border-left: 4px solid var(--success-color);
             }
-            
+
             .alert-danger {
                 background-color: #f8d7da;
                 color: #721c24;
                 border-left: 4px solid var(--danger-color);
             }
-            
+
             /* Navigation Pills */
             .nav-pills .nav-link {
                 border-radius: 25px;
@@ -109,39 +109,39 @@
                 font-weight: 500;
                 transition: all 0.3s ease;
             }
-            
+
             .nav-pills .nav-link:hover {
                 background-color: rgba(63, 187, 192, 0.1);
                 color: var(--primary-color);
             }
-            
+
             .nav-pills .nav-link.active {
                 background-color: var(--primary-color);
                 color: white;
             }
-            
+
             /* Date Picker Group */
             .date-picker {
                 max-width: 350px;
             }
-            
+
             .date-picker .form-control {
                 border-radius: 25px 0 0 25px;
                 border: 2px solid #e0e0e0;
                 padding: 0.6rem 1rem;
             }
-            
+
             .date-picker .form-control:focus {
                 border-color: var(--primary-color);
                 box-shadow: 0 0 0 0.2rem rgba(63, 187, 192, 0.25);
             }
-            
+
             .date-picker .btn {
                 border-radius: 0 25px 25px 0;
                 padding: 0.6rem 1.5rem;
                 font-weight: 500;
             }
-            
+
             /* Statistics Cards */
             .statistics-card {
                 border-radius: 15px;
@@ -150,50 +150,50 @@
                 color: white;
                 transition: transform 0.3s ease;
             }
-            
+
             .statistics-card:hover {
                 transform: translateY(-8px);
             }
-            
+
             .statistics-card i {
                 opacity: 0.9;
             }
-            
+
             .statistics-card h5 {
                 font-size: 1rem;
                 font-weight: 400;
                 margin-top: 0.5rem;
                 opacity: 0.95;
             }
-            
+
             .statistics-card h2 {
                 font-size: 2.5rem;
                 font-weight: 700;
                 margin: 0.5rem 0 0;
             }
-            
+
             .bg-primary-custom {
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             }
-            
+
             .bg-success-custom {
                 background: linear-gradient(135deg, #4caf50, #388e3c);
             }
-            
+
             .bg-warning-custom {
                 background: linear-gradient(135deg, #ffc107, #ff9800);
             }
-            
+
             /* Table Styling */
             .table-responsive {
                 border-radius: 8px;
                 overflow: hidden;
             }
-            
+
             .table {
                 margin-bottom: 0;
             }
-            
+
             .table thead th {
                 background-color: #f8f9fa;
                 color: var(--dark-color);
@@ -204,22 +204,22 @@
                 padding: 1rem;
                 border: none;
             }
-            
+
             .table tbody td {
                 padding: 1rem;
                 vertical-align: middle;
                 border-color: #f0f0f0;
             }
-            
+
             .table-hover tbody tr {
                 transition: all 0.3s ease;
             }
-            
+
             .table-hover tbody tr:hover {
                 background-color: rgba(63, 187, 192, 0.08);
                 transform: scale(1.01);
             }
-            
+
             /* Status Badges */
             .status-badge {
                 font-size: 0.85rem;
@@ -230,16 +230,16 @@
                 align-items: center;
                 gap: 0.4rem;
             }
-            
+
             .badge.bg-success {
                 background-color: var(--success-color) !important;
             }
-            
+
             .badge.bg-warning {
                 background-color: var(--warning-color) !important;
                 color: #333 !important;
             }
-            
+
             /* Button Styling */
             .btn {
                 border-radius: 25px;
@@ -247,127 +247,127 @@
                 font-weight: 500;
                 transition: all 0.3s ease;
             }
-            
+
             .btn-primary {
                 background-color: var(--primary-color);
                 border-color: var(--primary-color);
             }
-            
+
             .btn-primary:hover {
                 background-color: var(--secondary-color);
                 border-color: var(--secondary-color);
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(63, 187, 192, 0.4);
             }
-            
+
             .btn-group .btn {
                 border-radius: 4px;
                 margin: 0 2px;
             }
-            
+
             .btn-sm {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.875rem;
             }
-            
+
             .btn-info {
                 background-color: var(--info-color);
                 border-color: var(--info-color);
                 color: white;
             }
-            
+
             .btn-info:hover {
                 background-color: #138496;
                 border-color: #138496;
             }
-            
+
             .btn-outline-primary {
                 color: var(--primary-color);
                 border-color: var(--primary-color);
             }
-            
+
             .btn-outline-primary:hover {
                 background-color: var(--primary-color);
                 border-color: var(--primary-color);
                 color: white;
             }
-            
+
             .btn-outline-success {
                 color: var(--success-color);
                 border-color: var(--success-color);
             }
-            
+
             .btn-outline-success:hover {
                 background-color: var(--success-color);
                 border-color: var(--success-color);
             }
-            
+
             .btn-outline-warning {
                 color: #ff9800;
                 border-color: #ff9800;
             }
-            
+
             .btn-outline-warning:hover {
                 background-color: #ff9800;
                 border-color: #ff9800;
                 color: white;
             }
-            
+
             /* Empty State */
             .empty-state {
                 padding: 3rem 1rem;
                 text-align: center;
             }
-            
+
             .empty-state i {
                 color: #ccc;
                 margin-bottom: 1rem;
             }
-            
+
             .empty-state p {
                 color: #999;
                 font-size: 1.1rem;
             }
-            
+
             /* Quick Links Card */
             .quick-links-card .card-header {
                 background: var(--info-color);
             }
-            
+
             /* Icons */
             .text-primary-custom {
                 color: var(--primary-color) !important;
             }
-            
+
             /* Responsive */
             @media (max-width: 768px) {
                 .header-section h1 {
                     font-size: 1.8rem;
                 }
-                
+
                 .header-section {
                     padding: 2rem 0 1.5rem;
                 }
-                
+
                 .nav-pills {
                     flex-direction: column;
                 }
-                
+
                 .nav-pills .nav-link {
                     margin-bottom: 0.5rem;
                     margin-right: 0;
                 }
-                
+
                 .date-picker {
                     max-width: 100%;
                     margin-top: 1rem;
                 }
-                
+
                 .statistics-card h2 {
                     font-size: 2rem;
                 }
             }
-            
+
             /* Animation */
             @keyframes fadeInUp {
                 from {
@@ -379,10 +379,20 @@
                     transform: translateY(0);
                 }
             }
-            
+
             .card {
                 animation: fadeInUp 0.5s ease-out;
             }
+            .btn-back {
+                background-color: #58c1c5;
+                border: none;
+                color: white;
+            }
+            .btn-back:hover {
+                background-color: #3fb0b5;
+            }
+
+
         </style>
     </head>
     <body>
@@ -392,6 +402,14 @@
                 <h1><i class="fas fa-calendar-alt"></i> Lịch hẹn bệnh nhân</h1>
                 <p class="mb-0">Quản lý và theo dõi lịch khám bệnh</p>
             </div>
+            <!-- Nút trở về trang chính bác sĩ -->
+            <div class="mb-3 text-end">
+                <a href="doctor-dashboard" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Trang chính bác sĩ
+                </a>
+
+            </div>
+
         </div>
 
         <div class="container">

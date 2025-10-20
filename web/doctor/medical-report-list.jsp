@@ -67,6 +67,14 @@
                 z-index: 9999;
                 min-width: 300px;
             }
+            .btn-success {
+                background-color: #3fbbc0;
+                border: none;
+            }
+            .btn-success:hover {
+                background-color: #2a9ca1;
+            }
+
         </style>
     </head>
     <body>
@@ -97,12 +105,20 @@
                         <h5 class="card-title mb-0">
                             <i class="fas fa-list"></i> Danh sách đơn thuốc
                         </h5>
-                        <a href="medical-report?action=add" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Thêm đơn thuốc mới
-                        </a>
+                        <div class="d-flex gap-2">
+                            <!-- Nút trở về Doctor Dashboard -->
+                            <a href="doctor-dashboard" class="btn btn-success">
+                                <i class="fas fa-house-medical"></i> Trang chính bác sĩ
+                            </a>
+                            <!-- Nút thêm đơn thuốc mới -->
+                            <a href="medical-report?action=add" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Thêm đơn thuốc mới
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <!-- Table -->
             <div class="card">
