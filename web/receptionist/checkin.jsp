@@ -225,7 +225,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="parentCccd" class="form-label">Số CCCD Phụ Huynh <span class="text-red-500">*</span></label>
-                                <input type="text" class="form-control" id="parentCccd" name="parentCccd" placeholder="Nhập số CCCD" required>
+                                <input type="text" class="form-control" id="parentCccd" name="parentCccd" 
+                                       placeholder="Nhập số CCCD (9-12 số)" 
+                                       pattern="[0-9]{9,12}" 
+                                       maxlength="12"
+                                       minlength="9"
+                                       title="Số CCCD phải có từ 9 đến 12 chữ số"
+                                       required>
+                                <small class="text-gray-500 text-sm">Số CCCD phải có từ 9 đến 12 chữ số</small>
                             </div>
                         </div>
 
@@ -389,6 +396,38 @@
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('searchBtn').click();
+            }
+        });
+        
+        // CCCD validation
+        document.getElementById('parentCccd').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const cccdPattern = /^[0-9]{9,12}$/;
+            
+            // Remove any non-numeric characters
+            e.target.value = value.replace(/[^0-9]/g, '');
+            
+            // Validate length and format
+            if (e.target.value.length > 0 && (e.target.value.length < 9 || e.target.value.length > 12)) {
+                e.target.setCustomValidity('Số CCCD phải có từ 9 đến 12 chữ số');
+            } else if (e.target.value.length >= 9 && e.target.value.length <= 12 && !cccdPattern.test(e.target.value)) {
+                e.target.setCustomValidity('Số CCCD chỉ được chứa chữ số');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+        
+        // Form submission validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const cccdInput = document.getElementById('parentCccd');
+            const cccdValue = cccdInput.value;
+            const cccdPattern = /^[0-9]{9,12}$/;
+            
+            if (cccdValue && !cccdPattern.test(cccdValue)) {
+                e.preventDefault();
+                alert('Số CCCD phải có từ 9 đến 12 chữ số và chỉ chứa số');
+                cccdInput.focus();
+                return false;
             }
         });
     </script>
