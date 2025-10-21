@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package control;
 
 import dao.TestResultDAO;
 import entity.TestResult;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -21,41 +21,46 @@ import java.util.List;
  *
  * @author Quang Anh
  */
-@WebServlet(name="TestResultServlet", urlPatterns={"/test-result"})
+@WebServlet(name = "TestResultServlet", urlPatterns = {"/test-result"})
 public class TestResultServlet extends HttpServlet {
-   private TestResultDAO dao;
+
+    private TestResultDAO dao;
 
     @Override
     public void init() throws ServletException {
         dao = new TestResultDAO();
     }
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet TestResultServlet</title>");  
+            out.println("<title>Servlet TestResultServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet TestResultServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet TestResultServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -63,7 +68,7 @@ public class TestResultServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
@@ -83,38 +88,64 @@ public class TestResultServlet extends HttpServlet {
                 listTestResults(request, response);
                 break;
         }
-    } 
+    }
+
     private void listTestResults(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1; // Giá trị mặc định để test
+
+        HttpSession session = request.getSession(false);
+        User acc = (User) session.getAttribute("acc");
+
+        // Kiểm tra đăng nhập
+        if (acc == null) {
+            response.sendRedirect("login.jsp");
+            return;
         }
 
-        List<TestResult> testResults = dao.getAllByDoctorId(doctorId);
-        request.setAttribute("testResults", testResults);
-        request.getRequestDispatcher("doctor/test-result-list.jsp").forward(request, response);
+        // Kiểm tra quyền (roleId = 2 là bác sĩ)
+        if (acc.getRoleId() != 2) {
+            request.getRequestDispatcher("403.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            // Lấy doctor_id từ user_id
+            int doctorId = dao.getDoctorIdByUserId(acc.getUserId());
+            if (doctorId == -1) {
+                request.setAttribute("errorMessage", "Không tìm thấy thông tin bác sĩ!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
+
+            // Lấy danh sách kết quả xét nghiệm
+            List<TestResult> testResults = dao.getAllByDoctorId(doctorId);
+            request.setAttribute("testResults", testResults);
+
+            request.getRequestDispatcher("doctor/test-result-list.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi tải danh sách kết quả xét nghiệm!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
     }
 
     // Xem test results của một medical record cụ thể
     private void viewByRecord(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             int recordId = Integer.parseInt(request.getParameter("recordId"));
-            
+
             List<TestResult> testResults = dao.getByRecordId(recordId);
             boolean hasTestRequest = dao.hasTestRequest(recordId);
             int testCount = dao.countByRecordId(recordId);
-            
+
             request.setAttribute("testResults", testResults);
             request.setAttribute("recordId", recordId);
             request.setAttribute("hasTestRequest", hasTestRequest);
             request.setAttribute("testCount", testCount);
-            
+
             request.getRequestDispatcher("doctor/test-result-by-record.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -125,12 +156,12 @@ public class TestResultServlet extends HttpServlet {
     // Xem chi tiết một test result
     private void viewDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             int testId = Integer.parseInt(request.getParameter("id"));
-            
+
             TestResult testResult = dao.getById(testId);
-            
+
             if (testResult != null) {
                 request.setAttribute("testResult", testResult);
                 request.getRequestDispatcher("doctor/test-result-detail.jsp").forward(request, response);
@@ -144,8 +175,10 @@ public class TestResultServlet extends HttpServlet {
             response.sendRedirect("test-result?action=list");
         }
     }
-    /** 
+
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -153,12 +186,13 @@ public class TestResultServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

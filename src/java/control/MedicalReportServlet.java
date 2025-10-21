@@ -7,6 +7,7 @@ package control;
 
 import dao.MedicalReportDAO;
 import entity.MedicalReport;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -127,18 +128,32 @@ public class MedicalReportServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    private Integer getDoctorIdFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) return null;
+
+        User acc = (User) session.getAttribute("acc");
+        if (acc == null) return null;
+
+        int userId = acc.getUserId();
+        try {
+            int doctorId = dao.getDoctorIdByUserId(userId);
+            return (doctorId > 0) ? doctorId : null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void listReports(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
-            // Lấy doctor_id từ session (giả sử đã đăng nhập)
-            HttpSession session = request.getSession();
-            Integer doctorId = (Integer) session.getAttribute("doctorId");
-            
+            Integer doctorId = getDoctorIdFromSession(request);
             if (doctorId == null) {
-                doctorId = 1; // Giá trị mặc định để test
+                response.sendRedirect("Login.jsp");
+                return;
             }
-            
+
             List<MedicalReport> reports = dao.getAllByDoctorId(doctorId);
             request.setAttribute("reports", reports);
             request.getRequestDispatcher("doctor/medical-report-list.jsp").forward(request, response);
@@ -147,18 +162,15 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 
-    // Hiển thị form thêm mới
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
-            HttpSession session = request.getSession();
-            Integer doctorId = (Integer) session.getAttribute("doctorId");
-            
+            Integer doctorId = getDoctorIdFromSession(request);
             if (doctorId == null) {
-                doctorId = 1;
+                response.sendRedirect("Login.jsp");
+                return;
             }
-            
+
             List<MedicalReportDAO.Appointment> appointments = dao.getAppointmentsWithoutReport(doctorId);
             request.setAttribute("appointments", appointments);
             request.getRequestDispatcher("doctor/medical-report-form.jsp").forward(request, response);
@@ -167,10 +179,8 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 
-    // Hiển thị form chỉnh sửa
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             int recordId = Integer.parseInt(request.getParameter("id"));
             MedicalReport report = dao.getById(recordId);
@@ -181,24 +191,22 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 
-    // Thêm medical report
     private void insertReport(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
             String diagnosis = request.getParameter("diagnosis");
             String prescription = request.getParameter("prescription");
             boolean testRequest = request.getParameter("testRequest") != null;
-            
+
             MedicalReport report = new MedicalReport();
             report.setAppointmentId(appointmentId);
             report.setDiagnosis(diagnosis);
             report.setPrescription(prescription);
             report.setTestRequest(testRequest);
-            
+
             boolean success = dao.insert(report);
-            
+
             if (success) {
                 request.getSession().setAttribute("message", "Thêm đơn thuốc thành công!");
                 request.getSession().setAttribute("messageType", "success");
@@ -206,31 +214,29 @@ public class MedicalReportServlet extends HttpServlet {
                 request.getSession().setAttribute("message", "Lỗi khi thêm đơn thuốc!");
                 request.getSession().setAttribute("messageType", "error");
             }
-            
+
             response.sendRedirect("medical-report?action=list");
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    // Cập nhật medical report
     private void updateReport(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             int recordId = Integer.parseInt(request.getParameter("recordId"));
             String diagnosis = request.getParameter("diagnosis");
             String prescription = request.getParameter("prescription");
             boolean testRequest = request.getParameter("testRequest") != null;
-            
+
             MedicalReport report = new MedicalReport();
             report.setRecordId(recordId);
             report.setDiagnosis(diagnosis);
             report.setPrescription(prescription);
             report.setTestRequest(testRequest);
-            
+
             boolean success = dao.update(report);
-            
+
             if (success) {
                 request.getSession().setAttribute("message", "Cập nhật đơn thuốc thành công!");
                 request.getSession().setAttribute("messageType", "success");
@@ -238,21 +244,19 @@ public class MedicalReportServlet extends HttpServlet {
                 request.getSession().setAttribute("message", "Lỗi khi cập nhật đơn thuốc!");
                 request.getSession().setAttribute("messageType", "error");
             }
-            
+
             response.sendRedirect("medical-report?action=list");
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    // Xóa medical report
     private void deleteReport(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             int recordId = Integer.parseInt(request.getParameter("id"));
             boolean success = dao.delete(recordId);
-            
+
             if (success) {
                 request.getSession().setAttribute("message", "Xóa đơn thuốc thành công!");
                 request.getSession().setAttribute("messageType", "success");
@@ -260,17 +264,15 @@ public class MedicalReportServlet extends HttpServlet {
                 request.getSession().setAttribute("message", "Lỗi khi xóa đơn thuốc!");
                 request.getSession().setAttribute("messageType", "error");
             }
-            
+
             response.sendRedirect("medical-report?action=list");
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    // Xem chi tiết medical report
     private void viewReport(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             int recordId = Integer.parseInt(request.getParameter("id"));
             MedicalReport report = dao.getById(recordId);
@@ -281,3 +283,4 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 }
+

@@ -425,7 +425,7 @@
             <i class="fas fa-link"></i> Truy cập nhanh
         </h4>
         <div class="row g-4 mb-4">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-xl-2 col-lg-4 col-md-6">
                 <a href="appointment?action=list" class="quick-link">
                     <div class="icon text-primary">
                         <i class="fas fa-calendar-alt"></i>
@@ -434,7 +434,7 @@
                     <p>Xem và quản lý lịch khám</p>
                 </a>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-xl-2 col-lg-4 col-md-6">
                 <a href="medical-report?action=list" class="quick-link">
                     <div class="icon text-success">
                         <i class="fas fa-prescription-bottle-medical"></i>
@@ -443,7 +443,7 @@
                     <p>Quản lý đơn thuốc</p>
                 </a>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-xl-2 col-lg-4 col-md-6">
                 <a href="test-result?action=list" class="quick-link">
                     <div class="icon text-info">
                         <i class="fas fa-flask"></i>
@@ -452,13 +452,22 @@
                     <p>Xem kết quả xét nghiệm</p>
                 </a>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-xl-2 col-lg-4 col-md-6">
                 <a href="appointment?action=pending" class="quick-link">
                     <div class="icon text-warning">
                         <i class="fas fa-user-injured"></i>
                     </div>
                     <h5>Bệnh nhân chờ</h5>
                     <p>Danh sách chờ khám</p>
+                </a>
+            </div>
+            <div class="col-xl-2 col-lg-4 col-md-6">
+                <a href="patient-queue" class="quick-link">
+                    <div class="icon text-purple">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5>Hàng đợi</h5>
+                    <p>Theo dõi hàng đợi bệnh nhân</p>
                 </a>
             </div>
         </div>
