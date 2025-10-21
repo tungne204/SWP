@@ -24,7 +24,8 @@ import entity.User;
     "/set-permission",
     "/test-result",
     "/medical-report",
-    "/doctor-dashboard"
+    "/doctor-dashboard",
+    "/Receptionist-Dashboard"
 })
 public class ServletAuthFilter implements Filter {
     
@@ -94,7 +95,8 @@ public class ServletAuthFilter implements Filter {
         }
         
         // Receptionist servlets (role_id = 5)
-        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment")) {
+        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment")
+                || uri.contains("/Receptionist-Dashboard")) {
             return roleId == 5; // Chỉ Receptionist
         }
         
