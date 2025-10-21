@@ -9,7 +9,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Patient Profile | Medilab Clinic</title>
+        <title>Patient Profile</title>
 
         <!-- Tailwind -->
         <script src="https://cdn.tailwindcss.com"></script>
@@ -34,7 +34,9 @@
         <!-- Header -->
         <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <span class="text-2xl fw-bold tracking-wide">Medilab Clinic</span>
+                <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                    Medilab
+                </a>
                 <div class="d-flex gap-3">
                     <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">Home</a>
                     <a href="logout" class="btn btn-outline-light fw-semibold px-4 py-1">Logout</a>
@@ -56,7 +58,7 @@
 
                 <!-- Logo + Title -->
                 <div class="text-center mb-4">
-                    <h2 class="text-primary fw-bold">Medilab Clinic - Patient Profile</h2>
+                    <h2 class="text-primary fw-bold">Medilab - Patient Profile</h2>
                     <hr class="my-3 border-blue-300">
                 </div>
 
@@ -164,26 +166,26 @@
                         ["Phone", "${patient.phone}"], [],
                         ["Status", "${patient.status}"],
                         ["Date & Time", "${patient.appointmentDate} at ${patient.appointmentTime}"],
-                        ["Doctor", "${patient.doctorName} - ${patient.doctorSpecialty}"]
-                    ];
-                    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-                    XLSX.utils.book_append_sheet(wb, ws, "Profile");
-                    XLSX.writeFile(wb, "PatientProfile.xlsx");
-                });
+                                        ["Doctor", "${patient.doctorName} - ${patient.doctorSpecialty}"]
+                                                    ];
+                                                    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                                                    XLSX.utils.book_append_sheet(wb, ws, "Profile");
+                                                    XLSX.writeFile(wb, "PatientProfile.xlsx");
+                                                });
 
-                // --- EXPORT PDF (Không chứa các nút, có logo + tiêu đề) ---
-                document.getElementById("printPdfBtn").addEventListener("click", () => {
-                    const element = document.getElementById("pdfContent"); // chỉ in phần nội dung hồ sơ
-                    const opt = {
-                        margin: 0.5,
-                        filename: 'PatientProfile.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2 },
-                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                    };
-                    html2pdf().set(opt).from(element).save();
-                });
-            });
+                                                // --- EXPORT PDF (Không chứa các nút, có logo + tiêu đề) ---
+                                                document.getElementById("printPdfBtn").addEventListener("click", () => {
+                                                    const element = document.getElementById("pdfContent"); // chỉ in phần nội dung hồ sơ
+                                                    const opt = {
+                                                        margin: 0.5,
+                                                        filename: 'PatientProfile.pdf',
+                                                        image: {type: 'jpeg', quality: 0.98},
+                                                        html2canvas: {scale: 2},
+                                                        jsPDF: {unit: 'in', format: 'a4', orientation: 'portrait'}
+                                                    };
+                                                    html2pdf().set(opt).from(element).save();
+                                                });
+                                            });
         </script>
 
     </body>

@@ -9,7 +9,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Receptionist Home | Medilab Clinic</title>
+        <title>Receptionist Home</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
@@ -21,7 +21,9 @@
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
+                    <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                        Medilab
+                    </a>
                 </div>
 
                 <!-- Button group -->

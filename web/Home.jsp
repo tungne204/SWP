@@ -86,7 +86,7 @@
                             Hello, <%= acc.getUsername() %>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
+                            <li><a class="dropdown-item" href="View-Profile">View Profile</a></li>
                             <li><a class="dropdown-item" href="Change_password">Change Password</a></li>
                             <li><a class="dropdown-item" href="patient-appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>

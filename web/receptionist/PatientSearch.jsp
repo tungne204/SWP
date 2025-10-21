@@ -10,7 +10,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Patient Information | Medilab Clinic</title>
+        <title>Patient Information </title>
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Sort icons + hover style -->
@@ -34,7 +34,9 @@
         <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl font-bold tracking-wide">Medilab Clinic</span>
+                    <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                        Medilab
+                    </a>
                 </div>
 
                 <div class="flex items-center gap-3">
