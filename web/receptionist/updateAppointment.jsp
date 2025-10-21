@@ -88,7 +88,7 @@
             <input type="text" name="parentId" value="${parent.idInfo}"
                    class="w-full border rounded-lg p-2 mb-3" required>
 
-            <!-- ✅ NEW: Parent Email (đọc từ User) -->
+            <!-- NEW: Parent Email (đọc từ User) -->
             <label class="block text-sm font-medium text-gray-600">Parent Email</label>
             <input type="email" name="parentEmail" value="${user.email}"
                    placeholder="Enter parent email"

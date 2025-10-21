@@ -4,13 +4,6 @@
  */
 package dao.Receptionist;
 
-/**
- * DAO xử lý dữ liệu bệnh nhân cho module Receptionist - Hiển thị danh sách bệnh
- * nhân và lịch khám gần nhất - Tìm kiếm bệnh nhân theo tên hoặc ID - Lấy chi
- * tiết bệnh nhân theo ID
- *
- * @author Kiên
- */
 import entity.Receptionist.Patient;
 import entity.Receptionist.Parent;
 import entity.Receptionist.User;
@@ -22,10 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 import context.DBContext;
 
+/**
+ * DAO xử lý dữ liệu bệnh nhân cho module Receptionist - Hiển thị danh sách bệnh
+ * nhân và lịch khám gần nhất - Tìm kiếm bệnh nhân theo tên hoặc ID - Lấy chi
+ * tiết bệnh nhân theo ID
+ *
+ * @author Kiên
+ */
 public class PatientDAO extends DBContext {
 
     /**
-     * Lấy danh sách toàn bộ bệnh nhân cùng thông tin lịch hẹn mới nhất
+     * true Lấy danh sách toàn bộ bệnh nhân cùng thông tin lịch hẹn mới nhất
      */
     public List<Patient> getAllPatients() {
         List<Patient> list = new ArrayList<>();
@@ -77,7 +77,10 @@ public class PatientDAO extends DBContext {
     }
 
     /**
-     * Tìm kiếm bệnh nhân theo tên hoặc ID (cũng chỉ lấy lịch khám mới nhất)
+     * true 
+     * 
+     * Tìm kiếm bệnh nhân theo tên hoặc ID (cũng chỉ lấy lịch khám mới
+     * nhất)
      */
     public List<Patient> searchPatients(String keyword) {
         List<Patient> list = new ArrayList<>();
@@ -146,6 +149,7 @@ public class PatientDAO extends DBContext {
     }
 
     /**
+     * true
      * Lấy thông tin chi tiết bệnh nhân theo ID
      *
      * @param id ID bệnh nhân
@@ -222,6 +226,7 @@ public class PatientDAO extends DBContext {
     }
 
     /**
+     * true 
      * Cập nhật thông tin bệnh nhân (bao gồm Patient, Parent, User)
      */
     public void updatePatient(Patient p) {
@@ -284,6 +289,12 @@ public class PatientDAO extends DBContext {
         }
     }
 
+    /**
+     * true
+     *
+     * @param patientId
+     * @return
+     */
     public int getUserIdByPatientId(int patientId) {
         String sql = "SELECT user_id FROM Patient WHERE patient_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
