@@ -44,7 +44,7 @@
                             <div class="alert alert-success"><%= request.getAttribute("success") %></div>
                         <% } %>
                         <button type="submit" class="btn btn-primary w-100">Update Password</button>
-                        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
+                        <a href="${pageContext.request.contextPath}/" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
                     </form>
                 </div>
             </div>
