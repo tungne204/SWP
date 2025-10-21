@@ -16,13 +16,13 @@ public class LoginControl extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Check if user is already logged in
         if (request.getSession(false) != null && request.getSession(false).getAttribute("acc") != null) {
             response.sendRedirect("Home.jsp");
             return;
         }
-        
+
         // Forward to Login.jsp
         request.getRequestDispatcher("Login.jsp").forward(request, response);
     }
@@ -47,19 +47,21 @@ public class LoginControl extends HttpServlet {
                     response.sendRedirect("adminDashboard.jsp");
                     break;
                 case 2: // Doctor
-                    response.sendRedirect("doctor-dashboard");
+                    response.sendRedirect("doctorDashboard.jsp");
                     break;
                 case 3: // Patient
-                    response.sendRedirect("Home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/");
+
                     break;
                 case 4: // MedicalAssistant
                     response.sendRedirect("medicalAssistantDashboard.jsp");
                     break;
                 case 5: // Receptionist
-                    response.sendRedirect("Receptionist-Dashboard");
+
+                    response.sendRedirect(request.getContextPath() + "/Receptionist-Dashboard");
                     break;
                 default:
-                    response.sendRedirect("Home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/");
                     break;
             }
         } else {
