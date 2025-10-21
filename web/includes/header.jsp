@@ -20,7 +20,7 @@
     <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
 
       <!-- Logo -->
-      <a href="${pageContext.request.contextPath}/Home.jsp" class="logo d-flex align-items-center text-decoration-none">
+      <a href="${pageContext.request.contextPath}/" class="logo d-flex align-items-center text-decoration-none">
         <h1 class="sitename m-0">Medilab</h1>
       </a>
 
@@ -28,7 +28,7 @@
       <nav id="navmenu" class="navmenu">
         <ul class="d-flex align-items-center list-unstyled mb-0">
           <li>
-            <a href="${pageContext.request.contextPath}/Home.jsp"
+            <a href="${pageContext.request.contextPath}/"
                class="active text-dark text-decoration-none px-3">Home</a>
           </li>
         </ul>
@@ -63,8 +63,8 @@
 <style>
   /* Header */
   #header {
-    background-color: #ffffff !important; /* Nền trắng */
-    border-bottom: 1px solid #e0e0e0;
+    background-color: #0d6efd !important; /* ✅ Nền xanh */
+    border-bottom: none;
     padding: 8px 0;
   }
 
@@ -72,21 +72,34 @@
   #header .sitename {
     font-size: 1.4rem;
     font-weight: 700;
-    color: #0d6efd;
+    color: #ffffff !important; /* ✅ Chữ Medilab trắng */
   }
 
   /* Navigation link */
   #header .navmenu a {
-    color: #000 !important; /* ✅ Màu đen cho Home */
+    color: #ffffff !important; /* ✅ Chữ Home trắng */
     font-size: 1rem;
     font-weight: 500;
-    transition: 0.3s;
+    position: relative; /* Để tạo hiệu ứng gạch */
+    text-decoration: none !important;
+    transition: color 0.3s ease;
   }
 
-  #header .navmenu a:hover,
-  #header .navmenu a.active {
-    color: #0d6efd !important; /* Xanh khi hover/active */
-    text-decoration: underline;
+  /* Gạch chân trắng khi hover/active */
+  #header .navmenu a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease;
+  }
+
+  #header .navmenu a:hover::after,
+  #header .navmenu a.active::after {
+    width: 100%; /* ✅ Hiện gạch trắng chạy từ trái sang phải */
   }
 
   /* Dropdown */
@@ -100,3 +113,4 @@
     background-color: #eaf1ff;
   }
 </style>
+
