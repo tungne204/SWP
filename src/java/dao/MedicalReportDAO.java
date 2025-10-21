@@ -4,7 +4,6 @@
  */
 package dao;
 
-
 import context.DBContext;
 import entity.MedicalReport;
 import java.sql.*;
@@ -12,25 +11,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MedicalReportDAO extends DBContext {
-       public List<MedicalReport> getAllByDoctorId(int doctorId) throws Exception {
+    // Lấy doctor_id từ user_id
+
+    public int getDoctorIdByUserId(int userId) throws Exception {
+        String sql = "SELECT doctor_id FROM Doctor WHERE user_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("doctor_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
+
+    public List<MedicalReport> getAllByDoctorId(int doctorId) throws Exception {
         List<MedicalReport> list = new ArrayList<>();
-        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
-                    "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
-                    "a.date_time as appointment_date " +
-                    "FROM MedicalReport mr " +
-                    "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
-                    "JOIN Patient p ON a.patient_id = p.patient_id " +
-                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
-                    "JOIN [User] u ON d.user_id = u.user_id " +
-                    "WHERE d.doctor_id = ? " +
-                    "ORDER BY a.date_time DESC";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, "
+                + "mr.test_request, p.full_name as patient_name, u.username as doctor_name, "
+                + "a.date_time as appointment_date "
+                + "FROM MedicalReport mr "
+                + "JOIN Appointment a ON mr.appointment_id = a.appointment_id "
+                + "JOIN Patient p ON a.patient_id = p.patient_id "
+                + "JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE d.doctor_id = ? "
+                + "ORDER BY a.date_time DESC";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, doctorId);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 MedicalReport mr = new MedicalReport();
                 mr.setRecordId(rs.getInt("record_id"));
@@ -51,22 +65,21 @@ public class MedicalReportDAO extends DBContext {
 
     // Lấy medical report theo ID
     public MedicalReport getById(int recordId) throws Exception {
-        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
-                    "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
-                    "a.date_time as appointment_date " +
-                    "FROM MedicalReport mr " +
-                    "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
-                    "JOIN Patient p ON a.patient_id = p.patient_id " +
-                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
-                    "JOIN [User] u ON d.user_id = u.user_id " +
-                    "WHERE mr.record_id = ?";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, "
+                + "mr.test_request, p.full_name as patient_name, u.username as doctor_name, "
+                + "a.date_time as appointment_date "
+                + "FROM MedicalReport mr "
+                + "JOIN Appointment a ON mr.appointment_id = a.appointment_id "
+                + "JOIN Patient p ON a.patient_id = p.patient_id "
+                + "JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE mr.record_id = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, recordId);
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 MedicalReport mr = new MedicalReport();
                 mr.setRecordId(rs.getInt("record_id"));
@@ -87,22 +100,21 @@ public class MedicalReportDAO extends DBContext {
 
     // Lấy medical report theo appointment ID
     public MedicalReport getByAppointmentId(int appointmentId) throws Exception {
-        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, " +
-                    "mr.test_request, p.full_name as patient_name, u.username as doctor_name, " +
-                    "a.date_time as appointment_date " +
-                    "FROM MedicalReport mr " +
-                    "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
-                    "JOIN Patient p ON a.patient_id = p.patient_id " +
-                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
-                    "JOIN [User] u ON d.user_id = u.user_id " +
-                    "WHERE mr.appointment_id = ?";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT mr.record_id, mr.appointment_id, mr.diagnosis, mr.prescription, "
+                + "mr.test_request, p.full_name as patient_name, u.username as doctor_name, "
+                + "a.date_time as appointment_date "
+                + "FROM MedicalReport mr "
+                + "JOIN Appointment a ON mr.appointment_id = a.appointment_id "
+                + "JOIN Patient p ON a.patient_id = p.patient_id "
+                + "JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE mr.appointment_id = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, appointmentId);
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 MedicalReport mr = new MedicalReport();
                 mr.setRecordId(rs.getInt("record_id"));
@@ -124,19 +136,18 @@ public class MedicalReportDAO extends DBContext {
     // Lấy appointments chưa có medical report của doctor
     public List<Appointment> getAppointmentsWithoutReport(int doctorId) throws Exception {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT a.appointment_id, p.full_name, a.date_time " +
-                    "FROM Appointment a " +
-                    "JOIN Patient p ON a.patient_id = p.patient_id " +
-                    "WHERE a.doctor_id = ? AND a.status = 1 " +
-                    "AND NOT EXISTS (SELECT 1 FROM MedicalReport mr WHERE mr.appointment_id = a.appointment_id) " +
-                    "ORDER BY a.date_time DESC";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT a.appointment_id, p.full_name, a.date_time "
+                + "FROM Appointment a "
+                + "JOIN Patient p ON a.patient_id = p.patient_id "
+                + "WHERE a.doctor_id = ? AND a.status = 1 "
+                + "AND NOT EXISTS (SELECT 1 FROM MedicalReport mr WHERE mr.appointment_id = a.appointment_id) "
+                + "ORDER BY a.date_time DESC";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, doctorId);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 Appointment apt = new Appointment();
                 apt.setAppointmentId(rs.getInt("appointment_id"));
@@ -152,17 +163,16 @@ public class MedicalReportDAO extends DBContext {
 
     // Thêm medical report mới
     public boolean insert(MedicalReport mr) throws Exception {
-        String sql = "INSERT INTO MedicalReport (appointment_id, diagnosis, prescription, test_request) " +
-                    "VALUES (?, ?, ?, ?)";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "INSERT INTO MedicalReport (appointment_id, diagnosis, prescription, test_request) "
+                + "VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, mr.getAppointmentId());
             ps.setString(2, mr.getDiagnosis());
             ps.setString(3, mr.getPrescription());
             ps.setBoolean(4, mr.isTestRequest());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -172,17 +182,16 @@ public class MedicalReportDAO extends DBContext {
 
     // Cập nhật medical report
     public boolean update(MedicalReport mr) throws Exception {
-        String sql = "UPDATE MedicalReport SET diagnosis = ?, prescription = ?, test_request = ? " +
-                    "WHERE record_id = ?";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "UPDATE MedicalReport SET diagnosis = ?, prescription = ?, test_request = ? "
+                + "WHERE record_id = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, mr.getDiagnosis());
             ps.setString(2, mr.getPrescription());
             ps.setBoolean(3, mr.isTestRequest());
             ps.setInt(4, mr.getRecordId());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -193,10 +202,9 @@ public class MedicalReportDAO extends DBContext {
     // Xóa medical report
     public boolean delete(int recordId) throws Exception {
         String sql = "DELETE FROM MedicalReport WHERE record_id = ?";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, recordId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -207,6 +215,7 @@ public class MedicalReportDAO extends DBContext {
 
     // Inner class cho Appointment
     public static class Appointment {
+
         private int appointmentId;
         private String patientName;
         private Timestamp dateTime;

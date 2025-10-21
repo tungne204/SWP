@@ -12,6 +12,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestResultDAO extends DBContext {
+    // 🔹 Lấy doctor_id từ user_id (đặt trong cùng DAO)
+    public int getDoctorIdByUserId(int userId) throws Exception {
+        String sql = "SELECT doctor_id FROM Doctor WHERE user_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("doctor_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
 
     // Lấy tất cả test results của một medical record
     public List<TestResult> getByRecordId(int recordId) {
