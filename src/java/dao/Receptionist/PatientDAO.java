@@ -70,8 +70,8 @@ public class PatientDAO extends DBContext {
                 p.setDoctorName(rs.getString("doctor_name"));
                 p.setAppointmentDate(rs.getString("appointment_date"));
                 p.setStatus(rs.getString("status"));
-                p.setEmail(rs.getString("email"));   
-                p.setPhone(rs.getString("phone"));   
+                p.setEmail(rs.getString("email"));
+                p.setPhone(rs.getString("phone"));
                 list.add(p);
             }
 
@@ -289,6 +289,67 @@ public class PatientDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Lấy thông tin bệnh nhân theo user_id (dùng cho chức năng View Profile)
+     */
+    public Patient getPatientByUserId(int userId) {
+        Patient p = null;
+
+        String sql = """
+        SELECT 
+            p.patient_id,
+            p.user_id,
+            p.full_name,
+            p.dob,
+            p.address,
+            p.insurance_info,
+            pa.parentname AS parent_name,
+            u.email,
+            u.phone,
+            u2.username AS doctor_name,
+            FORMAT(a.date_time, 'dd/MM/yyyy') AS appointment_date,
+            CASE WHEN a.status = 1 THEN N'Confirmed' ELSE N'Pending' END AS status
+        FROM Patient p
+        LEFT JOIN Parent pa ON p.parent_id = pa.parent_id
+        LEFT JOIN [User] u ON p.user_id = u.user_id          -- thông tin user của bệnh nhân
+        LEFT JOIN Appointment a 
+            ON a.appointment_id = (
+                SELECT TOP 1 appointment_id 
+                FROM Appointment 
+                WHERE patient_id = p.patient_id 
+                ORDER BY date_time DESC
+            )
+        LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id
+        LEFT JOIN [User] u2 ON d.user_id = u2.user_id        -- bác sĩ
+        WHERE p.user_id = ?
+    """;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    p = new Patient();
+                    p.setPatientId(rs.getInt("patient_id"));
+                    p.setUserId(rs.getInt("user_id"));
+                    p.setFullName(rs.getString("full_name"));
+                    p.setDob(rs.getDate("dob"));
+                    p.setAddress(rs.getString("address"));
+                    p.setInsuranceInfo(rs.getString("insurance_info"));
+                    p.setParentName(rs.getString("parent_name"));
+                    p.setEmail(rs.getString("email"));
+                    p.setPhone(rs.getString("phone"));
+                    p.setDoctorName(rs.getString("doctor_name"));
+                    p.setAppointmentDate(rs.getString("appointment_date"));
+                    p.setStatus(rs.getString("status"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return p;
     }
 
     /**

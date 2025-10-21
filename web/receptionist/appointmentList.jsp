@@ -8,7 +8,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Manage Appointments | Medilab Clinic</title>
+        <title>Manage Appointments</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
             .sortable:hover {
@@ -29,7 +29,9 @@
         <!-- Header -->
         <header class="bg-blue-700 text-white shadow-md fixed w-full z-10">
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <span class="text-xl font-bold tracking-wide">Medilab Clinic</span>
+                <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                    Medilab
+                </a>
                 <div class="flex items-center gap-3">
                     <a href="${pageContext.request.contextPath}/Receptionist-Dashboard"
                        class="bg-white/20 text-white px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
