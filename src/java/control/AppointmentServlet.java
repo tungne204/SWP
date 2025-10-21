@@ -1,5 +1,6 @@
 package control;
 
+import dao.AppointmentDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,21 +19,26 @@ import java.util.List;
 import dao.DoctorDAO;
 import dao.ParentDAO;
 import dao.PatientDAO;
+import entity.Appointment;
 import entity.AppointmentDetailDTO;
 import entity.Doctor;
 import entity.Parent;
 import entity.Patient;
 import entity.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "AppointmentServlet", urlPatterns = {"/appointment"})
 public class AppointmentServlet extends HttpServlet {
     
     // DAO for Doctor functionality
     private dao.viewSchedule.AppointmentDAO doctorDao;
+    private AppointmentDAO dao;
 
     @Override
     public void init() throws ServletException {
         doctorDao = new dao.viewSchedule.AppointmentDAO();
+        dao = new AppointmentDAO();
     }
 
     @Override
@@ -270,68 +276,76 @@ public class AppointmentServlet extends HttpServlet {
     private void handleDoctorGet(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
         
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
-
-        switch (action) {
-            case "list":
-                listAppointments(request, response);
-                break;
-            case "by-date":
-                listByDate(request, response);
-                break;
-            case "view":
-                viewAppointment(request, response);
-                break;
-            case "pending":
-                listPending(request, response);
-                break;
-            default:
-                listAppointments(request, response);
-                break;
+        try {
+            HttpSession session = request.getSession(false);
+            User currentUser = (session != null) ? (User) session.getAttribute("acc") : null;
+            
+            // Nếu chưa đăng nhập -> quay về trang Login
+            if (currentUser == null) {
+                response.sendRedirect("Login");
+                return;
+            }
+            
+            // Nếu không phải bác sĩ -> từ chối truy cập
+            if (currentUser.getRoleId() != 2) {
+                response.sendRedirect("403.jsp");
+                return;
+            }
+            
+            // Lấy doctorId theo user đang đăng nhập
+            int userId = currentUser.getUserId();
+            int doctorId = dao.getDoctorIdByUserId(userId); // hàm bạn đã có sẵn trong DAO
+            
+            String action = request.getParameter("action");
+            if (action == null) {
+                action = "list";
+            }
+            
+            switch (action) {
+                case "list":
+                    listAppointments(request, response, doctorId);
+                    break;
+                case "by-date":
+                    listByDate(request, response, doctorId);
+                    break;
+                case "view":
+                    viewAppointment(request, response, doctorId);
+                    break;
+                case "pending":
+                    listPending(request, response, doctorId);
+                    break;
+                default:
+                    listAppointments(request, response, doctorId);
+                    break;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     // Doctor methods (from other person's code)
-    private void listAppointments(HttpServletRequest request, HttpServletResponse response)
+    private void listAppointments(HttpServletRequest request, HttpServletResponse response, int doctorId)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1; // Giá trị mặc định để test
-        }
 
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getAllByDoctorId(doctorId);
+        List<Appointment> appointments = dao.getAllByDoctorId(doctorId);
         request.setAttribute("appointments", appointments);
         request.setAttribute("viewType", "all");
         request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
     }
 
-    // Hiển thị appointments theo ngày
-    private void listByDate(HttpServletRequest request, HttpServletResponse response)
+    // ✅ Hiển thị appointments theo ngày
+    private void listByDate(HttpServletRequest request, HttpServletResponse response, int doctorId)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1;
-        }
 
         String date = request.getParameter("date");
         if (date == null || date.isEmpty()) {
-            // Nếu không có date, redirect về list
             response.sendRedirect("appointment?action=list");
             return;
         }
 
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getByDoctorAndDate(doctorId, date);
-        int count = doctorDao.countByDoctorAndDate(doctorId, date);
-        
+        List<Appointment> appointments = dao.getByDoctorAndDate(doctorId, date);
+        int count = dao.countByDoctorAndDate(doctorId, date);
+
         request.setAttribute("appointments", appointments);
         request.setAttribute("selectedDate", date);
         request.setAttribute("appointmentCount", count);
@@ -339,41 +353,36 @@ public class AppointmentServlet extends HttpServlet {
         request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
     }
 
-    // Xem chi tiết appointment
-    private void viewAppointment(HttpServletRequest request, HttpServletResponse response)
+    // ✅ Xem chi tiết appointment (chỉ xem được lịch của chính mình)
+    private void viewAppointment(HttpServletRequest request, HttpServletResponse response, int doctorId)
             throws ServletException, IOException {
-        
+
         try {
             int appointmentId = Integer.parseInt(request.getParameter("id"));
-            
-            entity.viewSchedule.Appointment appointment = doctorDao.getById(appointmentId);
-            
-            if (appointment != null) {
-                request.setAttribute("appointment", appointment);
-                request.getRequestDispatcher("doctor/appointment-detail.jsp").forward(request, response);
-            } else {
-                request.getSession().setAttribute("message", "Không tìm thấy lịch hẹn!");
+            Appointment appointment = dao.getById(appointmentId);
+
+            // Kiểm tra quyền truy cập
+            if (appointment == null || appointment.getDoctorId() != doctorId) {
+                request.getSession().setAttribute("message", "Bạn không có quyền xem lịch hẹn này!");
                 request.getSession().setAttribute("messageType", "error");
                 response.sendRedirect("appointment?action=list");
+                return;
             }
+
+            request.setAttribute("appointment", appointment);
+            request.getRequestDispatcher("doctor/appointment-detail.jsp").forward(request, response);
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
             response.sendRedirect("appointment?action=list");
         }
     }
 
-    // Hiển thị appointments chưa khám (chưa có medical report)
-    private void listPending(HttpServletRequest request, HttpServletResponse response)
+    // ✅ Hiển thị appointments chưa khám (chưa có medical report)
+    private void listPending(HttpServletRequest request, HttpServletResponse response, int doctorId)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Integer doctorId = (Integer) session.getAttribute("doctorId");
-        
-        if (doctorId == null) {
-            doctorId = 1;
-        }
 
-        List<entity.viewSchedule.Appointment> appointments = doctorDao.getPendingByDoctorId(doctorId);
+        List<Appointment> appointments = dao.getPendingByDoctorId(doctorId);
         request.setAttribute("appointments", appointments);
         request.setAttribute("viewType", "pending");
         request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
