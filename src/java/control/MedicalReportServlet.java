@@ -5,7 +5,7 @@
 
 package control;
 
-import context.MedicalReportDAO;
+import dao.MedicalReportDAO;
 import entity.MedicalReport;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -141,7 +141,7 @@ public class MedicalReportServlet extends HttpServlet {
             
             List<MedicalReport> reports = dao.getAllByDoctorId(doctorId);
             request.setAttribute("reports", reports);
-            request.getRequestDispatcher("medical-report-list.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/medical-report-list.jsp").forward(request, response);
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,7 +161,7 @@ public class MedicalReportServlet extends HttpServlet {
             
             List<MedicalReportDAO.Appointment> appointments = dao.getAppointmentsWithoutReport(doctorId);
             request.setAttribute("appointments", appointments);
-            request.getRequestDispatcher("medical-report-form.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/medical-report-form.jsp").forward(request, response);
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -175,7 +175,7 @@ public class MedicalReportServlet extends HttpServlet {
             int recordId = Integer.parseInt(request.getParameter("id"));
             MedicalReport report = dao.getById(recordId);
             request.setAttribute("report", report);
-            request.getRequestDispatcher("medical-report-form.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/medical-report-form.jsp").forward(request, response);
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -275,7 +275,7 @@ public class MedicalReportServlet extends HttpServlet {
             int recordId = Integer.parseInt(request.getParameter("id"));
             MedicalReport report = dao.getById(recordId);
             request.setAttribute("report", report);
-            request.getRequestDispatcher("medical-report-view.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/medical-report-view.jsp").forward(request, response);
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
         }

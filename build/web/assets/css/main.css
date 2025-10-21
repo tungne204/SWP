@@ -64,6 +64,7 @@ body {
   color: var(--default-color);
   background-color: var(--background-color);
   font-family: var(--default-font);
+  margin: 0;
 }
 
 a {
@@ -1720,6 +1721,26 @@ section,
 .contact .php-email-form button[type=submit]:hover {
   background: color-mix(in srgb, var(--accent-color), transparent 20%);
 }
+.cta-btn {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 50px;
+  transition: 0.5s;
+  margin: 10px;
+  color: #fff;
+  background: #1977cc;
+  border: none;
+}
+
+.cta-btn:hover {
+  background: #1c84e3;
+  color: #fff;
+}
+
 
 /*--------------------------------------------------------------
 # Starter Section Section

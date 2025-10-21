@@ -1,20 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
 
-import java.io.Serializable;
-
-
-
-/**
- *
- * @author Quang Anh
- */
-public class MedicalReport implements Serializable {
-
-  private int recordId;
+public class MedicalReport {
+    private int recordId;
     private int appointmentId;
     private String diagnosis;
     private String prescription;
@@ -112,6 +99,4 @@ public class MedicalReport implements Serializable {
                 ", testRequest=" + testRequest +
                 '}';
     }
-    
-    
 }
