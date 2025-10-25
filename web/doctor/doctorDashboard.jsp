@@ -8,14 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Medilab Pediatric Clinic</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
-          rel="stylesheet" 
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
-          crossorigin="anonymous">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-    
     <style>
         :root {
             --primary-color: #3fbbc0;
@@ -337,32 +329,35 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="dashboard-header">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h2>
-                        <i class="fas fa-user-md"></i> 
-                        Chào mừng, BS. ${sessionScope.username != null ? sessionScope.username : 'Doctor'}
-                    </h2>
-                    <p class="text-muted mb-0">
-                        <i class="far fa-calendar me-2"></i> 
-                        <jsp:useBean id="now" class="java.util.Date"/>
-                        <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" />
-                        <span class="ms-4 time-display">
-                            <i class="far fa-clock me-2"></i>
-                            <span id="currentTime"></span>
-                        </span>
-                    </p>
-                </div>
-                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <a href="logout" class="btn btn-logout">
-                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                    </a>
+    <!-- Include Header -->
+    <%@ include file="../includes/header.jsp" %>
+    
+    <!-- Include Sidebar -->
+    <%@ include file="../includes/sidebar-doctor.jsp" %>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Welcome Header -->
+            <div class="dashboard-header">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2>
+                            <i class="fas fa-user-md"></i> 
+                            Chào mừng, BS. ${sessionScope.username != null ? sessionScope.username : 'Doctor'}
+                        </h2>
+                        <p class="text-muted mb-0">
+                            <i class="far fa-calendar me-2"></i> 
+                            <jsp:useBean id="now" class="java.util.Date"/>
+                            <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" />
+                            <span class="ms-4 time-display">
+                                <i class="far fa-clock me-2"></i>
+                                <span id="currentTime"></span>
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
@@ -614,7 +609,8 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div> <!-- End container-fluid -->
+    </div> <!-- End main-content -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

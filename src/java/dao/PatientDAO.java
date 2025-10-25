@@ -40,27 +40,24 @@ public class PatientDAO extends DBContext {
 
     // Get patient by user ID
     public Patient getPatientByUserId(int userId) {
-        String sql = "SELECT * FROM Patient WHERE user_id = ? ORDER BY patient_id DESC";
+        String sql = "SELECT * FROM Patient WHERE user_id = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
 
             try (ResultSet rs = ps.executeQuery()) {
-                Patient patient = null;
-                while (rs.next()) {
-                    if (patient == null) { // Take the first (most recent) one
-                        patient = new Patient();
-                        patient.setPatientId(rs.getInt("patient_id"));
-                        patient.setUserId(rs.getInt("user_id"));
-                        patient.setFullName(rs.getString("full_name"));
-                        patient.setDob(rs.getDate("dob"));
-                        patient.setAddress(rs.getString("address"));
-                        patient.setInsuranceInfo(rs.getString("insurance_info"));
-                        patient.setParentId(rs.getObject("parent_id", Integer.class));
-                    }
+                if (rs.next()) {
+                    Patient patient = new Patient();
+                    patient.setPatientId(rs.getInt("patient_id"));
+                    patient.setUserId(rs.getInt("user_id"));
+                    patient.setFullName(rs.getString("full_name"));
+                    patient.setDob(rs.getDate("dob"));
+                    patient.setAddress(rs.getString("address"));
+                    patient.setInsuranceInfo(rs.getString("insurance_info"));
+                    patient.setParentId(rs.getObject("parent_id", Integer.class));
+                    return patient;
                 }
-                return patient;
             }
         } catch (Exception e) {
             e.printStackTrace();

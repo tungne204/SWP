@@ -27,138 +27,144 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen">
+<body>
+    <!-- Include Header -->
+    <%@ include file="../includes/header.jsp" %>
     
-    <!-- Header Section -->
-    <div class="gradient-bg text-white py-8 mb-10 shadow-2xl">
-        <div class="container mx-auto px-4">
-            <h1 class="text-4xl font-bold text-center mb-2">🔐 Quản Lý Phân Quyền</h1>
-            <p class="text-center text-indigo-100 text-sm">Quản lý vai trò và quyền hạn người dùng trong hệ thống</p>
-        </div>
-    </div>
-
+    <!-- Include Sidebar -->
+    <%@ include file="../includes/sidebar-manager.jsp" %>
+    
     <!-- Main Content -->
-    <div class="container mx-auto px-4 pb-10">
-        <div class="max-w-7xl mx-auto">
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h3 mb-2">🔐 Quản Lý Phân Quyền</h1>
+                    <p class="text-muted">Quản lý vai trò và quyền hạn người dùng trong hệ thống</p>
+                </div>
+            </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in">
-                <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium">Tổng người dùng</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-1">
-                                <%= (request.getAttribute("users") != null) ? ((List<User>)request.getAttribute("users")).size() : 0 %>
-                            </p>
-                        </div>
-                        <div class="bg-blue-100 rounded-full p-4">
-                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium">Vai trò</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-1">
-                                <%= (request.getAttribute("roles") != null) ? ((List<Role>)request.getAttribute("roles")).size() : 0 %>
-                            </p>
-                        </div>
-                        <div class="bg-green-100 rounded-full p-4">
-                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-start border-primary border-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted small">Tổng người dùng</h6>
+                                    <h2 class="fw-bold text-dark">
+                                        <%= (request.getAttribute("users") != null) ? ((List<User>)request.getAttribute("users")).size() : 0 %>
+                                    </h2>
+                                </div>
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-users text-primary fs-4"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium">Trạng thái</p>
-                            <p class="text-xl font-bold text-green-600 mt-1">Hoạt động</p>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-start border-success border-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted small">Vai trò</h6>
+                                    <h2 class="fw-bold text-dark">
+                                        <%= (request.getAttribute("roles") != null) ? ((List<Role>)request.getAttribute("roles")).size() : 0 %>
+                                    </h2>
+                                </div>
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-shield-alt text-success fs-4"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="bg-purple-100 rounded-full p-4">
-                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-start border-info border-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted small">Trạng thái</h6>
+                                    <h4 class="fw-bold text-success">Hoạt động</h4>
+                                </div>
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-check-circle text-info fs-4"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Table Section -->
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
-                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-                    <h2 class="text-xl font-bold text-white flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0 d-flex align-items-center">
+                        <i class="fas fa-users me-2"></i>
                         Danh sách người dùng
-                    </h2>
+                    </h5>
                 </div>
                 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    ID
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    Tên đăng nhập
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    Email
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    Vai trò hiện tại
-                                </th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-3 py-3 text-start fw-bold text-muted small text-uppercase">
+                                        ID
+                                    </th>
+                                    <th class="px-3 py-3 text-start fw-bold text-muted small text-uppercase">
+                                        Tên đăng nhập
+                                    </th>
+                                    <th class="px-3 py-3 text-start fw-bold text-muted small text-uppercase">
+                                        Email
+                                    </th>
+                                    <th class="px-3 py-3 text-start fw-bold text-muted small text-uppercase">
+                                        Vai trò hiện tại
+                                    </th>
+                                    <th class="px-3 py-3 text-center fw-bold text-muted small text-uppercase">
                                     Thao tác
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody>
                             <%
                                 List<User> users = (List<User>) request.getAttribute("users");
                                 List<Role> roles = (List<Role>) request.getAttribute("roles");
                                 if (users != null && !users.isEmpty()) {
                                     for (User u : users) {
                             %>
-                            <tr class="table-row-hover">
-                                <form action="set-permission" method="post" class="contents">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                            <tr>
+                                <form action="set-permission" method="post" class="d-contents">
+                                    <td class="px-3 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px; font-size: 0.9rem;">
                                                 <%=u.getUserId()%>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold text-gray-900"><%=u.getUsername()%></div>
+                                    <td class="px-3 py-3">
+                                        <div class="fw-semibold text-dark"><%=u.getUsername()%></div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-600 flex items-center">
-                                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                            </svg>
+                                    <td class="px-3 py-3">
+                                        <div class="text-muted d-flex align-items-center">
+                                            <i class="fas fa-envelope me-2 text-muted"></i>
                                             <%=u.getEmail()%>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                    <td class="px-3 py-3">
+                                        <span class="badge bg-primary rounded-pill">
                                             <%=u.getRoleName()%>
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <div class="flex items-center justify-center space-x-3">
+                                    <td class="px-3 py-3 text-center">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
                                             <input type="hidden" name="userId" value="<%=u.getUserId()%>">
-                                            <select name="roleId" 
-                                                class="block w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white shadow-sm">
+                                            <select name="roleId" class="form-select form-select-sm" style="width: 150px;">
                                                 <% for (Role r : roles) { %>
                                                     <option value="<%=r.getRoleId()%>"
                                                         <%= (r.getRoleId() == u.getRoleId() ? "selected" : "") %>>
@@ -166,11 +172,8 @@
                                                     </option>
                                                 <% } %>
                                             </select>
-                                            <button type="submit"
-                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md transition-all duration-200 transform hover:scale-105">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                                </svg>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-sync-alt me-1"></i>
                                                 Cập nhật
                                             </button>
                                         </div>
@@ -182,28 +185,27 @@
                                 } else { 
                             %>
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                                        </svg>
-                                        <p class="text-gray-500 text-lg font-medium">Không có người dùng nào trong hệ thống</p>
-                                        <p class="text-gray-400 text-sm mt-1">Hãy thêm người dùng mới để bắt đầu</p>
+                                <td colspan="5" class="px-3 py-5 text-center">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-users text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <p class="text-muted h5">Không có người dùng nào trong hệ thống</p>
+                                        <p class="text-muted small mt-1">Hãy thêm người dùng mới để bắt đầu</p>
                                     </div>
                                 </td>
                             </tr>
                             <% } %>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
 
             <!-- Footer Info -->
-            <div class="mt-6 text-center text-gray-500 text-sm">
-                <p>💡 Lưu ý: Thay đổi vai trò sẽ ảnh hưởng đến quyền truy cập của người dùng trong hệ thống</p>
+            <div class="mt-4 text-center text-muted">
+                <p><i class="fas fa-info-circle me-1"></i> Lưu ý: Thay đổi vai trò sẽ ảnh hưởng đến quyền truy cập của người dùng trong hệ thống</p>
             </div>
-        </div>
-    </div>
+        </div> <!-- End container-fluid -->
+    </div> <!-- End main-content -->
 
 </body>
 </html>
