@@ -3,26 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/UpdateAppointmentServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ViewAppointmentServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/doctor/medical-report-form.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/MedicalReportServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/Home.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/DeleteAppointmentServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/ReceptionistDashboard.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/AppointmentServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/AppointmentStatusServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/TestResultServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/AppointmentDAO.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientSearchServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientSearch.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/doctor/appointment-detail.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ChangePasswordServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/context/DBContext.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/viewSchedule/AppointmentDAO.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/DoctorListServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistDashboardServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/appointmentList.jsp</file>
+            <file>file:/D:/GitHub/SWP/src/java/util/MailUtil.java</file>
+            <file>file:/D:/GitHub/SWP/src/java/control/NewsServlet.java</file>
+            <file>file:/D:/GitHub/SWP/web/WEB-INF/web.xml</file>
+            <file>file:/D:/GitHub/SWP/web/News.jsp</file>
+            <file>file:/D:/GitHub/SWP/web/Home.jsp</file>
+            <file>file:/D:/GitHub/SWP/src/java/dao/NewsDAO.java</file>
+            <file>file:/D:/GitHub/SWP/src/java/context/DBContext.java</file>
+            <file>file:/D:/GitHub/SWP/web/includes/header.jsp</file>
+            <file>file:/D:/GitHub/SWP/src/java/entity/News.java</file>
         </group>
     </open-files>
 </project-private>
