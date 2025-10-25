@@ -6,6 +6,7 @@ public class User {
     private String password;
     private String email;
     private String phone;
+    private String avatar; // đường dẫn đến ảnh avatar
     private String roleName;
     private int roleId; // tham chiếu Role
     private boolean status; // true = Active, false = Inactive
@@ -13,12 +14,13 @@ public class User {
     public User() {
     }
 
-    public User(int userId, String username, String password, String email, String phone, int roleId, boolean status) {
+    public User(int userId, String username, String password, String email, String phone, String avatar, int roleId, boolean status) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
         this.phone = phone;
+        this.avatar = avatar;
         this.roleId = roleId;
         this.status = status;
     }
@@ -62,6 +64,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public int getRoleId() {
