@@ -3,18 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/includes/header.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/LogoutControl.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/filter/ServletAuthFilter.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/UserDAO.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/AppointmentServlet.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/RolePatient/DoctorDAO.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/LoginControl.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/Login.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/patient/viewAppointment_new.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/receptionist/ReceptionistDashboard.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/Home.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/AppointmentDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/PatientDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/PatientDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/patient/updateProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/patientUpdateProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/PatientAppointmentServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/ViewProfileServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Patient.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Patient.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/PatientProfileServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/patient/viewProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/UpdatePatientServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/UpdatePatientServlet.java</file>
         </group>
     </open-files>
 </project-private>

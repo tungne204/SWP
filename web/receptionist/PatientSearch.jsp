@@ -10,18 +10,33 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Patient Information | Medilab Clinic</title>
+        <title>Patient Information </title>
         <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Sort icons + hover style -->
+        <style>
+            .sortable:hover {
+                cursor: pointer;
+                background-color: #e2e8f0;
+                transition: background-color 0.2s ease;
+            }
+            .sort-icon {
+                font-size: 0.8rem;
+                margin-left: 4px;
+                opacity: 0.6;
+            }
+        </style>
     </head>
 
-    <!--  Body flex để giữ footer dưới cùng -->
     <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
         <!-- Header -->
         <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl font-bold tracking-wide">Medilab Clinic</span>
+                    <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                        Medilab
+                    </a>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -38,7 +53,7 @@
         </header>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-8 pt-28 pb-10 flex-grow">
+        <main class="w-[95%] mx-auto px-8 pt-28 pb-10 flex-grow">
             <h2 class="text-3xl font-bold mb-6 text-blue-700 text-center">
                 Patient Information
             </h2>
@@ -72,34 +87,58 @@
                     Search
                 </button>
             </form>
+            <!-- Advanced Filter -->
+            <div class="flex flex-wrap gap-3 mb-6 bg-blue-100 border border-blue-200 p-4 rounded-lg shadow-sm">
+                <input type="text" id="filterName" placeholder="Filter by Name"
+                       class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+                <input type="text" id="filterAddress" placeholder="Filter by Address"
+                       class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+                <input type="text" id="filterInsurance" placeholder="Filter by Insurance"
+                       class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+                <input type="text" id="filterPhone" placeholder="Filter by Phone"
+                       class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+            </div>
 
             <!--  Table Result -->
             <c:if test="${not empty patients}">
-                <div class="overflow-x-auto shadow border border-gray-200 rounded-xl bg-white max-w-6xl mx-auto">
-                    <table class="min-w-full w-full text-base text-left">
+                <div class="overflow-x-auto shadow border border-gray-200 rounded-xl bg-white w-full mx-auto">
+                    <table id="patientTable" class="min-w-full w-full text-base text-left table-fixed">
                         <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
                             <tr>
-                                <th class="px-6 py-4">Patient ID</th>
-                                <th class="px-6 py-4">Full Name</th>
-                                <th class="px-6 py-4">Date of Birth</th> 
-                                <th class="px-6 py-4">Address</th>
-                                <th class="px-6 py-4">Insurance</th>
-                                <th class="px-6 py-4">Email</th> 
-                                <th class="px-6 py-4">Phone</th>
-                                <th class="px-6 py-4 text-center">Details</th>
+                                <th class="px-4 py-4 w-[6%]">Patient ID</th>
+                                <th class="px-4 py-4 w-[14%] sortable" onclick="sortTable(1)">Full Name <span class="sort-icon">⇅</span></th>
+                                <th class="px-4 py-4 w-[12%]">Date of Birth</th>
+                                <th class="px-4 py-4 w-[18%] sortable" onclick="sortTable(3)">Address <span class="sort-icon">⇅</span></th>
+                                <th class="px-4 py-4 w-[10%] sortable" onclick="sortTable(4)">Insurance <span class="sort-icon">⇅</span></th>
+                                <th class="px-4 py-4 w-[20%]">Email</th>
+                                <th class="px-4 py-4 w-[10%] sortable" onclick="sortTable(6)">Phone <span class="sort-icon">⇅</span></th>
+                                <th class="px-4 py-4 w-[10%] text-center">Details</th>
+                            </tr>
+
+                            <!-- Filter Row -->
+                            <tr class="bg-gray-50 text-gray-600 text-sm">
+                                <td></td>
+                                <td><input type="text" onkeyup="filterTable(1, this.value)" placeholder="Filter Name..." class="w-full px-2 py-1 border rounded"/></td>
+                                <td></td>
+                                <td><input type="text" onkeyup="filterTable(3, this.value)" placeholder="Filter Address..." class="w-full px-2 py-1 border rounded"/></td>
+                                <td><input type="text" onkeyup="filterTable(4, this.value)" placeholder="Filter Insurance..." class="w-full px-2 py-1 border rounded"/></td>
+                                <td></td>
+                                <td><input type="text" onkeyup="filterTable(6, this.value)" placeholder="Filter Phone..." class="w-full px-2 py-1 border rounded"/></td>
+                                <td></td>
                             </tr>
                         </thead>
+
                         <tbody class="divide-y divide-gray-200">
                             <c:forEach var="p" items="${patients}">
                                 <tr class="hover:bg-blue-50">
-                                    <td class="px-6 py-4 font-semibold">${p.patientId}</td>
-                                    <td class="px-6 py-4">${p.fullName}</td>
-                                    <td class="px-6 py-4">${p.dob}</td> 
-                                    <td class="px-6 py-4">${p.address}</td>
-                                    <td class="px-6 py-4">${p.insuranceInfo}</td>
-                                    <th class="px-6 py-4">Email</th> 
-                                    <th class="px-6 py-4">Phone</th> 
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-4 py-3 font-semibold">${p.patientId}</td>
+                                    <td class="px-4 py-3">${p.fullName}</td>
+                                    <td class="px-4 py-3">${p.dob}</td> 
+                                    <td class="px-4 py-3">${p.address}</td>
+                                    <td class="px-4 py-3">${p.insuranceInfo}</td>
+                                    <td class="px-4 py-3 truncate">${p.email}</td>  
+                                    <td class="px-4 py-3">${p.phone}</td>  
+                                    <td class="px-4 py-3 text-center">
                                         <a href="Patient-Profile?id=${p.patientId}"
                                            class="bg-blue-500 text-white px-4 py-1.5 rounded-md hover:bg-blue-600 transition inline-flex items-center gap-1">
                                             👁 View
@@ -141,12 +180,6 @@
                     <strong>Phone:</strong> +84 987 654 321<br>
                     <strong>Email:</strong> medilab.contact@gmail.com
                 </p>
-                <div class="d-flex justify-content-center gap-4 mt-4">
-                    <a href="#" class="text-blue-600 hover:text-blue-800 transition"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="text-pink-500 hover:text-pink-700 transition"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-blue-500 hover:text-blue-700 transition"><i class="fab fa-youtube fa-lg"></i></a>
-                    <a href="#" class="text-blue-700 hover:text-blue-900 transition"><i class="fab fa-linkedin fa-lg"></i></a>
-                </div>
                 <p class="text-sm text-gray-500 mt-4">
                     © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
                     Designed by BootstrapMade | Customized by Medilab Team
@@ -154,74 +187,66 @@
             </div>
         </footer>
 
-        <!--  Patient Detail Modal -->
-        <div id="detailModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-lg w-96 p-6">
-                <h3 class="text-xl font-bold text-blue-700 mb-4">🩺 Patient Details</h3>
-                <div id="modalContent" class="text-sm text-gray-700 space-y-2">
-                    <!-- Content injected by JS -->
-                </div>
-                <div class="mt-6 text-center">
-                    <button onclick="closeModal()"
-                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!--  Script -->
+        <!-- Scripts -->
         <script>
-            const form = document.getElementById("searchForm");
-            const input = form.querySelector("input[name='keyword']");
-            const warningBox = document.getElementById("warningBox");
-            const modal = document.getElementById("detailModal");
-            const modalContent = document.getElementById("modalContent");
+            // ===== SORT FUNCTION =====
+            function sortTable(columnIndex) {
+                const table = document.getElementById("patientTable");
+                const tbody = table.querySelector("tbody");
+                const rows = Array.from(tbody.querySelectorAll("tr"));
+                const asc = table.dataset.sortOrder !== "asc";
+                table.dataset.sortOrder = asc ? "asc" : "desc";
 
-            // ✅ Lấy keyword thật từ server (an toàn cho ký tự đặc biệt)
-            const keyword = `${"${keyword}"}`.trim(); // Cách này JSP render ra đúng giá trị thật
-            const isShowingAll = (keyword === ""); // true nếu đang ở chế độ hiển thị toàn bộ danh sách
+                rows.sort((a, b) => {
+                    const aText = a.children[columnIndex].innerText.trim().toLowerCase();
+                    const bText = b.children[columnIndex].innerText.trim().toLowerCase();
 
-            // ✅ Chỉ cảnh báo khi đang ở chế độ lọc (đã có keyword cũ)
-            form.addEventListener("submit", (e) => {
-                const value = input.value.trim();
+                    if (!isNaN(aText) && !isNaN(bText)) {
+                        return asc ? aText - bText : bText - aText;
+                    }
+                    return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                });
 
-                if (value === "" && !isShowingAll) {
-                    e.preventDefault();
-                    alert("Please enter a patient name or ID to search!");
-                    input.focus();
-                }
+                tbody.innerHTML = "";
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            // ===== FILTER FUNCTION =====
+            function filterTable(columnIndex, keyword) {
+                const table = document.getElementById("patientTable");
+                const rows = table.querySelectorAll("tbody tr");
+                keyword = keyword.toLowerCase();
+
+                rows.forEach(row => {
+                    const cellText = row.children[columnIndex].innerText.toLowerCase();
+                    row.style.display = cellText.includes(keyword) ? "" : "none";
+                });
+            }
+            // ===== Advanced filter bar =====
+            ["filterName", "filterAddress", "filterInsurance", "filterPhone"].forEach(id => {
+                document.getElementById(id)?.addEventListener("input", advancedFilter);
             });
 
-            // === Modal ===
-            function openModal(id, name, dob, address, insurance, parentName, parentId, email, phone, status, appointment) {
-                modal.classList.remove("hidden");
-                modalContent.innerHTML = `
-            <p><strong>ID:</strong> ${id || '—'}</p>
-            <p><strong>Full Name:</strong> ${name || '—'}</p>
-            <p><strong>Date of Birth:</strong> ${dob || '—'}</p>
-            <p><strong>Address:</strong> ${address || '—'}</p>
-            <p><strong>Insurance:</strong> ${insurance || '—'}</p>
-            <p><strong>Parent Name:</strong> ${parentName || '—'}</p>
-            <p><strong>Parent ID:</strong> ${parentId || '—'}</p>
-            <p><strong>Email:</strong> ${email || '—'}</p>
-            <p><strong>Phone:</strong> ${phone || '—'}</p>
-            <p><strong>Status:</strong> ${status || '—'}</p>
-            <p><strong>Appointment:</strong> ${appointment || '—'}</p>
-        `;
-            }
+            function advancedFilter() {
+                const name = document.getElementById("filterName").value.toLowerCase();
+                const address = document.getElementById("filterAddress").value.toLowerCase();
+                const insurance = document.getElementById("filterInsurance").value.toLowerCase();
+                const phone = document.getElementById("filterPhone").value.toLowerCase();
 
-            function closeModal() {
-                modal.classList.add("hidden");
-            }
-
-            // === Ẩn warning sau 3s ===
-            if (warningBox) {
-                setTimeout(() => {
-                    warningBox.style.opacity = "0";
-                    warningBox.style.transition = "opacity 0.5s ease";
-                    setTimeout(() => warningBox.remove(), 500);
-                }, 3000);
+                document.querySelectorAll("#patientTable tbody tr").forEach(row => {
+                    const rowData = {
+                        name: row.children[1]?.innerText.toLowerCase(),
+                        address: row.children[3]?.innerText.toLowerCase(),
+                        insurance: row.children[4]?.innerText.toLowerCase(),
+                        phone: row.children[6]?.innerText.toLowerCase()
+                    };
+                    const visible =
+                            (!name || rowData.name.includes(name)) &&
+                            (!address || rowData.address.includes(address)) &&
+                            (!insurance || rowData.insurance.includes(insurance)) &&
+                            (!phone || rowData.phone.includes(phone));
+                    row.style.display = visible ? "" : "none";
+                });
             }
         </script>
     </body>

@@ -9,7 +9,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Receptionist Home | Medilab Clinic</title>
+        <title>Receptionist Home</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
@@ -21,7 +21,9 @@
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
+                    <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
+                        Medilab
+                    </a>
                 </div>
 
                 <!-- Button group -->
@@ -55,7 +57,7 @@
 
         <!--  Quick Access Buttons -->
         <main class="max-w-5xl mx-auto px-6 py-16 flex-grow">
-            <div class="grid md:grid-cols-2 gap-10">
+            <div class="grid md:grid-cols-3 gap-8">
 
                 <!-- View Patient Profile -->
                 <a href="Patient-Search"
@@ -72,6 +74,15 @@
                     <h3 class="font-bold text-2xl text-gray-800 mb-2">Manage Appointments</h3>
                     <p class="text-gray-600 max-w-sm">
                         View, update, or delete appointments for patients in just a few clicks.
+                    </p>
+                </a>
+
+                <!-- Waiting Screen -->
+                <a href="patient-queue"
+                   class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
+                    <h3 class="font-bold text-2xl text-gray-800 mb-2">Waiting Screen</h3>
+                    <p class="text-gray-600 max-w-sm">
+                        Monitor and manage the patient queue and waiting room status.
                     </p>
                 </a>
 

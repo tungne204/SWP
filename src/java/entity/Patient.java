@@ -9,12 +9,22 @@ public class Patient {
     private Date dob;
     private String address;
     private String insuranceInfo;
-    private Integer parentId; // Integer wrapper to allow null values
+    private Integer parentId; 
 
-    public Patient() {
-    }
-    
-    // Constructor for creating new patients without ID
+    // --- Các trường mở rộng cho View Profile ---
+    private String parentName;         // Tên phụ huynh
+    private String parentIdNumber;     // Số CMND/CCCD của phụ huynh
+    private String email;              // Email bệnh nhân
+    private String phone;              // Số điện thoại bệnh nhân
+    private String doctorName;         // Tên bác sĩ khám
+    private String doctorSpecialty;    // Chuyên khoa bác sĩ
+    private String appointmentDate;    // Ngày khám (định dạng dd/MM/yyyy)
+    private String appointmentTime;    // Giờ khám (định dạng HH:mm)
+    private String status;             // Trạng thái lịch hẹn (Confirmed/Pending)
+
+    // --- Constructors ---
+    public Patient() {}
+
     public Patient(int userId, String fullName, Date dob, String address, String insuranceInfo, Integer parentId) {
         this.userId = userId;
         this.fullName = fullName;
@@ -34,7 +44,7 @@ public class Patient {
         this.parentId = parentId;
     }
 
-    // Getter & Setter
+    // --- Getters & Setters ---
     public int getPatientId() {
         return patientId;
     }
@@ -89,5 +99,77 @@ public class Patient {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public String getParentIdNumber() {
+        return parentIdNumber;
+    }
+
+    public void setParentIdNumber(String parentIdNumber) {
+        this.parentIdNumber = parentIdNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getDoctorSpecialty() {
+        return doctorSpecialty;
+    }
+
+    public void setDoctorSpecialty(String doctorSpecialty) {
+        this.doctorSpecialty = doctorSpecialty;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(String appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
