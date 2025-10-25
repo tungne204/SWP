@@ -11,7 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentDAO extends DBContext {
-
+    
+    public int getDoctorIdByUserId(int userId) throws Exception {
+        String sql = "SELECT doctor_id FROM Doctor WHERE user_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("doctor_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Không tìm thấy
+    }
     // Get appointment by ID
     public Appointment getAppointmentById(int appointmentId) {
         String sql = "SELECT * FROM Appointment WHERE appointment_id = ?";

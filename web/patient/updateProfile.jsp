@@ -24,12 +24,10 @@
         <!-- ===== HEADER ===== -->
         <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
             <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
-                    Medilab
-                </a>
+                <span class="text-2xl fw-bold tracking-wide">Medilab</span>
                 <div class="d-flex gap-3">
-                    <!-- Nút Home quay về Dashboard -->
-                    <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">
+                    <!-- Nút Home quay về trang home -->
+                    <a href="Home.jsp" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">
                         <i class="fa-solid fa-house"></i> Home
                     </a>
                     <!-- Logout -->
@@ -48,7 +46,7 @@
             </h1>
 
             <!-- Update Form -->
-            <form action="Update-Patient" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
+            <form action="Update-Profile" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
 
                 <!-- PATIENT INFO -->
                 <h4 class="text-blue-700 fw-bold mb-4">
@@ -153,5 +151,5 @@
             ⚠️ Patient not found!
         </div>
     </c:if>
-
+    
 </html>
