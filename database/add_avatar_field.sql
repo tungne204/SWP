@@ -39,3 +39,4 @@ SELECT 'Sample Users with Avatar:' as Info;
 SELECT TOP 5 user_id, username, email, avatar 
 FROM [User];
 GO
+
