@@ -53,8 +53,14 @@ public class GoogleOAuthCallback extends HttpServlet {
                 String username = name != null ? name : email.split("@")[0];
                 String randomPassword = generateRandomPassword();
                 
-                userDAO.registerGoogleUser(username, randomPassword, email, null);
+                userDAO.registerGoogleUser(username, randomPassword, email, null, picture);
                 user = userDAO.findByEmail(email);
+            } else {
+                // Cập nhật avatar nếu user đã tồn tại nhưng chưa có avatar
+                if ((user.getAvatar() == null || user.getAvatar().isEmpty()) && picture != null && !picture.isEmpty()) {
+                    userDAO.updateUserAvatar(user.getUserId(), picture);
+                    user.setAvatar(picture);
+                }
             }
             
             if (user != null && user.isStatus()) {
