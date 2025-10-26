@@ -124,3 +124,4 @@ public class UploadAvatarServlet extends HttpServlet {
         out.flush();
     }
 }
+

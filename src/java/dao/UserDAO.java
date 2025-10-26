@@ -282,4 +282,72 @@ public class UserDAO extends DBContext {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    // ========== EMAIL VERIFICATION METHODS ==========
+    
+    // ✅ Save email verification code to database
+    public void saveEmailVerificationCode(String email, String code) {
+        String sql = "UPDATE [User] SET email_verification_code = ?, email_verification_expiry = DATEADD(MINUTE, 15, GETDATE()) WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, code);
+            ps.setString(2, email);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // ✅ Verify email verification code
+    public boolean verifyEmailCode(String email, String code) {
+        String sql = "SELECT 1 FROM [User] WHERE email = ? AND email_verification_code = ? AND email_verification_expiry > GETDATE()";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, code);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // ✅ Mark email as verified and complete registration
+    public void completeEmailVerification(String email) {
+        String sql = "UPDATE [User] SET email_verified = 1, email_verification_code = NULL, email_verification_expiry = NULL, status = 1 WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // ✅ Check if email is already verified
+    public boolean isEmailVerified(String email) {
+        String sql = "SELECT email_verified FROM [User] WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("email_verified");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // ✅ Register user with email verification (unverified status)
+    public void registerWithEmailVerification(String username, String password, String email, String phone) {
+        String sql = "INSERT INTO [User](username, password, email, phone, role_id, status, email_verified) VALUES (?, ?, ?, ?, 3, 0, 0)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, email);
+            ps.setString(4, phone);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
