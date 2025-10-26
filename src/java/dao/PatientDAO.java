@@ -15,13 +15,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * PatientDAO - Handles patient database operations
+ * Main DAO for patient functionality
+ */
 public class PatientDAO extends DBContext {
 
-    // Get patient by ID
+    /**
+     * Get patient by ID
+     */
     public Patient getPatientById(int patientId) {
         String sql = "SELECT * FROM Patient WHERE patient_id = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, patientId);
 
@@ -44,11 +51,14 @@ public class PatientDAO extends DBContext {
         return null;
     }
 
-    // Get patient by user ID
+    /**
+     * Get patient by user ID
+     */
     public Patient getPatientByUserId(int userId) {
         String sql = "SELECT * FROM Patient WHERE user_id = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
 
@@ -71,12 +81,16 @@ public class PatientDAO extends DBContext {
         return null;
     }
 
-    // Get all patients
+    /**
+     * Get all patients
+     */
     public List<Patient> getAllPatients() {
         List<Patient> patients = new ArrayList<>();
         String sql = "SELECT * FROM Patient";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Patient patient = new Patient();
@@ -95,39 +109,14 @@ public class PatientDAO extends DBContext {
         return patients;
     }
 
-    // Find existing patient by name and phone number (stored in address field)
-    public Patient findPatientByNameAndPhone(String fullName, String phoneNumber) {
-        String sql = "SELECT * FROM Patient WHERE full_name = ? AND address = ?";
-
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, fullName);
-            ps.setString(2, phoneNumber);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Patient patient = new Patient();
-                    patient.setPatientId(rs.getInt("patient_id"));
-                    patient.setUserId(rs.getInt("user_id"));
-                    patient.setFullName(rs.getString("full_name"));
-                    patient.setDob(rs.getDate("dob"));
-                    patient.setAddress(rs.getString("address"));
-                    patient.setInsuranceInfo(rs.getString("insurance_info"));
-                    patient.setParentId(rs.getObject("parent_id", Integer.class));
-                    return patient;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // Create a new patient
+    /**
+     * Create a new patient
+     */
     public int createPatient(Patient patient) {
         String sql = "INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             ps.setObject(1, patient.getUserId() > 0 ? patient.getUserId() : null, java.sql.Types.INTEGER);
             ps.setString(2, patient.getFullName());
@@ -139,7 +128,7 @@ public class PatientDAO extends DBContext {
             ps.executeUpdate();
 
             // Get the generated patient ID
-            try (var generatedKeys = ps.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 }
@@ -150,11 +139,14 @@ public class PatientDAO extends DBContext {
         return -1; // Return -1 if failed to create patient
     }
 
-    // Update patient information
+    /**
+     * Update patient information
+     */
     public void updatePatient(Patient patient) {
         String sql = "UPDATE Patient SET full_name = ?, dob = ?, address = ?, insurance_info = ?, parent_id = ? WHERE patient_id = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, patient.getFullName());
             ps.setDate(2, patient.getDob() != null ? new java.sql.Date(patient.getDob().getTime()) : null);
@@ -168,50 +160,10 @@ public class PatientDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    // Search patients by name, ID, or address
-
-    public List<Patient> searchPatients(String keyword) throws Exception {
-        List<Patient> patients = new ArrayList<>();
-
-        String sql
-                = "SELECT * FROM Patient "
-                + "WHERE CAST(patient_id AS NVARCHAR) LIKE ? "
-                + "OR LOWER(full_name) LIKE LOWER(?) "
-                + "OR LOWER(address) LIKE LOWER(?) "
-                + "ORDER BY patient_id DESC";
-
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            String likeKeyword = "%" + keyword + "%";
-            ps.setString(1, likeKeyword);
-            ps.setString(2, likeKeyword);
-            ps.setString(3, likeKeyword);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Patient patient = new Patient();
-                    patient.setPatientId(rs.getInt("patient_id"));
-                    patient.setUserId(rs.getInt("user_id"));
-                    patient.setFullName(rs.getString("full_name"));
-                    patient.setDob(rs.getDate("dob"));
-                    patient.setAddress(rs.getString("address"));
-                    patient.setInsuranceInfo(rs.getString("insurance_info"));
-                    patient.setParentId(rs.getObject("parent_id", Integer.class));
-                    patients.add(patient);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return patients;
-    }
 
     /**
-     * Lấy thông tin bệnh nhân theo user_id (dùng cho chức năng View Profile)
-     */
-    /**
-     * Lấy thông tin bệnh nhân theo user_id (dùng cho chức năng View Profile)
+     * Get patient information by user ID with detailed information
+     * Used for View Profile functionality
      */
     public Patient getPatientByUserID2(int userId) {
         Patient p = null;
@@ -248,7 +200,8 @@ public class PatientDAO extends DBContext {
         WHERE p.user_id = ?
     """;
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
 
@@ -280,13 +233,10 @@ public class PatientDAO extends DBContext {
     }
 
     /**
-     * true Lấy thông tin chi tiết bệnh nhân theo ID
-     *
-     * @param id ID bệnh nhân
-     * @return đối tượng Patient chứa thông tin chi tiết
+     * Get detailed patient information by ID
      */
     public Patient getPatientById2(int id) {
-        entity.Patient p = null;
+        Patient p = null;
 
         String sql = """
         SELECT 
@@ -320,13 +270,14 @@ public class PatientDAO extends DBContext {
         WHERE p.patient_id = ?
     """;
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    p = new entity.Patient();
+                    p = new Patient();
                     p.setPatientId(rs.getInt("patient_id"));
                     p.setUserId(rs.getInt("user_id"));
                     p.setFullName(rs.getString("full_name"));
@@ -347,7 +298,6 @@ public class PatientDAO extends DBContext {
                     p.setStatus(rs.getString("status"));
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -356,7 +306,7 @@ public class PatientDAO extends DBContext {
     }
 
     /**
-     * true Cập nhật thông tin bệnh nhân (bao gồm Patient, Parent, User)
+     * Update patient information including Patient, Parent, and User tables
      */
     public void updatePatient2(Patient p) {
         String sqlPatient = """
@@ -382,11 +332,13 @@ public class PatientDAO extends DBContext {
     """;
 
         try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // Bắt đầu transaction
+            conn.setAutoCommit(false); // Begin transaction
 
-            try (PreparedStatement ps1 = conn.prepareStatement(sqlPatient); PreparedStatement ps2 = conn.prepareStatement(sqlParent); PreparedStatement ps3 = conn.prepareStatement(sqlUser)) {
+            try (PreparedStatement ps1 = conn.prepareStatement(sqlPatient); 
+                 PreparedStatement ps2 = conn.prepareStatement(sqlParent); 
+                 PreparedStatement ps3 = conn.prepareStatement(sqlUser)) {
 
-                // === 1. Cập nhật bảng Patient ===
+                // Update Patient table
                 ps1.setString(1, p.getFullName());
                 ps1.setString(2, p.getAddress());
                 ps1.setString(3, p.getInsuranceInfo());
@@ -394,21 +346,21 @@ public class PatientDAO extends DBContext {
                 ps1.setInt(5, p.getPatientId());
                 ps1.executeUpdate();
 
-                // === 2. Cập nhật bảng Parent ===
+                // Update Parent table
                 ps2.setString(1, p.getParentName());
                 ps2.setString(2, p.getParentIdNumber());
                 ps2.setInt(3, p.getPatientId());
                 ps2.executeUpdate();
 
-                // === 3. Cập nhật bảng User ===
+                // Update User table
                 ps3.setString(1, p.getEmail());
                 ps3.setString(2, p.getPhone());
                 ps3.setInt(3, p.getPatientId());
                 ps3.executeUpdate();
 
-                conn.commit(); // Xác nhận tất cả thay đổi
+                conn.commit(); // Commit all changes
             } catch (Exception e) {
-                conn.rollback(); // Nếu lỗi → rollback toàn bộ
+                conn.rollback(); // Rollback on error
                 e.printStackTrace();
             } finally {
                 conn.setAutoCommit(true);
@@ -417,5 +369,42 @@ public class PatientDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Find patient by name and phone number
+     */
+    public Patient findPatientByNameAndPhone(String fullName, String phone) {
+        String sql = """
+            SELECT p.*, u.phone, u.email 
+            FROM Patient p 
+            JOIN [User] u ON p.user_id = u.user_id 
+            WHERE p.full_name = ? AND u.phone = ?
+        """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, fullName);
+            ps.setString(2, phone);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Patient patient = new Patient();
+                    patient.setPatientId(rs.getInt("patient_id"));
+                    patient.setUserId(rs.getInt("user_id"));
+                    patient.setFullName(rs.getString("full_name"));
+                    patient.setDob(rs.getDate("dob"));
+                    patient.setAddress(rs.getString("address"));
+                    patient.setInsuranceInfo(rs.getString("insurance_info"));
+                    patient.setParentId(rs.getObject("parent_id", Integer.class));
+                    patient.setPhone(rs.getString("phone"));
+                    patient.setEmail(rs.getString("email"));
+                    return patient;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

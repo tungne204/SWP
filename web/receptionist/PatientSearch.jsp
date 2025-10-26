@@ -3,18 +3,54 @@
     Created on : Oct 8, 2025, 5:37:36 PM
     Author     : KienPC
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Patient Information </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Patient Search - Medilab</title>
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- Sort icons + hover style -->
         <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+            }
+            
             .sortable:hover {
                 cursor: pointer;
                 background-color: #e2e8f0;
@@ -28,29 +64,16 @@
         </style>
     </head>
 
-    <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
-
+    <body>
         <!-- Header -->
-        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <div class="flex items-center gap-3">
-                    <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
-                        Medilab
-                    </a>
-                </div>
+        <%@ include file="../includes/header.jsp" %>
 
-                <div class="flex items-center gap-3">
-                    <a href="Receptionist-Dashboard"
-                       class="bg-white/20 text-white px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
-                        Home
-                    </a>
-                    <a href="logout"
-                       class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
-                        Logout
-                    </a>
-                </div>
-            </div>
-        </header>
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+
+            <!-- Main Content -->
+             <div class="content-area">
 
         <!-- Main Content -->
         <main class="w-[95%] mx-auto px-8 pt-28 pb-10 flex-grow">
@@ -249,5 +272,12 @@
                 });
             }
         </script>
+
+            </div> <!-- End content-area -->
+        </div> <!-- End main-wrapper -->
+
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
+
     </body>
 </html>

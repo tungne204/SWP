@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Medilab Pediatric Clinic</title>
     
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+          rel="stylesheet" 
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
+          crossorigin="anonymous">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #3fbbc0;
@@ -326,38 +334,67 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(63, 187, 192, 0.3);
         }
+        /* Layout styles for sidebar integration */
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar-fixed {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .content-area {
+            margin-left: 280px;
+            flex: 1;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <!-- Include Header -->
+    <!-- Header -->
     <%@ include file="../includes/header.jsp" %>
     
-    <!-- Include Sidebar -->
-    <%@ include file="../includes/sidebar-doctor.jsp" %>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container-fluid">
-            <!-- Welcome Header -->
-            <div class="dashboard-header">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <h2>
-                            <i class="fas fa-user-md"></i> 
-                            Chào mừng, BS. ${sessionScope.username != null ? sessionScope.username : 'Doctor'}
-                        </h2>
-                        <p class="text-muted mb-0">
-                            <i class="far fa-calendar me-2"></i> 
-                            <jsp:useBean id="now" class="java.util.Date"/>
-                            <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" />
-                            <span class="ms-4 time-display">
-                                <i class="far fa-clock me-2"></i>
-                                <span id="currentTime"></span>
-                            </span>
-                        </p>
-                    </div>
+    <!-- Main wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <%@ include file="../includes/sidebar-doctor.jsp" %>
+        
+        <!-- Content area -->
+        <div class="content-area">
+            <main>
+                <div class="container-fluid">
+                    <!-- Dashboard Header -->
+                    <div class="dashboard-header">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h2>
+                                    <i class="fas fa-user-md"></i> 
+                                    Chào mừng, BS. ${sessionScope.username != null ? sessionScope.username : 'Doctor'}
+                                </h2>
+                                <p class="text-muted mb-0">
+                                    <i class="far fa-calendar me-2"></i> 
+                                    <jsp:useBean id="now" class="java.util.Date"/>
+                                    <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" />
+                                    <span class="ms-4 time-display">
+                                        <i class="far fa-clock me-2"></i>
+                                        <span id="currentTime"></span>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                                <a href="logout" class="btn btn-logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                    </a>
                 </div>
             </div>
+        </div>
 
         <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
@@ -609,8 +646,7 @@
                             <h4 class="text-success">${monthlyReports != null ? monthlyReports : 0}</h4>
                         </div>
                     </div>
-                    <div class="stats-item">
-                        <div class="d-flex justify-content-between align-items-center">
+    </div>
                             <span class="text-muted">Xét nghiệm thực hiện</span>
                             <h4 class="text-info">${monthlyTests != null ? monthlyTests : 0}</h4>
                         </div>
@@ -638,5 +674,14 @@
         updateTime();
         setInterval(updateTime, 1000);
     </script>
+
+                </div> <!-- End container-fluid -->
+            </main>
+        </div> <!-- End content-area -->
+    </div> <!-- End main-wrapper -->
+
+    <!-- Footer -->
+    <%@ include file="../includes/footer.jsp" %>
+
 </body>
 </html>

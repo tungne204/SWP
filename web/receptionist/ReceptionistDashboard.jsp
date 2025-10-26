@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
 <%-- 
     Document   : Receptionist Dashboard
     Created on : Oct 18, 2025, 10:37:08 PM
@@ -8,86 +7,232 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Receptionist Home | Medilab Clinic</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Receptionist Dashboard | Medilab Clinic</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Include header styles and dependencies -->
+        <%@ include file="../includes/header.jsp" %>
+        
+        <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --sidebar-width: 280px;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px; /* Account for fixed header */
+            }
+            
+            .sidebar-fixed {
+                position: fixed;
+                top: 90px;
+                left: 0;
+                width: var(--sidebar-width);
+                height: calc(100vh - 70px);
+                background: white;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: var(--sidebar-width);
+                padding: 30px;
+                min-height: calc(100vh - 70px);
+            }
+
+            .dashboard-header {
+                background: #0d6efd;
+                color: white;
+                padding: 40px;
+                border-radius: 15px;
+                margin-bottom: 30px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .dashboard-header h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #fff;
+            }
+            
+            .dashboard-header p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin: 0;
+            }
+            
+            .quick-actions {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 25px;
+                margin-bottom: 40px;
+            }
+            
+            .action-card {
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-decoration: none;
+                color: inherit;
+                transition: all 0.3s ease;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+                border: 1px solid #e9ecef;
+                text-align: center;
+            }
+            
+            .action-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+                text-decoration: none;
+                color: inherit;
+            }
+            
+            .action-card i {
+                font-size: 3rem;
+                color: var(--primary-color);
+                margin-bottom: 20px;
+                display: block;
+            }
+            
+            .action-card h3 {
+                font-size: 1.4rem;
+                font-weight: 600;
+                margin-bottom: 15px;
+                color: #2c3e50;
+            }
+            
+            .action-card p {
+                color: #6c757d;
+                margin: 0;
+                line-height: 1.6;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .stat-card {
+                background: white;
+                padding: 25px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 5px;
+            }
+            
+            .stat-label {
+                color: #6c757d;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        </style>
     </head>
 
     <body>
-        <!-- Include Header -->
-        <%@ include file="../includes/header.jsp" %>
-        
-        <!-- Include Sidebar -->
-        <%@ include file="../includes/sidebar-receptionist.jsp" %>
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!--  Hero Section -->
-            <section class="text-center bg-gradient-to-r from-blue-100 to-blue-50 relative mb-6 rounded-lg p-8">
-                <div class="max-w-4xl mx-auto relative z-10">
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3">
-                        Welcome, Receptionist!
-                    </h1>
-                    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                        Manage patient profiles and appointments efficiently with our Medilab system.
-                    </p>
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Welcome Section -->
+                <div class="dashboard-header">
+                    <h1>Welcome to Receptionist Dashboard</h1>
+                    <p>Manage patient check-ins, appointments, and clinic operations efficiently</p>
                 </div>
-            </section>
 
-            <!--  Quick Access Buttons -->
-            <section class="py-8">
-                <div class="max-w-6xl mx-auto">
-                    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Quick Access</h2>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <!-- Patient Check-in -->
+                    <a href="checkin-form" class="action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <h3>Patient Check-in</h3>
+                        <p>Register new patients or check-in existing patients for appointments</p>
+                    </a>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <!-- Patient Check-in -->
-                        <a href="receptionist/checkin.jsp"
-                           class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-center border border-gray-100 hover:border-blue-200 transform hover:-translate-y-2">
-                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-200 transition-colors">
-                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Patient Check-in</h3>
-                            <p class="text-gray-600 leading-relaxed">Register new patients and manage check-in process efficiently.</p>
-                        </a>
+                    <!-- Search Patients -->
+                    <a href="search-patients" class="action-card">
+                        <i class="fas fa-search"></i>
+                        <h3>Search Patients</h3>
+                        <p>Find and view patient information quickly and efficiently</p>
+                    </a>
 
-                        <!-- Patient Search -->
-                        <a href="PatientSearch"
-                           class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-center border border-gray-100 hover:border-green-200 transform hover:-translate-y-2">
-                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors">
-                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Patient Search</h3>
-                            <p class="text-gray-600 leading-relaxed">Search and view patient information quickly and easily.</p>
-                        </a>
+                    <!-- Appointment Management -->
+                    <a href="appointment-list" class="action-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Appointments</h3>
+                        <p>View and manage today's appointments and schedules</p>
+                    </a>
 
-                        <!-- Waiting Screen -->
-                        <a href="/patient-queue"
-                           class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 text-center border border-gray-100 hover:border-purple-200 transform hover:-translate-y-2">
-                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-purple-200 transition-colors">
-                                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Waiting Screen</h3>
-                            <p class="text-gray-600 leading-relaxed">Monitor and manage the patient queue and waiting times.</p>
-                        </a>
+                    <!-- Patient Queue -->
+                    <a href="patient-queue" class="action-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Patient Queue</h3>
+                        <p>Monitor waiting patients and manage queue efficiently</p>
+                    </a>
+
+                    <!-- Patient Profiles -->
+                    <a href="patient-profiles" class="action-card">
+                        <i class="fas fa-user"></i>
+                        <h3>Patient Profiles</h3>
+                        <p>Access detailed patient information and medical history</p>
+                    </a>
+
+                    <!-- Reports -->
+                    <a href="reports" class="action-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Reports</h3>
+                        <p>Generate and view clinic reports and statistics</p>
+                    </a>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Today's Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Waiting Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Total Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Completed Today</div>
                     </div>
                 </div>
-            </section>
-
-            <!--  Footer -->
-            <footer class="bg-gray-800 text-white py-8 mt-auto rounded-lg">
-                <div class="max-w-7xl mx-auto text-center px-6">
-                    <p class="text-gray-300">&copy; 2024 Medilab Clinic. All rights reserved.</p>
-                </div>
-            </footer>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
 
     </body>
 </html>

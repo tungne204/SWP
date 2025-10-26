@@ -1,50 +1,136 @@
-<%-- 
-    Document   : updateAppointment
-    Created on : Oct 19, 2025, 7:47:48 AM
-    Author     : KiênPC
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="vi_VN" />
+<fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Edit Appointment</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Update Appointment - Medilab</title>
         <script src="https://cdn.tailwindcss.com"></script>
-
-        <!-- Bootstrap 5.3 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            crossorigin="anonymous"
-            />
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            crossorigin="anonymous"
-        ></script>
-
-        <!-- FontAwesome -->
-        <script src="https://kit.fontawesome.com/a2e0b7c6d6.js" crossorigin="anonymous"></script>
+        <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+            }
+            
+            .form-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .form-card {
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+            }
+            .form-title {
+                color: #4a5568;
+                font-size: 2.5rem;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .form-label {
+                display: block;
+                color: #4a5568;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .form-input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 10px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(63, 187, 192, 0.1);
+            }
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                color: white;
+                padding: 12px 30px;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(63, 187, 192, 0.3);
+            }
+            .btn-secondary {
+                background: #e2e8f0;
+                color: #4a5568;
+                padding: 12px 30px;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-left: 10px;
+            }
+            .btn-secondary:hover {
+                background: #cbd5e0;
+            }
+        </style>
     </head>
 
-    <body class="bg-gray-50 min-h-screen text-gray-800">
+    <body>
+        <!-- Header -->
+        <%@ include file="../includes/header.jsp" %>
 
-        <!-- ================= HEADER (copy từ PatientSearch.jsp) ================= -->
-        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
-                    Medilab
-                </a>
-                <div class="d-flex gap-3">
-                    <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">Home</a>
-                    <a href="logout" class="btn btn-outline-light fw-semibold px-4 py-1">Logout</a>
-                </div>
-            </div>
-        </header>
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
 
-        <!-- ================= MAIN CONTENT ================= -->
-        <main class="pt-32 pb-10 px-8">
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="form-container">
             <div class="max-w-6xl mx-auto bg-white shadow-xl rounded-xl mt-10 p-8 border border-gray-200">
                 <h2 class="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">✏️ Edit Appointment</h2>
 
@@ -222,6 +308,13 @@
                 URL.revokeObjectURL(url);
             }
         </script>
+
+                </div> <!-- End form-container -->
+            </div> <!-- End content-area -->
+        </div> <!-- End main-wrapper -->
+
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
 
     </body>
 </html>

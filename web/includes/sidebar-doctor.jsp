@@ -72,7 +72,7 @@
         <div class="nav-section">
             <div class="nav-section-title">Dashboard</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor-dashboard" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/doctorDashboard.jsp" class="nav-link">
                     <i class="bi bi-speedometer2"></i>
                     <span class="nav-link-text">Dashboard</span>
                 </a>
@@ -83,13 +83,13 @@
         <div class="nav-section">
             <div class="nav-section-title">Appointments</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/appointment-list" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/appointment-list.jsp" class="nav-link">
                     <i class="bi bi-calendar-check"></i>
                     <span class="nav-link-text">Appointment List</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/appointment-detail" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/appointment-detail.jsp" class="nav-link">
                     <i class="bi bi-calendar-event"></i>
                     <span class="nav-link-text">Appointment Details</span>
                 </a>
@@ -100,43 +100,44 @@
         <div class="nav-section">
             <div class="nav-section-title">Medical Records</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/medical-report-list" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/medical-report-list.jsp" class="nav-link">
                     <i class="bi bi-file-medical"></i>
                     <span class="nav-link-text">Medical Reports</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/medical-report-form" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/medical-report-form.jsp" class="nav-link">
                     <i class="bi bi-file-plus"></i>
-                    <span class="nav-link-text">New Medical Report</span>
+                    <span class="nav-link-text">Create Report</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/doctor/medical-report-view.jsp" class="nav-link">
+                    <i class="bi bi-file-text"></i>
+                    <span class="nav-link-text">View Reports</span>
                 </a>
             </div>
         </div>
         
-        <!-- Lab Tests -->
+        <!-- Test Results -->
         <div class="nav-section">
-            <div class="nav-section-title">Laboratory</div>
+            <div class="nav-section-title">Test Results</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/test-result-list" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/test-result-list.jsp" class="nav-link">
                     <i class="bi bi-clipboard-data"></i>
                     <span class="nav-link-text">Test Results</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/test-result-by-record" class="nav-link">
-                    <i class="bi bi-search"></i>
-                    <span class="nav-link-text">Search Test Results</span>
+                <a href="${pageContext.request.contextPath}/doctor/test-result-detail.jsp" class="nav-link">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span class="nav-link-text">Test Details</span>
                 </a>
             </div>
-        </div>
-        
-        <!-- Queue Management -->
-        <div class="nav-section">
-            <div class="nav-section-title">Patient Queue</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/patient-queue" class="nav-link">
-                    <i class="bi bi-people"></i>
-                    <span class="nav-link-text">Waiting Queue</span>
+                <a href="${pageContext.request.contextPath}/doctor/test-result-by-record.jsp" class="nav-link">
+                    <i class="bi bi-clipboard-pulse"></i>
+                    <span class="nav-link-text">Results by Record</span>
                 </a>
             </div>
         </div>
@@ -145,15 +146,15 @@
         <div class="nav-section">
             <div class="nav-section-title">Quick Actions</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/medical-report-form" class="nav-link">
+                <a href="${pageContext.request.contextPath}/doctor/medical-report-form.jsp" class="nav-link">
                     <i class="bi bi-plus-circle"></i>
-                    <span class="nav-link-text">New Prescription</span>
+                    <span class="nav-link-text">New Medical Report</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/test-result-list" class="nav-link">
-                    <i class="bi bi-clipboard-check"></i>
-                    <span class="nav-link-text">Review Lab Results</span>
+                <a href="${pageContext.request.contextPath}/doctor/appointment-list.jsp" class="nav-link">
+                    <i class="bi bi-calendar-plus"></i>
+                    <span class="nav-link-text">Today's Appointments</span>
                 </a>
             </div>
         </div>

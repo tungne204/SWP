@@ -32,7 +32,7 @@
                         <p><strong>Mã Bệnh Nhân:</strong> ${patient.patientId}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType == 'Walk-in' ? 'Khám Trực Tiếp' : 'Đã Đặt Lịch'}</p>
+                        <p><strong>Loại Bệnh Nhân:</strong> ${patientQueue.queueType}</p>
                         <p><strong>Trạng Thái Mới:</strong> ${patientQueue.status}</p>
                     </div>
                 </div>
@@ -45,12 +45,9 @@
                 <h5>Thông Tin Xét Nghiệm</h5>
             </div>
             <div class="card-body">
-                <p><strong>Loại Xét Nghiệm:</strong> ${testType}</p>
-                <p><strong>Kết Quả:</strong> ${testResult}</p>
-                <p><strong>Ngày Thực Hiện:</strong> ${testDate}</p>
-                <c:if test="${not empty technician}">
-                    <p><strong>Kỹ Thuật Viên:</strong> ${technician}</p>
-                </c:if>
+                <p><strong>Loại Xét Nghiệm:</strong> ${testResult.testType}</p>
+                <p><strong>Kết Quả:</strong> ${testResult.result}</p>
+                <p><strong>Ngày Thực Hiện:</strong> ${testResult.date}</p>
             </div>
         </div>
         
