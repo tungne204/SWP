@@ -33,7 +33,7 @@
         <div class="page-header">
             <div class="container">
                 <div class="d-flex align-items-center">
-                    <a href="${pageContext.request.contextPath}/manager/doctors?action=view&id=${qualification.doctorId}" 
+                    <a href="${pageContext.request.contextPath}/doctors1?action=view&id=${qualification.doctorId}" 
                        class="btn btn-light me-3">
                         <i class="fas fa-arrow-left"></i>
                     </a>
@@ -49,7 +49,7 @@
             <div class="col-lg-8">
                 <div class="card form-card">
                     <div class="card-body p-4">
-                        <form action="${pageContext.request.contextPath}/manager/doctors" 
+                        <form action="${pageContext.request.contextPath}/doctors1" 
                               method="post" 
                               onsubmit="return validateForm()">
                             <input type="hidden" name="action" value="updateQualification">
@@ -116,7 +116,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                <a href="${pageContext.request.contextPath}/manager/doctors?action=view&id=${qualification.doctorId}" 
+                                <a href="${pageContext.request.contextPath}/doctors1?action=view&id=${qualification.doctorId}" 
                                    class="btn btn-secondary">
                                     <i class="fas fa-times me-2"></i>Hủy
                                 </a>

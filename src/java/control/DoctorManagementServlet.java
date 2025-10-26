@@ -188,7 +188,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=list");
+        response.sendRedirect(request.getContextPath() + "doctors1?action=list");
     }
     
     // Cập nhật bác sĩ
@@ -213,7 +213,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=view&id=" + doctorId);
+        response.sendRedirect(request.getContextPath() + "doctors1?action=view&id=" + doctorId);
     }
     
     // Xóa bác sĩ
@@ -231,7 +231,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=list");
+        response.sendRedirect(request.getContextPath() + "doctors1?action=list");
     }
     
     // Hiển thị form thêm bằng cấp
@@ -283,7 +283,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=view&id=" + doctorId);
+        response.sendRedirect(request.getContextPath() + "doctors1?action=view&id=" + doctorId);
     }
     
     // Cập nhật bằng cấp
@@ -317,7 +317,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=view&id=" + doctorId);
+        response.sendRedirect(request.getContextPath() + "doctors1?action=view&id=" + doctorId);
     }
     
     // Xóa bằng cấp
@@ -337,7 +337,7 @@ private void listDoctors(HttpServletRequest request, HttpServletResponse respons
             request.getSession().setAttribute("messageType", "error");
         }
         
-        response.sendRedirect(request.getContextPath() + "/manager/doctors?action=view&id=" + doctorId);
+        response.sendRedirect(request.getContextPath() + "doctors1?action=view&id=" + doctorId);
     }
     /** 
      * Returns a short description of the servlet.

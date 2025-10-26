@@ -48,7 +48,7 @@
         <div class="page-header">
             <div class="container">
                 <div class="d-flex align-items-center">
-                    <a href="${pageContext.request.contextPath}/manager/doctors?action=list" 
+                    <a href="${pageContext.request.contextPath}/doctors1?action=list" 
                        class="btn btn-light me-3">
                         <i class="fas fa-arrow-left"></i>
                     </a>
@@ -111,7 +111,7 @@
                         </div>
                         
                         <div class="d-grid gap-2 mt-4">
-                            <a href="${pageContext.request.contextPath}/manager/doctors?action=edit&id=${doctor.doctorId}" 
+                            <a href="${pageContext.request.contextPath}/doctors1?action=edit&id=${doctor.doctorId}" 
                                class="btn btn-primary">
                                 <i class="fas fa-edit me-2"></i>Chỉnh sửa thông tin
                             </a>
@@ -129,7 +129,7 @@
                                 <i class="fas fa-graduation-cap text-primary me-2"></i>
                                 Bằng cấp & Chứng chỉ
                             </h5>
-                            <a href="${pageContext.request.contextPath}/manager/doctors?action=addQualification&doctorId=${doctor.doctorId}" 
+                            <a href="${pageContext.request.contextPath}/doctors1?action=addQualification&doctorId=${doctor.doctorId}" 
                                class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus me-1"></i>Thêm bằng cấp
                             </a>
@@ -168,7 +168,7 @@
                                                 </c:if>
                                             </div>
                                             <div class="btn-group-vertical ms-3">
-                                                <a href="${pageContext.request.contextPath}/manager/doctors?action=editQualification&id=${qual.qualificationId}" 
+                                                <a href="${pageContext.request.contextPath}/doctors1?action=editQualification&id=${qual.qualificationId}" 
                                                    class="btn btn-sm btn-outline-success" title="Sửa">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
@@ -201,7 +201,7 @@
     <script>
         function confirmDeleteQual(qualId, degreeName) {
             if (confirm('Bạn có chắc chắn muốn xóa bằng cấp "' + degreeName + '"?')) {
-                window.location.href = '${pageContext.request.contextPath}/manager/doctors?action=deleteQualification&id=' 
+                window.location.href = '${pageContext.request.contextPath}/doctors1?action=deleteQualification&id=' 
                     + qualId + '&doctorId=${doctor.doctorId}';
             }
         }

@@ -62,7 +62,7 @@
                         <h5 class="mb-0">Danh sách bác sĩ (${doctors.size()})</h5>
                     </div>
                     <div class="col-md-6 text-end">
-                        <a href="${pageContext.request.contextPath}/manager/doctors?action=add" 
+                        <a href="${pageContext.request.contextPath}/doctors1?action=add" 
                            class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Thêm bác sĩ mới
                         </a>
@@ -106,12 +106,12 @@
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <a href="${pageContext.request.contextPath}/manager/doctors?action=view&id=${doctor.doctorId}" 
+                                <a href="${pageContext.request.contextPath}/doctors1?action=view&id=${doctor.doctorId}" 
                                    class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-eye me-1"></i>Xem chi tiết
                                 </a>
                                 <div class="btn-group">
-                                    <a href="${pageContext.request.contextPath}/manager/doctors?action=edit&id=${doctor.doctorId}" 
+                                    <a href="${pageContext.request.contextPath}/doctors1?action=edit&id=${doctor.doctorId}" 
                                        class="btn btn-sm btn-outline-success">
                                         <i class="fas fa-edit me-1"></i>Sửa
                                     </a>
@@ -144,7 +144,7 @@
     <script>
         function confirmDelete(doctorId, doctorName) {
             if (confirm('Bạn có chắc chắn muốn xóa bác sĩ "' + doctorName + '"?\n\nLưu ý: Tất cả bằng cấp của bác sĩ cũng sẽ bị xóa.')) {
-                window.location.href = '${pageContext.request.contextPath}/manager/doctors?action=delete&id=' + doctorId;
+                window.location.href = '${pageContext.request.contextPath}/doctors1?action=delete&id=' + doctorId;
             }
         }
     </script>
