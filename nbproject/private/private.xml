@@ -3,29 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/departments-4.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/Change_password.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/LogoutControl.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/apple-touch-icon.png</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/UserDAO.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/AppointmentServlet.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/departments-1.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/about.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/departments-2.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/LoginControl.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/patient/viewAppointment_new.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/Home.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/AppointmentDAO.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/includes/header.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/logo.png</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/departments-5.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/filter/ServletAuthFilter.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/departments-3.jpg</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/RolePatient/DoctorDAO.java</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/Login.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/receptionist/ReceptionistDashboard.jsp</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/favicon.png</file>
-            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/hero-bg.jpg</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/UploadAvatarServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/DoctorManagementServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/manager/qualification-edit.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/entity/Qualification.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/dao/DoctorDAO.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/entity/Doctor.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/dao/QualificationDAO.java</file>
         </group>
     </open-files>
 </project-private>

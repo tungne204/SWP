@@ -1,11 +1,15 @@
 package entity;
 
+import java.util.List;
+
 public class Doctor {
 
     private int doctorId;
     private int userId;
     private String specialty;
     private String username;
+    private User user;
+    private List<Qualification> qualifications;
 
     public Doctor() {
     }
@@ -16,6 +20,23 @@ public class Doctor {
         this.specialty = specialty;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Qualification> getQualifications() {
+        return qualifications;
+    }
+
+    public void setQualifications(List<Qualification> qualifications) {
+        this.qualifications = qualifications;
+    }
+
+    
     // Getter & Setter
     public int getDoctorId() {
         return doctorId;
