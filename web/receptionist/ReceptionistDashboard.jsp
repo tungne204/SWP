@@ -1,113 +1,238 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
 <%-- 
     Document   : Receptionist Dashboard
     Created on : Oct 18, 2025, 10:37:08 PM
     Author     : KiênPC
 --%>
-<%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Receptionist Home | Medilab Clinic</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Receptionist Dashboard | Medilab Clinic</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Include header styles and dependencies -->
+        <%@ include file="../includes/header.jsp" %>
+        
+        <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --sidebar-width: 280px;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px; /* Account for fixed header */
+            }
+            
+            .sidebar-fixed {
+                position: fixed;
+                top: 90px;
+                left: 0;
+                width: var(--sidebar-width);
+                height: calc(100vh - 70px);
+                background: white;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: var(--sidebar-width);
+                padding: 30px;
+                min-height: calc(100vh - 70px);
+            }
+
+            .dashboard-header {
+                background: #0d6efd;
+                color: white;
+                padding: 40px;
+                border-radius: 15px;
+                margin-bottom: 30px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .dashboard-header h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #fff;
+            }
+            
+            .dashboard-header p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin: 0;
+            }
+            
+            .quick-actions {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 25px;
+                margin-bottom: 40px;
+            }
+            
+            .action-card {
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-decoration: none;
+                color: inherit;
+                transition: all 0.3s ease;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+                border: 1px solid #e9ecef;
+                text-align: center;
+            }
+            
+            .action-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+                text-decoration: none;
+                color: inherit;
+            }
+            
+            .action-card i {
+                font-size: 3rem;
+                color: var(--primary-color);
+                margin-bottom: 20px;
+                display: block;
+            }
+            
+            .action-card h3 {
+                font-size: 1.4rem;
+                font-weight: 600;
+                margin-bottom: 15px;
+                color: #2c3e50;
+            }
+            
+            .action-card p {
+                color: #6c757d;
+                margin: 0;
+                line-height: 1.6;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .stat-card {
+                background: white;
+                padding: 25px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 5px;
+            }
+            
+            .stat-label {
+                color: #6c757d;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        </style>
     </head>
 
-    <!--Dùng flex layout toàn trang -->
-    <body class="bg-gradient-to-b from-blue-50 to-white text-gray-800 font-sans min-h-screen flex flex-col">
+    <body>
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
 
-        <!--  Header -->
-        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl font-bold tracking-wide">Medilab Clinic</span>
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Welcome Section -->
+                <div class="dashboard-header">
+                    <h1>Welcome to Receptionist Dashboard</h1>
+                    <p>Manage patient check-ins, appointments, and clinic operations efficiently</p>
                 </div>
 
-                <!-- Button group -->
-                <div class="flex items-center gap-3">
-                    <a href="Receptionist-Dashboard"
-                       class="bg-white/20 text-white px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
-                        Home
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <!-- Patient Check-in -->
+                    <a href="checkin-form" class="action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <h3>Patient Check-in</h3>
+                        <p>Register new patients or check-in existing patients for appointments</p>
                     </a>
-                    <a href="logout"
-                       class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
-                        Logout
+
+                    <!-- Search Patients -->
+                    <a href="search-patients" class="action-card">
+                        <i class="fas fa-search"></i>
+                        <h3>Search Patients</h3>
+                        <p>Find and view patient information quickly and efficiently</p>
+                    </a>
+
+                    <!-- Appointment Management -->
+                    <a href="appointment-list" class="action-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Appointments</h3>
+                        <p>View and manage today's appointments and schedules</p>
+                    </a>
+
+                    <!-- Patient Queue -->
+                    <a href="patient-queue" class="action-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Patient Queue</h3>
+                        <p>Monitor waiting patients and manage queue efficiently</p>
+                    </a>
+
+                    <!-- Patient Profiles -->
+                    <a href="patient-profiles" class="action-card">
+                        <i class="fas fa-user"></i>
+                        <h3>Patient Profiles</h3>
+                        <p>Access detailed patient information and medical history</p>
+                    </a>
+
+                    <!-- Reports -->
+                    <a href="reports" class="action-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Reports</h3>
+                        <p>Generate and view clinic reports and statistics</p>
                     </a>
                 </div>
+
+                <!-- Statistics Section -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Today's Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Waiting Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Total Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Completed Today</div>
+                    </div>
+                </div>
             </div>
-        </header>
-
-        <!--  Hero Section -->
-        <section class="pt-24 pb-10 text-center bg-gradient-to-r from-blue-100 to-blue-50 relative flex-shrink-0">
-            <div class="max-w-4xl mx-auto relative z-10 px-6">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-3">
-                    Welcome, Receptionist!
-                </h1>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    Manage patient profiles and appointments efficiently with our Medilab system.
-                </p>
-            </div>
-            <img src="https://i.ibb.co/4MZ7hCm/doctor-bg.png"
-                 alt="Doctor Background"
-                 class="absolute right-0 top-0 h-full opacity-20 object-contain pointer-events-none" />
-        </section>
-
-        <!--  Quick Access Buttons -->
-        <main class="max-w-5xl mx-auto px-6 py-16 flex-grow">
-            <div class="grid md:grid-cols-3 gap-8">
-
-                <!-- View Patient Profile -->
-                <a href="Patient-Search"
-                   class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
-                    <h3 class="font-bold text-2xl text-gray-800 mb-2">View Patient</h3>
-                    <p class="text-gray-600 max-w-sm">
-                        Easily search and view detailed information about your patients.
-                    </p>
-                </a>
-
-                <!-- Manage Appointments -->
-                <a href="Appointment-List"
-                   class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
-                    <h3 class="font-bold text-2xl text-gray-800 mb-2">Manage Appointments</h3>
-                    <p class="text-gray-600 max-w-sm">
-                        View, update, or delete appointments for patients in just a few clicks.
-                    </p>
-                </a>
-
-                <!-- Waiting Screen -->
-                <a href="patient-queue"
-                   class="flex flex-col items-center justify-center bg-white hover:bg-blue-50 p-10 rounded-2xl border border-blue-100 shadow-md hover:shadow-lg transition text-center">
-                    <h3 class="font-bold text-2xl text-gray-800 mb-2">Waiting Screen</h3>
-                    <p class="text-gray-600 max-w-sm">
-                        Monitor and manage the patient queue and waiting room status.
-                    </p>
-                </a>
-
-            </div>
-        </main>
+        </div>
 
         <!-- Footer -->
-        <footer class="bg-[#f7f9fc] text-gray-700 py-8 border-top border-gray-200 mt-5">
-            <div class="max-w-5xl mx-auto text-center space-y-3">
-                <h2 class="text-2xl fw-bold text-gray-800">Medilab</h2>
-                <p>FPT University, Hoa Lac Hi-Tech Park, Thach That, Hanoi</p>
-                <p>
-                    <strong>Phone:</strong> +84 987 654 321<br>
-                    <strong>Email:</strong> medilab.contact@gmail.com
-                </p>
-                <div class="d-flex justify-content-center gap-4 mt-4">
-                    <a href="#" class="text-blue-600 hover:text-blue-800 transition"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="text-pink-500 hover:text-pink-700 transition"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-blue-500 hover:text-blue-700 transition"><i class="fab fa-youtube fa-lg"></i></a>
-                    <a href="#" class="text-blue-700 hover:text-blue-900 transition"><i class="fab fa-linkedin fa-lg"></i></a>
-                </div>
-                <p class="text-sm text-gray-500 mt-4">
-                    © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
-                    Designed by BootstrapMade | Customized by Medilab Team
-                </p>
-            </div>
-        </footer>
+        <%@ include file="../includes/footer.jsp" %>
 
     </body>
 </html>

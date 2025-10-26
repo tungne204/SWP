@@ -1,35 +1,62 @@
-<%@ page import="entity.User" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="vi_VN" />
+<fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
+
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hàng Đợi Bệnh Nhân - Medilab</title>
-    <meta name="description" content="Quản lý hàng đợi bệnh nhân">
-    <meta name="keywords" content="patient queue, hàng đợi, bệnh viện">
-    
-    <!-- Favicons -->
-    <link href="<c:url value="/assets/img/favicon.png"/>" rel="icon">
-    <link href="<c:url value="/assets/img/apple-touch-icon.png"/>" rel="apple-touch-icon">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Vendor CSS Files -->
-    <link href="<c:url value="/assets/vendor/aos/aos.css"/>" rel="stylesheet">
-    <link href="<c:url value="/assets/vendor/fontawesome-free/css/all.min.css"/>" rel="stylesheet">
-    
-    <!-- Main CSS File -->
-    <link href="<c:url value="/assets/css/main.css"/>" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="<c:url value="/assets/vendor/tailwindv4/tailwind.min.js"/>"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Waiting Screen - Medilab</title>
+        <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="assets/img/favicon/android-chrome-512x512.png" />
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+        <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+        <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+        <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+        <!-- Main CSS File -->
+        <link href="assets/css/main.css" rel="stylesheet">
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
+        /* Layout styles for sidebar integration */
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar-fixed {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .content-area {
+            margin-left: 280px;
+            flex: 1;
+            padding: 20px;
+        }
+        
         /* Queue Waiting Screen Custom Styles */
         .queue-container {
             max-width: 1400px;
@@ -390,9 +417,16 @@
     </style>
 </head>
 <body>
-    <%@ include file="../patient-queue/header.jsp" %>
+    <!-- Header -->
+    <%@ include file="../includes/header.jsp" %>
 
-    <main class="main">
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <%@ include file="../includes/sidebar-receptionist.jsp" %>
+
+        <!-- Main Content -->
+        <div class="content-area">
+            <main class="main">
         <section class="section">
             <div class="queue-container">
                 <!-- Header Section -->
@@ -691,5 +725,13 @@
             }
         }
     </script>
+
+            </main>
+        </div> <!-- End content-area -->
+    </div> <!-- End main-wrapper -->
+
+    <!-- Footer -->
+    <%@ include file="../includes/footer.jsp" %>
+
 </body>
 </html>

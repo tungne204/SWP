@@ -1,55 +1,51 @@
 package util;
 
 import entity.Patient;
-import entity.PatientQueue;
 import entity.Parent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import entity.PatientQueue;
 
 /**
- * Utility class for creating JSON messages for WebSocket queue updates
+ * Utility class for creating JSON updates for patient queue WebSocket
  */
 public class QueueUpdateUtil {
     
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    /**
+     * Escape special characters for JSON string values
+     */
+    private static String escapeJson(String value) {
+        if (value == null) return "null";
+        return "\"" + value.replace("\\", "\\\\")
+                          .replace("\"", "\\\"")
+                          .replace("\n", "\\n")
+                          .replace("\r", "\\r")
+                          .replace("\t", "\\t") + "\"";
+    }
     
     /**
-     * Create JSON representation of a patient queue entry
-     * @param patient The patient object
-     * @param queue The queue object
-     * @param parent The parent object (can be null)
+     * Create JSON string for patient queue data (without parent)
+     * @param patient Patient information
+     * @param patientQueue Queue information
      * @return JSON string representation
      */
-    public static String createPatientQueueJson(Patient patient, PatientQueue queue, Parent parent) {
+    public static String createPatientQueueJson(Patient patient, PatientQueue patientQueue) {
         StringBuilder json = new StringBuilder();
         json.append("{");
         
-        // Patient information
+        // Patient data
         json.append("\"patient\":{");
-        json.append("\"id\":").append(patient.getPatientId()).append(",");
-        json.append("\"fullName\":\"").append(escapeJson(patient.getFullName())).append("\",");
-        json.append("\"address\":\"").append(escapeJson(patient.getAddress())).append("\"");
+        json.append("\"patientId\":").append(patient.getPatientId()).append(",");
+        json.append("\"fullName\":").append(escapeJson(patient.getFullName())).append(",");
+        json.append("\"phoneNumber\":").append(escapeJson(patient.getPhone())).append(",");
+        json.append("\"dateOfBirth\":").append(escapeJson(patient.getDob() != null ? patient.getDob().toString() : null));
         json.append("},");
         
-        // Parent information
-        json.append("\"parent\":{");
-        if (parent != null) {
-            json.append("\"parentname\":\"").append(escapeJson(parent.getParentname())).append("\",");
-            json.append("\"idInfo\":\"").append(escapeJson(parent.getIdInfo())).append("\"");
-        } else {
-            json.append("\"parentname\":\"-\",");
-            json.append("\"idInfo\":\"-\"");
-        }
-        json.append("},");
-        
-        // Queue information
+        // Queue data
         json.append("\"queue\":{");
-        json.append("\"queueId\":").append(queue.getQueueId()).append(",");
-        json.append("\"status\":\"").append(escapeJson(queue.getStatus())).append("\",");
-        json.append("\"queueType\":\"").append(escapeJson(queue.getQueueType())).append("\",");
-        json.append("\"roomNumber\":\"").append(escapeJson(queue.getRoomNumber())).append("\",");
-        json.append("\"checkInTime\":\"").append(dateFormat.format(queue.getCheckInTime())).append("\",");
-        json.append("\"priority\":").append(queue.getPriority());
+        json.append("\"queueId\":").append(patientQueue.getQueueId()).append(",");
+        json.append("\"patientId\":").append(patientQueue.getPatientId()).append(",");
+        json.append("\"status\":").append(escapeJson(patientQueue.getStatus())).append(",");
+        json.append("\"checkInTime\":").append(escapeJson(patientQueue.getCheckInTime() != null ? patientQueue.getCheckInTime().toString() : null)).append(",");
+        json.append("\"queueNumber\":").append(patientQueue.getQueueNumber());
         json.append("}");
         
         json.append("}");
@@ -57,45 +53,59 @@ public class QueueUpdateUtil {
     }
     
     /**
-     * Create a simple status update JSON
-     * @param queueId The queue ID
-     * @param newStatus The new status
+     * Create JSON string for patient queue data (with parent)
+     * @param patient Patient information
+     * @param patientQueue Queue information
+     * @param parent Parent information (can be null)
      * @return JSON string representation
      */
-    public static String createStatusUpdateJson(int queueId, String newStatus) {
-        return String.format(
-            "{\"queueId\":%d,\"status:\"%s\",\"timestamp\":\"%s\"}",
-            queueId, escapeJson(newStatus), dateFormat.format(new Date())
-        );
-    }
-    
-    /**
-     * Create a queue statistics JSON
-     * @param waitingCount Number of waiting patients
-     * @param consultingCount Number of patients in consultation
-     * @param totalCount Total number of patients
-     * @return JSON string representation
-     */
-    public static String createStatsJson(int waitingCount, int consultingCount, int totalCount) {
-        return String.format(
-            "{\"stats\":{\"waiting\":%d,\"consulting\":%d,\"total\":%d}}",
-            waitingCount, consultingCount, totalCount
-        );
-    }
-    
-    /**
-     * Escape special characters in JSON strings
-     * @param input The input string
-     * @return Escaped string safe for JSON
-     */
-    private static String escapeJson(String input) {
-        if (input == null) {
-            return "";
+    public static String createPatientQueueJson(Patient patient, PatientQueue patientQueue, Parent parent) {
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        
+        // Patient data
+        json.append("\"patient\":{");
+        json.append("\"patientId\":").append(patient.getPatientId()).append(",");
+        json.append("\"fullName\":").append(escapeJson(patient.getFullName())).append(",");
+        json.append("\"phoneNumber\":").append(escapeJson(patient.getPhone())).append(",");
+        json.append("\"dateOfBirth\":").append(escapeJson(patient.getDob() != null ? patient.getDob().toString() : null));
+        json.append("},");
+        
+        // Queue data
+        json.append("\"queue\":{");
+        json.append("\"queueId\":").append(patientQueue.getQueueId()).append(",");
+        json.append("\"patientId\":").append(patientQueue.getPatientId()).append(",");
+        json.append("\"status\":").append(escapeJson(patientQueue.getStatus())).append(",");
+        json.append("\"checkInTime\":").append(escapeJson(patientQueue.getCheckInTime() != null ? patientQueue.getCheckInTime().toString() : null)).append(",");
+        json.append("\"queueNumber\":").append(patientQueue.getQueueNumber());
+        json.append("}");
+        
+        // Parent data (if provided)
+        if (parent != null) {
+            json.append(",\"parent\":{");
+            json.append("\"parentId\":").append(parent.getParentId()).append(",");
+            json.append("\"parentName\":").append(escapeJson(parent.getParentname())).append(",");
+            json.append("\"idInfo\":").append(escapeJson(parent.getIdInfo()));
+            json.append("}");
         }
-        return input.replace("\\", "\\\\")
-                   .replace("\"", "\\\"")
-                   .replace("\n", "\\n")
-                   .replace("\r", "\\r")
-                   .replace("\t", "\\t");
+        
+        json.append("}");
+        return json.toString();
+    }
+    
+    /**
+     * Create JSON string for simple queue update
+     * @param queueId Queue ID
+     * @param status New status
+     * @return JSON string representation
+     */
+    public static String createQueueStatusJson(int queueId, String status) {
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"queueId\":").append(queueId).append(",");
+        json.append("\"status\":").append(escapeJson(status)).append(",");
+        json.append("\"timestamp\":").append(System.currentTimeMillis());
+        json.append("}");
+        return json.toString();
     }
 }

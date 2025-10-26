@@ -1,5 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <fmt:setLocale value="vi_VN" />
 <fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
@@ -8,9 +7,46 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Manage Appointments | Medilab Clinic</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage Appointments - Medilab</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+            }
+            
             .sortable:hover {
                 cursor: pointer;
                 background-color: #e2e8f0;
@@ -24,27 +60,16 @@
         </style>
     </head>
 
-    <body class="bg-blue-50 min-h-screen text-gray-800 font-sans flex flex-col">
-
+    <body>
         <!-- Header -->
-        <header class="bg-blue-700 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <span class="text-xl font-bold tracking-wide">Medilab Clinic</span>
-                <div class="flex items-center gap-3">
-                    <a href="${pageContext.request.contextPath}/Receptionist-Dashboard"
-                       class="bg-white/20 text-white px-4 py-1.5 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition">
-                        Home
-                    </a>
-                    <a href="${pageContext.request.contextPath}/logout"
-                       class="bg-white text-blue-600 px-4 py-1.5 rounded-full font-semibold hover:bg-blue-100 transition">
-                        Logout
-                    </a>
-                </div>
-            </div>
-        </header>
+        <%@ include file="../includes/header.jsp" %>
 
-        <!-- Main Content -->
-        <main class="w-[100%] mx-auto px-8 pt-28 pb-10 flex-grow">
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+
+            <!-- Main Content -->
+            <div class="content-area">
             <h2 class="text-3xl font-bold mb-6 text-blue-700 text-center">
                 Appointment Management
             </h2>
@@ -285,6 +310,12 @@
             }
 
         </script>
+
+            </div> <!-- End content-area -->
+        </div> <!-- End main-wrapper -->
+
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
 
     </body>
 </html>

@@ -35,6 +35,16 @@
 
         <!-- Main CSS File -->
         <link href="assets/css/main.css" rel="stylesheet">
+        
+        <style>
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #007bff;
+            }
+        </style>
     </head>
 
     <body class="index-page">
@@ -59,8 +69,8 @@
             <div class="branding d-flex align-items-center">
                 <div class="container position-relative d-flex align-items-center justify-content-between">
                     <a href="${pageContext.request.contextPath}/" class="logo d-flex align-items-center me-auto">
-    <h1 class="sitename">Medilab</h1>
-</a>
+                        <h1 class="sitename">Medilab</h1>
+                    </a>
 
 
                     <nav id="navmenu" class="navmenu">
@@ -81,12 +91,14 @@
                     <a class="cta-btn d-none d-sm-block" href="Login">Login</a>
                     <% } else { %>
                     <div class="dropdown ms-4">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenu" 
+                        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="userMenu" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<%= acc.getAvatar() != null && !acc.getAvatar().isEmpty() ? acc.getAvatar() : request.getContextPath() + "/assets/img/avata.jpg" %>" 
+                                 alt="Avatar" class="user-avatar me-2">
                             Hello, <%= acc.getUsername() %>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="viewProfile.jsp">View Profile</a></li>
+                            <li><a class="dropdown-item" href="viewProfile">View Profile</a></li>
                             <li><a class="dropdown-item" href="Change_password">Change Password</a></li>
                             <li><a class="dropdown-item" href="patient-appointment">View My Appointments</a></li>
                             <li><hr class="dropdown-divider"></li>
