@@ -33,7 +33,7 @@ public class DBContext {
     private final String portNumber = "1433";
     private final String instance   = ""; // LEAVE THIS EMPTY IF YOUR SQL IS A SINGLE INSTANCE
     private final String userID     = "sa";
-    private final String password   = "123";
+    private final String password   = "123456";
     
 
 
@@ -41,12 +41,12 @@ public class DBContext {
     try {
         Connection conn = new DBContext().getConnection();
         if (conn != null) {
-            System.out.println("Connection successful!");
+            System.out.println("✅ Kết nối thành công!");
         } else {
-            System.out.println("Connection failed!");
+            System.out.println("❌ Kết nối thất bại!");
         }
     } catch (Exception e) {
-        System.out.println("Connection error: " + e.getMessage());
+        System.out.println("❌ Lỗi kết nối: " + e.getMessage());
         e.printStackTrace();
     }
 }

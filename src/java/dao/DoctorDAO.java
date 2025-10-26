@@ -60,31 +60,26 @@ public class DoctorDAO extends DBContext {
     }
 
     // Get all doctors
-    // Get all doctors with username
-public List<Doctor> getAllDoctors() {
-    List<Doctor> doctors = new ArrayList<>();
-    String sql = "SELECT d.doctor_id, d.user_id, d.specialty, u.username " +
-                 "FROM Doctor d " +
-                 "JOIN [User] u ON d.user_id = u.user_id";
-
-    try (Connection conn = getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Doctor doctor = new Doctor();
-            doctor.setDoctorId(rs.getInt("doctor_id"));
-            doctor.setUserId(rs.getInt("user_id"));
-            doctor.setSpecialty(rs.getString("specialty"));
-            doctor.setUsername(rs.getString("username")); // 👈 thêm field username
-            doctors.add(doctor);
+    public List<Doctor> getAllDoctors() {
+        List<Doctor> doctors = new ArrayList<>();
+        String sql = "SELECT * FROM Doctor";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Doctor doctor = new Doctor();
+                doctor.setDoctorId(rs.getInt("doctor_id"));
+                doctor.setUserId(rs.getInt("user_id"));
+                doctor.setSpecialty(rs.getString("specialty"));
+                doctors.add(doctor);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return doctors;
     }
-    return doctors;
-}
-
 
     // Create a new doctor
     public void createDoctor(Doctor doctor) {
@@ -118,44 +113,25 @@ public List<Doctor> getAllDoctors() {
         }
     }
     
-    // Ensure at least one doctor exists in the database
+    // Ensure at least one default doctor exists in the database
     public void ensureDefaultDoctorExists() {
-        List<Doctor> doctors = getAllDoctors();
-        if (doctors.isEmpty()) {
-            // Create a default user for the doctor
-            String userSql = "INSERT INTO [User] (username, password, email, phone, role_id, status) VALUES (?, ?, ?, ?, 2, 1)";
-            String doctorSql = "INSERT INTO Doctor (user_id, specialty) VALUES (?, ?)";
+        String checkSql = "SELECT COUNT(*) FROM Doctor";
+        String insertSql = "INSERT INTO Doctor (user_id, specialty) VALUES (?, ?)";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement checkPs = conn.prepareStatement(checkSql);
+             ResultSet rs = checkPs.executeQuery()) {
             
-            try (Connection conn = getConnection()) {
-                // Insert default user
-                try (PreparedStatement userPs = conn.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                    userPs.setString(1, "default_doctor");
-                    userPs.setString(2, "password123");
-                    userPs.setString(3, "doctor@hospital.com");
-                    userPs.setString(4, "0123456789");
-                    
-                    userPs.executeUpdate();
-                    
-                    // Get the generated user ID
-                    try (var generatedKeys = userPs.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            int userId = generatedKeys.getInt(1);
-                            
-                            // Insert doctor record
-                            try (PreparedStatement doctorPs = conn.prepareStatement(doctorSql)) {
-                                doctorPs.setInt(1, userId);
-                                doctorPs.setString(2, "General Medicine");
-                                doctorPs.executeUpdate();
-                                
-                                System.out.println("Default doctor created successfully with user_id: " + userId);
-                            }
-                        }
-                    }
+            if (rs.next() && rs.getInt(1) == 0) {
+                // No doctors exist, create a default one
+                try (PreparedStatement insertPs = conn.prepareStatement(insertSql)) {
+                    insertPs.setInt(1, 0); // Default user_id (0 indicates system default)
+                    insertPs.setString(2, "General Practice"); // Default specialty
+                    insertPs.executeUpdate();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println("Failed to create default doctor: " + e.getMessage());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

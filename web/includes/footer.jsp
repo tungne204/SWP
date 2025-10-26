@@ -1,5 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <footer id="footer" class="footer light-background py-5">
 
   <div class="text-center">

@@ -1,19 +1,51 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="vi_VN" />
+<fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
+
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Bệnh Nhân - Lễ Tân</title>
-    <!-- Tailwind CSS -->
-    <script src="<c:url value="/assets/vendor/tailwindv4/tailwind.min.js"/>"></script>
-    <link href="<c:url value="/assets/vendor/fontawesome-free/css/all.min.css"/>" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Check-in Patient - Medilab</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+            }
         
         .form-container {
             max-width: 800px;
@@ -155,8 +187,18 @@
         }
     </style>
 </head>
-<body>
-    <div class="form-container">
+
+    <body>
+        <!-- Header -->
+        <%@ include file="../includes/header.jsp" %>
+
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="form-container">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -326,7 +368,9 @@
                 </div>
             </div>
         </div>
-    </div>
+                </div>
+            </div>
+        </div>
     
     <script>
         // Hiển thị/ẩn các section dựa trên loại bệnh nhân
@@ -431,5 +475,12 @@
             }
         });
     </script>
+
+        </div> <!-- End content-area -->
+    </div> <!-- End main-wrapper -->
+
+    <!-- Footer -->
+    <%@ include file="../includes/footer.jsp" %>
+
 </body>
 </html>

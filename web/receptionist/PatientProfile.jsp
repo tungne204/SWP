@@ -1,51 +1,71 @@
 <%-- 
-    Document   : PatientSearch
+    Document   : PatientProfile
     Created on : Oct 8, 2025, 5:37:36 PM
     Author     : KienPC
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Patient Profile</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Patient Profile - Medilab</title>
 
         <!-- Tailwind -->
         <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Bootstrap 5.3 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            crossorigin="anonymous"
-            />
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            crossorigin="anonymous"
-        ></script>
-
         <!-- FontAwesome -->
         <script src="https://kit.fontawesome.com/a2e0b7c6d6.js" crossorigin="anonymous"></script>
+        
+        <style>
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 70px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+            }
+        </style>
     </head>
 
-    <body class="bg-[#f7f9fc] text-gray-800 font-sans text-[17px]">
-
+    <body>
         <!-- Header -->
-        <header class="bg-blue-600 text-white shadow-md fixed w-full z-10">
-            <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-3">
-                <a href="Receptionist-Dashboard" class="text-2xl font-bold tracking-wide hover:text-gray-200 transition">
-                    Medilab
-                </a>
-                <div class="d-flex gap-3">
-                    <a href="Receptionist-Dashboard" class="btn btn-light text-blue-700 fw-semibold px-4 py-1">Home</a>
-                    <a href="logout" class="btn btn-outline-light fw-semibold px-4 py-1">Logout</a>
-                </div>
-            </div>
-        </header>
+        <%@ include file="../includes/header.jsp" %>
 
-        <!-- Main -->
-        <main class="max-w-6xl mx-auto pt-32 pb-10 px-8">
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+
+            <!-- Main Content -->
+            <div class="content-area">
 
             <!-- Page Title -->
             <h1 class="text-3xl font-bold text-center mb-10 text-gray-800">
@@ -187,6 +207,12 @@
                                                 });
                                             });
         </script>
+
+            </div> <!-- End content-area -->
+        </div> <!-- End main-wrapper -->
+
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
 
     </body>
 </html>

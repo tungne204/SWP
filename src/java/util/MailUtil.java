@@ -8,8 +8,8 @@ import jakarta.mail.internet.*;
 public class MailUtil {
 
     public static void sendMail(String to, String subject, String body) throws MessagingException {
-        final String from = "tungnguyen200441@gmail.com"; // Your Gmail
-        final String password = "qibphumjfpfixlxg"; // Gmail app password (not regular password)
+        final String from = "tungnguyen200441@gmail.com"; // Gmail của bạn
+        final String password = "qibphumjfpfixlxg"; // App password của Gmail (không phải mật khẩu thường)
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
