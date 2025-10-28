@@ -10,8 +10,10 @@
         <title>Receptionist Dashboard | Medilab Clinic</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <!-- Include header styles and dependencies -->
-        <%@ include file="../includes/header.jsp" %>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+        <jsp:include page="../includes/head-includes.jsp"/>
         
         <style>
             :root {
@@ -152,6 +154,9 @@
     </head>
 
     <body>
+        <!-- Header -->
+        <jsp:include page="../includes/header.jsp"/>
+        
         <div class="main-wrapper">
             <!-- Sidebar -->
             <%@ include file="../includes/sidebar-receptionist.jsp" %>
@@ -232,7 +237,10 @@
         </div>
 
         <!-- Footer -->
-        <%@ include file="../includes/footer.jsp" %>
+        <jsp:include page="../includes/footer.jsp"/>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     </body>
 </html>

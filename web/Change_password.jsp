@@ -13,8 +13,12 @@
     <meta charset="UTF-8">
     <title>Change Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="includes/head-includes.jsp"/>
 </head>
+
 <body class="bg-light">
+    <jsp:include page="includes/header.jsp"/>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">

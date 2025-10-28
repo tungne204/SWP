@@ -9,8 +9,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Check-in Patient - Medilab</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- Include all CSS files -->
+        <jsp:include page="../includes/head-includes.jsp"/>
+        
         <style>
+            
             :root {
                 --primary-color: #3fbbc0;
                 --primary-dark: #2a9fa4;
@@ -21,12 +25,14 @@
                 background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
                 min-height: 100vh;
                 font-family: 'Roboto', sans-serif;
+                margin: 0;
+                padding: 0;
             }
             
             .main-wrapper {
                 display: flex;
                 min-height: 100vh;
-                padding-top: 70px;
+                padding-top: 80px;
             }
             
             .sidebar-fixed {
@@ -34,9 +40,9 @@
                 background: white;
                 box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
                 position: fixed;
-                top: 70px;
+                top: 80px;
                 left: 0;
-                height: calc(100vh - 70px);
+                height: calc(100vh - 80px);
                 overflow-y: auto;
                 z-index: 1000;
             }
@@ -45,6 +51,8 @@
                 flex: 1;
                 margin-left: 280px;
                 padding: 2rem;
+                min-height: calc(100vh - 80px);
+                padding-bottom: 100px; /* Space for footer */
             }
         
         .form-container {
@@ -190,11 +198,13 @@
 
     <body>
         <!-- Header -->
-        <%@ include file="../includes/header.jsp" %>
+        <jsp:include page="../includes/header.jsp"/>
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <div class="sidebar-fixed">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </div>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -476,11 +486,15 @@
         });
     </script>
 
+            </div> <!-- End form-container -->
         </div> <!-- End content-area -->
     </div> <!-- End main-wrapper -->
 
     <!-- Footer -->
-    <%@ include file="../includes/footer.jsp" %>
+    <jsp:include page="../includes/footer.jsp"/>
+    
+    <!-- Include all JS files -->
+    <jsp:include page="../includes/footer-includes.jsp"/>
 
 </body>
 </html>
