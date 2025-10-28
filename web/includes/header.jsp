@@ -101,12 +101,15 @@
       <nav id="navmenu" class="navmenu">
         <ul class="d-flex align-items-center list-unstyled mb-0">
           <li>
-            <a href="${pageContext.request.contextPath}/" class="active">Home</a>
+            <a href="${pageContext.request.contextPath}/">Trang chủ</a>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/doctorList">Bác Sĩ</a>
           </li>
           <!-- Hiển thị menu "Cuộc hẹn của tôi" cho Patient (roleId = 3) -->
           <% if (acc != null && acc.getRoleId() == 3) { %>
           <li>
-            <a href="${pageContext.request.contextPath}/patient-appointment" class="active">Cuộc hẹn của tôi</a>
+            <a href="${pageContext.request.contextPath}/patient-appointment">Cuộc hẹn của tôi</a>
           </li>
           <% } %>
         </ul>
@@ -115,8 +118,8 @@
       <!-- Login / Dropdown -->
       <% if (acc == null) { %>
         <div class="d-flex gap-2 align-items-center">
-          <a class="cta-btn d-none d-sm-block btn btn-outline-light" href="${pageContext.request.contextPath}/Register">Sign In</a>
-          <a class="cta-btn d-none d-sm-block btn btn-light" href="${pageContext.request.contextPath}/Login">Login</a>
+          <a class="cta-btn d-none d-sm-block btn btn-outline-light" href="${pageContext.request.contextPath}/Register">Đăng Ký</a>
+          <a class="cta-btn d-none d-sm-block btn btn-light" href="${pageContext.request.contextPath}/Login">Đăng Nhập</a>
         </div>
       <% } else { %>
         <div class="dropdown ms-4">
@@ -127,11 +130,11 @@
             Hello, <%= acc.getUsername() %>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/viewProfile">View Profile</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Change_password">Change Password</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/patient-appointment">View My Appointments</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/viewProfile">Hồ sơ cá nhân</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Change_password">Đổi mật khẩu</a></li>
+            
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+            <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
           </ul>
         </div>
       <% } %>

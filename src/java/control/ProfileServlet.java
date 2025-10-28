@@ -1,6 +1,8 @@
 package control;
 
+import dao.DoctorDAO;
 import dao.UserDAO;
+import entity.Doctor;
 import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -31,6 +33,15 @@ public class ProfileServlet extends HttpServlet {
         if (fullUser != null) {
             // Cập nhật session với thông tin đầy đủ
             session.setAttribute("acc", fullUser);
+        }
+        
+        // Nếu user là Doctor (role_id = 2), lấy thông tin Doctor
+        if (fullUser.getRoleId() == 2) {
+            DoctorDAO doctorDAO = new DoctorDAO();
+            Doctor doctor = doctorDAO.getDoctorByUserId(fullUser.getUserId());
+            if (doctor != null) {
+                request.setAttribute("doctorInfo", doctor);
+            }
         }
         
         request.getRequestDispatcher("viewProfile.jsp").forward(request, response);
