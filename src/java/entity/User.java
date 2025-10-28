@@ -10,6 +10,7 @@ public class User {
     private String roleName;
     private int roleId; // tham chiếu Role
     private boolean status; // true = Active, false = Inactive
+    
 
     public User() {
     }
