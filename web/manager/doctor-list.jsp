@@ -1,39 +1,93 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.*, entity.User"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Bác sĩ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Danh sách bác sĩ | Medilab Clinic</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="../includes/head-includes.jsp"/>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .page-header {
+        :root {
+            --primary-color: #3fbbc0;
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 0px;
+        }
+        
+        .sidebar-fixed {
+            position: fixed;
+            top: 115px;
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - 70px);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .content-area {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            border-radius: 10px;
         }
         .doctor-card {
-            transition: transform 0.3s;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         .doctor-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
-        .status-badge {
-            font-size: 0.85rem;
+        .status-active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
-        .alert {
-            border-radius: 8px;
+        .status-inactive {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
+    <!-- Header -->
+    <jsp:include page="../includes/header.jsp"/>
+    
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <%@ include file="../includes/sidebar-manager.jsp" %>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
     <div class="container py-4">
         <!-- Header -->
         <div class="page-header">
@@ -139,8 +193,14 @@
             </div>
         </c:if>
     </div>
+        </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Footer -->
+    <jsp:include page="../includes/footer.jsp"/>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function confirmDelete(doctorId, doctorName) {
             if (confirm('Bạn có chắc chắn muốn xóa bác sĩ "' + doctorName + '"?\n\nLưu ý: Tất cả bằng cấp của bác sĩ cũng sẽ bị xóa.')) {

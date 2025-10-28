@@ -5,6 +5,30 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <!-- Servlets -->
+    <servlet>
+        <servlet-name>PermissionManagementServlet</servlet-name>
+        <servlet-class>control.PermissionManagementServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>PermissionManagementServlet</servlet-name>
+        <url-pattern>/permission-management</url-pattern>
+    </servlet-mapping>
+
+    <!-- Filters -->
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>filter.AuthorizationFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/permission-management</url-pattern>
+        <url-pattern>/manager/*</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
     <!-- Welcome File -->
     <welcome-file-list>
         <welcome-file>Home.jsp</welcome-file>

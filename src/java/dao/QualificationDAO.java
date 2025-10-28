@@ -49,6 +49,37 @@ public class QualificationDAO extends DBContext {
         return qualifications;
     }
 
+    // Lấy tất cả bằng cấp
+    public List<Qualification> getAllQualifications() {
+        List<Qualification> qualifications = new ArrayList<>();
+        String sql = "SELECT * FROM Qualification ORDER BY year_obtained DESC";
+
+        try (Connection connection = getConnection();
+             PreparedStatement st = connection.prepareStatement(sql)) {
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Qualification qual = new Qualification();
+                    qual.setQualificationId(rs.getInt("qualification_id"));
+                    qual.setDoctorId(rs.getInt("doctor_id"));
+                    qual.setDegreeName(rs.getString("degree_name"));
+                    qual.setInstitution(rs.getString("institution"));
+                    qual.setYearObtained(rs.getInt("year_obtained"));
+                    qual.setCertificateNumber(rs.getString("certificate_number"));
+                    qual.setDescription(rs.getString("description"));
+                    qualifications.add(qual);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception ex) {
+            Logger.getLogger(QualificationDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return qualifications;
+    }
+
     // Lấy bằng cấp theo ID
     public Qualification getQualificationById(int qualificationId) {
         String sql = "SELECT * FROM Qualification WHERE qualification_id = ?";
