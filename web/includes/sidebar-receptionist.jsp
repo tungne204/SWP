@@ -1,12 +1,15 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <style>
     .sidebar-nav {
-        padding: 20px 0;
+        padding: 20px 0 0 0;
     }
     
     .nav-section {
         margin-bottom: 30px;
+    }
+    
+    .nav-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 20px;
     }
     
     .nav-section-title {

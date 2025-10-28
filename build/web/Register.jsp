@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="includes/head-includes.jsp"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -42,7 +43,7 @@
     </style>
 </head>
 <body>
-
+<jsp:include page="includes/header.jsp"/>
 <div class="register-container">
     <!-- Header -->
     <div class="register-header">

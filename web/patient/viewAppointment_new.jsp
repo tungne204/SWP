@@ -1,5 +1,5 @@
 
-<%@ include file="../includes/header.jsp" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -9,6 +9,7 @@
     <title>My Appointments</title>
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="../includes/head-includes.jsp"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -405,6 +406,7 @@
 </head>
 
 <body>
+    <jsp:include page="../includes/header.jsp"/>
     <div class="container">
         <h1 class="page-title">My Appointments</h1>
         <!-- Search and Filter -->
