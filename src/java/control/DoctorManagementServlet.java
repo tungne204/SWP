@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Quang Anh
  */
-@WebServlet(name="DoctorManagementServlet", urlPatterns={"/doctors1"})
+@WebServlet(name="DoctorManagementServlet", urlPatterns={"/doctor-management"})
 public class DoctorManagementServlet extends HttpServlet {
     private DoctorDAO doctorDAO;
     private QualificationDAO qualificationDAO;

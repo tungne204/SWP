@@ -6,7 +6,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import entity.User;
 
-@WebFilter(urlPatterns = {"/doctor/*", "/receptionist/*", "/manager/*", "/patient-queue/*", "/medical-assistant/*","/set-permission","/appointment","/test-result","/medical-report"})
+@WebFilter(urlPatterns = {"/doctor/*", "/receptionist/*", "/manager/*", "/patient-queue/*", "/medical-assistant/*","/set-permission","/permission-management","/appointment","/test-result","/medical-report"})
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
             res.sendRedirect(req.getContextPath() + "/403.jsp");
             return;
         }
-        if ((uri.contains("/manager/") || uri.contains("/set-permission")) && roleId != 1) {
+        if ((uri.contains("/manager/") || uri.contains("/set-permission") || uri.contains("/permission-management")) && roleId != 1) {
             res.sendRedirect(req.getContextPath() + "/403.jsp");
             return;
         }
