@@ -209,6 +209,76 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    // ✅ Lấy tất cả users
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        String sql = """
+            SELECT u.user_id, u.username, u.email, u.phone, u.avatar, u.role_id, u.status, r.role_name
+            FROM [User] u
+            LEFT JOIN [Role] r ON u.role_id = r.role_id
+            WHERE u.status = 1
+        """;
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAvatar(rs.getString("avatar"));
+                u.setRoleId(rs.getInt("role_id"));
+                u.setStatus(rs.getBoolean("status"));
+                u.setRoleName(rs.getString("role_name"));
+                list.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(dao.UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
+    // ✅ Lấy users theo role
+    public List<User> getUsersByRole(int roleId) {
+        List<User> list = new ArrayList<>();
+        String sql = """
+            SELECT u.user_id, u.username, u.email, u.phone, u.avatar, u.role_id, u.status, r.role_name
+            FROM [User] u
+            LEFT JOIN [Role] r ON u.role_id = r.role_id
+            WHERE u.role_id = ? AND u.status = 1
+        """;
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, roleId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAvatar(rs.getString("avatar"));
+                u.setRoleId(rs.getInt("role_id"));
+                u.setStatus(rs.getBoolean("status"));
+                u.setRoleName(rs.getString("role_name"));
+                list.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(dao.UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
     // ✅ Lấy tất cả các vai trò (role)
     public List<Role> getAllRoles() {
         List<Role> list = new ArrayList<>();
