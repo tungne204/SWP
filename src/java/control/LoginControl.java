@@ -44,17 +44,17 @@ public class LoginControl extends HttpServlet {
             // Chuyển hướng theo role
             switch (user.getRoleId()) {
                 case 1: // Admin
-                    response.sendRedirect("adminDashboard.jsp");
+                     response.sendRedirect(request.getContextPath() + "/");
                     break;
                 case 2: // Doctor
-                    response.sendRedirect("doctorDashboard.jsp");
+                     response.sendRedirect(request.getContextPath() + "/");
                     break;
                 case 3: // Patient
                     response.sendRedirect(request.getContextPath() + "/");
 
                     break;
                 case 4: // MedicalAssistant
-                    response.sendRedirect("medicalAssistantDashboard.jsp");
+                     response.sendRedirect(request.getContextPath() + "/");
                     break;
                 case 5: // Receptionist
 
