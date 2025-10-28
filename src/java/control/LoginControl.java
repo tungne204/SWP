@@ -47,7 +47,7 @@ public class LoginControl extends HttpServlet {
                     response.sendRedirect("adminDashboard.jsp");
                     break;
                 case 2: // Doctor
-                    response.sendRedirect("doctorDashboard.jsp");
+                    response.sendRedirect("doctor-dashboard");
                     break;
                 case 3: // Patient
                     response.sendRedirect(request.getContextPath() + "/");
