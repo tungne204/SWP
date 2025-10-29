@@ -8,6 +8,7 @@ import java.sql.Timestamp;
  * Created by DungPhan - News Manager Module.
  */
 public class News {
+
     private int newsId;              // Mã tin tức (news_id)
     private String title;            // Tiêu đề chính
     private String subtitle;         // Tiêu đề phụ

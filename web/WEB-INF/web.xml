@@ -9,5 +9,22 @@
     <welcome-file-list>
         <welcome-file>Home.jsp</welcome-file>
     </welcome-file-list>
+<servlet>
+    <servlet-name>NewsManagerServlet</servlet-name>
+    <servlet-class>control.NewsManagerServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>NewsManagerServlet</servlet-name>
+    <url-pattern>/admin/news</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>NewsServlet</servlet-name>
+    <servlet-class>control.NewsServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>NewsServlet</servlet-name>
+    <url-pattern>/news</url-pattern>
+</servlet-mapping>
 
 </web-app>
