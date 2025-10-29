@@ -13,8 +13,12 @@
     <meta charset="UTF-8">
     <title>Change Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="includes/head-includes.jsp"/>
 </head>
+
 <body class="bg-light">
+    <jsp:include page="includes/header.jsp"/>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -44,7 +48,7 @@
                             <div class="alert alert-success"><%= request.getAttribute("success") %></div>
                         <% } %>
                         <button type="submit" class="btn btn-primary w-100">Update Password</button>
-                        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
+                        <a href="${pageContext.request.contextPath}/" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
                     </form>
                 </div>
             </div>

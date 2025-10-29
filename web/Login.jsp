@@ -7,6 +7,7 @@
     <title>Login - Medilab</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
@@ -57,7 +58,7 @@
     </style>
 </head>
 <body>
-
+<jsp:include page="includes/header.jsp"/>
 <div class="login-container">
     <h3 class="text-center mb-2">Welcome Back</h3>
     <p class="text-center text-muted">Sign in to continue to your account</p>

@@ -25,25 +25,19 @@ public class ConsultationDAO extends DBContext {
             ps.setTimestamp(5, consultation.getEndTime() != null ? new java.sql.Timestamp(consultation.getEndTime().getTime()) : null);
             ps.setString(6, consultation.getStatus());
             
-            int affectedRows = ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
             
-            if (affectedRows == 0) {
-                throw new SQLException("Creating consultation failed, no rows affected.");
-            }
-            
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int consultationId = generatedKeys.getInt(1);
-                    consultation.setConsultationId(consultationId);
-                    return consultationId;
-                } else {
-                    throw new SQLException("Creating consultation failed, no ID obtained.");
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e;
         }
+        return -1; // Return -1 if creation failed
     }
 
     // Update consultation status
@@ -192,10 +186,10 @@ public class ConsultationDAO extends DBContext {
         }
         return consultations;
     }
-
+    
     // Get consultation by queue ID
     public Consultation getConsultationByQueueId(int queueId) {
-        String sql = "SELECT TOP 1 * FROM Consultation WHERE queue_id = ? ORDER BY start_time DESC";
+        String sql = "SELECT * FROM Consultation WHERE queue_id = ?";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

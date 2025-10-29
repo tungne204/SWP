@@ -14,24 +14,7 @@ public class PatientQueueDAO extends DBContext {
     // Get all patients in queue ordered by priority and check-in time
     public List<PatientQueue> getAllPatientsInQueue() {
         List<PatientQueue> queue = new ArrayList<>();
-        // Modified query to get only today's patients with optimized sorting:
-        // 1. Priority status (urgent cases first) - priority DESC
-        // 2. Status priority (Ready for Examination, then Waiting, then others)
-        // 3. Arrival time (earliest first) - check_in_time ASC
-        String sql = "SELECT * FROM PatientQueue " +
-                    "WHERE CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) " +
-                    "AND status IN ('Waiting', 'Ready for Examination', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up') " +
-                    "ORDER BY " +
-                    "priority DESC, " +
-                    "CASE " +
-                    "  WHEN status = 'Ready for Examination' THEN 1 " +
-                    "  WHEN status = 'Waiting' THEN 2 " +
-                    "  WHEN status = 'Ready for Follow-up' THEN 3 " +
-                    "  WHEN status = 'In Consultation' THEN 4 " +
-                    "  WHEN status = 'Awaiting Lab Results' THEN 5 " +
-                    "  ELSE 6 " +
-                    "END, " +
-                    "check_in_time ASC";
+        String sql = "SELECT * FROM PatientQueue ORDER BY priority DESC, check_in_time ASC";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -57,13 +40,10 @@ public class PatientQueueDAO extends DBContext {
         return queue;
     }
 
-    // Get patients by status (today only)
+    // Get patients by status
     public List<PatientQueue> getPatientsByStatus(String status) {
         List<PatientQueue> queue = new ArrayList<>();
-        String sql = "SELECT * FROM PatientQueue " +
-                    "WHERE status = ? " +
-                    "AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) " +
-                    "ORDER BY priority DESC, check_in_time ASC";
+        String sql = "SELECT * FROM PatientQueue WHERE status = ? ORDER BY priority DESC, check_in_time ASC";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -210,7 +190,12 @@ public class PatientQueueDAO extends DBContext {
     
     // Check if patient is already in queue today
     public boolean isPatientInQueueToday(int patientId) {
-        String sql = "SELECT COUNT(*) FROM PatientQueue WHERE patient_id = ? AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE) AND status IN ('Waiting', 'In Consultation', 'Awaiting Lab Results', 'Ready for Follow-up')";
+        String sql = """
+            SELECT COUNT(*) FROM PatientQueue 
+            WHERE patient_id = ? 
+            AND CAST(check_in_time AS DATE) = CAST(GETDATE() AS DATE)
+            AND status != 'Completed'
+        """;
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

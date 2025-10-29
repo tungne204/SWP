@@ -1,19 +1,59 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="vi_VN" />
+<fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
+
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Bệnh Nhân - Lễ Tân</title>
-    <!-- Tailwind CSS -->
-    <script src="<c:url value="/assets/vendor/tailwindv4/tailwind.min.js"/>"></script>
-    <link href="<c:url value="/assets/vendor/fontawesome-free/css/all.min.css"/>" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Check-in Patient - Medilab</title>
+        
+        <!-- Include all CSS files -->
+        <jsp:include page="../includes/head-includes.jsp"/>
+        
+        <style>
+            
+            :root {
+                --primary-color: #3fbbc0;
+                --primary-dark: #2a9fa4;
+                --secondary-color: #2c4964;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
+                min-height: 100vh;
+                font-family: 'Roboto', sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .main-wrapper {
+                display: flex;
+                min-height: 100vh;
+                padding-top: 80px;
+            }
+            
+            .sidebar-fixed {
+                width: 280px;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 80px;
+                left: 0;
+                height: calc(100vh - 80px);
+                overflow-y: auto;
+                z-index: 1000;
+            }
+            
+            .content-area {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+                min-height: calc(100vh - 80px);
+                padding-bottom: 100px; /* Space for footer */
+            }
         
         .form-container {
             max-width: 800px;
@@ -155,8 +195,20 @@
         }
     </style>
 </head>
-<body>
-    <div class="form-container">
+
+    <body>
+        <!-- Header -->
+        <jsp:include page="../includes/header.jsp"/>
+
+        <div class="main-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar-fixed">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="form-container">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div class="flex items-center justify-between">
@@ -225,7 +277,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="parentCccd" class="form-label">Số CCCD Phụ Huynh <span class="text-red-500">*</span></label>
-                                <input type="text" class="form-control" id="parentCccd" name="parentCccd" placeholder="Nhập số CCCD" required>
+                                <input type="text" class="form-control" id="parentCccd" name="parentCccd" 
+                                       placeholder="Nhập số CCCD (9-12 số)" 
+                                       pattern="[0-9]{9,12}" 
+                                       maxlength="12"
+                                       minlength="9"
+                                       title="Số CCCD phải có từ 9 đến 12 chữ số"
+                                       required>
+                                <small class="text-gray-500 text-sm">Số CCCD phải có từ 9 đến 12 chữ số</small>
                             </div>
                         </div>
 
@@ -319,7 +378,9 @@
                 </div>
             </div>
         </div>
-    </div>
+                </div>
+            </div>
+        </div>
     
     <script>
         // Hiển thị/ẩn các section dựa trên loại bệnh nhân
@@ -391,6 +452,49 @@
                 document.getElementById('searchBtn').click();
             }
         });
+        
+        // CCCD validation
+        document.getElementById('parentCccd').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const cccdPattern = /^[0-9]{9,12}$/;
+            
+            // Remove any non-numeric characters
+            e.target.value = value.replace(/[^0-9]/g, '');
+            
+            // Validate length and format
+            if (e.target.value.length > 0 && (e.target.value.length < 9 || e.target.value.length > 12)) {
+                e.target.setCustomValidity('Số CCCD phải có từ 9 đến 12 chữ số');
+            } else if (e.target.value.length >= 9 && e.target.value.length <= 12 && !cccdPattern.test(e.target.value)) {
+                e.target.setCustomValidity('Số CCCD chỉ được chứa chữ số');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+        
+        // Form submission validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const cccdInput = document.getElementById('parentCccd');
+            const cccdValue = cccdInput.value;
+            const cccdPattern = /^[0-9]{9,12}$/;
+            
+            if (cccdValue && !cccdPattern.test(cccdValue)) {
+                e.preventDefault();
+                alert('Số CCCD phải có từ 9 đến 12 chữ số và chỉ chứa số');
+                cccdInput.focus();
+                return false;
+            }
+        });
     </script>
+
+            </div> <!-- End form-container -->
+        </div> <!-- End content-area -->
+    </div> <!-- End main-wrapper -->
+
+    <!-- Footer -->
+    <jsp:include page="../includes/footer.jsp"/>
+    
+    <!-- Include all JS files -->
+    <jsp:include page="../includes/footer-includes.jsp"/>
+
 </body>
 </html>

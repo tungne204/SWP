@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="includes/head-includes.jsp"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -42,7 +43,7 @@
     </style>
 </head>
 <body>
-
+<jsp:include page="includes/header.jsp"/>
 <div class="register-container">
     <!-- Header -->
     <div class="register-header">
@@ -63,7 +64,7 @@
             <div class="alert alert-success text-center"><%= success %></div>
         <% } %>
 
-        <form action="Register" method="post">
+        <form action="Register" method="post" id="registerForm">
             <!-- Full Name -->
             <div class="mb-3">
                 <label class="form-label">Full name</label>
@@ -98,11 +99,18 @@
                 <label class="form-label">Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    <input type="password" 
+                           name="password" 
+                           class="form-control" 
+                           id="password" 
+                           placeholder="Enter your password (min 6 characters)" 
+                           minlength="6" 
+                           required>
                     <span class="input-group-text toggle-password" onclick="togglePassword('password')">
                         <i class="bi bi-eye"></i>
                     </span>
                 </div>
+                <small class="text-muted">Password must be at least 6 characters</small>
             </div>
 
             <!-- Confirm Password -->
@@ -110,7 +118,13 @@
                 <label class="form-label">Confirm Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                    <input type="password" 
+                           name="confirmPassword" 
+                           class="form-control" 
+                           id="confirmPassword" 
+                           placeholder="Confirm your password" 
+                           minlength="6" 
+                           required>
                     <span class="input-group-text toggle-password" onclick="togglePassword('confirmPassword')">
                         <i class="bi bi-eye"></i>
                     </span>
@@ -139,6 +153,26 @@
         const type = input.getAttribute("type") === "password" ? "text" : "password";
         input.setAttribute("type", type);
     }
+
+    // Form validation for password length
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validate password length
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters long!');
+            return false;
+        }
+
+        // Validate password match
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+            return false;
+        }
+    });
 </script>
 </body>
 </html>

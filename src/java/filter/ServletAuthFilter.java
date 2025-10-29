@@ -18,13 +18,14 @@ import entity.User;
     "/resetPassword",
     "/doctors",
     "/patientSearch",
+    "/setPermission",
+    "/medicalReport",
+    "/testResult",
     "/updateAppointment",
     "/deleteAppointment",
     "/viewAppointment",
-    "/set-permission",
-    "/test-result",
-    "/medical-report",
-    "/doctor-dashboard"
+    "/Receptionist-Dashboard"
+        
 })
 public class ServletAuthFilter implements Filter {
     
@@ -84,22 +85,22 @@ public class ServletAuthFilter implements Filter {
      */
     private boolean hasPermission(String uri, int roleId) {
         // Patient servlets (role_id = 3)
-        if (uri.contains("/viewAppointment")) {
+        if ( uri.contains("/viewAppointment")) {
             return roleId == 3; // Chỉ Patient
         }
         
         // Doctor servlets (role_id = 2)
-        if (uri.contains("/medical-report") || uri.contains("/test-result") || uri.contains("/appointment") || uri.contains("/doctor-dashboard")) {
+        if (uri.contains("/medicalReport") || uri.contains("/testResult")||uri.contains("/appointment") ) {
             return roleId == 2; // Chỉ Doctor
         }
         
         // Receptionist servlets (role_id = 5)
-        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment")) {
+        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment")|| uri.contains("/Receptionist-Dashboard")) {
             return roleId == 5; // Chỉ Receptionist
         }
         
         // Manager servlets (role_id = 1)
-        if (uri.contains("/set-permission")) {
+        if (uri.contains("/setPermission")) {
             return roleId == 1; // Chỉ Manager
         }
         

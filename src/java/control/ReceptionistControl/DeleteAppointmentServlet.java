@@ -1,6 +1,6 @@
 package control.ReceptionistControl;
 
-import dao.AppointmentDAO;
+import dao.Receptionist.AppointmentDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

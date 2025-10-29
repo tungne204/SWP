@@ -1,5 +1,5 @@
 
-<%@ include file="../includes/header.jsp" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -9,6 +9,7 @@
     <title>My Appointments</title>
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="../includes/head-includes.jsp"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -405,9 +406,43 @@
 </head>
 
 <body>
+    <jsp:include page="../includes/header.jsp"/>
     <div class="container">
         <h1 class="page-title">My Appointments</h1>
-        
+        <!-- Search and Filter -->
+<div class="search-filter-container mb-4 p-3 border rounded shadow-sm bg-light">
+    <div class="row g-3 align-items-end">
+        <!-- Search by name -->
+        <div class="col-md-4">
+            <label for="searchInput" class="form-label fw-semibold">Search with Patient Name:</label>
+            <input type="text" id="searchInput" class="form-control" placeholder="Enter name...">
+        </div>
+
+        <!-- Sort by Date -->
+        <div class="col-md-3">
+            <label for="sortSelect" class="form-label fw-semibold">Sort by Date:</label>
+            <select id="sortSelect" class="form-select">
+                <option value="">Default Order</option>
+                <option value="asc">Date Ascending (Oldest First)</option>
+                <option value="desc">Date Descending (Newest First)</option>
+            </select>
+        </div>
+
+        <!-- Filter by Exact Date -->
+        <div class="col-md-3">
+            <label for="dateFilter" class="form-label fw-semibold">Filter by Appointment Date:</label>
+            <input type="date" id="dateFilter" class="form-control">
+        </div>
+
+        <!-- Clear -->
+        <div class="col-md-2 text-end">
+            <button class="btn btn-secondary w-100" onclick="clearFilters()">
+                <i class="bi bi-x-circle"></i> Clear
+            </button>
+        </div>
+    </div>
+</div>
+
         <c:if test="${not empty error}">
             <div class="alert alert-danger">
                 <i class="bi bi-exclamation-triangle"></i>
@@ -602,7 +637,7 @@
                                 </form>
                             </div>
                         </div>
-                    </c:forEach>
+                        </c:forEach>
                 </div>
             </div>
         </c:if>
@@ -944,7 +979,89 @@
                 }
             });
         });
+        
+        // ===============================
+// Search & Filter Functionality
+// ===============================
+let allAppointments = [];
+let filteredAppointments = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const appointmentCards = document.querySelectorAll('.appointment-card');
+    allAppointments = Array.from(appointmentCards).map(card => {
+        const doctorName = card.querySelector('.info-section:nth-child(1) .info-value').textContent.split('-')[0].trim();
+        const patientName = card.querySelector('.info-section:nth-child(2) .info-value').textContent.trim();
+        const dateText = card.querySelector('.info-section:nth-child(1) .info-value').textContent.trim();
+
+        const dateMatch = dateText.match(/(\w+), (\w+) (\d+), (\d+) at (\d+):(\d+)/);
+        let appointmentDate = null;
+        if (dateMatch) {
+            const [, , monthName, day, year, hour, minute] = dateMatch;
+            const monthMap = {January:0,February:1,March:2,April:3,May:4,June:5,July:6,August:7,September:8,October:9,November:10,December:11};
+            appointmentDate = new Date(year, monthMap[monthName], day, hour, minute);
+        }
+        return { element: card, doctorName, patientName, appointmentDate };
+    });
+
+    filteredAppointments = [...allAppointments];
+
+    document.getElementById('searchInput').addEventListener('input', filterAndSort);
+    document.getElementById('sortSelect').addEventListener('change', filterAndSort);
+    document.getElementById('dateFilter').addEventListener('change', filterAndSort);
+});
+
+function filterAndSort() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const sortOption = document.getElementById('sortSelect').value;
+    const dateFilterValue = document.getElementById('dateFilter').value;
+
+    filteredAppointments = allAppointments.filter(app => {
+        const matchName =
+            app.doctorName.toLowerCase().includes(searchTerm) ||
+            app.patientName.toLowerCase().includes(searchTerm);
+
+        let matchDate = true;
+        if (dateFilterValue && app.appointmentDate) {
+            const filterDate = new Date(dateFilterValue);
+            matchDate =
+                app.appointmentDate.getFullYear() === filterDate.getFullYear() &&
+                app.appointmentDate.getMonth() === filterDate.getMonth() &&
+                app.appointmentDate.getDate() === filterDate.getDate();
+        }
+        return matchName && matchDate;
+    });
+
+    if (sortOption === 'asc') filteredAppointments.sort((a,b)=>a.appointmentDate-b.appointmentDate);
+    if (sortOption === 'desc') filteredAppointments.sort((a,b)=>b.appointmentDate-a.appointmentDate);
+
+    updateAppointmentDisplay();
+}
+
+function updateAppointmentDisplay() {
+    const container = document.querySelector('.col-12');
+    container.innerHTML = '';
+    if (filteredAppointments.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="bi bi-search"></i>
+                <h3>No Matching Appointments</h3>
+                <p>Try adjusting your filters or search keywords.</p>
+            </div>`;
+    } else {
+        filteredAppointments.forEach(app => container.appendChild(app.element));
+    }
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('sortSelect').value = '';
+    document.getElementById('dateFilter').value = '';
+    filteredAppointments = [...allAppointments];
+    updateAppointmentDisplay();
+}
+
     </script>
+    
     <jsp:include page="../includes/footer.jsp" />
 
 </body>
