@@ -121,7 +121,7 @@
         <div class="nav-section">
             <div class="nav-section-title">Test Results</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/test-result-list.jsp" class="nav-link">
+                <a href="${pageContext.request.contextPath}/testresult" class="nav-link">
                     <i class="bi bi-clipboard-data"></i>
                     <span class="nav-link-text">Test Results</span>
                 </a>
