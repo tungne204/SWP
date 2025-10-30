@@ -25,6 +25,7 @@ import java.util.List;
 @WebServlet(name="TestResultServlet1", urlPatterns={"/testresult"})
 public class TestResultServlet extends HttpServlet {
     private TestResultDAO testResultDAO = new TestResultDAO();
+    private static final int PAGE_SIZE = 10;
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -108,30 +109,77 @@ public class TestResultServlet extends HttpServlet {
     }
      private void listTestResults(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<TestResult> testResults = testResultDAO.getAllTestResults();
+        
+        // Get search and filter parameters
+        String searchQuery = request.getParameter("search");
+        String testTypeFilter = request.getParameter("testType");
+        
+        // Get page number
+        int page = 1;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && !pageParam.isEmpty()) {
+            try {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        
+        // Get data with pagination
+        List<TestResult> testResults = testResultDAO.getTestResults(searchQuery, testTypeFilter, page, PAGE_SIZE);
+        int totalRecords = testResultDAO.getTotalCount(searchQuery, testTypeFilter);
+        int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+        
+        // Get distinct test types for filter
+        List<String> testTypes = testResultDAO.getDistinctTestTypes();
+        
+        // Set attributes
         request.setAttribute("testResults", testResults);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalRecords", totalRecords);
+        request.setAttribute("searchQuery", searchQuery);
+        request.setAttribute("testTypeFilter", testTypeFilter);
+        request.setAttribute("testTypes", testTypes);
+        
         request.getRequestDispatcher("medical-assistant/testresult-list.jsp").forward(request, response);
     }
 
     // Show add form
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        List<TestResultDAO.MedicalReportInfo> medicalReports = testResultDAO.getAllMedicalReports();
-        request.setAttribute("medicalReports", medicalReports);
-        request.getRequestDispatcher("medical-assistant/testresult-add.jsp").forward(request, response);
-    }
+        throws ServletException, IOException {
+
+    // Lấy danh sách hồ sơ y tế
+    List<TestResultDAO.MedicalReportInfo> medicalReports = testResultDAO.getAllMedicalReports();
+
+    // ✅ Lấy danh sách loại xét nghiệm (động)
+    List<String> testTypes = testResultDAO.getDistinctTestTypes();
+
+    // Gửi sang JSP
+    request.setAttribute("medicalReports", medicalReports);
+    request.setAttribute("testTypes", testTypes);
+
+    request.getRequestDispatcher("medical-assistant/testresult-add.jsp").forward(request, response);
+}
+
 
     // Show edit form
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int testId = Integer.parseInt(request.getParameter("id"));
-        TestResult testResult = testResultDAO.getTestResultById(testId);
-        List<TestResultDAO.MedicalReportInfo> medicalReports = testResultDAO.getAllMedicalReports();
-        
-        request.setAttribute("testResult", testResult);
-        request.setAttribute("medicalReports", medicalReports);
-        request.getRequestDispatcher("medical-assistant/testresult-edit.jsp").forward(request, response);
-    }
+        throws ServletException, IOException {
+    int testId = Integer.parseInt(request.getParameter("id"));
+    TestResult testResult = testResultDAO.getTestResultById(testId);
+    List<TestResultDAO.MedicalReportInfo> medicalReports = testResultDAO.getAllMedicalReports();
+
+    // ✅ Lấy danh sách loại xét nghiệm từ DB
+    List<String> testTypes = testResultDAO.getDistinctTestTypes();
+
+    request.setAttribute("testResult", testResult);
+    request.setAttribute("medicalReports", medicalReports);
+    request.setAttribute("testTypes", testTypes); // truyền thêm vào JSP
+    request.getRequestDispatcher("medical-assistant/testresult-edit.jsp").forward(request, response);
+}
+
 
     // Insert new test result
     private void insertTestResult(HttpServletRequest request, HttpServletResponse response)

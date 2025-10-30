@@ -1,245 +1,322 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Test Result</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Thêm kết quả xét nghiệm</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <jsp:include page="../includes/head-includes.jsp"/>
+        <style>
+            :root {
+                --sidebar-width: 250px;
+                --header-height: 60px;
+                --bg: #f5f6fa;
+            }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f6fa;
-            padding: 20px;
-        }
+            html, body {
+                height: 100%;
+                margin: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: var(--bg);
+            }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+            /* ===== HEADER CỐ ĐỊNH ===== */
+            #header-fixed {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: var(--header-height);
+                z-index: 3000 !important;
+                background: #0d6efd;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
 
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            /* ===== LAYOUT CHUNG ===== */
+            .layout {
+                display: flex;
+                min-height: 100vh;
+                margin-top: var(--header-height);
+            }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+            /* ===== SIDEBAR ===== */
+            .sidebar-wrap {
+                width: var(--sidebar-width);
+                flex-shrink: 0;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                bottom: 0;
+                background: #f8f9fb;
+                border-right: 1px solid #e6e6e6;
+                overflow-y: auto;
+                z-index: 500;
+            }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #34495e;
-            font-weight: 600;
-        }
+            /* ===== NỘI DUNG CHÍNH ===== */
+            .main-content {
+                margin-left: var(--sidebar-width);
+                flex: 1;
+                background: var(--bg);
+                min-height: calc(100vh - var(--header-height));
+                position: relative;
+                z-index: 1;
+            }
 
-        label .required {
-            color: #e74c3c;
-        }
+            .content-wrapper {
+                padding: 40px;
+            }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
+            .card {
+                background: #fff;
+                border-radius: 10px;
+                padding: 30px 35px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                max-width: 850px;
+                margin: 0 auto;
+            }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
+            h2 {
+                color: #2c3e50;
+                font-size: 22px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 25px;
+            }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+            .form-group {
+                margin-bottom: 20px;
+            }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #34495e;
+                font-weight: 600;
+            }
 
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
+            .required {
+                color: #e74c3c;
+            }
 
-        .btn-success:hover {
-            background: #229954;
-        }
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+                transition: border-color 0.3s;
+            }
 
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: #3498db;
+            }
 
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
+            textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
 
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-
-        .help-text {
-            font-size: 13px;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-
-        .select-info {
-            background: #ecf0f1;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 13px;
-            color: #34495e;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
+            .help-text {
+                font-size: 13px;
+                color: #7f8c8d;
+                margin-top: 5px;
             }
 
             .form-actions {
-                flex-direction: column;
+                display: flex;
+                gap: 10px;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
             }
 
             .btn {
-                width: 100%;
-                justify-content: center;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                transition: all 0.3s;
+                font-weight: 600;
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>
-            <i class="fas fa-plus-circle"></i>
-            Add New Test Result
-        </h1>
 
-        <form action="testresult" method="post">
-            <input type="hidden" name="action" value="insert">
+            .btn-success {
+                background: #27ae60;
+                color: white;
+            }
 
-            <div class="form-group">
-                <label for="recordId">
-                    Medical Record <span class="required">*</span>
-                </label>
-                <select id="recordId" name="recordId" required>
-                    <option value="">-- Select Medical Record --</option>
-                    <c:forEach var="report" items="${medicalReports}">
-                        <option value="${report.recordId}">
-                            Record #${report.recordId} - ${report.patientName} (${report.diagnosis})
-                        </option>
-                    </c:forEach>
-                </select>
-                <div class="help-text">
-                    Select the medical record that requested this test
-                </div>
+            .btn-success:hover {
+                background: #229954;
+            }
+
+            .btn-secondary {
+                background: #95a5a6;
+                color: white;
+            }
+
+            .btn-secondary:hover {
+                background: #7f8c8d;
+            }
+
+            /* ===== RESPONSIVE ===== */
+            @media (max-width: 900px) {
+                .sidebar-wrap {
+                    display: none;
+                }
+                .main-content {
+                    margin-left: 0;
+                }
+                .content-wrapper {
+                    padding: 20px;
+                }
+                .form-actions {
+                    flex-direction: column;
+                }
+                .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+
+            /* ===== FIX DROPDOWN AVATAR ===== */
+            #header {
+                position: relative !important;
+                z-index: 4000 !important;
+            }
+
+            .dropdown-menu {
+                z-index: 5000 !important;
+            }
+
+            .layout, .main-content {
+                overflow: visible !important;
+                position: relative !important;
+                z-index: 1 !important;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- HEADER -->
+        <header id="header-fixed">
+            <%@ include file="../includes/header.jsp" %>
+        </header>
+
+        <!-- LAYOUT -->
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <div class="sidebar-wrap">
+                <jsp:include page="../includes/sidebar-medicalassistant.jsp" />
+
             </div>
 
-            <div class="form-group">
-                <label for="testType">
-                    Test Type <span class="required">*</span>
-                </label>
-                <select id="testType" name="testType" required>
-                    <option value="">-- Select Test Type --</option>
-                    <option value="Blood Test">Blood Test</option>
-                    <option value="Urine Test">Urine Test</option>
-                    <option value="X-Ray">X-Ray</option>
-                    <option value="CT Scan">CT Scan</option>
-                    <option value="MRI">MRI</option>
-                    <option value="Ultrasound">Ultrasound</option>
-                    <option value="ECG">ECG</option>
-                    <option value="Allergy Test">Allergy Test</option>
-                    <option value="Other">Other</option>
-                </select>
-                <div class="help-text">
-                    Type of medical test performed
-                </div>
-            </div>
+            <!-- NỘI DUNG CHÍNH -->
+            <div class="main-content">
+                <main class="content-wrapper">
+                    <div class="card">
+                        <h2>
+                            <i class="fas fa-plus-circle"></i>
+                            Thêm kết quả xét nghiệm mới
+                        </h2>
 
-            <div class="form-group">
-                <label for="result">
-                    Test Result <span class="required">*</span>
-                </label>
-                <textarea id="result" name="result" required placeholder="Enter detailed test results..."></textarea>
-                <div class="help-text">
-                    Enter the complete test results and findings
-                </div>
-            </div>
+                        <form action="testresult" method="post">
+                            <input type="hidden" name="action" value="insert">
 
-            <div class="form-group">
-                <label for="date">
-                    Test Date <span class="required">*</span>
-                </label>
-                <input type="date" id="date" name="date" required max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
-                <div class="help-text">
-                    Date when the test was conducted
-                </div>
-            </div>
+                            <div class="form-group">
+                                <label for="recordId">
+                                    Hồ sơ y tế <span class="required">*</span>
+                                </label>
+                                <select id="recordId" name="recordId" required>
+                                    <option value="">-- Chọn hồ sơ y tế --</option>
+                                    <c:forEach var="report" items="${medicalReports}">
+                                        <option value="${report.recordId}">
+                                            Hồ sơ #${report.recordId} - ${report.patientName} (${report.diagnosis})
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                                <div class="help-text">
+                                    Chọn hồ sơ y tế có yêu cầu thực hiện xét nghiệm này
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label for="consultationId">
-                    Consultation ID (Optional)
-                </label>
-                <input type="number" id="consultationId" name="consultationId" placeholder="Enter consultation ID if applicable">
-                <div class="help-text">
-                    Link this test result to a specific consultation (if applicable)
-                </div>
-            </div>
+                            <div class="form-group">
+                                <label for="testType">
+                                    Loại xét nghiệm <span class="required">*</span>
+                                </label>
+                                <select id="testType" name="testType" required>
+                                    <option value="">-- Chọn loại xét nghiệm --</option>
+                                    <c:forEach var="type" items="${testTypes}">
+                                        <option value="${type}">${type}</option>
+                                    </c:forEach>
+                                </select>
+                                <div class="help-text">
+                                    Danh sách loại xét nghiệm được lấy tự động từ cơ sở dữ liệu
+                                </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Save Test Result
-                </button>
-                <a href="testresult?action=list" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancel
-                </a>
-            </div>
-        </form>
-    </div>
+                                <div class="help-text">
+                                    Chọn loại xét nghiệm đã được thực hiện
+                                </div>
+                            </div>
 
-    <script>
-        // Set today's date as default
-        document.getElementById('date').valueAsDate = new Date();
-    </script>
-</body>
+                            <div class="form-group">
+                                <label for="result">
+                                    Kết quả xét nghiệm <span class="required">*</span>
+                                </label>
+                                <textarea id="result" name="result" maxlength="50" required
+                                          placeholder="Nhập kết quả chi tiết của xét nghiệm..."></textarea>
+                                <div class="help-text">
+                                    Nhập toàn bộ kết quả và ghi chú chuyên môn liên quan
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="date">
+                                    Ngày xét nghiệm <span class="required">*</span>
+                                </label>
+                                <input type="date" id="date" name="date" required
+                                       max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
+                                <div class="help-text">
+                                    Ngày tiến hành thực hiện xét nghiệm
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Lưu kết quả
+                                </button>
+                                <a href="testresult?action=list" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Hủy bỏ
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <script>
+            // Tự động đặt ngày hiện tại làm mặc định
+            document.getElementById('date').valueAsDate = new Date();
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    </body>
 </html>
