@@ -96,11 +96,11 @@
         
         <!-- Medical Records -->
         <div class="nav-section">
-            <div class="nav-section-title">Medical Records</div>
+            <div class="nav-section-title">Prescribe Medical</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/medical-report-list.jsp" class="nav-link">
+                <a href="${pageContext.request.contextPath}/medical-report" class="nav-link">
                     <i class="bi bi-file-medical"></i>
-                    <span class="nav-link-text">Medical Reports</span>
+                    <span class="nav-link-text">List Prescribe Medical</span>
                 </a>
             </div>
             <div class="nav-item">

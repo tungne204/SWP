@@ -4,14 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/SWP391-2/SWP/web/medical-assistant/testresult-list.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/testResult/TestResultServlet.java</file>
             <file>file:/D:/SWP391-2/SWP/web/includes/header.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/entity/testResult/TestResult.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/medical-assistant/testresult-add.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/web/includes/head-includes.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/web/includes/sidebar-medicalassistant.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/dao/testResult/TestResultDAO.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/medical-assistant/testresult-edit.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/web/Home.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/MedicalReportServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/doctor/medical-report-list.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/filter/ServletAuthFilter.java</file>
         </group>
     </open-files>
 </project-private>

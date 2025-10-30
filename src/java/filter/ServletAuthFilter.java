@@ -19,13 +19,12 @@ import entity.User;
     "/doctors",
     "/patientSearch",
     "/setPermission",
-    "/medicalReport",
-    "/testResult",
     "/updateAppointment",
     "/deleteAppointment",
     "/viewAppointment",
     "/Receptionist-Dashboard",
-    "/testresult"
+    "/testresult",
+    "/medical-report"
 
 })
 public class ServletAuthFilter implements Filter {
@@ -85,18 +84,22 @@ public class ServletAuthFilter implements Filter {
      * Kiểm tra quyền truy cập servlet theo role
      */
     private boolean hasPermission(String uri, int roleId) {
+        if (uri.contains("/medical-report")) {
+            return roleId == 2 || roleId == 3;
+        }
         if (uri.contains("/testresult")) {
             return roleId == 2 || roleId == 4;
         }
-        
+
         // Patient servlets (role_id = 3)
-        if (uri.contains("/viewAppointment")) {
+        if (uri.contains("/viewAppointment") ) {
             return roleId == 3; // Chỉ Patient
         }
 
         // Doctor servlets (role_id = 2)
-        if (uri.contains("/medicalReport") || uri.contains("/testResult") || uri.contains("/appointment") || uri.contains("/testresult")) {
-            return roleId == 2; // Chỉ Doctor
+        if (!uri.contains("/medical-report") &&
+            (uri.contains("/appointment") || uri.contains("/testresult"))) {
+            return roleId == 2;
         }
 
         // Receptionist servlets (role_id = 5)
@@ -121,5 +124,7 @@ public class ServletAuthFilter implements Filter {
 
         // Mặc định: từ chối truy cập
         return false;
+        
     }
+    
 }

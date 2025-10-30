@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package control;
 
 import dao.MedicalReportDAO;
@@ -24,41 +23,46 @@ import java.util.logging.Logger;
  *
  * @author Quang Anh
  */
-@WebServlet(name="MedicalReportServlet", urlPatterns={"/medical-report"})
+@WebServlet(name = "MedicalReportServlet", urlPatterns = {"/medical-report"})
 public class MedicalReportServlet extends HttpServlet {
+
     private MedicalReportDAO dao;
 
     @Override
     public void init() throws ServletException {
         dao = new MedicalReportDAO();
     }
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MedicalReportServlet</title>");  
+            out.println("<title>Servlet MedicalReportServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet MedicalReportServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet MedicalReportServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -66,7 +70,7 @@ public class MedicalReportServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
@@ -92,10 +96,11 @@ public class MedicalReportServlet extends HttpServlet {
                 listReports(request, response);
                 break;
         }
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -103,8 +108,8 @@ public class MedicalReportServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-         request.setCharacterEncoding("UTF-8");
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
         switch (action) {
@@ -120,20 +125,26 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
     private Integer getDoctorIdFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) return null;
+        if (session == null) {
+            return null;
+        }
 
         User acc = (User) session.getAttribute("acc");
-        if (acc == null) return null;
+        if (acc == null) {
+            return null;
+        }
 
         int userId = acc.getUserId();
         try {
@@ -146,21 +157,73 @@ public class MedicalReportServlet extends HttpServlet {
     }
 
     private void listReports(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            Integer doctorId = getDoctorIdFromSession(request);
-            if (doctorId == null) {
-                response.sendRedirect("Login.jsp");
-                return;
-            }
-
-            List<MedicalReport> reports = dao.getAllByDoctorId(doctorId);
-            request.setAttribute("reports", reports);
-            request.getRequestDispatcher("doctor/medical-report-list.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
+        throws ServletException, IOException {
+    try {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("Login.jsp");
+            return;
         }
+
+        User acc = (User) session.getAttribute("acc");
+        if (acc == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
+
+        int roleId = acc.getRoleId();
+
+        // --- Lấy tham số tìm kiếm & lọc ---
+        String keyword = request.getParameter("keyword");
+        String filterType = request.getParameter("filterType");
+        if (filterType == null) filterType = "all";
+
+        // --- Phân trang ---
+        int page = 1, pageSize = 10;
+        try {
+            if (request.getParameter("page") != null)
+                page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException ignored) {}
+        int offset = (page - 1) * pageSize;
+
+        List<MedicalReport> reports;
+        int totalReports;
+
+        if (roleId == 2) { // 👨‍⚕️ Doctor
+            Integer doctorId = getDoctorIdFromSession(request);
+            reports = dao.searchAndFilter(doctorId, keyword, filterType, offset, pageSize);
+            totalReports = dao.countFilteredReports(doctorId, keyword, filterType);
+
+            // ✅ Forward đến trang bác sĩ
+            request.setAttribute("reports", reports);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", (int) Math.ceil((double) totalReports / pageSize));
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("filterType", filterType);
+            request.getRequestDispatcher("doctor/medical-report-list.jsp").forward(request, response);
+
+        } else if (roleId == 3) { // 🧑‍🦰 Patient
+            int patientId = dao.getPatientIdByUserId(acc.getUserId());
+            reports = dao.searchAndFilterByPatient(patientId, keyword, filterType, offset, pageSize);
+            totalReports = dao.countFilteredReportsByPatient(patientId, keyword, filterType);
+
+            // ✅ Forward đến trang dành cho bệnh nhân
+            request.setAttribute("reports", reports);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", (int) Math.ceil((double) totalReports / pageSize));
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("filterType", filterType);
+            request.getRequestDispatcher("doctor/medical-report-list.jsp").forward(request, response);
+
+        } else {
+            response.sendRedirect("403.jsp");
+        }
+
+    } catch (Exception ex) {
+        Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
     }
+}
+
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -283,4 +346,3 @@ public class MedicalReportServlet extends HttpServlet {
         }
     }
 }
-
