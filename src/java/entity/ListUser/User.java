@@ -22,14 +22,13 @@ public class User {
     private boolean status;
     private String resetToken;
     private Timestamp resetExpiry;
-    private boolean isBanned;
 
     // Constructors
     public User() {
     }
 
     public User(int userId, String username, String password, String email,
-            String phone, int roleId, boolean status) {
+                String phone, int roleId, boolean status) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -37,14 +36,6 @@ public class User {
         this.phone = phone;
         this.roleId = roleId;
         this.status = status;
-    }
-
-    public boolean isBanned() {
-        return isBanned;
-    }
-
-    public void setBanned(boolean banned) {
-        isBanned = banned;
     }
 
     // Getters and Setters
@@ -130,14 +121,14 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{"
-                + "userId=" + userId
-                + ", username='" + username + '\''
-                + ", email='" + email + '\''
-                + ", phone='" + phone + '\''
-                + ", roleId=" + roleId
-                + ", roleName='" + roleName + '\''
-                + ", status=" + status
-                + '}';
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
