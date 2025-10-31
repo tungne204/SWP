@@ -117,6 +117,9 @@
             <a href="${pageContext.request.contextPath}/medical-report">Đơn thuốc của tôi</a>
           </li>
           <% } %>
+          <li>
+            <a href="${pageContext.request.contextPath}/blog">Blog</a>
+          </li>
         </ul>
       </nav>
 
