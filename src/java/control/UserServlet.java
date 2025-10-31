@@ -72,9 +72,7 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
+        if (action == null) action = "list";
 
         switch (action) {
             case "list":
@@ -82,9 +80,6 @@ public class UserServlet extends HttpServlet {
                 break;
             case "toggle":
                 toggleUserStatus(request, response);
-                break;
-            case "ban":
-                banUser(request, response);
                 break;
             case "view":
                 viewUserDetail(request, response);
@@ -98,7 +93,6 @@ public class UserServlet extends HttpServlet {
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lấy các tham số tìm kiếm và lọc
         String search = request.getParameter("search");
         String roleFilterStr = request.getParameter("roleFilter");
         String statusFilterStr = request.getParameter("statusFilter");
@@ -106,29 +100,8 @@ public class UserServlet extends HttpServlet {
 
         Integer roleFilter = null;
         Integer statusFilter = null;
-        boolean showBanned = false; // ✅ mới thêm
         int page = 1;
         int recordsPerPage = 10;
-
-        try {
-            if (roleFilterStr != null && !roleFilterStr.isEmpty()) {
-                roleFilter = Integer.parseInt(roleFilterStr);
-            }
-
-            if (statusFilterStr != null && !statusFilterStr.isEmpty()) {
-                if ("ban".equalsIgnoreCase(statusFilterStr)) {
-                    showBanned = true; // ✅ lọc user bị ban
-                } else {
-                    statusFilter = Integer.parseInt(statusFilterStr);
-                }
-            }
-
-            if (pageStr != null) {
-                page = Integer.parseInt(pageStr);
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
 
         try {
             if (roleFilterStr != null && !roleFilterStr.isEmpty()) {
@@ -146,22 +119,16 @@ public class UserServlet extends HttpServlet {
 
         int offset = (page - 1) * recordsPerPage;
 
-        // Lấy danh sách users
-        List<User> users = userDAO.getAllUsers(search, roleFilter, statusFilter,
-                showBanned, offset, recordsPerPage);
-        int totalRecords = userDAO.getTotalUsers(search, roleFilter, statusFilter, showBanned);
-
+        List<User> users = userDAO.getAllUsers(search, roleFilter, statusFilter, offset, recordsPerPage);
+        int totalRecords = userDAO.getTotalUsers(search, roleFilter, statusFilter);
         int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
-        // Lấy danh sách roles để hiển thị filter
         List<Role> roles = roleDAO.getAllRoles();
 
-        // Set attributes
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("search", search);
         request.setAttribute("roleFilter", roleFilter);
         request.setAttribute("statusFilter", statusFilter);
@@ -169,13 +136,10 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("/admin/userList.jsp").forward(request, response);
     }
 
-    // Xem chi tiết user
     private void viewUserDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         int userId = Integer.parseInt(request.getParameter("id"));
         User user = userDAO.getUserById(userId);
-
         request.setAttribute("user", user);
         request.getRequestDispatcher("/admin/userDetail.jsp").forward(request, response);
     }
@@ -190,7 +154,6 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    // Bật/tắt trạng thái user
     private void toggleUserStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -201,31 +164,6 @@ public class UserServlet extends HttpServlet {
             e.printStackTrace();
             setMessage(request, false, "", "Lỗi hệ thống khi thay đổi trạng thái!");
         }
-        response.sendRedirect(request.getContextPath() + "/admin/users?action=list");
-    }
-
-    // Ban user
-    // Ban user
-    private void banUser(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            String idParam = request.getParameter("id");
-            if (idParam == null || idParam.trim().isEmpty()) {
-                throw new IllegalArgumentException("Thiếu tham số id");
-            }
-
-            int userId = Integer.parseInt(idParam);
-            boolean result = userDAO.banUser(userId);
-
-            setMessage(request, result,
-                    "Ban user thành công!",
-                    "Ban user thất bại!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            setMessage(request, false, "", "Lỗi hệ thống khi ban user!");
-        }
-
-        // Quay lại danh sách người dùng
         response.sendRedirect(request.getContextPath() + "/admin/users?action=list");
     }
 
