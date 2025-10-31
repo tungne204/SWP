@@ -174,6 +174,14 @@
                                             </div>
                                             <div class="main-content">
                                                 <% } %>
+                                                 <% if (acc != null && acc.getRoleId() == 1) { %>
+                                    <div class="container-fluid p-0">
+                                        <div class="row g-0">
+                                            <div class="sidebar-container">
+                                                <%@ include file="includes/sidebar-admin.jsp" %>
+                                            </div>
+                                            <div class="main-content">
+                                                <% } %>
 
 
                                                 <!-- Hero Section -->

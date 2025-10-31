@@ -112,6 +112,11 @@
             <a href="${pageContext.request.contextPath}/patient-appointment">Cuộc hẹn của tôi</a>
           </li>
           <% } %>
+          <% if (acc != null && acc.getRoleId() == 3) { %>
+          <li>
+            <a href="${pageContext.request.contextPath}/medical-report">Đơn thuốc của tôi</a>
+          </li>
+          <% } %>
         </ul>
       </nav>
 

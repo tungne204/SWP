@@ -143,8 +143,9 @@
             }
 
             thead {
-                background: #34495e;
-                color: white;
+                background: #fffff;
+                color: black;
+                font-size: 15px;
             }
             th, td {
                 padding: 12px;
@@ -282,7 +283,10 @@
                                 <th>Kết quả</th>
                                 <th>Ngày xét nghiệm</th>
                                 <th>Chẩn đoán</th>
+                                    <% if (acc != null && acc.getRoleId() == 4) { %>
                                 <th>Thao tác</th>
+                                    <% } %>
+
                             </tr>
                         </thead>
                         <tbody>
