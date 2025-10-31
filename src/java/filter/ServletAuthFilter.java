@@ -24,7 +24,8 @@ import entity.User;
     "/viewAppointment",
     "/Receptionist-Dashboard",
     "/testresult",
-    "/medical-report"
+    "/medical-report",
+    "/admin/users"
 
 })
 public class ServletAuthFilter implements Filter {
@@ -108,7 +109,7 @@ public class ServletAuthFilter implements Filter {
         }
 
         // Manager servlets (role_id = 1)
-        if (uri.contains("/setPermission")) {
+        if (uri.contains("/setPermission")||uri.contains("/admin/users")) {
             return roleId == 1; // Chỉ Manager
         }
 

@@ -3,12 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391-2/SWP/web/medical-assistant/testresult-list.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/web/includes/header.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/web/admin/userDetail.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/UserServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/includes/sidebar-admin.jsp</file>
             <file>file:/D:/SWP391-2/SWP/web/Home.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/MedicalReportServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/doctor/medical-report-list.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/filter/ServletAuthFilter.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/admin/userList.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/dao/ListUser/UserDAO.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/entity/ListUser/User.java</file>
         </group>
     </open-files>
 </project-private>
