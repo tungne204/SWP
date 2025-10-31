@@ -9,17 +9,26 @@ import entity.Blog;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import java.util.List;
 
 /**
  *
  * @author Quang Anh
  */
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 1, // 1MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 20 // 20MB
+)
+
 @WebServlet(name = "BlogServlet", urlPatterns = {"/blog"})
 public class BlogServlet extends HttpServlet {
 
@@ -193,7 +202,7 @@ public class BlogServlet extends HttpServlet {
 
         if (session != null && session.getAttribute("acc") != null) {
             entity.User acc = (entity.User) session.getAttribute("acc");
-            userId = acc.getUserId(); // ✅ Lấy userId từ đối tượng acc
+            userId = acc.getUserId();
         }
 
         if (userId == null) {
@@ -204,7 +213,7 @@ public class BlogServlet extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String category = request.getParameter("category");
-        String thumbnail = request.getParameter("thumbnail");
+        String urlThumbnail = request.getParameter("thumbnailUrl");
         boolean status = "1".equals(request.getParameter("status"));
 
         Blog blog = new Blog();
@@ -212,16 +221,31 @@ public class BlogServlet extends HttpServlet {
         blog.setContent(content);
         blog.setAuthorId(userId);
         blog.setCategory(category);
-        blog.setThumbnail(thumbnail);
         blog.setStatus(status);
 
-        boolean success = blogDAO.insertBlog(blog);
+        // 🔹 Upload ảnh từ máy
+        Part filePart = request.getPart("thumbnailFile");
+        String fileName = filePart != null ? filePart.getSubmittedFileName() : null;
+        String imagePath = null;
 
-        if (success) {
-            request.setAttribute("message", "Thêm bài viết thành công!");
-        } else {
-            request.setAttribute("error", "Thêm bài viết thất bại!");
+        if (fileName != null && !fileName.isEmpty()) {
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String savedName = System.currentTimeMillis() + "_" + fileName;
+            filePart.write(uploadPath + File.separator + savedName);
+            imagePath = "uploads/" + savedName;
+        } else if (urlThumbnail != null && !urlThumbnail.isEmpty()) {
+            // 🔹 Nếu không upload file thì dùng URL
+            imagePath = urlThumbnail;
         }
+
+        blog.setThumbnail(imagePath);
+
+        boolean success = blogDAO.insertBlog(blog);
 
         response.sendRedirect("blog?action=list");
     }
@@ -236,7 +260,7 @@ public class BlogServlet extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String category = request.getParameter("category");
-        String thumbnail = request.getParameter("thumbnail");
+        String urlThumbnail = request.getParameter("thumbnailUrl");
         boolean status = "1".equals(request.getParameter("status"));
 
         Blog blog = new Blog();
@@ -244,16 +268,30 @@ public class BlogServlet extends HttpServlet {
         blog.setTitle(title);
         blog.setContent(content);
         blog.setCategory(category);
-        blog.setThumbnail(thumbnail);
         blog.setStatus(status);
 
-        boolean success = blogDAO.updateBlog(blog);
+        // 🔹 Xử lý ảnh upload hoặc URL
+        Part filePart = request.getPart("thumbnailFile");
+        String fileName = filePart != null ? filePart.getSubmittedFileName() : null;
+        String imagePath = null;
 
-        if (success) {
-            request.setAttribute("message", "Cập nhật bài viết thành công!");
-        } else {
-            request.setAttribute("error", "Cập nhật bài viết thất bại!");
+        if (fileName != null && !fileName.isEmpty()) {
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String savedName = System.currentTimeMillis() + "_" + fileName;
+            filePart.write(uploadPath + File.separator + savedName);
+            imagePath = "uploads/" + savedName;
+        } else if (urlThumbnail != null && !urlThumbnail.isEmpty()) {
+            imagePath = urlThumbnail;
         }
+
+        blog.setThumbnail(imagePath);
+
+        boolean success = blogDAO.updateBlog(blog);
 
         response.sendRedirect("blog?action=list");
     }
