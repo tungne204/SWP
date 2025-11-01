@@ -7,28 +7,29 @@ import java.io.IOException;
 import entity.User;
 
 /**
- * AuthFilter cho các servlet quan trọng
- * Bảo vệ các servlet như /appointment, /logout, /changePassword, etc.
+ * AuthFilter cho các servlet quan trọng Bảo vệ các servlet như /appointment,
+ * /logout, /changePassword, etc.
  */
 @WebFilter(urlPatterns = {
-    "/appointment", 
-    "/logout", 
-    "/changePassword", 
-    "/forgotPassword", 
+    "/appointment",
+    "/logout",
+    "/changePassword",
+    "/forgotPassword",
     "/resetPassword",
     "/doctors",
     "/patientSearch",
     "/setPermission",
-    "/medicalReport",
-    "/testResult",
     "/updateAppointment",
     "/deleteAppointment",
     "/viewAppointment",
-    "/Receptionist-Dashboard"
-        
+    "/Receptionist-Dashboard",
+    "/testresult",
+    "/medical-report",
+    "/admin/users"
+
 })
 public class ServletAuthFilter implements Filter {
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -37,7 +38,7 @@ public class ServletAuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         String uri = req.getRequestURI();
         String contextPath = req.getContextPath();
-        
+
         System.out.println("DEBUG: ServletAuthFilter - URI: " + uri);
 
         // Kiểm tra session và user
@@ -75,46 +76,56 @@ public class ServletAuthFilter implements Filter {
      * Kiểm tra servlet có cần đăng nhập không
      */
     private boolean isPublicServlet(String uri) {
-        return uri.contains("/forgotPassword") || 
-               uri.contains("/resetPassword") ||
-               uri.contains("/doctors"); // API để load doctors cho form
+        return uri.contains("/forgotPassword")
+                || uri.contains("/resetPassword")
+                || uri.contains("/doctors"); // API để load doctors cho form
     }
 
     /**
      * Kiểm tra quyền truy cập servlet theo role
      */
     private boolean hasPermission(String uri, int roleId) {
+        if (uri.contains("/medical-report")) {
+            return roleId == 2 || roleId == 3;
+        }
+        if (uri.contains("/testresult")) {
+            return roleId == 2 || roleId == 4;
+        }
+
         // Patient servlets (role_id = 3)
-        if ( uri.contains("/viewAppointment")) {
+        if (uri.contains("/viewAppointment") ) {
             return roleId == 3; // Chỉ Patient
         }
-        
+
         // Doctor servlets (role_id = 2)
-        if (uri.contains("/medicalReport") || uri.contains("/testResult")||uri.contains("/appointment") ) {
-            return roleId == 2; // Chỉ Doctor
+        if (!uri.contains("/medical-report") &&
+            (uri.contains("/appointment") || uri.contains("/testresult"))) {
+            return roleId == 2;
         }
-        
+
         // Receptionist servlets (role_id = 5)
-        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment")|| uri.contains("/Receptionist-Dashboard")) {
+        if (uri.contains("/patientSearch") || uri.contains("/updateAppointment") || uri.contains("/deleteAppointment") || uri.contains("/Receptionist-Dashboard")) {
             return roleId == 5; // Chỉ Receptionist
         }
-        
+
         // Manager servlets (role_id = 1)
-        if (uri.contains("/setPermission")) {
+        if (uri.contains("/setPermission")||uri.contains("/admin/users")) {
             return roleId == 1; // Chỉ Manager
         }
-        
+
         // Logout - tất cả role đều có thể logout
         if (uri.contains("/logout")) {
             return true;
         }
-        
+
         // Change password - tất cả role đều có thể đổi password
         if (uri.contains("/changePassword")) {
             return true;
         }
-        
+
         // Mặc định: từ chối truy cập
         return false;
+        
     }
+    
 }

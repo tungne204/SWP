@@ -28,10 +28,18 @@ public class ResetPasswordServlet extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
+        // ✅ Validate password length (ít nhất 6 ký tự)
+        if (newPassword == null || newPassword.length() < 6) {
+            request.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+            request.setAttribute("token", token);
+            request.getRequestDispatcher("Reset_password.jsp").forward(request, response);
+            return;
+        }
+
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu xác nhận không khớp!");
             request.setAttribute("token", token);
-            request.getRequestDispatcher("resetpassword.jsp").forward(request, response);
+            request.getRequestDispatcher("Reset_password.jsp").forward(request, response);
             return;
         }
 

@@ -5,6 +5,7 @@
 /dist/
 /out/
 /web/WEB-INF/classes/
+
 # ============================
 # 🌐 NetBeans Java Web Project
 # ============================
@@ -43,3 +44,12 @@ Thumbs.db
 # Maven or Gradle (if later added)
 target/
 
+# ============================
+# ✅ Keep important source folders
+# ============================
+!src/
+!web/
+!database/
+!test/
+!build.xml
+!README.md
