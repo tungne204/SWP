@@ -83,8 +83,9 @@ public class UploadAvatarServlet extends HttpServlet {
             // Generate unique filename
             String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
             
-            // Create upload directory if it doesn't exist
-            String uploadPath = getServletContext().getRealPath("/") + "assets/img/avatars/";
+            // Use absolute path outside webapp directory
+            String webappRoot = getServletContext().getRealPath("/");
+            String uploadPath = webappRoot + "assets/img/avatars/";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
@@ -93,6 +94,21 @@ public class UploadAvatarServlet extends HttpServlet {
             // Save file
             String filePath = uploadPath + uniqueFileName;
             filePart.write(filePath);
+            
+            // Also keep a reference in source folder (for development)
+            try {
+                String sourcePath = "web/assets/img/avatars/";
+                File sourceDir = new File(sourcePath);
+                if (!sourceDir.exists()) {
+                    sourceDir.mkdirs();
+                }
+                // Copy to source folder
+                Files.copy(Paths.get(filePath), Paths.get(sourcePath + uniqueFileName), 
+                          java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                // Ignore source copy errors
+                System.out.println("Note: Could not copy to source folder: " + e.getMessage());
+            }
             
             // Update user avatar in database
             String avatarPath = "assets/img/avatars/" + uniqueFileName;
