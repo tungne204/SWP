@@ -12,10 +12,10 @@ import java.util.List;
 public class DoctorDAO extends DBContext {
 
     /**
-     * true
-     * Get doctor by ID
+     * true Get doctor by ID
+     *
      * @param doctorId
-     * @return 
+     * @return
      */
     public Doctor getDoctorById(int doctorId) {
         String sql = "SELECT * FROM Doctor WHERE doctor_id = ?";
@@ -29,7 +29,7 @@ public class DoctorDAO extends DBContext {
                     Doctor doctor = new Doctor();
                     doctor.setDoctorId(rs.getInt("doctor_id"));
                     doctor.setUserId(rs.getInt("user_id"));
-                    doctor.setSpecialty(rs.getString("specialty"));
+                    doctor.setExperienceYears(rs.getString("experienceYears"));
                     return doctor;
                 }
             }
@@ -40,10 +40,7 @@ public class DoctorDAO extends DBContext {
     }
 
     /**
-     * true
-     * Get all doctors 
-     * Get all doctors with username
-     * Lấy tất cả bác sĩ
+     * true Get all doctors Get all doctors with username Lấy tất cả bác sĩ
      *
      * @return
      */
@@ -60,7 +57,7 @@ public class DoctorDAO extends DBContext {
                 Doctor d = new Doctor();
                 d.setDoctorId(rs.getInt("doctor_id"));
                 d.setUserId(rs.getInt("user_id"));
-                d.setSpecialty(rs.getString("specialty"));
+                d.setExperienceYears(rs.getString("experienceYears"));
                 d.setUsername(rs.getString("username"));
                 list.add(d);
             }

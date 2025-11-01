@@ -150,7 +150,6 @@ public class UpdateAppointmentServlet extends HttpServlet {
                 // === Cập nhật Parent ===
                 Parent parent = new Parent();
                 parent.setParentName(parentName);
-                parent.setIdInfo(parentIdInfo);
                 parentDAO.updateParentByPatientId(patientId, parent);
                 
                 // === Cập nhật Email (User table) ===

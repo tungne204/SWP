@@ -214,7 +214,7 @@ public class PatientDAO extends DBContext {
                     p.setPhone(rs.getString("phone"));
 
                     p.setDoctorName(rs.getString("doctor_name"));
-                    p.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                    p.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
                     p.setAppointmentDate(rs.getString("appointment_date"));
                     p.setAppointmentTime(rs.getString("appointment_time"));
                     p.setStatus(rs.getString("status"));

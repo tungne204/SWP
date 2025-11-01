@@ -18,7 +18,8 @@ public class Patient {
     private String phone;             // Số điện thoại của cha/mẹ
 
     private String doctorName;        // Bác sĩ phụ trách
-    private String doctorSpecialty;   // Chuyên khoa
+    private String doctorCertificate;
+    private String doctorExperienceYears;
     private String appointmentDate;   // Ngày khám
     private String appointmentTime;   // Giờ khám
     private String status;            // Trạng thái lịch hẹn

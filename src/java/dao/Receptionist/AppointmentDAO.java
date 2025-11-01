@@ -121,7 +121,7 @@ public class AppointmentDAO extends DBContext {
 
                 // === Thông tin bác sĩ ===
                 a.setDoctorName(rs.getString("doctor_name"));
-                a.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
 
                 list.add(a);
             }
