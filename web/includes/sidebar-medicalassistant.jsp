@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <style>
     .sidebar-nav {
         padding: 20px 0;

@@ -1,5 +1,3 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <!-- Favicons -->
 <link href="assets/img/favicon.png" rel="icon">
 <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
