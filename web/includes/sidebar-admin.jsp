@@ -67,7 +67,16 @@
 
 <div class="sidebar-fixed">
     <nav class="sidebar-nav">
-        
+        <!-- Bảng điều khiển -->
+        <div class="nav-section">
+            <div class="nav-section-title">Bảng điều khiển</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="nav-link-text">Trang tổng quan</span>
+                </a>
+            </div>
+        </div>
       <div class="nav-section">
             <div class="nav-section-title">Danh sách người dùng</div>
             <div class="nav-item">
