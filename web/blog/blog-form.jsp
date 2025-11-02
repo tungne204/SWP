@@ -185,15 +185,7 @@
                                 <textarea class="form-control" id="content" name="content" rows="10" required>${blog.content}</textarea>
                             </div>
 
-                            <!-- Trạng thái -->
-                            <div class="form-check form-switch mb-4">
-                                <input class="form-check-input" type="checkbox" id="status"
-                                       name="status" value="1"
-                                       ${blog == null || blog.status ? 'checked' : ''}>
-                                <label class="form-check-label" for="status">
-                                    <span id="statusLabel">${blog == null || blog.status ? 'Công khai' : 'Nháp'}</span>
-                                </label>
-                            </div>
+                            
 
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary">

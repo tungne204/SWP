@@ -215,7 +215,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <c:if test="${acc != null && (acc.roleId == 1 || acc.userId == blog.authorId)}">
+                        <c:if test="${acc != null && (acc.roleId == 5 || acc.userId == blog.authorId)}">
                             <div class="mb-4">
                                 <a href="blog?action=edit&id=${blog.blogId}" class="btn btn-warning">
                                     <i class="fas fa-edit"></i> Chỉnh sửa
