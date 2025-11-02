@@ -91,7 +91,7 @@ Author : KienPC
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <%@ include file="../includes/sidebar-doctor.jsp" %>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -119,7 +119,7 @@ Author : KienPC
                     </c:if>
 
                     <!--Search Form -->
-                    <form id="searchForm" action="Patient-Search" method="post"
+                    <form id="searchForm" action="Patient-SearchD" method="post"
                           class="flex flex-col sm:flex-row gap-3 mb-10 justify-center max-w-3xl mx-auto w-full">
                         <input type="text" name="keyword" placeholder="Nhập tên hoặc mã Bệnh Nhân..."
                                value="${keyword}"
@@ -226,12 +226,12 @@ Author : KienPC
                             <c:if test="${totalPages > 1}">
                                 <div class="flex justify-center mt-6 gap-2">
                                     <c:if test="${currentPage > 1}">
-                                        <a href="Patient-Search?page=${currentPage - 1}&keyword=${keyword}"
+                                        <a href="Patient-SearchD?page=${currentPage - 1}&keyword=${keyword}"
                                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">Trước</a>
                                     </c:if>
 
                                     <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <a href="Patient-Search?page=${i}&keyword=${keyword}"
+                                        <a href="Patient-SearchD?page=${i}&keyword=${keyword}"
                                            class="px-3 py-1 rounded
                                            ${i == currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}">
                                             ${i}
@@ -239,7 +239,7 @@ Author : KienPC
                                     </c:forEach>
 
                                     <c:if test="${currentPage < totalPages}">
-                                        <a href="Patient-Search?page=${currentPage + 1}&keyword=${keyword}"
+                                        <a href="Patient-SearchD?page=${currentPage + 1}&keyword=${keyword}"
                                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">Tiếp</a>
                                     </c:if>
                                 </div>
