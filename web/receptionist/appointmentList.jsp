@@ -201,7 +201,7 @@
                                                 </button>
                                             </form>
                                         </c:if>
-                                        <!-- 🔹 Patient -->
+                                        <!--Patient -->
                                         <c:if test="${sessionScope.role eq 'Patient'}">
                                             <a href="Appointment-Detail?id=${a.appointmentId}"
                                                class="text-blue-600 hover:underline mr-2">👁 Xem</a>
