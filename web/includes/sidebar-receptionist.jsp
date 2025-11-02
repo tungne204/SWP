@@ -139,7 +139,7 @@
             <div class="nav-item">
                 <a href="${pageContext.request.contextPath}/manage-contacts" class="nav-link">
                     <i class="bi bi-envelope-check"></i>
-                    <span class="nav-link-text">Qu?n lı liên h?</span>
+                    <span class="nav-link-text">Quan ly lien he?</span>
                 </a>
             </div>
         </div>
