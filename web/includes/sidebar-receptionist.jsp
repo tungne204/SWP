@@ -134,6 +134,18 @@
             </div>
         </div>
 
+        <!-- Contact Management -->
+        <div class="nav-section">
+            <div class="nav-section-title">Contact Management</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manage-contacts" class="nav-link">
+                    <i class="bi bi-envelope-check"></i>
+                    <span class="nav-link-text">Quan ly lien he</span>
+                </a>
+            </div>
+        </div>
+
+
         <!-- Quick Actions -->
         <div class="nav-section">
             <div class="nav-section-title">Thao tác nhanh</div>
