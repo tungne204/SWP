@@ -44,6 +44,13 @@ public class ChangePasswordServlet extends HttpServlet {
 
         UserDAO dao = new UserDAO();
 
+        // ✅ Validate password length (ít nhất 6 ký tự)
+        if (newPassword == null || newPassword.length() < 6) {
+            request.setAttribute("error", "Password must be at least 6 characters!");
+            request.getRequestDispatcher("Change_password.jsp").forward(request, response);
+            return;
+        }
+
         // ✅ Check old password
         if (!dao.checkPassword(acc.getEmail(), oldPassword)) {
             request.setAttribute("error", "Current password is incorrect!");

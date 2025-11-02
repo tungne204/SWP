@@ -34,6 +34,62 @@ public class UploadAvatarServlet extends HttpServlet {
     public void init() throws ServletException {
         userDAO = new UserDAO();
     }
+    
+    /**
+     * Find the project root directory by looking for build.xml or nbproject folder
+     */
+    private File findProjectRoot() {
+        // Strategy 1: Try to find from webapp root
+        try {
+            String webappRoot = getServletContext().getRealPath("/");
+            File current = new File(webappRoot);
+            
+            // Go up directories looking for build.xml or nbproject
+            for (int i = 0; i < 5 && current != null; i++) {
+                File buildXml = new File(current, "build.xml");
+                File nbproject = new File(current, "nbproject");
+                if (buildXml.exists() || nbproject.exists()) {
+                    return current;
+                }
+                current = current.getParentFile();
+            }
+        } catch (Exception e) {
+            // Continue to next strategy
+        }
+        
+        // Strategy 2: Use user.dir (working directory)
+        try {
+            String userDir = System.getProperty("user.dir");
+            if (userDir != null) {
+                File dir = new File(userDir);
+                File buildXml = new File(dir, "build.xml");
+                File nbproject = new File(dir, "nbproject");
+                if (buildXml.exists() || nbproject.exists()) {
+                    return dir;
+                }
+            }
+        } catch (Exception e) {
+            // Continue to next strategy
+        }
+        
+        // Strategy 3: Fallback - go up from webapp root (2 levels typical)
+        try {
+            String webappRoot = getServletContext().getRealPath("/");
+            File webappDir = new File(webappRoot);
+            File projectRoot = webappDir.getParentFile();
+            if (projectRoot != null) {
+                projectRoot = projectRoot.getParentFile();
+            }
+            if (projectRoot != null && projectRoot.exists()) {
+                return projectRoot;
+            }
+        } catch (Exception e) {
+            // Last resort
+        }
+        
+        // Last resort: return current directory
+        return new File(System.getProperty("user.dir", "."));
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -83,22 +139,64 @@ public class UploadAvatarServlet extends HttpServlet {
             // Generate unique filename
             String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
             
-            // Create upload directory if it doesn't exist
-            String uploadPath = getServletContext().getRealPath("/") + "assets/img/avatars/";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
+            // Find project root - try multiple strategies
+            File projectRoot = findProjectRoot();
+            
+            // Use source folder path (will be copied to build during build process)
+            String sourcePath = projectRoot.getAbsolutePath() + File.separator + "web" + File.separator + "assets" + File.separator + "img" + File.separator + "avatars" + File.separator;
+            File sourceDir = new File(sourcePath);
+            if (!sourceDir.exists()) {
+                sourceDir.mkdirs();
             }
             
-            // Save file
-            String filePath = uploadPath + uniqueFileName;
-            filePart.write(filePath);
+            // Also save to webapp directory for immediate access
+            String webappRoot = getServletContext().getRealPath("/");
+            String webappPath = webappRoot + "assets/img/avatars/";
+            File webappDir2 = new File(webappPath);
+            if (!webappDir2.exists()) {
+                webappDir2.mkdirs();
+            }
+            
+            // Save file to source folder first (persistent - won't be deleted on clean)
+            String sourceFilePath = sourcePath + uniqueFileName;
+            filePart.write(sourceFilePath);
+            
+            // Also copy to webapp directory for immediate use
+            try {
+                String webappFilePath = webappPath + uniqueFileName;
+                Files.copy(Paths.get(sourceFilePath), Paths.get(webappFilePath), 
+                          java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                // If copy fails, webapp will use file from source during next build
+                System.out.println("Note: Could not copy to webapp directory: " + e.getMessage());
+            }
+            
+            // Get old avatar path before updating (to delete it later)
+            String oldAvatarPath = user.getAvatar();
             
             // Update user avatar in database
             String avatarPath = "assets/img/avatars/" + uniqueFileName;
             boolean updateSuccess = userDAO.updateUserAvatar(user.getUserId(), avatarPath);
             
             if (updateSuccess) {
+                // Delete old avatar file if it exists and is not default avatar
+                if (oldAvatarPath != null && !oldAvatarPath.isEmpty() 
+                    && !oldAvatarPath.equals("assets/img/default-avatar.png") 
+                    && !oldAvatarPath.equals("assets/img/avata.jpg")) {
+                    try {
+                        // Delete from source folder
+                        String oldSourcePath = projectRoot.getAbsolutePath() + File.separator + "web" + File.separator + oldAvatarPath;
+                        Files.deleteIfExists(Paths.get(oldSourcePath));
+                        
+                        // Delete from webapp folder
+                        String oldWebappPath = webappRoot + oldAvatarPath;
+                        Files.deleteIfExists(Paths.get(oldWebappPath));
+                    } catch (Exception e) {
+                        // Log but don't fail if old file deletion fails
+                        System.out.println("Note: Could not delete old avatar file: " + e.getMessage());
+                    }
+                }
+                
                 // Update session
                 user.setAvatar(avatarPath);
                 session.setAttribute("acc", user);
@@ -108,7 +206,12 @@ public class UploadAvatarServlet extends HttpServlet {
                 jsonResponse.addProperty("avatarPath", avatarPath);
             } else {
                 // Delete uploaded file if database update failed
-                Files.deleteIfExists(Paths.get(filePath));
+                Files.deleteIfExists(Paths.get(sourceFilePath));
+                try {
+                    Files.deleteIfExists(Paths.get(webappPath + uniqueFileName));
+                } catch (Exception e) {
+                    // Ignore
+                }
                 
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "Failed to update avatar in database");

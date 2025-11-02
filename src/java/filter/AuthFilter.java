@@ -26,7 +26,7 @@ public class AuthFilter implements Filter {
         int roleId = acc.getRoleId();
         String uri = req.getRequestURI();
 
-        if ((uri.contains("/doctor/") || uri.contains("/appointment")|| uri.contains("/test-result") || uri.contains("/medical-report")) && roleId != 2) {
+        if (uri.contains("/appointment") && roleId != 2) {
             res.sendRedirect(req.getContextPath() + "/403.jsp");
             return;
         }
