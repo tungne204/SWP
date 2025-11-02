@@ -3,7 +3,7 @@ Document : PatientProfile
 Created on : Oct 8, 2025, 5:37:36
 PM Author : KienPC
 --%>
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +68,7 @@ PM Author : KienPC
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <%@ include file="../includes/sidebar-doctor.jsp" %>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -110,7 +110,7 @@ PM Author : KienPC
                                 ${patient.appointmentDate} at ${patient.appointmentTime}
                             </p>
                             <p class="mb-4"><strong>Bác Sĩ:</strong>
-                                ${patient.doctorName} - <strong>
+                                ${patient.doctorName} - <strong>Số năm kinh nghiệm
                                 </strong>${patient.doctorExperienceYears} năm
                             </p>
 
@@ -133,7 +133,7 @@ PM Author : KienPC
 
                 <!-- ==================== BUTTONS (Không in vào PDF) ==================== -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <a href="Update-Patient?pid=${patient.patientId}"
+                    <a href="Update-PatientD?pid=${patient.patientId}"
                        class="btn btn-primary d-flex align-items-center gap-2 px-4">
                         <i class="fa-regular fa-pen-to-square"></i> Cập Nhật
                     </a>

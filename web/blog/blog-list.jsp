@@ -204,7 +204,7 @@
                                 </c:forEach>
                             </select>
                         </div>
-                        <c:if test="${acc.roleId == 1 || acc.roleId == 2}">
+                        <c:if test="${acc.roleId == 5}">
                             <div class="col-md-2">
                                 <a href="blog?action=add" class="btn btn-success w-100">
                                     <i class="fas fa-plus"></i> Thêm mới
@@ -254,7 +254,7 @@
                                                     <a href="blog?action=view&id=${blog.blogId}" class="btn btn-sm btn-primary">
                                                         <i class="fas fa-eye"></i> Xem
                                                     </a>
-                                                    <c:if test="${acc.roleId == 1 || acc.userId == blog.authorId}">
+                                                    <c:if test="${acc.roleId == 5 || acc.userId == blog.authorId}">
                                                         <a href="blog?action=edit&id=${blog.blogId}" class="btn btn-sm btn-warning">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
