@@ -278,8 +278,7 @@ public class PatientDAO extends DBContext {
             uParent.phone AS phone,
 
             uDoctor.username AS doctor_name,
-            d.experienceYears AS doctor_experienceYears,
-            d.specailty AS doctor_specailty;
+            d.experienceYears AS doctor_experienceYears;
 
             FORMAT(a.date_time, 'dd/MM/yyyy') AS appointment_date,
             FORMAT(a.date_time, 'HH:mm') AS appointment_time,
@@ -315,7 +314,8 @@ public class PatientDAO extends DBContext {
                     p.setPhone(rs.getString("phone"));
 
                     p.setDoctorName(rs.getString("doctor_name"));
-                    p.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                    p.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
+//                    p.setDoctorSpecialty(rs.getString("doctor_specialty"));
                     p.setAppointmentDate(rs.getString("appointment_date"));
                     p.setAppointmentTime(rs.getString("appointment_time"));
                     p.setStatus(rs.getString("status"));

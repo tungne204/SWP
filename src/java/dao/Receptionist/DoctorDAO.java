@@ -59,7 +59,7 @@ public class DoctorDAO extends DBContext {
                 Doctor d = new Doctor();
                 d.setDoctorId(rs.getInt("doctor_id"));
                 d.setUsername(rs.getString("username"));
-                d.setSpecialty(rs.getString("specialty"));
+                d.setExperienceYears(rs.getString("experienceYears"));
                 list.add(d);
             }
 
@@ -80,7 +80,7 @@ public class DoctorDAO extends DBContext {
                     d.setDoctorId(rs.getInt("doctor_id"));
                     d.setUserId(rs.getInt("user_id"));
                     d.setUsername(rs.getString("name"));
-                    d.setSpecialty(rs.getString("specialty"));
+                    d.setExperienceYears(rs.getString("experienceYears"));
                 }
             }
         } catch (Exception e) {

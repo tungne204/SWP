@@ -27,9 +27,9 @@ public class Appointment {
 
     // --- Thông tin bác sĩ ---
     private String doctorName;
-    private String doctorSpecialty;
+    //private String doctorSpecialty;
 //    private String doctorCertificate;
-//    private String doctorExperienceYears;
+    private String doctorExperienceYears;
 
     public Appointment() {
     }
@@ -45,7 +45,7 @@ public class Appointment {
     public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, String status,
             String patientName, String patientDob, String patientAddress, String patientInsurance,
             String parentName, String patientEmail, String parentPhone,
-            String doctorName, String doctorSpecialty
+            String doctorName, String doctorExperienceYears
     ) {
 
         this.appointmentId = appointmentId;
@@ -61,9 +61,9 @@ public class Appointment {
         this.patientEmail = patientEmail;
         this.parentPhone = parentPhone;
         this.doctorName = doctorName;
-        this.doctorSpecialty = doctorSpecialty;
+        //this.doctorSpecialty = doctorSpecialty;
 //        this.doctorCertificate = doctorCertificate;
-//        this.doctorExperienceYears = doctorExperienceYears;
+        this.doctorExperienceYears = doctorExperienceYears;
     }
 
     // --- Getter & Setter ---
@@ -179,19 +179,19 @@ public class Appointment {
 //        this.doctorCertificate = doctorCertificate;
 //    }
 //
-//    public String getDoctorExperienceYears() {
-//        return doctorExperienceYears;
-//    }
-//
-//    public void setDoctorExperienceYears(String doctorExperienceYears) {
-//        this.doctorExperienceYears = doctorExperienceYears;
-//    }
-    public String getDoctorSpecialty() {
-        return doctorSpecialty;
+    public String getDoctorExperienceYears() {
+        return doctorExperienceYears;
     }
 
-    public void setDoctorSpecialty(String doctorSpecialty) {
-        this.doctorSpecialty = doctorSpecialty;
+    public void setDoctorExperienceYears(String doctorExperienceYears) {
+        this.doctorExperienceYears = doctorExperienceYears;
     }
+//    public String getDoctorSpecialty() {
+//        return doctorSpecialty;
+//    }
+//
+//    public void setDoctorSpecialty(String doctorSpecialty) {
+//        this.doctorSpecialty = doctorSpecialty;
+//    }
 
 }

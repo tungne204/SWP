@@ -33,7 +33,7 @@ public class AppointmentDAO extends DBContext {
                 u_patient.phone,
                 u_patient.email,
                 u_doctor.username AS doctor_name,
-                d.specialty,
+                d.experienceYears AS doctor_experienceYears,
                 a.date_time,
                 a.status
             FROM Appointment a
@@ -60,7 +60,7 @@ public class AppointmentDAO extends DBContext {
                 a.setParentPhone(rs.getString("phone"));
                 a.setPatientEmail(rs.getString("email"));
                 a.setDoctorName(rs.getString("doctor_name"));
-                a.setDoctorSpecialty(rs.getString("specialty"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
                 a.setDateTime(rs.getTimestamp("date_time"));
                 a.setStatus(rs.getString("status"));
                 return a;
@@ -99,7 +99,7 @@ public class AppointmentDAO extends DBContext {
 
             -- Thông tin bác sĩ
             ud.username AS doctor_name,
-            d.specialty AS doctor_specialty
+            d.experienceYears AS doctor_experienceYears
 
         FROM Appointment a
         LEFT JOIN Patient p ON a.patient_id = p.patient_id
@@ -129,8 +129,8 @@ public class AppointmentDAO extends DBContext {
 
                 // === Thông tin bác sĩ ===
                 a.setDoctorName(rs.getString("doctor_name"));
-//                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
-                a.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
+                //a.setDoctorExperienceYears(rs.getString("doctor_specialty"));
 
                 list.add(a);
             }
@@ -142,41 +142,50 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
-    /**
-     * true
-     *
-     * Cập nhật thông tin lịch hẹn (Appointment)
-     *
-     * @param a đối tượng Appointment cần cập nhật
-     */
-    public void updateAppointment(Appointment a) {
+    public boolean updateAppointmentFull(int appointmentId, String dateTime, int doctorId, String status,
+            String patientName, String parentName, String patientAddress,
+            String patientEmail, String parentPhone) {
         String sql = """
         UPDATE Appointment
-        SET patient_id = ?, doctor_id = ?, date_time = ?, status = ?
-        WHERE appointment_id = ?
+        SET date_time = ?, doctor_id = ?, status = ?
+        WHERE appointment_id = ?;
+
+        UPDATE Patient
+        SET full_name = ?, address = ?, insurance_info = ?
+        WHERE patient_id = (SELECT patient_id FROM Appointment WHERE appointment_id = ?);
+
+        UPDATE Parent
+        SET parentname = ?, id_info = ?, phone = ?
+        WHERE parent_id = (
+            SELECT p.parent_id FROM Patient p
+            JOIN Appointment a ON a.patient_id = p.patient_id
+            WHERE a.appointment_id = ?
+        );
     """;
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, a.getPatientId());
-            ps.setInt(2, a.getDoctorId());
-            ps.setTimestamp(3, new java.sql.Timestamp(a.getDateTime().getTime()));
-            ps.setString(4, a.getStatus());
-            ps.setInt(5, a.getAppointmentId());
+            ps.setString(1, dateTime);
+            ps.setInt(2, doctorId);
+            ps.setString(3, status);
+            ps.setInt(4, appointmentId);
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                System.out.println("[INFO] Appointment updated successfully (ID = " + a.getAppointmentId() + ")");
-            } else {
-                System.out.println("[WARN] No appointment found for ID = " + a.getAppointmentId());
-            }
+            ps.setString(5, patientName);
+            ps.setString(6, patientAddress);
+            ps.setString(7, patientEmail);
+            ps.setInt(8, appointmentId);
 
-        } catch (SQLException e) {
-            System.err.println("[ERROR] Failed to update appointment (ID = " + a.getAppointmentId() + ")");
+            ps.setString(9, parentName);
+            ps.setString(10, ""); // nếu có parent_id_info thì đặt ở đây
+            ps.setString(11, parentPhone);
+            ps.setInt(12, appointmentId);
+
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (Exception ex) {
-            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     /**
@@ -206,10 +215,10 @@ public class AppointmentDAO extends DBContext {
             pa.parentname AS parent_name,
             p.address,
             p.insurance_info,
-            u_patient.phone,
-            u_patient.email,
+            u_patient.phone AS patient_phone,
+            u_patient.email AS patient_email,
             u_doctor.username AS doctor_name,
-            d.specialty,
+            d.experienceYears AS doctor_experienceYears,
             a.date_time,
             a.status
         FROM Appointment a
@@ -264,10 +273,10 @@ public class AppointmentDAO extends DBContext {
                 a.setParentName(rs.getString("parent_name"));
                 a.setPatientAddress(rs.getString("address"));
                 a.setPatientInsurance(rs.getString("insurance_info"));
-                a.setParentPhone(rs.getString("phone"));
-                a.setPatientEmail(rs.getString("email"));
+                a.setParentPhone(rs.getString("patient_phone"));
+                a.setPatientEmail(rs.getString("patient_email"));
                 a.setDoctorName(rs.getString("doctor_name"));
-                a.setDoctorSpecialty(rs.getString("specialty"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
                 a.setDateTime(rs.getTimestamp("date_time"));
                 a.setStatus(rs.getString("status"));
                 list.add(a);
@@ -312,7 +321,7 @@ public class AppointmentDAO extends DBContext {
                 Doctor d = new Doctor();
                 d.setDoctorId(rs.getInt("doctor_id"));
                 d.setUsername(rs.getString("username"));
-                d.setSpecialty(rs.getString("specialty"));
+                d.setExperienceYears(rs.getString("experienceYears"));
                 list.add(d);
             }
 
@@ -356,7 +365,7 @@ public class AppointmentDAO extends DBContext {
             u_patient.phone,
             u_patient.email,
             u_doctor.username AS doctor_name,
-            d.specialty,
+            d.experienceYears,
             a.date_time,
             a.status
         FROM Appointment a
@@ -414,7 +423,7 @@ public class AppointmentDAO extends DBContext {
                 a.setParentPhone(rs.getString("phone"));
                 a.setPatientEmail(rs.getString("email"));
                 a.setDoctorName(rs.getString("doctor_name"));
-                a.setDoctorSpecialty(rs.getString("specialty"));
+                a.setDoctorExperienceYears(rs.getString("specialty"));
                 a.setDateTime(rs.getTimestamp("date_time"));
                 a.setStatus(rs.getString("status"));
                 list.add(a);
@@ -437,7 +446,7 @@ public class AppointmentDAO extends DBContext {
                     d.setDoctorId(rs.getInt("doctor_id"));
                     d.setUserId(rs.getInt("user_id"));
                     d.setUsername(rs.getString("name"));
-                    d.setSpecialty(rs.getString("specialty"));
+                    d.setExperienceYears(rs.getString("experienceYears"));
                 }
             }
         } catch (Exception e) {
@@ -449,7 +458,7 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getAppointmentsByUserId(int userId, String keyword, String status, String sort, int page, int pageSize) {
         List<Appointment> list = new ArrayList<>();
         String sql = """
-        SELECT a.*, p.full_name AS patientName, d.name AS doctorName, d.specialty AS doctorSpecialty
+        SELECT a.*, p.full_name AS patient_Name, d.name AS doctor_Name, d.experienceYears AS doctor_ExperienceYears
         FROM Appointment a
         JOIN Patient p ON a.patient_id = p.patient_id
         JOIN Doctor d ON a.doctor_id = d.doctor_id
@@ -464,9 +473,9 @@ public class AppointmentDAO extends DBContext {
             while (rs.next()) {
                 Appointment a = new Appointment();
                 a.setAppointmentId(rs.getInt("appointment_id"));
-                a.setPatientName(rs.getString("patientName"));
-                a.setDoctorName(rs.getString("doctorName"));
-                a.setDoctorSpecialty(rs.getString("doctorSpecialty"));
+                a.setPatientName(rs.getString("patient_name"));
+                a.setDoctorName(rs.getString("doctor_name"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
                 a.setDateTime(rs.getTimestamp("date_time"));
                 a.setStatus(rs.getString("status"));
                 list.add(a);
@@ -475,6 +484,85 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getPatientIdByUserId(int userId) {
+        String sql = "SELECT patient_id FROM Patient WHERE user_id = ?";
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("patient_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public List<Appointment> getAppointmentsByPatientId(int patientId, String keyword, String status, String sort, int page, int pageSize) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = """
+        SELECT a.appointment_id, p.full_name AS patient_name, p.address, 
+               p.insurance_info AS benh_nen, d.doctor_id, u.username AS doctor_name, 
+               d.experienceYears AS doctor_experienceYears, a.date_time, a.status
+        FROM Appointment a
+        JOIN Patient p ON a.patient_id = p.patient_id
+        JOIN Doctor d ON a.doctor_id = d.doctor_id
+        JOIN [User] u ON d.user_id = u.user_id
+        WHERE a.patient_id = ?
+        ORDER BY a.date_time DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setInt(2, (page - 1) * pageSize);
+            ps.setInt(3, pageSize);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Appointment a = new Appointment();
+                a.setAppointmentId(rs.getInt("appointment_id"));
+                a.setPatientName(rs.getString("patient_name"));
+                a.setPatientAddress(rs.getString("address"));
+                a.setPatientInsurance(rs.getString("benh_nen"));
+                a.setDoctorName(rs.getString("doctor_name"));
+                a.setDoctorExperienceYears(rs.getString("doctor_experienceYears"));
+                a.setDateTime(rs.getTimestamp("date_time"));
+                a.setStatus(rs.getString("status"));
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean createAppointment(String patientName, String parentName, String patientAddress,
+            String patientEmail, String parentPhone, String dateTime,
+            int doctorId, String status) {
+        String sql = """
+        INSERT INTO Appointment (patient_id, doctor_id, date_time, status)
+        VALUES (
+            (SELECT TOP 1 patient_id FROM Patient p
+             JOIN [User] u ON p.user_id = u.user_id
+             WHERE u.email = ?),
+            ?, ?, ?
+        );
+    """;
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, patientEmail);
+            ps.setInt(2, doctorId);
+            ps.setString(3, dateTime);
+            ps.setString(4, status);
+
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

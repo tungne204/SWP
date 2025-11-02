@@ -3,7 +3,7 @@ Document : PatientProfile
 Created on : Oct 8, 2025, 5:37:36
 PM Author : KienPC
 --%>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -111,7 +111,7 @@ PM Author : KienPC
                             </p>
                             <p class="mb-4"><strong>Bác Sĩ:</strong>
                                 ${patient.doctorName} - <strong>
-                                </strong>${patient.doctorSpecialty}
+                                </strong>${patient.doctorExperienceYears} năm
                             </p>
 
                             <h5 class="fw-bold text-primary mb-2 mt-4">Thông Tin Phụ Huynh</h5>

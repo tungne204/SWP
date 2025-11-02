@@ -93,11 +93,18 @@
 
         <div class="p-6 max-w-6xl mx-auto">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <c:if test="${sessionScope.role eq 'Receptionist'}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
+
+            <c:if test="${sessionScope.role eq 'Doctor'}">
+                <%@ include file="../includes/sidebar-doctor.jsp" %>
+            </c:if>
+
 
             <h1 class="text-2xl font-bold text-teal-600 mb-4">Danh sách lịch hẹn</h1>
 
-            <!--  Nếu là Patient thì có nút tạo mới -->
+            <!--Nếu là Patient thì có nút tạo mới -->
             <c:if test="${sessionScope.role eq 'Patient'}">
                 <div class="mb-4">
                     <a href="Appointment-Create"
@@ -107,7 +114,7 @@
                 </div>
             </c:if>
 
-            <!-- Search & Filter -->
+            <!--Search & Filter (cho mọi role) -->
             <form method="get" action="Appointment-List" class="flex gap-3 mb-4">
                 <input type="text" name="keyword" placeholder="Tìm theo tên bệnh nhân, bác sĩ, địa chỉ,..."
                        value="${keyword}" class="border p-2 flex-1 rounded-md">
@@ -116,8 +123,9 @@
                     <option value="confirmed" ${status == 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
                     <option value="pending" ${status == 'pending' ? 'selected' : ''}>Chờ</option>
                     <option value="cancelled" ${status == 'cancelled' ? 'selected' : ''}>Huỷ</option>
-
+                    <option value="completed" ${status == 'completed' ? 'selected' : ''}>Đã khám</option>
                 </select>
+
                 <select name="sort" class="border p-2 rounded-md">
                     <option value="date_desc" ${sort == 'date_desc' ? 'selected' : ''}>Mới nhất</option>
                     <option value="date_asc" ${sort == 'date_asc' ? 'selected' : ''}>Cũ nhất</option>
@@ -131,10 +139,9 @@
                         class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
                     🔄 Reload
                 </button>
-
             </form>
 
-            <!-- Table -->
+            <!--Table -->
             <div class="overflow-x-auto bg-white border rounded-lg shadow">
                 <table class="min-w-full w-full text-sm">
                     <thead class="bg-gray-100 text-gray-600">
@@ -144,7 +151,7 @@
                             <th class="p-3 text-left">Địa chỉ</th>
                             <th class="p-3 text-left">Bệnh nền</th>
                             <th class="p-3 text-left">Bác sĩ</th>
-                            <th class="p-3 text-left">Chuyên khoa</th>
+                            <th class="p-3 text-left">Năm kinh nghiệm</th>
                             <th class="p-3 text-left">Ngày khám</th>
                             <th class="p-3 text-left">Trạng thái</th>
                             <th class="p-3 text-center">Thao tác</th>
@@ -156,52 +163,56 @@
                             <tr class="border-t hover:bg-gray-50">
                                 <td class="p-3">${a.appointmentId}</td>
                                 <td class="p-3">${a.patientName}</td>
-                                <td class="p-3 table-cell-truncate" title="${a.patientAddress}">${a.patientAddress}</td> <!--chống tràn chữ-->
+                                <td class="p-3 table-cell-truncate" title="${a.patientAddress}">${a.patientAddress}</td>
                                 <td class="p-3 table-cell-truncate" title="${a.patientInsurance}">${a.patientInsurance}</td>
                                 <td class="p-3">${a.doctorName}</td>
-                                <td class="p-3">${a.doctorSpecialty}</td>
+                                <td class="p-3">${a.doctorExperienceYears}</td>
                                 <td class="p-3"><fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm"/></td>
                                 <td class="p-3">
                                     <span class="px-2 py-1 rounded-full text-white
                                           ${a.status == 'Confirmed' ? 'bg-green-500' :
                                             (a.status == 'Pending' ? 'bg-yellow-500' :
-                                            (a.status == 'Cancelled' ? 'bg-red-500' : 'bg-gray-400'))}">
+                                            (a.status == 'Cancelled' ? 'bg-red-500' :
+                                            (a.status == 'Completed' ? 'bg-blue-500' : 'bg-gray-400')))}">
                                               ${a.status}
                                           </span>
                                     </td>
+
                                     <td class="p-3 text-center">
-                                        <!--Receptionist-->
+
+                                        <!-- Receptionist -->
                                         <c:if test="${sessionScope.role eq 'Receptionist'}">
-                                            <a href="Appointment-Update?id=${a.appointmentId}"
-                                               class="text-blue-500 hover:underline mr-2">Cập nhật</a>
+                                            <a href="Appointment-Detail?id=${a.appointmentId}"
+                                               class="text-blue-600 hover:underline mr-2">👁 Xem</a>
+                                           
                                             <form method="post" action="Appointment-Status" class="inline">
                                                 <input type="hidden" name="id" value="${a.appointmentId}">
-
-                                                <select name="status" class="border rounded-md p-1 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
-                                                    <option value="Pending" ${a.status == 'Pending' ? 'selected' : ''}>Chờ xác nhận</option>
+                                                <select name="status" class="border rounded-md p-1 text-sm">
+                                                    <option value="Pending" ${a.status == 'Pending' ? 'selected' : ''}>Chờ</option>
                                                     <option value="Confirmed" ${a.status == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
                                                     <option value="Cancelled" ${a.status == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                                     <option value="Completed" ${a.status == 'Completed' ? 'selected' : ''}>Đã khám</option>
                                                 </select>
-
-                                                <button type="submit" class="ml-2 bg-teal-600 text-white px-3 py-1 rounded-md hover:bg-teal-700 transition">
+                                                <button type="submit"
+                                                        class="ml-2 bg-teal-600 text-white px-3 py-1 rounded-md hover:bg-teal-700 transition">
                                                     Lưu
                                                 </button>
                                             </form>
                                         </c:if>
-                                        <!-- Doctor chỉ được đổi trạng thái thành "Đã khám" -->
+
+                                        <!-- Doctor -->
                                         <c:if test="${sessionScope.role eq 'Doctor'}">
                                             <form method="post" action="Appointment-Status" class="inline">
                                                 <input type="hidden" name="id" value="${a.appointmentId}">
                                                 <input type="hidden" name="status" value="Completed">
-
-                                                <button type="submit" 
+                                                <button type="submit"
                                                         class="bg-orange-500 text-white px-3 py-1 rounded-md hover:bg-orange-600 transition">
                                                     ✅ Đánh dấu đã khám
                                                 </button>
                                             </form>
                                         </c:if>
-                                        <!--Patient -->
+
+                                        <!-- Patient -->
                                         <c:if test="${sessionScope.role eq 'Patient'}">
                                             <a href="Appointment-Detail?id=${a.appointmentId}"
                                                class="text-blue-600 hover:underline mr-2">👁 Xem</a>
@@ -224,7 +235,6 @@
                                 </tr>
                             </c:forEach>
                         </tbody>
-
                     </table>
                 </div>
                 <!-- Paging -->

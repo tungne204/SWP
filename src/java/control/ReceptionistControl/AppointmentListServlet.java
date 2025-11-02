@@ -70,19 +70,18 @@ public class AppointmentListServlet extends HttpServlet {
                 // Nếu không tìm thấy doctor → hiển thị trống
                 list = List.of();
             }
-        } 
-        
-        //Nếu là Receptionist → xem toàn bộ
+        } //Nếu là Receptionist → xem toàn bộ
         else if ("Receptionist".equalsIgnoreCase(role)) {
             list = dao.getAppointments(keyword, status, sort, page, pageSize);
-        } 
-        
-        // Nếu là Patient → chỉ xem appointment của chính mình
+        } // Nếu là Patient → chỉ xem appointment của chính mình
         else if ("Patient".equalsIgnoreCase(role)) {
-            list = dao.getAppointmentsByUserId(acc.getUserId(), keyword, status, sort, page, pageSize);
-        } 
-
-        //Các role khác → không có quyền xem
+            int patientId = dao.getPatientIdByUserId(acc.getUserId());
+            if (patientId > 0) {
+                list = dao.getAppointmentsByPatientId(patientId, keyword, status, sort, page, pageSize);
+            } else {
+                list = List.of(); // nếu không có patientId
+            }
+        } //Các role khác → không có quyền xem
         else {
             list = List.of();
         }

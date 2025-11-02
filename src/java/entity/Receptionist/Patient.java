@@ -19,9 +19,9 @@ public class Patient {
     private String phone;             // Số điện thoại của cha/mẹ
 
     private String doctorName;        // Bác sĩ phụ trách
-//    private String doctorCertificate;
-//    private String doctorExperienceYears;
-    private String doctorSpecialty;
+//    private String doctorSpecialty;
+    private String doctorExperienceYears;
+    private String doctorCertificate;
     private String appointmentDate;   // Ngày khám
     private String appointmentTime;   // Giờ khám
     private String status;            // Trạng thái lịch hẹn
@@ -147,28 +147,30 @@ public class Patient {
         this.status = status;
     }
 
-//    public String getDoctorCertificate() {
-//        return doctorCertificate;
+//    public String getDoctorSpecialty() {
+//        return doctorSpecialty;
 //    }
 //
-//    public void setDoctorCertificate(String doctorCertificate) {
-//        this.doctorCertificate = doctorCertificate;
-//    }
-//
-//    public String getDoctorExperienceYears() {
-//        return doctorExperienceYears;
-//    }
-//
-//    public void setDoctorExperienceYears(String doctorExperienceYears) {
-//        this.doctorExperienceYears = doctorExperienceYears;
+//    public void setDoctorSpecialty(String doctorSpecialty) {
+//        this.doctorSpecialty = doctorSpecialty;
 //    }
 
-    public String getDoctorSpecialty() {
-        return doctorSpecialty;
+    public String getDoctorExperienceYears() {
+        return doctorExperienceYears;
     }
 
-    public void setDoctorSpecialty(String doctorSpecialty) {
-        this.doctorSpecialty = doctorSpecialty;
+    public void setDoctorExperienceYears(String doctorExperienceYears) {
+        this.doctorExperienceYears = doctorExperienceYears;
     }
+
+    public String getDoctorCertificate() {
+        return doctorCertificate;
+    }
+
+    public void setDoctorCertificate(String doctorCertificate) {
+        this.doctorCertificate = doctorCertificate;
+    }
+    
+    
 
 }
