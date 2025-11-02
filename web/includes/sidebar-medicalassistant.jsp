@@ -67,6 +67,16 @@
 
 <div class="sidebar-fixed">
     <nav class="sidebar-nav">
+        <!-- Bảng điều khiển -->
+        <div class="nav-section">
+            <div class="nav-section-title">Bảng điều khiển</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="nav-link-text">Trang tổng quan</span>
+                </a>
+            </div>
+        </div>
         
       <div class="nav-section">
             <div class="nav-section-title">Kết quả xét nghiệm</div>
@@ -80,31 +90,6 @@
         </div>
         
         
-        
-        <!-- Test Results -->
-        <div class="nav-section">
-            <div class="nav-section-title">Test Results</div>
-            <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/test-result-list.jsp" class="nav-link">
-                    <i class="bi bi-clipboard-data"></i>
-                    <span class="nav-link-text">Test Results</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/test-result-detail.jsp" class="nav-link">
-                    <i class="bi bi-clipboard-check"></i>
-                    <span class="nav-link-text">Test Details</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/test-result-by-record.jsp" class="nav-link">
-                    <i class="bi bi-clipboard-pulse"></i>
-                    <span class="nav-link-text">Results by Record</span>
-                </a>
-            </div>
-        </div>
-        
-        <!-- Quick Actions -->
         
     </nav>
 </div>
