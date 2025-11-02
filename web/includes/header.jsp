@@ -120,6 +120,9 @@
           <li>
             <a href="${pageContext.request.contextPath}/blog">Blog</a>
           </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/contact">Liên hệ</a>
+          </li>
         </ul>
       </nav>
 
