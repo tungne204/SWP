@@ -2,16 +2,16 @@
     .sidebar-nav {
         padding: 20px 0 0 0;
     }
-    
+
     .nav-section {
         margin-bottom: 30px;
     }
-    
+
     .nav-section:last-child {
         margin-bottom: 0;
         padding-bottom: 20px;
     }
-    
+
     .nav-section-title {
         font-size: 12px;
         font-weight: 600;
@@ -21,11 +21,11 @@
         margin-bottom: 10px;
         padding: 0 20px;
     }
-    
+
     .nav-item {
         margin-bottom: 5px;
     }
-    
+
     .nav-link {
         display: flex;
         align-items: center;
@@ -35,30 +35,30 @@
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
     }
-    
+
     .nav-link:hover {
         background-color: #f8f9fa;
         color: var(--primary-color);
         border-left-color: var(--primary-color);
     }
-    
+
     .nav-link.active {
         background-color: rgba(63, 187, 192, 0.1);
         color: var(--primary-color);
         border-left-color: var(--primary-color);
         font-weight: 500;
     }
-    
+
     .nav-link i {
         width: 20px;
         margin-right: 12px;
         font-size: 16px;
     }
-    
+
     .nav-link-text {
         flex: 1;
     }
-    
+
     .nav-badge {
         background: #dc3545;
         color: white;
@@ -73,6 +73,8 @@
     <nav class="sidebar-nav">
         <!-- Dashboard Section -->
         <div class="nav-section">
+            <br>
+            <br>
             <div class="nav-section-title">Dashboard</div>
             <div class="nav-item">
                 <a href="${pageContext.request.contextPath}/Receptionist-Dashboard" class="nav-link">
@@ -81,7 +83,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Patient Management -->
         <div class="nav-section">
             <div class="nav-section-title">Patient Management</div>
@@ -92,9 +94,9 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/PatientSearch" class="nav-link">
+                <a href="${pageContext.request.contextPath}/Patient-Search" class="nav-link">
                     <i class="bi bi-search"></i>
-                    <span class="nav-link-text">Search Patients</span>
+                    <span class="nav-link-text">Patients List</span>
                 </a>
             </div>
             <div class="nav-item">
@@ -104,24 +106,24 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Appointments -->
         <div class="nav-section">
             <div class="nav-section-title">Appointments</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/appointmentList" class="nav-link">
+                <a href="${pageContext.request.contextPath}/Appointment-List" class="nav-link">
                     <i class="bi bi-calendar-check"></i>
                     <span class="nav-link-text">Appointment List</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/updateAppointment" class="nav-link">
+                <a href="${pageContext.request.contextPath}/Appointment-UpdateSearch" class="nav-link">
                     <i class="bi bi-calendar-event"></i>
                     <span class="nav-link-text">Update Appointments</span>
                 </a>
             </div>
         </div>
-        
+
         <!-- Queue Management -->
         <div class="nav-section">
             <div class="nav-section-title">Queue Management</div>
@@ -132,7 +134,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Quick Actions -->
         <div class="nav-section">
             <div class="nav-section-title">Quick Actions</div>

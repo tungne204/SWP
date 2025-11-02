@@ -14,7 +14,7 @@ public class Appointment {
     private int patientId;
     private int doctorId;
     private Date dateTime;
-    private boolean status; // true = Active, false = Inactive
+    private String status; // true = Active, false = Inactive
 
     // --- Thông tin bệnh nhân ---
     private String patientName;
@@ -27,13 +27,14 @@ public class Appointment {
 
     // --- Thông tin bác sĩ ---
     private String doctorName;
-    private String doctorCertificate;
-    private String doctorExperienceYears;
+    private String doctorSpecialty;
+//    private String doctorCertificate;
+//    private String doctorExperienceYears;
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, boolean status) {
+    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, String status) {
         this.appointmentId = appointmentId;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -41,11 +42,11 @@ public class Appointment {
         this.status = status;
     }
 
-    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, boolean status,
+    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, String status,
             String patientName, String patientDob, String patientAddress, String patientInsurance,
             String parentName, String patientEmail, String parentPhone,
-            String doctorName, String doctorCertificate, String doctorExperienceYears,
-            boolean hasMedicalReport, Integer recordId, String diagnosis) {
+            String doctorName, String doctorSpecialty
+    ) {
 
         this.appointmentId = appointmentId;
         this.patientId = patientId;
@@ -60,8 +61,9 @@ public class Appointment {
         this.patientEmail = patientEmail;
         this.parentPhone = parentPhone;
         this.doctorName = doctorName;
-        this.doctorCertificate = doctorCertificate;
-        this.doctorExperienceYears = doctorExperienceYears;
+        this.doctorSpecialty = doctorSpecialty;
+//        this.doctorCertificate = doctorCertificate;
+//        this.doctorExperienceYears = doctorExperienceYears;
     }
 
     // --- Getter & Setter ---
@@ -97,11 +99,11 @@ public class Appointment {
         this.dateTime = dateTime;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -169,20 +171,27 @@ public class Appointment {
         this.doctorName = doctorName;
     }
 
-    public String getDoctorCertificate() {
-        return doctorCertificate;
+//    public String getDoctorCertificate() {
+//        return doctorCertificate;
+//    }
+//
+//    public void setDoctorCertificate(String doctorCertificate) {
+//        this.doctorCertificate = doctorCertificate;
+//    }
+//
+//    public String getDoctorExperienceYears() {
+//        return doctorExperienceYears;
+//    }
+//
+//    public void setDoctorExperienceYears(String doctorExperienceYears) {
+//        this.doctorExperienceYears = doctorExperienceYears;
+//    }
+    public String getDoctorSpecialty() {
+        return doctorSpecialty;
     }
 
-    public void setDoctorCertificate(String doctorCertificate) {
-        this.doctorCertificate = doctorCertificate;
-    }
-
-    public String getDoctorExperienceYears() {
-        return doctorExperienceYears;
-    }
-
-    public void setDoctorExperienceYears(String doctorExperienceYears) {
-        this.doctorExperienceYears = doctorExperienceYears;
+    public void setDoctorSpecialty(String doctorSpecialty) {
+        this.doctorSpecialty = doctorSpecialty;
     }
 
 }

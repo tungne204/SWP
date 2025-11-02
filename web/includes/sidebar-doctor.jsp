@@ -2,11 +2,11 @@
     .sidebar-nav {
         padding: 20px 0;
     }
-    
+
     .nav-section {
         margin-bottom: 30px;
     }
-    
+
     .nav-section-title {
         font-size: 12px;
         font-weight: 600;
@@ -16,11 +16,11 @@
         margin-bottom: 10px;
         padding: 0 20px;
     }
-    
+
     .nav-item {
         margin-bottom: 5px;
     }
-    
+
     .nav-link {
         display: flex;
         align-items: center;
@@ -30,30 +30,30 @@
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
     }
-    
+
     .nav-link:hover {
         background-color: #f8f9fa;
         color: var(--primary-color);
         border-left-color: var(--primary-color);
     }
-    
+
     .nav-link.active {
         background-color: rgba(63, 187, 192, 0.1);
         color: var(--primary-color);
         border-left-color: var(--primary-color);
         font-weight: 500;
     }
-    
+
     .nav-link i {
         width: 20px;
         margin-right: 12px;
         font-size: 16px;
     }
-    
+
     .nav-link-text {
         flex: 1;
     }
-    
+
     .nav-badge {
         background: #dc3545;
         color: white;
@@ -76,12 +76,12 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Appointments -->
         <div class="nav-section">
             <div class="nav-section-title">Appointments</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/doctor/appointment-list.jsp" class="nav-link">
+                <a href="${pageContext.request.contextPath}/Appointment-List" class="nav-link">
                     <i class="bi bi-calendar-check"></i>
                     <span class="nav-link-text">Appointment List</span>
                 </a>
@@ -93,7 +93,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Medical Records -->
         <div class="nav-section">
             <div class="nav-section-title">Medical Records</div>
@@ -116,7 +116,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Test Results -->
         <div class="nav-section">
             <div class="nav-section-title">Test Results</div>
@@ -139,7 +139,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Quick Actions -->
         <div class="nav-section">
             <div class="nav-section-title">Quick Actions</div>

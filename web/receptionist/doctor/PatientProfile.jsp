@@ -68,7 +68,7 @@ PM Author : KienPC
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <%@ include file="../includes/sidebar-doctor.jsp" %>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -110,8 +110,8 @@ PM Author : KienPC
                                 ${patient.appointmentDate} at ${patient.appointmentTime}
                             </p>
                             <p class="mb-4"><strong>Bác Sĩ:</strong>
-                                ${patient.doctorName} - <strong>
-                                </strong>${patient.doctorSpecialty}
+                                ${patient.doctorName} - <strong>Số năm kinh nghiệm
+                                </strong>${patient.doctorExperienceYears} năm
                             </p>
 
                             <h5 class="fw-bold text-primary mb-2 mt-4">Thông Tin Phụ Huynh</h5>
@@ -133,7 +133,7 @@ PM Author : KienPC
 
                 <!-- ==================== BUTTONS (Không in vào PDF) ==================== -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <a href="Update-Patient?pid=${patient.patientId}"
+                    <a href="Update-PatientD?pid=${patient.patientId}"
                        class="btn btn-primary d-flex align-items-center gap-2 px-4">
                         <i class="fa-regular fa-pen-to-square"></i> Cập Nhật
                     </a>

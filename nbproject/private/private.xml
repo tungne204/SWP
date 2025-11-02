@@ -2,6 +2,16 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/doctor/AppoinmetListD.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Patient.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/AppointmentDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentStatusServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/doctor/PatientSearch.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentListServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Appointment.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentList.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/DoctorDAO.java</file>
+        </group>
     </open-files>
 </project-private>

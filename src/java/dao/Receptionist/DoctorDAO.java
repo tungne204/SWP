@@ -29,7 +29,7 @@ public class DoctorDAO extends DBContext {
                     Doctor doctor = new Doctor();
                     doctor.setDoctorId(rs.getInt("doctor_id"));
                     doctor.setUserId(rs.getInt("user_id"));
-                    doctor.setExperienceYears(rs.getString("experienceYears"));
+//                    doctor.setExperienceYears(rs.getString("experienceYears"));
                     return doctor;
                 }
             }
@@ -47,30 +47,46 @@ public class DoctorDAO extends DBContext {
     public List<Doctor> getAllDoctors() {
         List<Doctor> list = new ArrayList<>();
         String sql = """
-        SELECT d.doctor_id, d.user_id, d.specialty, u.username
+        SELECT d.doctor_id, u.username, d.specialty
         FROM Doctor d
         JOIN [User] u ON d.user_id = u.user_id
+        ORDER BY u.username
     """;
+
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Doctor d = new Doctor();
                 d.setDoctorId(rs.getInt("doctor_id"));
-                d.setUserId(rs.getInt("user_id"));
-                d.setExperienceYears(rs.getString("experienceYears"));
                 d.setUsername(rs.getString("username"));
+                d.setSpecialty(rs.getString("specialty"));
                 list.add(d);
             }
 
-            // Debug log (xem trong Output NetBeans)
-            System.out.println("[DEBUG] Doctor list size = " + list.size());
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("❌ SQL Error in getAllDoctors(): " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
+
+    public Doctor getDoctorByUserId(int userId) {
+        Doctor d = null;
+        String sql = "SELECT * FROM Doctor WHERE user_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    d = new Doctor();
+                    d.setDoctorId(rs.getInt("doctor_id"));
+                    d.setUserId(rs.getInt("user_id"));
+                    d.setUsername(rs.getString("name"));
+                    d.setSpecialty(rs.getString("specialty"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+
 }

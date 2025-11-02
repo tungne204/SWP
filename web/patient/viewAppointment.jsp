@@ -114,6 +114,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2><i class="bi bi-calendar-check"></i> My Appointments</h2>
+                    
                     <a href="Home.jsp" class="btn btn-primary">Go Home</a>
                 </div>
 
