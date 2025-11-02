@@ -3,6 +3,7 @@ package dao;
 import context.DBContext;
 import entity.Role;
 import entity.User;
+import util.PasswordUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,26 +15,30 @@ import java.util.logging.Logger;
 
 public class UserDAO extends DBContext {
 
-    // ✅ Login
+    // ✅ Login - Verify password hash
     public User login(String email, String password) {
-        String sql = "SELECT * FROM [User] WHERE email = ? AND password = ? AND status = 1";
+        String sql = "SELECT * FROM [User] WHERE email = ? AND status = 1";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, email);
-            ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("avatar"),
-                        rs.getInt("role_id"),
-                        rs.getBoolean("status")
-                );
+                String storedHash = rs.getString("password");
+                
+                // Verify password hash
+                if (PasswordUtil.verifyPassword(password, storedHash)) {
+                    return new User(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("avatar"),
+                            rs.getInt("role_id"),
+                            rs.getBoolean("status")
+                    );
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,12 +59,13 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    // ✅ Thêm user mới (mặc định role_id = 3 (Patient), status = 1)
+    // ✅ Thêm user mới (mặc định role_id = 3 (Patient), status = 1) - Hash password
     public void register(String username, String password, String email, String phone) {
         String sql = "INSERT INTO [User](username, password, email, phone, role_id, status) VALUES (?, ?, ?, ?, 3, 1)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password);
+            // Hash password before storing
+            ps.setString(2, PasswordUtil.hashPassword(password));
             ps.setString(3, email);
             ps.setString(4, phone);
             ps.executeUpdate();
@@ -101,12 +107,13 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    // Dang ky user moi tu Google (mac dinh role_id = 3 (Patient), status = 1)
+    // Dang ky user moi tu Google (mac dinh role_id = 3 (Patient), status = 1) - Hash password
     public void registerGoogleUser(String username, String password, String email, String phone, String avatar) {
         String sql = "INSERT INTO [User](username, password, email, phone, avatar, role_id, status) VALUES (?, ?, ?, ?, ?, 3, 1)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password);
+            // Hash password before storing (even for Google users)
+            ps.setString(2, PasswordUtil.hashPassword(password));
             ps.setString(3, email);
             ps.setString(4, phone);
             ps.setString(5, avatar);
@@ -143,25 +150,29 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-// ✅ Kiểm tra mật khẩu cũ có đúng không
+// ✅ Kiểm tra mật khẩu cũ có đúng không - Verify password hash
     public boolean checkPassword(String email, String oldPassword) {
-        String sql = "SELECT 1 FROM [User] WHERE email = ? AND password = ?";
+        String sql = "SELECT password FROM [User] WHERE email = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
-            ps.setString(2, oldPassword);
             ResultSet rs = ps.executeQuery();
-            return rs.next();
+            if (rs.next()) {
+                String storedHash = rs.getString("password");
+                // Verify password hash
+                return PasswordUtil.verifyPassword(oldPassword, storedHash);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
-// ✅ Cập nhật mật khẩu
+// ✅ Cập nhật mật khẩu - Hash password
 
     public void updatePassword(String email, String newPassword) {
         String sql = "UPDATE [User] SET password = ? WHERE email = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, newPassword);
+            // Hash password before storing
+            ps.setString(1, PasswordUtil.hashPassword(newPassword));
             ps.setString(2, email);
             ps.executeUpdate();
         } catch (Exception e) {
@@ -406,12 +417,13 @@ public class UserDAO extends DBContext {
         return false;
     }
     
-    // ✅ Register user with email verification (unverified status)
+    // ✅ Register user with email verification (unverified status) - Hash password
     public void registerWithEmailVerification(String username, String password, String email, String phone) {
         String sql = "INSERT INTO [User](username, password, email, phone, role_id, status, email_verified) VALUES (?, ?, ?, ?, 3, 0, 0)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password);
+            // Hash password before storing
+            ps.setString(2, PasswordUtil.hashPassword(password));
             ps.setString(3, email);
             ps.setString(4, phone);
             ps.executeUpdate();

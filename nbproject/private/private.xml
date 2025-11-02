@@ -3,12 +3,26 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391-2/SWP/web/admin/userDetail.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/filter/AuthFilter.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/includes/sidebar-admin.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/UserServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/Home.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/filter/ServletAuthFilter.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/includes/sidebar-receptionist.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/RegisterControl.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/UserDAO.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/LoginControl.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/context/DBContext.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/patient/viewAppointment_new.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/manager/permission-management.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Register.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/entity/Discount.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/receptionist/appointmentList.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/UploadAvatarServlet.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Home.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/entity/Doctor.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/testimonials/testimonials-1.jpg</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/includes/header.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/includes/sidebar-doctor.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/manager/audit-logs.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Forgot_password.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/ProfileServlet.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/assets/img/hero-bg.jpg</file>
         </group>
     </open-files>
 </project-private>

@@ -121,7 +121,7 @@ public class DoctorDashboardServlet extends HttpServlet {
             request.setAttribute("pendingPatients", 0);
             request.setAttribute("weeklyReports", 0);
             request.setAttribute("pendingTests", 0);
-            request.getRequestDispatcher("doctorDashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("doctor/doctorDashboard.jsp").forward(request, response);
         }
     }
 
