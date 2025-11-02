@@ -16,7 +16,7 @@ import context.DBContext;
 public class PatientDAO extends DBContext {
 
     /**
-     * Lấy danh sách toàn bộ bệnh nhân (không phân trang)
+     * Lấy danh sách toàn bộ bệnh nhân (không phâns trang)
      */
     public List<Patient> getAllPatients() {
         List<Patient> list = new ArrayList<>();

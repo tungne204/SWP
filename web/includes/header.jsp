@@ -109,7 +109,7 @@
           <!-- Hiển thị menu "Cuộc hẹn của tôi" cho Patient (roleId = 3) -->
           <% if (acc != null && acc.getRoleId() == 3) { %>
           <li>
-            <a href="${pageContext.request.contextPath}/Appointment-List">Cuộc hẹn của tôi</a>
+            <a href="${pageContext.request.contextPath}/patient-appointment">Cuộc hẹn của tôi</a>
           </li>
           <% } %>
         </ul>

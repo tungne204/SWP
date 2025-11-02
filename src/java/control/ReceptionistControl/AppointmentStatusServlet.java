@@ -31,7 +31,7 @@ public class AppointmentStatusServlet extends HttpServlet {
             throws ServletException, IOException {
 
         int appointmentId = Integer.parseInt(req.getParameter("id"));
-        String newStatus = req.getParameter("status");  // lấy thẳng từ dropdown
+        String newStatus = req.getParameter("status");  
 
         AppointmentDAO dao = new AppointmentDAO();
         dao.updateStatus(appointmentId, newStatus);
@@ -40,10 +40,4 @@ public class AppointmentStatusServlet extends HttpServlet {
     }
 }
 
-/**
- * Tạm thời để kiểu boolean ở class AppointmentDAO.java trong package dao true:
- * Confirmed (hoặc Completed) false: Pending (hoặc Canceled) sau này sửa thành
- * string vì còn nhiều trạng thái ví dụ:(Pending, Confirmed, Canceled,
- * Completed).
- *
- */
+

@@ -26,7 +26,7 @@ public class AppointmentListServlet extends HttpServlet {
             return;
         }
 
-        // Lấy thông tin user & role từ session
+        // ✅ 1. Lấy thông tin user & role
         User acc = (User) session.getAttribute("acc");
         String role = "";
         if (acc != null && acc.getRoleId() != 0) {
@@ -41,58 +41,93 @@ public class AppointmentListServlet extends HttpServlet {
                     role = "Other";
             }
         }
-
-        // Lưu role vào session (phục vụ JSP)
         session.setAttribute("role", role);
 
+        // ✅ 2. Lấy tham số từ request + gán giá trị mặc định để tránh null
         String keyword = req.getParameter("keyword");
         String status = req.getParameter("status");
         String sort = req.getParameter("sort");
-        int page = req.getParameter("page") != null ? Integer.parseInt(req.getParameter("page")) : 1;
-        int pageSize = 10;
 
+        if (keyword == null) {
+            keyword = "";
+        }
+        if (status == null || status.isEmpty()) {
+            status = "all";
+        }
+        if (sort == null || sort.isEmpty()) {
+            sort = "date_desc";
+        }
+
+        int page = 1;
+        int pageSize = 10;
         if (req.getParameter("page") != null) {
-            page = Integer.parseInt(req.getParameter("page"));
+            try {
+                page = Integer.parseInt(req.getParameter("page"));
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
         }
 
         List<Appointment> list;
+        int totalAppointments = 0;
 
-        //Nếu là Doctor → lấy doctorId từ bảng Doctor (dựa theo user_id)
-        if ("Doctor".equalsIgnoreCase(role)) {
-            DoctorDAO doctorDAO = new DoctorDAO();
-            Doctor doctor = doctorDAO.getDoctorByUserId(acc.getUserId()); // ← phải có hàm này trong DoctorDAO
+        //3. Xử lý theo từng role
+        switch (role) {
+            case "Doctor" -> {
+                DoctorDAO doctorDAO = new DoctorDAO();
+                Doctor doctor = doctorDAO.getDoctorByUserId(acc.getUserId());
+                if (doctor != null) {
+                    session.setAttribute("doctorId", doctor.getDoctorId());
+                    list = dao.getAppointmentsByDoctorId(
+                            doctor.getDoctorId(), keyword, status, sort, page, pageSize);
+                    totalAppointments = dao.countAppointments(keyword, status, "Doctor", acc.getUserId());
+                } else {
+                    list = List.of();
+                }
+            }
 
-            if (doctor != null) {
-                session.setAttribute("doctorId", doctor.getDoctorId()); // lưu doctorId vào session
-                list = dao.getAppointmentsByDoctorId(
-                        doctor.getDoctorId(), keyword, status, sort, page, pageSize);
-            } else {
-                // Nếu không tìm thấy doctor → hiển thị trống
+            case "Receptionist" -> {
+                list = dao.getAppointments(keyword, status, sort, page, pageSize);
+                totalAppointments = dao.countAppointments(keyword, status, "Receptionist", acc.getUserId());
+            }
+
+            case "Patient" -> {
+                // ✅ 1. Lấy patientId tương ứng với user đang đăng nhập
+                int patientId = dao.getPatientIdByUserId(acc.getUserId());
+
+                // Nếu có patientId trong bảng Patient
+                if (patientId > 0) {
+                    list = dao.getAppointmentsByPatientId(patientId, keyword, status, sort, page, pageSize);
+                    totalAppointments = dao.countAppointments(keyword, status, "Patient", acc.getUserId());
+                } // ✅ 2. Nếu chưa có patientId → fallback lấy qua user_id (vì có thể Patient chưa có record)
+                else {
+                    list = dao.getAppointmentsByUserId(acc.getUserId(), keyword, status, sort, page, pageSize);
+                    totalAppointments = dao.countAppointments(keyword, status, "Patient", acc.getUserId());
+                }
+
+                // ✅ 3. Gắn thông tin để JSP biết đây là bệnh nhân đang xem
+                session.setAttribute("patientId", patientId);
+            }
+
+            default ->
                 list = List.of();
-            }
-        } //Nếu là Receptionist → xem toàn bộ
-        else if ("Receptionist".equalsIgnoreCase(role)) {
-            list = dao.getAppointments(keyword, status, sort, page, pageSize);
-        } // Nếu là Patient → chỉ xem appointment của chính mình
-        else if ("Patient".equalsIgnoreCase(role)) {
-            int patientId = dao.getPatientIdByUserId(acc.getUserId());
-            if (patientId > 0) {
-                list = dao.getAppointmentsByPatientId(patientId, keyword, status, sort, page, pageSize);
-            } else {
-                list = List.of(); // nếu không có patientId
-            }
-        } //Các role khác → không có quyền xem
-        else {
-            list = List.of();
         }
 
+        //4. Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalAppointments / pageSize);
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+
+        //5. Gửi dữ liệu sang JSP
         req.setAttribute("list", list);
         req.setAttribute("keyword", keyword);
         req.setAttribute("status", status);
         req.setAttribute("sort", sort);
         req.setAttribute("page", page);
+        req.setAttribute("totalPages", totalPages);
 
-        // Dùng chung JSP
+        // 6. Forward sang giao diện JSP
         req.getRequestDispatcher("/receptionist/AppointmentList.jsp").forward(req, resp);
     }
 }

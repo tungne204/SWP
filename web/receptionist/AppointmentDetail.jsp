@@ -159,7 +159,7 @@
                                     </p>
                                     <p><span class="label">👨‍⚕️ Bác sĩ: </span>
                                         <span class="value">${appointment.doctorName} - 
-                                            <strong>Số năm kinh nghiệm:</strong> ${appointment.doctorExperienceYears}
+                                            <strong>Số năm kinh nghiệm:</strong> ${appointment.doctorExperienceYears} năm
                                         </span>
                                     </p>
                                 </div>

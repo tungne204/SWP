@@ -29,7 +29,7 @@ public class Appointment {
     private String doctorName;
     //private String doctorSpecialty;
 //    private String doctorCertificate;
-    private String doctorExperienceYears;
+    private int doctorExperienceYears;
 
     public Appointment() {
     }
@@ -45,7 +45,7 @@ public class Appointment {
     public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, String status,
             String patientName, String patientDob, String patientAddress, String patientInsurance,
             String parentName, String patientEmail, String parentPhone,
-            String doctorName, String doctorExperienceYears
+            String doctorName, int doctorExperienceYears
     ) {
 
         this.appointmentId = appointmentId;
@@ -179,13 +179,6 @@ public class Appointment {
 //        this.doctorCertificate = doctorCertificate;
 //    }
 //
-    public String getDoctorExperienceYears() {
-        return doctorExperienceYears;
-    }
-
-    public void setDoctorExperienceYears(String doctorExperienceYears) {
-        this.doctorExperienceYears = doctorExperienceYears;
-    }
 //    public String getDoctorSpecialty() {
 //        return doctorSpecialty;
 //    }
@@ -193,5 +186,12 @@ public class Appointment {
 //    public void setDoctorSpecialty(String doctorSpecialty) {
 //        this.doctorSpecialty = doctorSpecialty;
 //    }
+    public int getDoctorExperienceYears() {
+        return doctorExperienceYears;
+    }
+
+    public void setDoctorExperienceYears(int doctorExperienceYears) {
+        this.doctorExperienceYears = doctorExperienceYears;
+    }
 
 }

@@ -14,23 +14,32 @@
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Doctor.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/ViewProfileServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Patient.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/ParentDAO.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientSearch.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/sidebar-doctor.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/header.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentDetail.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Appointment.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/PatientDeleteAppointmentServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/head-includes.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/patient/viewAppointment_new.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/PatientDAO.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/sidebar-receptionist.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/PatientSearchServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/AppointmentDAO.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentStatusServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/doctor/PatientSearch.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentCreateServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/PatientControl/PatientAppointmentServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/Home.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/util/ValidationUtils.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/ReceptionistDashboard.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/PatientProfileServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentCreate.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/LoginControl.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/UpdatePatientServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentDetailsServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentListServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/doctor/PatientProfile.jsp</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentUpdateServlet.java</file>

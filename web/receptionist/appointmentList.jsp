@@ -184,7 +184,7 @@
                                         <c:if test="${sessionScope.role eq 'Receptionist'}">
                                             <a href="Appointment-Detail?id=${a.appointmentId}"
                                                class="text-blue-600 hover:underline mr-2">👁 Xem</a>
-                                           
+
                                             <form method="post" action="Appointment-Status" class="inline">
                                                 <input type="hidden" name="id" value="${a.appointmentId}">
                                                 <select name="status" class="border rounded-md p-1 text-sm">
@@ -239,36 +239,41 @@
                 </div>
                 <!-- Paging -->
                 <div class="flex justify-center mt-4 gap-2">
-                    <c:forEach var="i" begin="1" end="5">
-                        <a href="Appointment-List?page=${i}"
-                           class="px-3 py-1 border rounded ${i==page ? 'bg-teal-600 text-white' : 'bg-white'}">${i}</a>
+                    <c:forEach var="i" begin="1" end="${totalPages}">
+                        <a href="Appointment-List?page=${i}&keyword=${keyword}&status=${status}&sort=${sort}"
+                           class="px-3 py-1 border rounded
+                           ${i == page ? 'bg-teal-600 text-white' : 'bg-white hover:bg-gray-100'}">
+                            ${i}
+                        </a>
                     </c:forEach>
                 </div>
-            </div>
-            <!-- Footer -->
-            <%@ include file="../includes/footer.jsp" %>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    document.querySelectorAll('.table-cell-truncate').forEach(cell => {
-                        const fullText = cell.textContent.trim();
-                        const limit = 30; // giới hạn số ký tự hiển thị ban đầu
-                        if (fullText.length > limit) {
-                            const shortText = fullText.substring(0, limit) + '...';
-                            cell.textContent = shortText;
-                            cell.dataset.full = fullText;
-                            cell.dataset.short = shortText;
-                            cell.dataset.expanded = "false";
-                        }
 
-                        cell.addEventListener('click', () => {
-                            const expanded = cell.dataset.expanded === "true";
-                            cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
-                            cell.dataset.expanded = expanded ? "false" : "true";
-                            cell.classList.toggle('table-cell-expanded', !expanded);
-                        });
+            </div>
+        </div>
+        <!-- Footer -->
+        <%@ include file="../includes/footer.jsp" %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.table-cell-truncate').forEach(cell => {
+                    const fullText = cell.textContent.trim();
+                    const limit = 30; // giới hạn số ký tự hiển thị ban đầu
+                    if (fullText.length > limit) {
+                        const shortText = fullText.substring(0, limit) + '...';
+                        cell.textContent = shortText;
+                        cell.dataset.full = fullText;
+                        cell.dataset.short = shortText;
+                        cell.dataset.expanded = "false";
+                    }
+
+                    cell.addEventListener('click', () => {
+                        const expanded = cell.dataset.expanded === "true";
+                        cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
+                        cell.dataset.expanded = expanded ? "false" : "true";
+                        cell.classList.toggle('table-cell-expanded', !expanded);
                     });
                 });
-            </script>
+            });
+        </script>
 
-        </body>
-    </html>
+    </body>
+</html>

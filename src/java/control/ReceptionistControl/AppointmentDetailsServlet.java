@@ -1,4 +1,4 @@
-package control.PatientControl;
+package control.ReceptionistControl;
 
 import dao.Receptionist.AppointmentDAO;
 import entity.Receptionist.Appointment;
