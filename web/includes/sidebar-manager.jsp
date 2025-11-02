@@ -144,6 +144,12 @@
                 </a>
             </div>
             <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/statistics" class="nav-link">
+                    <i class="bi bi-bar-chart"></i>
+                    <span class="nav-link-text">Statistics</span>
+                </a>
+            </div>
+            <div class="nav-item">
                 <a href="${pageContext.request.contextPath}/manager-dashboard?action=reports" class="nav-link">
                     <i class="bi bi-graph-up"></i>
                     <span class="nav-link-text">Reports</span>
