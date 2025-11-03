@@ -611,7 +611,21 @@ public class DoctorDAO extends DBContext {
     }
     
     // Update doctor introduce only
-   
+    public boolean updateDoctorIntroduce(int userId, String introduce) {
+        String sql = "UPDATE Doctor SET introduce = ? WHERE user_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, introduce);
+            ps.setInt(2, userId);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     
     // Update doctor experience years and certificate
     public boolean updateDoctorInfo(int userId, int experienceYears, String certificate) {
