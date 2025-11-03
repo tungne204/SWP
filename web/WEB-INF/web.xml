@@ -4,6 +4,24 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+    <!-- VNPay config (fallback khi không set biến môi trường) -->
+    <context-param>
+        <param-name>VNP_TMN_CODE</param-name>
+        <param-value>YOUR_TMN_CODE</param-value>
+    </context-param>
+    <context-param>
+        <param-name>VNP_HASH_SECRET</param-name>
+        <param-value>YOUR_HASH_SECRET</param-value>
+    </context-param>
+    <context-param>
+        <param-name>VNP_RETURN_URL</param-name>
+        <param-value>https://your-domain/reception/payment/return</param-value>
+    </context-param>
+    <context-param>
+        <param-name>VNP_IPN_URL</param-name>
+        <param-value>https://your-domain/reception/payment/ipn</param-value>
+    </context-param>
+
 
     <!-- Servlets -->
     <servlet>
