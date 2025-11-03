@@ -33,6 +33,29 @@ public class RoleDAO extends DBContext{
         }
         return roles;
     }
+    // NEW: lấy danh sách role theo tên (IN ...)
+    public List<Role> getRolesByNames(List<String> names) {
+        List<Role> list = new ArrayList<>();
+        if (names == null || names.isEmpty()) return list;
+
+        String placeholders = String.join(",", java.util.Collections.nCopies(names.size(), "?"));
+        String sql = "SELECT role_id, role_name FROM Role WHERE role_name IN (" + placeholders + ") ORDER BY role_name";
+
+        try (Connection c = getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            int i = 1;
+            for (String n : names) ps.setString(i++, n);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Role r = new Role();
+                    r.setRoleId(rs.getInt(1));
+                    r.setRoleName(rs.getString(2));
+                    list.add(r);
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
 
     // Lấy role theo ID
     public Role getRoleById(int roleId) {
