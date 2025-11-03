@@ -1,4 +1,4 @@
-package control.ReceptionistControl;
+package control.DoctorSideBar;
 
 import dao.Receptionist.PatientDAO;
 import entity.Receptionist.Patient;
@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * PatientSearchServlet: Tìm kiếm & hiển thị danh sách bệnh nhân (có phân trang)
+ * PatientSearchDServlet: Tìm kiếm & hiển thị danh sách bệnh nhân (có phân trang)
  * URL: /Patient-Search
  *
  * @author Kiên
  */
-@WebServlet("/Patient-Search")
-public class PatientSearchServlet extends HttpServlet {
+@WebServlet("/Patient-SearchD")
+public class PatientSearchDServlet extends HttpServlet {
 
     private static final int RECORDS_PER_PAGE = 8;
 
@@ -66,7 +66,7 @@ public class PatientSearchServlet extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
 
-            request.getRequestDispatcher("/receptionist/PatientSearch.jsp").forward(request, response);
+            request.getRequestDispatcher("/receptionist/doctor/PatientSearch.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

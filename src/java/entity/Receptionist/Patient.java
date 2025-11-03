@@ -3,6 +3,7 @@ package entity.Receptionist;
 import java.sql.Date;
 
 public class Patient {
+
     private int patientId;
     private int userId;
     private String fullName;
@@ -18,59 +19,158 @@ public class Patient {
     private String phone;             // Số điện thoại của cha/mẹ
 
     private String doctorName;        // Bác sĩ phụ trách
-    private String doctorSpecialty;   // Chuyên khoa
+//    private String doctorSpecialty;
+    private String doctorExperienceYears;
+    private String doctorCertificate;
     private String appointmentDate;   // Ngày khám
     private String appointmentTime;   // Giờ khám
     private String status;            // Trạng thái lịch hẹn
 
     // === Getters & Setters ===
-    public int getPatientId() { return patientId; }
-    public void setPatientId(int patientId) { this.patientId = patientId; }
+    public int getPatientId() {
+        return patientId;
+    }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
 
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public int getUserId() {
+        return userId;
+    }
 
-    public Date getDob() { return dob; }
-    public void setDob(Date dob) { this.dob = dob; }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public String getFullName() {
+        return fullName;
+    }
 
-    public String getInsuranceInfo() { return insuranceInfo; }
-    public void setInsuranceInfo(String insuranceInfo) { this.insuranceInfo = insuranceInfo; }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-    public int getParentId() { return parentId; }
-    public void setParentId(int parentId) { this.parentId = parentId; }
+    public Date getDob() {
+        return dob;
+    }
 
-    public String getParentName() { return parentName; }
-    public void setParentName(String parentName) { this.parentName = parentName; }
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
 
-    public String getParentIdNumber() { return parentIdNumber; }
-    public void setParentIdNumber(String parentIdNumber) { this.parentIdNumber = parentIdNumber; }
+    public String getAddress() {
+        return address;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getInsuranceInfo() {
+        return insuranceInfo;
+    }
 
-    public String getDoctorName() { return doctorName; }
-    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public void setInsuranceInfo(String insuranceInfo) {
+        this.insuranceInfo = insuranceInfo;
+    }
 
-    public String getAppointmentDate() { return appointmentDate; }
-    public void setAppointmentDate(String appointmentDate) { this.appointmentDate = appointmentDate; }
+    public int getParentId() {
+        return parentId;
+    }
 
-    public String getAppointmentTime() { return appointmentTime; }
-    public void setAppointmentTime(String appointmentTime) { this.appointmentTime = appointmentTime; }
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getParentName() {
+        return parentName;
+    }
 
-    public String getDoctorSpecialty() {return doctorSpecialty;}
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
 
-    public void setDoctorSpecialty(String doctorSpecialty) {this.doctorSpecialty = doctorSpecialty;}
+    public String getParentIdNumber() {
+        return parentIdNumber;
+    }
+
+    public void setParentIdNumber(String parentIdNumber) {
+        this.parentIdNumber = parentIdNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(String appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+//    public String getDoctorSpecialty() {
+//        return doctorSpecialty;
+//    }
+//
+//    public void setDoctorSpecialty(String doctorSpecialty) {
+//        this.doctorSpecialty = doctorSpecialty;
+//    }
+
+    public String getDoctorExperienceYears() {
+        return doctorExperienceYears;
+    }
+
+    public void setDoctorExperienceYears(String doctorExperienceYears) {
+        this.doctorExperienceYears = doctorExperienceYears;
+    }
+
+    public String getDoctorCertificate() {
+        return doctorCertificate;
+    }
+
+    public void setDoctorCertificate(String doctorCertificate) {
+        this.doctorCertificate = doctorCertificate;
+    }
     
+    
+
 }

@@ -513,7 +513,7 @@ public class DoctorDAO extends DBContext {
     public List<Doctor> getFeaturedDoctors(int limit) {
         List<Doctor> doctors = new ArrayList<>();
         String sql = """
-            SELECT TOP (?) d.doctor_id, d.user_id, d.experienceYears, d.certificate, d.introduce,
+            SELECT TOP (?) d.doctor_id, d.user_id, d.experienceYears, d.certificate,
                    u.username, u.avatar
             FROM Doctor d
             JOIN [User] u ON d.user_id = u.user_id
@@ -539,8 +539,7 @@ public class DoctorDAO extends DBContext {
                     String cert = rs.getString("certificate");
                     doctor.setCertificate(cert != null ? cert : "");
                     
-                    String intro = rs.getString("introduce");
-                    doctor.setIntroduce(intro != null ? intro : "");
+                    
                     
                     String avatar = rs.getString("avatar");
                     if (avatar != null && !avatar.isEmpty()) {
@@ -575,20 +574,7 @@ public class DoctorDAO extends DBContext {
     }
 
     // Update doctor specialty
-    public void updateDoctorSpecialty(int doctorId, String specialty) {
-        String sql = "UPDATE Doctor SET specialty = ? WHERE doctor_id = ?";
-        
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, specialty);
-            ps.setInt(2, doctorId);
-            
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    
     
     // Update doctor certificate
     public boolean updateDoctorCertificate(int userId, String certificatePath) {
@@ -630,7 +616,7 @@ public class DoctorDAO extends DBContext {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, introduce != null ? introduce : "");
+            ps.setString(1, introduce);
             ps.setInt(2, userId);
             
             int rowsAffected = ps.executeUpdate();

@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<style>
+﻿<style>
     .sidebar-nav {
         padding: 20px 0;
     }
@@ -88,9 +87,37 @@
            
         </div>
         
-        
-        
-       
+        <!-- Quản lý khuyến mãi -->
+        <div class="nav-section">
+            <div class="nav-section-title">Quản lý khuyến mãi</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/discount?action=list" class="nav-link">
+                    <i class="bi bi-percent"></i>
+                    <span class="nav-link-text">Danh sách khuyến mãi</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/discount?action=add" class="nav-link">
+                    <i class="bi bi-plus-circle"></i>
+                    <span class="nav-link-text">Thêm khuyến mãi</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/discount?action=expiring" class="nav-link">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span class="nav-link-text">Khuyến mãi sắp hết hạn</span>
+                </a>
+            </div>
+        </div>
+         <div class="nav-section">
+            <div class="nav-section-title">Báo cáo thống kê</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/statistics" class="nav-link">
+                    <i class="bi bi-bar-chart"></i>
+                    <span class="nav-link-text">Báo cáo thống kê</span>
+                </a>
+            </div>
+        </div>
         
     </nav>
 </div>

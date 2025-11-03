@@ -136,7 +136,7 @@
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <%@ include file="../includes/sidebar-doctor.jsp" %>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -147,7 +147,7 @@
                     </h1>
 
                     <!-- Update Form -->
-                    <form action="Update-Patient" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
+                    <form action="Update-PatientD" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
 
                         <!-- PATIENT INFO -->
                         <h4 class="text-blue-700 fw-bold mb-4">
@@ -204,7 +204,7 @@
                                 <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
                             </button>
                             <!-- Cancel -->
-                            <a href="Patient-Profile?pid=${patient.patientId}" class="btn btn-secondary d-flex align-items-center gap-2 px-4">
+                            <a href="Patient-ProfileD?pid=${patient.patientId}" class="btn btn-secondary d-flex align-items-center gap-2 px-4">
                                 <i class="fa-solid fa-xmark"></i> Huỷ
                             </a>
                         </div>
@@ -213,7 +213,7 @@
                     </body>
                     <c:if test="${param.success == 'true'}">
                         <div class="alert alert-success text-center fw-semibold my-3" role="alert">
-                            ✅ Cập nhật Thành Công!
+                            ✅ Cập Nhật Thành Công!
                         </div>
                     </c:if>
 
@@ -225,7 +225,7 @@
 
                     <c:if test="${param.error == 'notfound'}">
                         <div class="alert alert-warning text-center fw-semibold my-3" role="alert">
-                            ⚠️ Không tìm thấy bệnh nhân!
+                            ⚠️ Không tìm thấy Bệnh Nhân!
                         </div>
                     </c:if>
 
