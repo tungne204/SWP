@@ -109,6 +109,15 @@
                 </a>
             </div>
         </div>
+         <div class="nav-section">
+            <div class="nav-section-title">Báo cáo thống kê</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manager/statistics" class="nav-link">
+                    <i class="bi bi-bar-chart"></i>
+                    <span class="nav-link-text">Báo cáo thống kê</span>
+                </a>
+            </div>
+        </div>
         
     </nav>
 </div>

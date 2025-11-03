@@ -1,4 +1,4 @@
-<%@ page import="entity.User" %>
+﻿<%@ page import="entity.User" %>
 <%
     User acc = (User) session.getAttribute("acc");
 %>
