@@ -97,7 +97,7 @@
                 <div class="nav-item">
                     <a href="${pageContext.request.contextPath}/Patient-Search" class="nav-link">
                         <i class="bi bi-search"></i>
-                        <span class="nav-link-text">Patients List</span>
+                        <span class="nav-link-text">Danh sách bệnh nhân</span>
                     </a>
                 </div>
                 <div class="nav-item">

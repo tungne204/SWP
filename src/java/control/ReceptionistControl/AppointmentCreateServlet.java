@@ -2,6 +2,7 @@ package control.ReceptionistControl;
 
 import dao.Receptionist.AppointmentDAO;
 import entity.Receptionist.Doctor;
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -20,6 +21,17 @@ public class AppointmentCreateServlet extends HttpServlet {
         // Lấy danh sách bác sĩ
         List<Doctor> doctors = dao.getAllDoctors();
         req.setAttribute("doctors", doctors);
+        
+        // Lấy email của user đang đăng nhập
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            User loggedInUser = (User) session.getAttribute("acc");
+            if (loggedInUser != null) {
+                req.setAttribute("userEmail", loggedInUser.getEmail());
+                req.setAttribute("userPhone", loggedInUser.getPhone());
+            }
+        }
+        
         req.getRequestDispatcher("/receptionist/AppointmentCreate.jsp").forward(req, resp);
     }
 
@@ -28,10 +40,21 @@ public class AppointmentCreateServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String patientName = req.getParameter("patientName");
+        String patientDob = req.getParameter("patientDob");
         String parentName = req.getParameter("parentName");
         String patientAddress = req.getParameter("patientAddress");
-        String patientEmail = req.getParameter("patientEmail");
+        String insuranceInfo = req.getParameter("insuranceInfo");
         String parentPhone = req.getParameter("parentPhone");
+        
+        // Lấy email từ session
+        String patientEmail = null;
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            User loggedInUser = (User) session.getAttribute("acc");
+            if (loggedInUser != null) {
+                patientEmail = loggedInUser.getEmail();
+            }
+        }
         String appointmentDate = req.getParameter("appointmentDate");
         String appointmentTime = req.getParameter("appointmentTime");
         String status = req.getParameter("status");
@@ -42,10 +65,11 @@ public class AppointmentCreateServlet extends HttpServlet {
         // --- VALIDATE ---
         ValidationUtils validator = new ValidationUtils();
         validator.validateNotEmpty(patientName, "Tên bệnh nhân");
+        validator.validateNotEmpty(patientDob, "Ngày sinh");
         validator.validateNotEmpty(parentName, "Phụ huynh");
         validator.validateNotEmpty(patientAddress, "Địa chỉ");
-        validator.validateNotEmpty(patientEmail, "Email");
-        validator.validateNotEmpty(parentPhone, "Số điện thoại");
+        validator.validateNotEmpty(insuranceInfo, "Thông tin bảo hiểm");
+        validator.validatePhone(parentPhone, "Số điện thoại");
         validator.validateNotEmpty(appointmentDate, "Ngày khám");
         validator.validateNotEmpty(appointmentTime, "Giờ khám");
         validator.validatePositiveId(doctorId, "Bác sĩ");
@@ -59,13 +83,21 @@ public class AppointmentCreateServlet extends HttpServlet {
             List<Doctor> doctors = dao.getAllDoctors();
             req.setAttribute("doctors", doctors);
             req.setAttribute("errors", validator.getErrors());
+            // Set lại email và phone cho form
+            if (session != null) {
+                User loggedInUser = (User) session.getAttribute("acc");
+                if (loggedInUser != null) {
+                    req.setAttribute("userEmail", loggedInUser.getEmail());
+                    req.setAttribute("userPhone", loggedInUser.getPhone());
+                }
+            }
             req.getRequestDispatcher("/receptionist/AppointmentCreate.jsp").forward(req, resp);
             return;
         }
 
         // --- INSERT ---
         boolean success = dao.createAppointment(
-                patientName, parentName, patientAddress,
+                patientName, patientDob, parentName, patientAddress, insuranceInfo,
                 patientEmail, parentPhone, dateTimeStr,
                 doctorId, status
         );
@@ -76,6 +108,14 @@ public class AppointmentCreateServlet extends HttpServlet {
             List<Doctor> doctors = dao.getAllDoctors();
             req.setAttribute("errorMsg", "❌ Không thể tạo lịch hẹn. Vui lòng thử lại!");
             req.setAttribute("doctors", doctors);
+            // Set lại email và phone cho form
+            if (session != null) {
+                User loggedInUser = (User) session.getAttribute("acc");
+                if (loggedInUser != null) {
+                    req.setAttribute("userEmail", loggedInUser.getEmail());
+                    req.setAttribute("userPhone", loggedInUser.getPhone());
+                }
+            }
             req.getRequestDispatcher("/receptionist/AppointmentCreate.jsp").forward(req, resp);
         }
     }

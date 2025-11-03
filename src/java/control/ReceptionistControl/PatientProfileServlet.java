@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package control.ReceptionistControl;
 
 import dao.Receptionist.PatientDAO;
@@ -11,12 +7,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-/**
- * Hiển thị thông tin chi tiết bệnh nhân
- * URL: /Patient-Profile
- *
- * @author Kiên
- */
 @WebServlet("/Patient-Profile")
 public class PatientProfileServlet extends HttpServlet {
 
@@ -27,30 +17,42 @@ public class PatientProfileServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         String id = request.getParameter("id");
+
+        // Không có id → quay lại màn search
         if (id == null || id.isEmpty()) {
             response.sendRedirect("Patient-Search");
             return;
         }
 
         try {
+            int patientId = Integer.parseInt(id);
             PatientDAO dao = new PatientDAO();
-            Patient patient = dao.getPatientById(Integer.parseInt(id));
+            Patient patient = dao.getPatientById(patientId);
 
             if (patient == null) {
-                request.setAttribute("error", "Không tìm thấy bệnh nhân ID: " + id);
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                // KHÔNG forward sang /error.jsp nữa
+                request.setAttribute("error", "Không tìm thấy bệnh nhân với ID: " + id);
+                request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
                 return;
             }
 
+            // Có dữ liệu → show lên JSP
             request.setAttribute("patient", patient);
+            request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            // id không phải số
+            request.setAttribute("error", "ID bệnh nhân không hợp lệ!");
             request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi khi tải thông tin bệnh nhân!");
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            // Lỗi DB, lỗi SQL, lỗi DAO → vẫn đẩy về profile.jsp
+            request.setAttribute("error", "Lỗi khi tải thông tin bệnh nhân: " + e.getMessage());
+            request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
         }
     }
-    
 }

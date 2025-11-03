@@ -107,10 +107,10 @@ PM Author : KienPC
                                 </c:choose>
                             </p>
                             <p class="mb-1"><strong>Ngày & giờ:</strong>
-                                ${patient.appointmentDate} at ${patient.appointmentTime}
+                                ${patient.appointmentDate} ${patient.appointmentTime}
                             </p>
                             <p class="mb-4"><strong>Bác Sĩ:</strong>
-                                ${patient.doctorName} - <strong>
+                                ${patient.doctorName} - <strong>Số năm kinh nghiệm: 
                                 </strong>${patient.doctorExperienceYears} năm
                             </p>
 

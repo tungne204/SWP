@@ -36,17 +36,20 @@
                     <label class="block text-gray-700 font-medium">Tên bệnh nhân</label>
                     <input type="text" name="patientName" class="w-full border rounded-lg p-2" required>
 
-                    <label class="block text-gray-700 font-medium">Phụ huynh</label>
-                    <input type="text" name="parentName" class="w-full border rounded-lg p-2" required>
+                    <label class="block text-gray-700 font-medium">Ngày sinh</label>
+                    <input type="date" name="patientDob" class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Địa chỉ</label>
                     <input type="text" name="patientAddress" class="w-full border rounded-lg p-2" required>
 
-                    <label class="block text-gray-700 font-medium">Email</label>
-                    <input type="email" name="patientEmail" class="w-full border rounded-lg p-2" required>
+                    <label class="block text-gray-700 font-medium">Thông tin bảo hiểm</label>
+                    <input type="text" name="insuranceInfo" class="w-full border rounded-lg p-2" required>
+
+                    <label class="block text-gray-700 font-medium">Phụ huynh</label>
+                    <input type="text" name="parentName" value="${param.parentName}" class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Số điện thoại</label>
-                    <input type="text" name="parentPhone" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="parentPhone" value="${param.parentPhone}" class="w-full border rounded-lg p-2" required>
                 </div>
 
                 <!-- RIGHT -->
@@ -62,7 +65,7 @@
                     <select name="doctorId" class="w-full border rounded-lg p-2" required>
                         <option value="">-- Chọn bác sĩ --</option>
                         <c:forEach var="d" items="${doctors}">
-                            <option value="${d.doctorId}">${d.username} - ${d.specialty}</option>
+                            <option value="${d.doctorId}">${d.username} - ${d.introduce}</option>
                         </c:forEach>
                     </select>
 
