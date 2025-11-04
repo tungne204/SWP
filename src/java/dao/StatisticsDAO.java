@@ -50,8 +50,9 @@ public class StatisticsDAO extends DBContext {
     }
     
     // Get total number of active appointments
+    // Note: status is nvarchar(20), not bit. Common values: 'Pending', 'Active', 'Completed', 'Cancelled'
     public int getActiveAppointments() {
-        String sql = "SELECT COUNT(*) FROM Appointment WHERE status = 1";
+        String sql = "SELECT COUNT(*) FROM Appointment WHERE status = 'Active' OR status = '1' OR status = 'active'";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
@@ -61,6 +62,7 @@ public class StatisticsDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error in getActiveAppointments: " + e.getMessage());
         }
         return 0;
     }
@@ -127,33 +129,37 @@ public class StatisticsDAO extends DBContext {
     }
     
     // Get appointments by status
+    // Note: status is nvarchar(20), contains values like 'Pending', 'Active', 'Completed', 'Cancelled'
     public List<Map<String, Object>> getAppointmentsByStatus() {
         List<Map<String, Object>> result = new ArrayList<>();
-        String sql = "SELECT status, COUNT(*) as count FROM Appointment GROUP BY status";
+        String sql = "SELECT status, COUNT(*) as count FROM Appointment WHERE status IS NOT NULL GROUP BY status";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
-                row.put("status", rs.getString("status"));
+                String statusValue = rs.getString("status");
+                row.put("status", statusValue);
                 row.put("count", rs.getInt("count"));
                 result.add(row);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error in getAppointmentsByStatus: " + e.getMessage());
         }
         return result;
     }
     
     // Get top doctors by appointment count
+    // Note: status is nvarchar(20), use 'Active' instead of 1
     public List<Map<String, Object>> getTopDoctorsByAppointments() {
         List<Map<String, Object>> result = new ArrayList<>();
         String sql = "SELECT TOP 5 d.doctor_id, u.username as doctor_name, COUNT(*) as appointment_count " +
                      "FROM Appointment a " +
                      "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
                      "JOIN [User] u ON d.user_id = u.user_id " +
-                     "WHERE a.status = 1 " +
+                     "WHERE a.status = 'Active' OR a.status = 'active' OR a.status = '1' " +
                      "GROUP BY d.doctor_id, u.username " +
                      "ORDER BY appointment_count DESC";
         
@@ -170,6 +176,7 @@ public class StatisticsDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error in getTopDoctorsByAppointments: " + e.getMessage());
         }
         return result;
     }

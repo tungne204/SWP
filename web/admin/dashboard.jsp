@@ -351,7 +351,7 @@
                         <div class="stat-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="stat-number">${totalPatients}</div>
+                        <div class="stat-number">${totalPatients != null ? totalPatients : 0}</div>
                         <div class="stat-label">Bệnh Nhân</div>
                     </div>
 
@@ -359,7 +359,7 @@
                         <div class="stat-icon">
                             <i class="fas fa-user-md"></i>
                         </div>
-                        <div class="stat-number">${totalDoctors}</div>
+                        <div class="stat-number">${totalDoctors != null ? totalDoctors : 0}</div>
                         <div class="stat-label">Bác Sĩ</div>
                     </div>
 
@@ -367,7 +367,7 @@
                         <div class="stat-icon">
                             <i class="fas fa-user-tie"></i>
                         </div>
-                        <div class="stat-number">${totalReceptionists}</div>
+                        <div class="stat-number">${totalReceptionists != null ? totalReceptionists : 0}</div>
                         <div class="stat-label">Lễ Tân</div>
                     </div>
 
@@ -375,7 +375,7 @@
                         <div class="stat-icon">
                             <i class="fas fa-user-nurse"></i>
                         </div>
-                        <div class="stat-number">${totalMedicalAssistants}</div>
+                        <div class="stat-number">${totalMedicalAssistants != null ? totalMedicalAssistants : 0}</div>
                         <div class="stat-label">Trợ Lý Y Tế</div>
                     </div>
 
@@ -383,7 +383,7 @@
                         <div class="stat-icon">
                             <i class="fas fa-blog"></i>
                         </div>
-                        <div class="stat-number">${totalBlogs}</div>
+                        <div class="stat-number">${totalBlogs != null ? totalBlogs : 0}</div>
                         <div class="stat-label">Bài Viết Blog</div>
                     </div>
                 </div>
@@ -420,15 +420,15 @@
                     <!-- Summary Cards -->
                     <div class="stats-summary">
                         <div class="summary-card info">
-                            <div class="summary-number">${totalAppointments}</div>
+                            <div class="summary-number">${totalAppointments != null ? totalAppointments : 0}</div>
                             <div class="summary-label">Tổng Số Lịch Hẹn</div>
                         </div>
                         <div class="summary-card success">
-                            <div class="summary-number">${activeAppointments}</div>
+                            <div class="summary-number">${activeAppointments != null ? activeAppointments : 0}</div>
                             <div class="summary-label">Lịch Hẹn Đang Hoạt Động</div>
                         </div>
                         <div class="summary-card warning">
-                            <div class="summary-number">${recentAppointments}</div>
+                            <div class="summary-number">${recentAppointments != null ? recentAppointments : 0}</div>
                             <div class="summary-label">Lịch Hẹn 30 Ngày Gần Đây</div>
                         </div>
                     </div>
@@ -454,23 +454,24 @@
                                                     <c:set var="statusText" value="Chờ Xử Lý" />
                                                     
                                                     <c:choose>
-                                                        <c:when test="${statusValue == '0' || statusValue == 0}">
+                                                        <c:when test="${statusValue == 'Pending' || statusValue == 'pending' || statusValue == '0'}">
                                                             <c:set var="statusClass" value="pending" />
                                                             <c:set var="statusText" value="Chờ Xử Lý" />
                                                         </c:when>
-                                                        <c:when test="${statusValue == '1' || statusValue == 1}">
+                                                        <c:when test="${statusValue == 'Active' || statusValue == 'active' || statusValue == '1'}">
                                                             <c:set var="statusClass" value="active" />
                                                             <c:set var="statusText" value="Đang Hoạt Động" />
                                                         </c:when>
-                                                        <c:when test="${statusValue == '2' || statusValue == 2}">
+                                                        <c:when test="${statusValue == 'Completed' || statusValue == 'completed' || statusValue == '2'}">
                                                             <c:set var="statusClass" value="completed" />
                                                             <c:set var="statusText" value="Hoàn Thành" />
                                                         </c:when>
-                                                        <c:when test="${statusValue == '3' || statusValue == 3}">
+                                                        <c:when test="${statusValue == 'Cancelled' || statusValue == 'cancelled' || statusValue == '3'}">
                                                             <c:set var="statusClass" value="cancelled" />
                                                             <c:set var="statusText" value="Đã Hủy" />
                                                         </c:when>
                                                         <c:otherwise>
+                                                            <c:set var="statusClass" value="pending" />
                                                             <c:set var="statusText" value="${statusValue}" />
                                                         </c:otherwise>
                                                     </c:choose>
@@ -481,10 +482,11 @@
                                                 </td>
                                                 <td><strong>${statusItem.count}</strong></td>
                                                 <td>
-                                                    <c:if test="${totalAppointments > 0}">
-                                                        <fmt:formatNumber value="${(statusItem.count / totalAppointments) * 100}" maxFractionDigits="1" />%
+                                                    <c:set var="totalApps" value="${totalAppointments != null ? totalAppointments : 0}" />
+                                                    <c:if test="${totalApps > 0}">
+                                                        <fmt:formatNumber value="${(statusItem.count / totalApps) * 100}" maxFractionDigits="1" />%
                                                     </c:if>
-                                                    <c:if test="${totalAppointments == 0}">
+                                                    <c:if test="${totalApps == 0}">
                                                         0%
                                                     </c:if>
                                                 </td>
@@ -511,12 +513,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <script>
-        // Prepare data from JSP variables
-        const totalPatients = ${totalPatients != null ? totalPatients : 0};
-        const totalDoctors = ${totalDoctors != null ? totalDoctors : 0};
-        const totalReceptionists = ${totalReceptionists != null ? totalReceptionists : 0};
-        const totalMedicalAssistants = ${totalMedicalAssistants != null ? totalMedicalAssistants : 0};
-        const totalBlogs = ${totalBlogs != null ? totalBlogs : 0};
+        // Prepare data from JSP variables with null checks
+        const totalPatients = ${totalPatients != null ? totalPatients : 0} || 0;
+        const totalDoctors = ${totalDoctors != null ? totalDoctors : 0} || 0;
+        const totalReceptionists = ${totalReceptionists != null ? totalReceptionists : 0} || 0;
+        const totalMedicalAssistants = ${totalMedicalAssistants != null ? totalMedicalAssistants : 0} || 0;
+        const totalBlogs = ${totalBlogs != null ? totalBlogs : 0} || 0;
 
         // Pie Chart - Phân bổ nhân sự
         const pieCtx = document.getElementById('staffPieChart').getContext('2d');
