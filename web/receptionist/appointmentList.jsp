@@ -153,9 +153,7 @@
                             <th class="p-3 text-left">ID</th>
                             <th class="p-3 text-left">Bệnh nhân</th>
                             <th class="p-3 text-left">Địa chỉ</th>
-                            <th class="p-3 text-left">Bệnh nền</th>
                             <th class="p-3 text-left">Bác sĩ</th>
-                            <th class="p-3 text-left">Năm kinh nghiệm</th>
                             <th class="p-3 text-left">Ngày khám</th>
                             <th class="p-3 text-left">Trạng thái</th>
                             <th class="p-3 text-center">Thao tác</th>
@@ -168,9 +166,7 @@
                                 <td class="p-3">${a.appointmentId}</td>
                                 <td class="p-3">${a.patientName}</td>
                                 <td class="p-3 table-cell-truncate" title="${a.patientAddress}">${a.patientAddress}</td>
-                                <td class="p-3 table-cell-truncate" title="${a.patientInsurance}">${a.patientInsurance}</td>
                                 <td class="p-3">${a.doctorName}</td>
-                                <td class="p-3">${a.doctorExperienceYears}</td>
                                 <td class="p-3">
                                     <fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm"/>
                                 </td>

@@ -136,10 +136,7 @@
                                placeholder="Lọc theo bệnh nền"
                                value="${filterInsurance}"
                                class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                        <input type="text" id="filterPhone" name="filterPhone" form="searchForm"
-                               placeholder="Lọc theo SĐT"
-                               value="${filterPhone}"
-                               class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
                     </div>
 
 
@@ -150,12 +147,10 @@
                                 <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
                                     <tr>
                                         <th class="px-4 py-4 w-[6%]">Mã</th>
-                                        <th class="px-4 py-4 w-[14%] sortable" onclick="sortTable(1)">Họ Tên</th>
+                                        <th class="px-4 py-4 w-[14%] sortable" onclick="sortTable(1)">Tên</th>
                                         <th class="px-4 py-4 w-[12%]">Ngày sinh</th>
                                         <th class="px-4 py-4 w-[18%] sortable" onclick="sortTable(3)">Địa chỉ</th>
                                         <th class="px-4 py-4 w-[10%] sortable" onclick="sortTable(4)">Bệnh nền</th>
-                                        <th class="px-4 py-4 w-[20%]">Email</th>
-                                        <th class="px-4 py-4 w-[10%] sortable" onclick="sortTable(6)">SĐT</th>
                                         <th class="px-4 py-4 w-[10%] text-center">Chi tiết</th>
                                     </tr>
                                     <!-- Filter Row -->
@@ -169,8 +164,6 @@
                                             <td class="px-4 py-3">${p.dob}</td>
                                             <td class="px-4 py-3">${p.address}</td>
                                             <td class="px-4 py-3">${p.insuranceInfo}</td>
-                                            <td class="px-4 py-3 truncate">${p.email}</td>
-                                            <td class="px-4 py-3">${p.phone}</td>
                                             <td class="px-4 py-3 text-center">
                                                 <a href="Patient-Profile?id=${p.patientId}"
                                                    class="bg-blue-500 text-white px-4 py-1.5 rounded-md hover:bg-blue-600 transition inline-flex items-center gap-1">
@@ -241,58 +234,58 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
         <script>
-                                                    // Ẩn/hiện cột "Chi tiết" (cột cuối)
-                                                    function toggleDetailColumn(hide) {
-                                                        const table = document.getElementById('patientTable');
-                                                        if (!table)
-                                                            return;
+                                            // Ẩn/hiện cột "Chi tiết" (cột cuối)
+                                            function toggleDetailColumn(hide) {
+                                                const table = document.getElementById('patientTable');
+                                                if (!table)
+                                                    return;
 
-                                                        Array.from(table.rows).forEach(row => {
-                                                            const lastIndex = row.cells.length - 1;
-                                                            if (lastIndex >= 0) {
-                                                                row.cells[lastIndex].style.display = hide ? 'none' : '';
-                                                            }
-                                                        });
+                                                Array.from(table.rows).forEach(row => {
+                                                    const lastIndex = row.cells.length - 1;
+                                                    if (lastIndex >= 0) {
+                                                        row.cells[lastIndex].style.display = hide ? 'none' : '';
                                                     }
+                                                });
+                                            }
 
-                                                    // Export Excel: ẩn cột "Chi tiết" -> export -> hiện lại
-                                                    function exportTableToExcel(tableId, fileName) {
-                                                        const table = document.getElementById(tableId);
-                                                        if (!table) {
-                                                            alert('Không tìm thấy bảng để export.');
-                                                            return;
-                                                        }
+                                            // Export Excel: ẩn cột "Chi tiết" -> export -> hiện lại
+                                            function exportTableToExcel(tableId, fileName) {
+                                                const table = document.getElementById(tableId);
+                                                if (!table) {
+                                                    alert('Không tìm thấy bảng để export.');
+                                                    return;
+                                                }
 
-                                                        toggleDetailColumn(true); // ẩn cột chi tiết
+                                                toggleDetailColumn(true); // ẩn cột chi tiết
 
-                                                        const wb = XLSX.utils.table_to_book(table, {sheet: "BenhNhan"});
-                                                        XLSX.writeFile(wb, fileName + ".xlsx");
+                                                const wb = XLSX.utils.table_to_book(table, {sheet: "BenhNhan"});
+                                                XLSX.writeFile(wb, fileName + ".xlsx");
 
-                                                        toggleDetailColumn(false); // hiện lại
-                                                    }
+                                                toggleDetailColumn(false); // hiện lại
+                                            }
 
-                                                    // Export PDF: ẩn cột "Chi tiết" -> export -> hiện lại
-                                                    function exportTableToPDF() {
-                                                        const table = document.getElementById('patientTable');
-                                                        if (!table) {
-                                                            alert('Không tìm thấy bảng để export.');
-                                                            return;
-                                                        }
+                                            // Export PDF: ẩn cột "Chi tiết" -> export -> hiện lại
+                                            function exportTableToPDF() {
+                                                const table = document.getElementById('patientTable');
+                                                if (!table) {
+                                                    alert('Không tìm thấy bảng để export.');
+                                                    return;
+                                                }
 
-                                                        toggleDetailColumn(true); // ẩn cột chi tiết
+                                                toggleDetailColumn(true); // ẩn cột chi tiết
 
-                                                        const opt = {
-                                                            margin: 10,
-                                                            filename: 'DanhSachBenhNhan.pdf',
-                                                            image: {type: 'jpeg', quality: 0.98},
-                                                            html2canvas: {scale: 2, useCORS: true},
-                                                            jsPDF: {unit: 'mm', format: 'a4', orientation: 'landscape'}
-                                                        };
+                                                const opt = {
+                                                    margin: 10,
+                                                    filename: 'DanhSachBenhNhan.pdf',
+                                                    image: {type: 'jpeg', quality: 0.98},
+                                                    html2canvas: {scale: 2, useCORS: true},
+                                                    jsPDF: {unit: 'mm', format: 'a4', orientation: 'landscape'}
+                                                };
 
-                                                        html2pdf().set(opt).from(table).save().then(() => {
-                                                            toggleDetailColumn(false); // hiện lại sau khi export xong
-                                                        });
-                                                    }
+                                                html2pdf().set(opt).from(table).save().then(() => {
+                                                    toggleDetailColumn(false); // hiện lại sau khi export xong
+                                                });
+                                            }
         </script>
 
 
