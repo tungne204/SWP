@@ -97,7 +97,7 @@ public class VNPayReturnServlet extends HttpServlet {
             } else {
                 req.setAttribute("message", "Thanh toán thất bại hoặc sai chữ ký (code=" + vnp_ResponseCode + ")");
             }
-            req.getRequestDispatcher("/WEB-INF/views/payment/return.jsp").forward(req, resp);
+            req.getRequestDispatcher("/views/payment/return.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
         }

@@ -3,18 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/payment/CreateVNPayServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/vnpay/VNPayConfig.java</file>
             <file>file:/D:/SWP391-2/SWP/src/java/dao/payment/MedicalReportViewDAO.java</file>
             <file>file:/D:/SWP391-2/SWP/src/java/dao/payment/PaymentDAO.java</file>
             <file>file:/D:/SWP391-2/SWP/src/java/control/payment/VNPayIPNServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/payment/list-medical-report.jsp</file>
             <file>file:/D:/SWP391-2/SWP/src/java/entity/payment/Payment.java</file>
             <file>file:/D:/SWP391-2/SWP/src/java/vnpay/VNPayUtil.java</file>
             <file>file:/D:/SWP391-2/SWP/src/java/context/DBContext.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/payment/return.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/vnpay/VNPayConfig.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/payment/list-medical-report.jsp</file>
             <file>file:/D:/SWP391-2/SWP/src/java/control/payment/VNPayReturnServlet.java</file>
             <file>file:/D:/SWP391-2/SWP/web/WEB-INF/web.xml</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/payment/return.jsp</file>
             <file>file:/D:/SWP391-2/SWP/src/java/control/payment/ListMedicalReportsServlet.java</file>
         </group>
     </open-files>

@@ -7,19 +7,19 @@
     <!-- VNPay config (fallback khi không set biến môi trường) -->
     <context-param>
         <param-name>VNP_TMN_CODE</param-name>
-        <param-value>YOUR_TMN_CODE</param-value>
+        <param-value>4YUP19I4</param-value>
     </context-param>
     <context-param>
         <param-name>VNP_HASH_SECRET</param-name>
-        <param-value>YOUR_HASH_SECRET</param-value>
+        <param-value>MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX</param-value>
     </context-param>
     <context-param>
         <param-name>VNP_RETURN_URL</param-name>
-        <param-value>https://your-domain/reception/payment/return</param-value>
+        <param-value>http://localhost:9999/reception/payment/return</param-value>
     </context-param>
     <context-param>
         <param-name>VNP_IPN_URL</param-name>
-        <param-value>https://your-domain/reception/payment/ipn</param-value>
+        <param-value>http://localhost:9999/reception/payment/ipn</param-value>
     </context-param>
 
 
