@@ -1,3 +1,4 @@
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <style>
     .sidebar-nav {
         padding: 20px 0;
@@ -66,13 +67,13 @@
 
 <div class="sidebar-fixed">
     <nav class="sidebar-nav">
-        <!-- Bảng điều khiển -->
+        <!-- Báº£ng Äiá»u khiá»n -->
         <div class="nav-section">
-            <div class="nav-section-title">Bảng điều khiển</div>
+            
             <div class="nav-item">
                 <a href="${pageContext.request.contextPath}/" class="nav-link">
                     <i class="bi bi-speedometer2"></i>
-                    <span class="nav-link-text">Trang tổng quan</span>
+                    <span class="nav-link-text">Trang tổng quan</span>
                 </a>
             </div>
         </div>

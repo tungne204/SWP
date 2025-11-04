@@ -1,5 +1,11 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="entity.User" %>
+<%
+    User acc = (User) session.getAttribute("acc");
+    boolean showMA = (acc != null && acc.getRoleId() == 4); // Medical assistant
+    boolean hasSidebar = showMA; // Trang này chỉ hiển thị sidebar cho trợ lý xét nghiệm
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -8,68 +14,56 @@
         <title>Thêm kết quả xét nghiệm</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <jsp:include page="../includes/head-includes.jsp"/>
-        <style>
-            :root {
-                --sidebar-width: 250px;
-                --header-height: 60px;
-                --bg: #f5f6fa;
-            }
 
-            html, body {
-                height: 100%;
+        <style>
+            /* ===== Scope RIÊNG cho trang Create TestResult ===== */
+            .tr-create {
+                --sidebar-width: 280px;
+                --header-height: 80px;
+                --bg: #f5f6fa;
                 margin: 0;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background: var(--bg);
             }
 
-            /* ===== HEADER CỐ ĐỊNH ===== */
-            #header-fixed {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: var(--header-height);
-                z-index: 3000 !important;
-                background: #0d6efd;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            /* Đệm phía trên để tránh đè lên header fixed dùng chung */
+            .tr-create .tr-main {
+                padding-top: var(--header-height);
             }
 
-            /* ===== LAYOUT CHUNG ===== */
-            .layout {
+            /* Layout chính */
+            .tr-create .tr-layout {
                 display: flex;
-                min-height: 100vh;
-                margin-top: var(--header-height);
+                min-height: calc(100vh - var(--header-height));
             }
 
-            /* ===== SIDEBAR ===== */
-            .sidebar-wrap {
+            /* Sidebar cố định giống Home */
+            .tr-create .tr-sidebar {
                 width: var(--sidebar-width);
-                flex-shrink: 0;
+                background: #ffffff;
+                border-right: 1px solid #dee2e6;
                 position: fixed;
                 top: var(--header-height);
                 left: 0;
-                bottom: 0;
-                background: #f8f9fb;
-                border-right: 1px solid #e6e6e6;
+                height: calc(100vh - var(--header-height));
                 overflow-y: auto;
-                z-index: 500;
+                z-index: 1000;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.06);
             }
 
-            /* ===== NỘI DUNG CHÍNH ===== */
-            .main-content {
-                margin-left: var(--sidebar-width);
+            /* Nội dung chính */
+            .tr-create .tr-content {
                 flex: 1;
-                background: var(--bg);
+                padding: 24px;
                 min-height: calc(100vh - var(--header-height));
-                position: relative;
-                z-index: 1;
+            }
+            /* Chỉ đẩy nội dung khi có sidebar */
+            .tr-create.has-sidebar .tr-content {
+                margin-left: var(--sidebar-width);
             }
 
-            .content-wrapper {
-                padding: 40px;
-            }
-
-            .card {
+            /* Card bọc form */
+            .tr-create .card {
                 background: #fff;
                 border-radius: 10px;
                 padding: 30px 35px;
@@ -78,7 +72,7 @@
                 margin: 0 auto;
             }
 
-            h2 {
+            .tr-create h2 {
                 color: #2c3e50;
                 font-size: 22px;
                 font-weight: 700;
@@ -88,53 +82,50 @@
                 margin-bottom: 25px;
             }
 
-            .form-group {
-                margin-bottom: 20px;
-            }
+            .tr-create .form-group { margin-bottom: 20px; }
 
-            label {
+            .tr-create label {
                 display: block;
                 margin-bottom: 8px;
                 color: #34495e;
                 font-weight: 600;
             }
 
-            .required {
-                color: #e74c3c;
-            }
+            .tr-create .required { color: #e74c3c; }
 
-            input[type="text"],
-            input[type="number"],
-            input[type="date"],
-            select,
-            textarea {
+            .tr-create input[type="text"],
+            .tr-create input[type="number"],
+            .tr-create input[type="date"],
+            .tr-create select,
+            .tr-create textarea {
                 width: 100%;
                 padding: 12px;
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 font-size: 14px;
                 transition: border-color 0.3s;
+                background: #fff;
             }
 
-            input:focus,
-            select:focus,
-            textarea:focus {
+            .tr-create input:focus,
+            .tr-create select:focus,
+            .tr-create textarea:focus {
                 outline: none;
                 border-color: #3498db;
             }
 
-            textarea {
+            .tr-create textarea {
                 resize: vertical;
                 min-height: 100px;
             }
 
-            .help-text {
+            .tr-create .help-text {
                 font-size: 13px;
                 color: #7f8c8d;
                 margin-top: 5px;
             }
 
-            .form-actions {
+            .tr-create .form-actions {
                 display: flex;
                 gap: 10px;
                 margin-top: 30px;
@@ -142,7 +133,7 @@
                 border-top: 1px solid #ddd;
             }
 
-            .btn {
+            .tr-create .btn {
                 padding: 12px 24px;
                 border: none;
                 border-radius: 5px;
@@ -156,79 +147,37 @@
                 font-weight: 600;
             }
 
-            .btn-success {
-                background: #27ae60;
-                color: white;
+            .tr-create .btn-success { background: #27ae60; color: #fff; }
+            .tr-create .btn-success:hover { background: #229954; }
+            .tr-create .btn-secondary { background: #95a5a6; color: #fff; }
+            .tr-create .btn-secondary:hover { background: #7f8c8d; }
+
+            /* Responsive */
+            @media (max-width: 991px) {
+                .tr-create .tr-sidebar { display: none; }
+                .tr-create .tr-content { margin-left: 0 !important; }
+                .tr-create .form-actions { flex-direction: column; }
+                .tr-create .btn { width: 100%; justify-content: center; }
             }
 
-            .btn-success:hover {
-                background: #229954;
-            }
-
-            .btn-secondary {
-                background: #95a5a6;
-                color: white;
-            }
-
-            .btn-secondary:hover {
-                background: #7f8c8d;
-            }
-
-            /* ===== RESPONSIVE ===== */
-            @media (max-width: 900px) {
-                .sidebar-wrap {
-                    display: none;
-                }
-                .main-content {
-                    margin-left: 0;
-                }
-                .content-wrapper {
-                    padding: 20px;
-                }
-                .form-actions {
-                    flex-direction: column;
-                }
-                .btn {
-                    width: 100%;
-                    justify-content: center;
-                }
-            }
-
-            /* ===== FIX DROPDOWN AVATAR ===== */
-            #header {
-                position: relative !important;
-                z-index: 4000 !important;
-            }
-
-            .dropdown-menu {
-                z-index: 5000 !important;
-            }
-
-            .layout, .main-content {
-                overflow: visible !important;
-                position: relative !important;
-                z-index: 1 !important;
-            }
+            /* Bảo đảm dropdown avatar nổi trên form khi cần (không đụng #header chung) */
+            .tr-create .dropdown-menu { z-index: 1050; }
         </style>
     </head>
 
-    <body>
-        <!-- HEADER -->
-        <header id="header-fixed">
-            <%@ include file="../includes/header.jsp" %>
-        </header>
+    <body class="tr-create <%= hasSidebar ? "has-sidebar" : "" %>">
+        <!-- Header dùng chung (đã fixed trong header.jsp) -->
+        <jsp:include page="../includes/header.jsp" />
 
-        <!-- LAYOUT -->
-        <div class="layout">
-            <!-- SIDEBAR -->
-            <div class="sidebar-wrap">
-                <jsp:include page="../includes/sidebar-medicalassistant.jsp" />
+        <main class="tr-main">
+            <div class="tr-layout">
+                <% if (showMA) { %>
+                    <div class="tr-sidebar">
+                        <jsp:include page="../includes/sidebar-medicalassistant.jsp" />
+                    </div>
+                <% } %>
 
-            </div>
-
-            <!-- NỘI DUNG CHÍNH -->
-            <div class="main-content">
-                <main class="content-wrapper">
+                <div class="tr-content">
                     <div class="card">
                         <h2>
                             <i class="fas fa-plus-circle"></i>
@@ -241,7 +190,6 @@
                                 <input type="hidden" name="returnTo" value="viewReport"/>
                             </c:if>
 
-
                             <div class="form-group">
                                 <label for="recordId">
                                     Hồ sơ y tế <span class="required">*</span>
@@ -250,11 +198,10 @@
                                     <option value="">-- Chọn hồ sơ y tế --</option>
                                     <c:forEach var="report" items="${medicalReports}">
                                         <option value="${report.recordId}"
-                                                <c:if test="${preselectedRecordId != null && preselectedRecordId == report.recordId}">selected</c:if>>
+                                            <c:if test="${preselectedRecordId != null && preselectedRecordId == report.recordId}">selected</c:if>>
                                             Hồ sơ #${report.recordId} - ${report.patientName} (${report.diagnosis})
                                         </option>
                                     </c:forEach>
-
                                 </select>
                                 <div class="help-text">
                                     Chọn hồ sơ y tế có yêu cầu thực hiện xét nghiệm này
@@ -271,13 +218,8 @@
                                         <option value="${type}">${type}</option>
                                     </c:forEach>
                                 </select>
-                                <div class="help-text">
-                                    Danh sách loại xét nghiệm được lấy tự động từ cơ sở dữ liệu
-                                </div>
-
-                                <div class="help-text">
-                                    Chọn loại xét nghiệm đã được thực hiện
-                                </div>
+                                <div class="help-text">Danh sách loại xét nghiệm được lấy tự động từ cơ sở dữ liệu</div>
+                                <div class="help-text">Chọn loại xét nghiệm đã được thực hiện</div>
                             </div>
 
                             <div class="form-group">
@@ -286,9 +228,7 @@
                                 </label>
                                 <textarea id="result" name="result" maxlength="50" required
                                           placeholder="Nhập kết quả chi tiết của xét nghiệm..."></textarea>
-                                <div class="help-text">
-                                    Nhập toàn bộ kết quả và ghi chú chuyên môn liên quan
-                                </div>
+                                <div class="help-text">Nhập toàn bộ kết quả và ghi chú chuyên môn liên quan</div>
                             </div>
 
                             <div class="form-group">
@@ -297,15 +237,14 @@
                                 </label>
                                 <input type="date" id="date" name="date" required
                                        max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
-                                <div class="help-text">
-                                    Ngày tiến hành thực hiện xét nghiệm
-                                </div>
+                                <div class="help-text">Ngày tiến hành thực hiện xét nghiệm</div>
                             </div>
 
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Lưu kết quả
                                 </button>
+
                                 <c:if test="${preselectedRecordId != null}">
                                     <button type="submit" class="btn btn-secondary"
                                             onclick="document.querySelector('input[name=returnTo]')?.setAttribute('value', 'viewReport');">
@@ -319,17 +258,18 @@
                             </div>
                         </form>
                     </div>
-                </main>
+                </div>
             </div>
-        </div>
+        </main>
 
         <script>
             // Tự động đặt ngày hiện tại làm mặc định
             document.getElementById('date').valueAsDate = new Date();
         </script>
 
+        <!-- Bootstrap bundle -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+                crossorigin="anonymous"></script>
     </body>
 </html>
