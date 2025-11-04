@@ -115,6 +115,6 @@ public class AppointmentListServlet extends HttpServlet {
         req.setAttribute("totalPages", totalPages);
 
         // 6. Forward sang giao diện JSP
-        req.getRequestDispatcher("/receptionist/AppointmentList.jsp").forward(req, resp);
+        req.getRequestDispatcher("/receptionist/appointmentList.jsp").forward(req, resp);
     }
 }
