@@ -237,6 +237,10 @@
 
                         <form action="testresult" method="post">
                             <input type="hidden" name="action" value="insert">
+                            <c:if test="${preselectedRecordId != null}">
+                                <input type="hidden" name="returnTo" value="viewReport"/>
+                            </c:if>
+
 
                             <div class="form-group">
                                 <label for="recordId">
@@ -245,10 +249,12 @@
                                 <select id="recordId" name="recordId" required>
                                     <option value="">-- Chọn hồ sơ y tế --</option>
                                     <c:forEach var="report" items="${medicalReports}">
-                                        <option value="${report.recordId}">
+                                        <option value="${report.recordId}"
+                                                <c:if test="${preselectedRecordId != null && preselectedRecordId == report.recordId}">selected</c:if>>
                                             Hồ sơ #${report.recordId} - ${report.patientName} (${report.diagnosis})
                                         </option>
                                     </c:forEach>
+
                                 </select>
                                 <div class="help-text">
                                     Chọn hồ sơ y tế có yêu cầu thực hiện xét nghiệm này
@@ -300,6 +306,13 @@
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Lưu kết quả
                                 </button>
+                                <c:if test="${preselectedRecordId != null}">
+                                    <button type="submit" class="btn btn-secondary"
+                                            onclick="document.querySelector('input[name=returnTo]')?.setAttribute('value', 'viewReport');">
+                                        <i class="fas fa-arrow-left"></i> Lưu & quay lại hồ sơ
+                                    </button>
+                                </c:if>
+
                                 <a href="testresult?action=list" class="btn btn-secondary">
                                     <i class="fas fa-times"></i> Hủy bỏ
                                 </a>
