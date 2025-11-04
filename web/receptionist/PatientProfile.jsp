@@ -107,10 +107,10 @@ PM Author : KienPC
                                 </c:choose>
                             </p>
                             <p class="mb-1"><strong>Ngày & giờ:</strong>
-                                ${patient.appointmentDate} at ${patient.appointmentTime}
+                                ${patient.appointmentDate} ${patient.appointmentTime}
                             </p>
                             <p class="mb-4"><strong>Bác Sĩ:</strong>
-                                ${patient.doctorName} - <strong>
+                                ${patient.doctorName} - <strong>Số năm kinh nghiệm: 
                                 </strong>${patient.doctorExperienceYears} năm
                             </p>
 
@@ -133,7 +133,7 @@ PM Author : KienPC
 
                 <!-- ==================== BUTTONS (Không in vào PDF) ==================== -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <a href="Update-Patient?pid=${patient.patientId}"
+                    <a href="Patient-Update?pid=${patient.patientId}"
                        class="btn btn-primary d-flex align-items-center gap-2 px-4">
                         <i class="fa-regular fa-pen-to-square"></i> Cập Nhật
                     </a>

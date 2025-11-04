@@ -54,6 +54,19 @@ public class ValidationUtils {
         }
     }
 
+    public void validatePhone(String phone, String fieldName) {
+        if (phone == null || phone.trim().isEmpty()) {
+            errors.put(fieldName, "Bạn chưa có số điện thoại, vui lòng nhập số điện thoại.");
+            return;
+        }
+        
+        // Validate phone format: Vietnamese phone number ^0[3|5|7|8|9][0-9]{8}$
+        String phoneRegex = "^0[35789][0-9]{8}$";
+        if (!phone.trim().matches(phoneRegex)) {
+            errors.put(fieldName, fieldName + " không hợp lệ. Số điện thoại phải có định dạng: 0[3|5|7|8|9]xxxxxxxx.");
+        }
+    }
+
     public boolean hasErrors() {
         return !errors.isEmpty();
     }

@@ -335,14 +335,21 @@ public class MedicalReportServlet extends HttpServlet {
     }
 
     private void viewReport(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int recordId = Integer.parseInt(request.getParameter("id"));
-            MedicalReport report = dao.getById(recordId);
-            request.setAttribute("report", report);
-            request.getRequestDispatcher("doctor/medical-report-view.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        throws ServletException, IOException {
+    try {
+        int recordId = Integer.parseInt(request.getParameter("id"));
+        MedicalReport report = dao.getById(recordId);
+
+        dao.testResult.TestResultDAO trDAO = new dao.testResult.TestResultDAO();
+        java.util.List<entity.testResult.TestResult> testResults = trDAO.findByRecordId(recordId);
+
+        request.setAttribute("report", report);
+        request.setAttribute("testResults", testResults);
+
+        request.getRequestDispatcher("doctor/medical-report-view.jsp").forward(request, response);
+    } catch (Exception ex) {
+        Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
     }
+}
+
 }

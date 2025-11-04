@@ -88,12 +88,7 @@
                         <span class="nav-link-text">Danh sách lịch hẹn</span>
                     </a>
                 </div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/doctor/appointment-detail.jsp" class="nav-link">
-                        <i class="bi bi-calendar-event"></i>
-                        <span class="nav-link-text">Chi tiết lịch hẹn</span>
-                    </a>
-                </div>
+               
             </div>
 
             <!-- Medical Records -->

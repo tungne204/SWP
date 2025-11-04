@@ -92,6 +92,10 @@ public class UserServlet extends HttpServlet {
 
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String group = request.getParameter("group");
+        if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
+            group = "customers"; // mặc định vào trang sẽ là danh sách khách
+        }
 
         String search = request.getParameter("search");
         String roleFilterStr = request.getParameter("roleFilter");
@@ -119,12 +123,24 @@ public class UserServlet extends HttpServlet {
 
         int offset = (page - 1) * recordsPerPage;
 
-        List<User> users = userDAO.getAllUsers(search, roleFilter, statusFilter, offset, recordsPerPage);
-        int totalRecords = userDAO.getTotalUsers(search, roleFilter, statusFilter);
+        // Lấy danh sách role names theo group
+        List<String> roleNamesForGroup = "staff".equals(group)
+                ? java.util.Arrays.asList("Receptionist", "Doctor", "MedicalAssistant")
+                : java.util.Arrays.asList("Patient");
+
+        // Lấy users + tổng số cho phân trang, có filter theo group
+        List<User> users = userDAO.getAllUsers(
+                search, roleFilter, statusFilter,
+                offset, recordsPerPage, roleNamesForGroup
+        );
+        int totalRecords = userDAO.getTotalUsers(
+                search, roleFilter, statusFilter, roleNamesForGroup
+        );
         int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
-        List<Role> roles = roleDAO.getAllRoles();
+        List<Role> roles = roleDAO.getRolesByNames(roleNamesForGroup);
 
+        request.setAttribute("group", group);
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
         request.setAttribute("currentPage", page);
@@ -140,6 +156,13 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("id"));
         User user = userDAO.getUserById(userId);
+        // Giữ lại group để nút “Quay lại” trở về đúng tab
+        String group = request.getParameter("group");
+        if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
+            group = "customers";
+        }
+
+        request.setAttribute("group", group);
         request.setAttribute("user", user);
         request.getRequestDispatcher("/admin/userDetail.jsp").forward(request, response);
     }
@@ -156,6 +179,10 @@ public class UserServlet extends HttpServlet {
 
     private void toggleUserStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+         String group = request.getParameter("group"); // để redirect về đúng tab
+        if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
+            group = "customers";
+        }
         try {
             int userId = Integer.parseInt(request.getParameter("id"));
             boolean result = userDAO.toggleUserStatus(userId);
@@ -164,7 +191,7 @@ public class UserServlet extends HttpServlet {
             e.printStackTrace();
             setMessage(request, false, "", "Lỗi hệ thống khi thay đổi trạng thái!");
         }
-        response.sendRedirect(request.getContextPath() + "/admin/users?action=list");
+        response.sendRedirect(request.getContextPath() + "/admin/users?action=list&group=" + group);
     }
 
     /**

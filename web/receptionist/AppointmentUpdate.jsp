@@ -88,8 +88,9 @@
         <jsp:include page="../includes/header.jsp" />
 
         <div class="main-wrapper">
-            <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <!-- Sidebar --><c:if test="${sessionScope.role eq 'Receptionist'}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -102,16 +103,29 @@
                             Cập nhật cuộc hẹn
                         </h2>
 
-                        <!-- Hiển thị lỗi -->
+                        <!-- Lỗi chung (DB, cập nhật fail) -->
                         <c:if test="${not empty errorMsg}">
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                                 ${errorMsg}
+                            </div>
+                        </c:if>
+
+                        <!-- Lỗi validate từng field -->
+                        <c:if test="${not empty errors}">
+                            <div class="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-5">
+                                <ul class="list-disc list-inside">
+                                    <c:forEach var="e" items="${errors}">
+                                        <li>${e.value}</li>
+                                    </c:forEach>
+                                </ul>
                             </div>
                         </c:if>
 
                         <!-- Form -->
                         <form action="${pageContext.request.contextPath}/Appointment-Update" method="post">
                             <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
+                            <!-- GIỮ TRẠNG THÁI HIỆN TẠI (nếu chưa cho sửa trên form) -->
+                            <input type="hidden" name="status" value="${appointment.status}">
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                                 <!-- LEFT COLUMN -->
@@ -144,7 +158,7 @@
                                             <c:forEach var="d" items="${doctors}">
                                                 <option value="${d.doctorId}" 
                                                         <c:if test="${appointment.doctorId == d.doctorId}">selected</c:if>>
-                                                    ${d.username} - ${d.specialty}
+                                                    ${d.username} - ${d.experienceYears}
                                                 </option>
                                             </c:forEach>
                                         </select>
@@ -191,7 +205,7 @@
 
                             <!-- BUTTONS -->
                             <div class="flex justify-end gap-4 mt-10">
-                                <a href="${pageContext.request.contextPath}/Appointment-List"
+                                <a href="${pageContext.request.contextPath}/Appointment-Detail?id=${appointment.appointmentId}"
                                    class="px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                                     Hủy
                                 </a>

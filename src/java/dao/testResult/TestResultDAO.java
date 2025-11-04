@@ -29,6 +29,46 @@ public class TestResultDAO extends DBContext {
 
     return testTypes;
 }
+    public List<TestResult> findByRecordId(int recordId) {
+    List<TestResult> list = new ArrayList<>();
+    String sql =
+        "SELECT tr.test_id, tr.record_id, tr.test_type, tr.result, tr.date, tr.consultation_id, " +
+        "       p.full_name AS patient_name, u.username AS doctor_name, mr.diagnosis " +
+        "FROM TestResult tr " +
+        "JOIN MedicalReport mr ON tr.record_id = mr.record_id " +
+        "JOIN Appointment a   ON mr.appointment_id = a.appointment_id " +
+        "JOIN Patient p       ON a.patient_id = p.patient_id " +
+        "JOIN Doctor d        ON a.doctor_id = d.doctor_id " +
+        "JOIN [User] u        ON d.user_id = u.user_id " +
+        "WHERE tr.record_id = ? " +
+        "ORDER BY tr.date DESC, tr.test_id DESC";
+
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, recordId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                TestResult tr = new TestResult();
+                tr.setTestId(rs.getInt("test_id"));
+                tr.setRecordId(rs.getInt("record_id"));
+                tr.setTestType(rs.getString("test_type"));
+                tr.setResult(rs.getString("result"));
+                tr.setDate(rs.getDate("date"));
+                tr.setConsultationId(rs.getObject("consultation_id") != null ? rs.getInt("consultation_id") : null);
+                tr.setPatientName(rs.getString("patient_name"));
+                tr.setDoctorName(rs.getString("doctor_name"));
+                tr.setDiagnosis(rs.getString("diagnosis"));
+                list.add(tr);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } catch (Exception ex) {
+        Logger.getLogger(TestResultDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return list;
+}
+
 
 
     public List<TestResult> getTestResults(String searchQuery, String testTypeFilter, int page, int pageSize) {

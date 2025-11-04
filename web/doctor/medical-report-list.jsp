@@ -180,6 +180,14 @@
                                                         </a>
 
                                                         <% } %>
+                                                        <a href="testresult?action=list&recordId=${report.recordId}" class="btn btn-outline-secondary btn-action" title="Xem XN của hồ sơ này">
+                                                            <i class="fas fa-vial"></i>
+                                                        </a>
+
+<!--                                                        <a href="testresult?action=add&recordId=${report.recordId}" class="btn btn-outline-primary btn-action" title="Thêm kết quả xét nghiệm">
+                                                            <i class="fas fa-plus"></i>
+                                                        </a>-->
+
                                                         <% if (acc != null && acc.getRoleId() == 2) { %>
                                                         <button type="button" class="btn btn-danger btn-action"
                                                                 onclick="confirmDelete(${report.recordId})"

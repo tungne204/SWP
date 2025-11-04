@@ -24,21 +24,21 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header text-center">
-                    <h3>🔑 Change Password</h3>
+                    <h3>Đổi mật khẩu</h3>
                 </div>
                 <div class="card-body">
                     <form action="${pageContext.request.contextPath}/Change_password" method="post">
 
                         <div class="mb-3">
-                            <label for="oldPassword" class="form-label">Current Password</label>
+                            <label for="oldPassword" class="form-label">Mật khẩu hiện tại</label>
                             <input type="password" name="oldPassword" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
+                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
                             <input type="password" name="newPassword" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
                             <input type="password" name="confirmPassword" class="form-control" required>
                         </div>
                         <% if (request.getAttribute("error") != null) { %>
@@ -47,8 +47,8 @@
                         <% if (request.getAttribute("success") != null) { %>
                             <div class="alert alert-success"><%= request.getAttribute("success") %></div>
                         <% } %>
-                        <button type="submit" class="btn btn-primary w-100">Update Password</button>
-                        <a href="${pageContext.request.contextPath}/" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
+                        <button type="submit" class="btn btn-primary w-100">Cập nhật mật khẩu </button>
+                        <a href="${pageContext.request.contextPath}/" class="back-link"><i class="bi bi-arrow-left"></i> Trở về trang chủ </a>
                     </form>
                 </div>
             </div>

@@ -76,7 +76,7 @@
             <div class="nav-section">
                 <br>
                 <br>
-                <div class="nav-section-title">Dashboard</div>
+                <div class="nav-section-title">Bảng điều khiển</div>
                 <div class="nav-item">
                     <a href="${pageContext.request.contextPath}/Receptionist-Dashboard" class="nav-link">
                         <i class="bi bi-speedometer2"></i>
@@ -95,9 +95,9 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Patient-Search" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/Patient-List" class="nav-link">
                         <i class="bi bi-search"></i>
-                        <span class="nav-link-text">Patients List</span>
+                        <span class="nav-link-text">Danh sách bệnh nhân</span>
                     </a>
                 </div>
                 <div class="nav-item">

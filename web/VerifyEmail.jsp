@@ -80,8 +80,8 @@
 <div class="verify-container">
     <!-- Header -->
     <div class="verify-header">
-        <h3><i class="bi bi-envelope-check"></i> Verify Your Email</h3>
-        <p class="mb-0 mt-2">We've sent a verification code to your email</p>
+        <h3><i class="bi bi-envelope-check"></i> Xác nhận email của bạn</h3>
+        <p class="mb-0 mt-2">Chúng tôi đã gửi một mã xác nhận đến email của bạn</p>
     </div>
 
     <!-- Form -->
@@ -92,7 +92,7 @@
         </div>
 
         <p class="text-muted mb-4">
-            Please check your email and enter the 6-digit verification code
+            Hãy kiểm tra email và nhập mã số gồm 6 số
         </p>
 
         <!-- Error Message -->
@@ -110,7 +110,7 @@
             </div>
             <div class="d-grid mb-3">
                 <a href="Login" class="btn btn-success btn-lg">
-                    <i class="bi bi-arrow-right-circle"></i> Go to Login Page
+                    <i class="bi bi-arrow-right-circle"></i> Trở về trang đăng nhập
                 </a>
             </div>
         <% } else if (success != null) { %>
@@ -132,27 +132,23 @@
                        autocomplete="off"
                        required>
                 <small class="text-muted d-block mt-2">
-                    Enter the code sent to your email
+                    Nhập code được gủi về email của bạn
                 </small>
             </div>
 
             <!-- Submit Button -->
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-primary btn-lg">
-                    <i class="bi bi-check-circle"></i> Verify Email
+                    <i class="bi bi-check-circle"></i> Xác nhận email
                 </button>
             </div>
 
-            <!-- Resend Link -->
-            <p class="mb-2">
-                Didn't receive the code? 
-                <a href="#" class="resend-link" onclick="alert('Resend functionality coming soon!')">Resend Code</a>
-            </p>
+           
 
             <!-- Back to Register -->
             <p class="mb-0">
                 <a href="Register" class="text-decoration-none">
-                    <i class="bi bi-arrow-left"></i> Back to Register
+                    <i class="bi bi-arrow-left"></i> Trở về trang đăng ký
                 </a>
             </p>
         </form>
@@ -163,7 +159,7 @@
         <div class="alert alert-info mt-3 text-start">
             <small>
                 <i class="bi bi-info-circle"></i> 
-                <strong>Note:</strong> The verification code expires in 15 minutes.
+                <strong>Note:</strong> mã xác nhận sẽ hết hạn sau 15 phút
             </small>
         </div>
         <% } %>

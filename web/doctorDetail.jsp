@@ -16,8 +16,46 @@
     <jsp:include page="includes/head-includes.jsp"/>
     
     <style>
+        /* ===== LAYOUT ===== */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            position: sticky;
+            top: 70px;
+            min-height: calc(100vh - 70px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #2c3e50;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 3px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background-color: #aaa;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background-color: #2c3e50;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+
         #doctor-detail-page {
-            padding: 120px 0 80px;
+            padding: 20px 0 80px;
             background: #f8f9fa;
             min-height: calc(100vh - 200px);
         }
@@ -128,9 +166,35 @@
     <!-- Header -->
     <jsp:include page="includes/header.jsp"/>
 
-    <main id="main">
-        <section id="doctor-detail-page">
-            <div class="container">
+    <div class="main-layout">
+        <!-- SIDEBAR -->
+        <% 
+        if (acc != null) {
+            if (acc.getRoleId() == 1) { 
+            %>
+            <jsp:include page="includes/sidebar-admin.jsp" />
+            <% 
+                    } else if (acc.getRoleId() == 2) { 
+            %>
+            <jsp:include page="includes/sidebar-doctor.jsp" />
+            <% 
+                    } else if (acc.getRoleId() == 4) { 
+            %>
+            <jsp:include page="includes/sidebar-medicalassistant.jsp" />
+            <%
+                    } else if (acc.getRoleId() == 5) {
+            %>
+            <jsp:include page="includes/sidebar-receptionist.jsp" />
+            <%
+                    }
+                }
+            %>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <main id="main">
+                <section id="doctor-detail-page">
+                    <div class="container">
                 <div class="back-link">
                     <a href="${pageContext.request.contextPath}/doctorList" class="btn btn-outline-primary">
                         <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách bác sĩ
@@ -201,9 +265,11 @@
                     </a>
                 </div>
                 <% } %>
-            </div>
-        </section>
-    </main>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
 
     <!-- Footer -->
     <jsp:include page="includes/footer.jsp"/>

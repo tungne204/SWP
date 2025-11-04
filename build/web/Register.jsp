@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Medilab</title>
+    <title>Đăng ký - Medilab</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -47,8 +47,8 @@
 <div class="register-container">
     <!-- Header -->
     <div class="register-header">
-        <h3>Create Account</h3>
-        <p class="mb-0">Join our community today</p>
+        <h3>Tạo tài khoản</h3>
+        <p class="mb-0">Tham gia ngay hôm nay</p>
     </div>
 
     <!-- Form -->
@@ -67,10 +67,10 @@
         <form action="Register" method="post" id="registerForm">
             <!-- Full Name -->
             <div class="mb-3">
-                <label class="form-label">Full name</label>
+                <label class="form-label">Họ và tên</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <input type="text" name="fullname" class="form-control" placeholder="Enter your full name" required>
+                    <input type="text" name="fullname" class="form-control" placeholder="Nhập họ và tên" required>
                 </div>
             </div>
 
@@ -79,50 +79,50 @@
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    <input type="email" name="email" class="form-control" placeholder="Nhập email" required>
                 </div>
             </div>
 
             <!-- Phone -->
             <div class="mb-3">
-                <label class="form-label">Phone</label>
+                <label class="form-label">Số điện thoại</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-phone"></i></span>
                     <input type="tel" name="phone" class="form-control"
                            placeholder="Enter your phone (10 digits)"
-                           pattern="\d{10}" title="Phone number must be exactly 10 digits" required>
+                           pattern="\d{10}" title="Số điện thoại phải có 10 số" required>
                 </div>
             </div>
 
             <!-- Password -->
             <div class="mb-3">
-                <label class="form-label">Password</label>
+                <label class="form-label">Mât khẩu</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
                     <input type="password" 
                            name="password" 
                            class="form-control" 
                            id="password" 
-                           placeholder="Enter your password (min 6 characters)" 
+                           placeholder="Nhập mật khẩu của bạn (tối thiểu 6 ký tự)" 
                            minlength="6" 
                            required>
                     <span class="input-group-text toggle-password" onclick="togglePassword('password')">
                         <i class="bi bi-eye"></i>
                     </span>
                 </div>
-                <small class="text-muted">Password must be at least 6 characters</small>
+                <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự </small>
             </div>
 
             <!-- Confirm Password -->
             <div class="mb-3">
-                <label class="form-label">Confirm Password</label>
+                <label class="form-label">Xác nhận mật khẩu</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
                     <input type="password" 
                            name="confirmPassword" 
                            class="form-control" 
                            id="confirmPassword" 
-                           placeholder="Confirm your password" 
+                           placeholder="Xác nhận mật khẩu" 
                            minlength="6" 
                            required>
                     <span class="input-group-text toggle-password" onclick="togglePassword('confirmPassword')">
@@ -133,12 +133,12 @@
 
             <!-- Submit -->
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Đăng ký</button>
             </div>
 
             <!-- Login Link -->
-            <p class="text-center">Already have an account?
-                <a href="Login">Log in</a>
+            <p class="text-center">Đã có tài khoản?
+                <a href="Login">Đăng nhập</a>
             </p>
         </form>
     </div>

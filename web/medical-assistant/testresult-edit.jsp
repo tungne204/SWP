@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -282,7 +284,9 @@
                             <label for="date">
                                 Test Date <span class="required">*</span>
                             </label>
-                            <input type="date" id="date" name="date" value="${testResult.date}" required>
+                            <input type="date" id="date" name="date"
+                                   value="<fmt:formatDate value='${testResult.date}' pattern='yyyy-MM-dd'/>" required>
+
                             <div class="help-text">Date when the test was conducted</div>
                         </div>
 

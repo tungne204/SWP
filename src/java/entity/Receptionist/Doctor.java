@@ -12,7 +12,7 @@ public class Doctor {
 //    private String certificate;
     private String experienceYears;
     private String username;
-    //private String specialty;
+    private String introduce;
 
     public Doctor() {
     }
@@ -42,13 +42,13 @@ public class Doctor {
         this.userId = userId;
     }
 
-//    public String getSpecialty() {
-//        return specialty;
-//    }
-//
-//    public void setSpecialty(String specialty) {
-//        this.specialty = specialty;
-//    }
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
+    }
 
 //    public String getCertificate() {
 //        return certificate;

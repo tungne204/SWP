@@ -26,7 +26,7 @@ public class AppointmentListServlet extends HttpServlet {
             return;
         }
 
-        // ✅ 1. Lấy thông tin user & role
+        //1. Lấy thông tin user & role
         User acc = (User) session.getAttribute("acc");
         String role = "";
         if (acc != null && acc.getRoleId() != 0) {
@@ -43,7 +43,7 @@ public class AppointmentListServlet extends HttpServlet {
         }
         session.setAttribute("role", role);
 
-        // ✅ 2. Lấy tham số từ request + gán giá trị mặc định để tránh null
+        //2. Lấy tham số từ request + gán giá trị mặc định để tránh null
         String keyword = req.getParameter("keyword");
         String status = req.getParameter("status");
         String sort = req.getParameter("sort");
@@ -92,21 +92,8 @@ public class AppointmentListServlet extends HttpServlet {
             }
 
             case "Patient" -> {
-                // ✅ 1. Lấy patientId tương ứng với user đang đăng nhập
-                int patientId = dao.getPatientIdByUserId(acc.getUserId());
-
-                // Nếu có patientId trong bảng Patient
-                if (patientId > 0) {
-                    list = dao.getAppointmentsByPatientId(patientId, keyword, status, sort, page, pageSize);
-                    totalAppointments = dao.countAppointments(keyword, status, "Patient", acc.getUserId());
-                } // ✅ 2. Nếu chưa có patientId → fallback lấy qua user_id (vì có thể Patient chưa có record)
-                else {
-                    list = dao.getAppointmentsByUserId(acc.getUserId(), keyword, status, sort, page, pageSize);
-                    totalAppointments = dao.countAppointments(keyword, status, "Patient", acc.getUserId());
-                }
-
-                // ✅ 3. Gắn thông tin để JSP biết đây là bệnh nhân đang xem
-                session.setAttribute("patientId", patientId);
+                list = dao.getAppointmentsByPatientUserId(acc.getUserId(), keyword, status, sort, page, pageSize);
+                totalAppointments = dao.countAppointments(keyword, status, "Patient", acc.getUserId());
             }
 
             default ->

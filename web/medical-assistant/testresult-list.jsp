@@ -255,7 +255,7 @@
                             <a href="testresult?action=add" class="btn btn-success">
                                 <i class="fas fa-plus"></i> Thêm mới
                             </a>
-                            <
+
                             <% } %>
 
                         </form>
@@ -341,11 +341,11 @@
                                         </span>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="testresult?action=list&page=${i}&search=${searchQuery}&testType=${testTypeFilter}"
-                                           style="padding: 8px 14px; background: #ecf0f1; border-radius: 5px;
-                                           color: #2c3e50; text-decoration: none;">
+                                        <a href="testresult?action=list&page=${i}&search=${searchQuery}&testType=${testTypeFilter}<c:if test='${recordId != null}'>&recordId=${recordId}</c:if>"
+                                           style="padding: 8px 14px; background: #ecf0f1; border-radius: 5px; color: #2c3e50; text-decoration: none;">
                                             ${i}
                                         </a>
+
                                     </c:otherwise>
                                 </c:choose>
                             </c:forEach>
