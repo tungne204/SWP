@@ -21,6 +21,7 @@ public class Patient {
     private String doctorName;        // Bác sĩ phụ trách
 //    private String doctorSpecialty;
     private String doctorExperienceYears;
+    private String doctorIntroduce;
     private String doctorCertificate;
     private String appointmentDate;   // Ngày khám
     private String appointmentTime;   // Giờ khám
@@ -169,6 +170,14 @@ public class Patient {
 
     public void setDoctorCertificate(String doctorCertificate) {
         this.doctorCertificate = doctorCertificate;
+    }
+
+    public String getDoctorIntroduce() {
+        return doctorIntroduce;
+    }
+
+    public void setDoctorIntroduce(String doctorIntroduce) {
+        this.doctorIntroduce = doctorIntroduce;
     }
     
     

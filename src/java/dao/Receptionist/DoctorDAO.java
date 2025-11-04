@@ -47,7 +47,7 @@ public class DoctorDAO extends DBContext {
     public List<Doctor> getAllDoctors() {
         List<Doctor> list = new ArrayList<>();
         String sql = """
-        SELECT d.doctor_id, u.username, d.specialty
+        SELECT d.doctor_id, u.username, d.introduce, d.experienceYears
         FROM Doctor d
         JOIN [User] u ON d.user_id = u.user_id
         ORDER BY u.username
@@ -59,6 +59,7 @@ public class DoctorDAO extends DBContext {
                 Doctor d = new Doctor();
                 d.setDoctorId(rs.getInt("doctor_id"));
                 d.setUsername(rs.getString("username"));
+                d.setIntroduce(rs.getString("introduce"));
                 d.setExperienceYears(rs.getString("experienceYears"));
                 list.add(d);
             }

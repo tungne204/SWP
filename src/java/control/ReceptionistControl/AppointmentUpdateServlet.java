@@ -5,7 +5,9 @@ import entity.Receptionist.Appointment;
 import entity.Receptionist.Doctor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import util.ValidationUtils;
@@ -41,9 +43,9 @@ public class AppointmentUpdateServlet extends HttpServlet {
         int doctorId = Integer.parseInt(req.getParameter("doctorId"));
         String date = req.getParameter("appointmentDate");
         String time = req.getParameter("appointmentTime");
-        String status = req.getParameter("status");
+        String status = req.getParameter("status");   // lấy từ hidden/select trên form
 
-        // 🩺 Thông tin bệnh nhân và phụ huynh (mới thêm)
+        // 🩺 Thông tin bệnh nhân và phụ huynh
         String patientName = req.getParameter("patientName");
         String parentName = req.getParameter("parentName");
         String patientAddress = req.getParameter("patientAddress");
@@ -72,7 +74,11 @@ public class AppointmentUpdateServlet extends HttpServlet {
             validator.validateDateTime(dateTimeStr, "Ngày giờ khám");
         }
 
-        validator.validateInList(status, List.of("Pending", "Confirmed", "Cancelled", "Completed"), "Trạng thái");
+        validator.validateInList(
+                status,
+                List.of("Pending", "Confirmed", "Cancelled", "Completed"),
+                "Trạng thái"
+        );
 
         if (validator.hasErrors()) {
             Appointment appointment = dao.getAppointmentById(appointmentId);
@@ -100,7 +106,8 @@ public class AppointmentUpdateServlet extends HttpServlet {
         );
 
         if (success) {
-            resp.sendRedirect("Appointment-List?msg=updated");
+            // Quay về trang chi tiết lịch hẹn
+            resp.sendRedirect("Appointment-Detail?id=" + appointmentId + "&msg=updated");
         } else {
             Appointment appointment = dao.getAppointmentById(appointmentId);
             List<Doctor> doctors = dao.getAllDoctors();

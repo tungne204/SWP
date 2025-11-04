@@ -3,7 +3,7 @@
     Created on : Oct 19, 2025, 11:11:44 PM
     Author     : Kiên
 --%>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -132,7 +132,7 @@
 
     <body>
         <!-- Header -->
-        <%@ include file="../includes/header.jsp" %>
+        <jsp:include page="../includes/header.jsp" />
 
         <div class="main-wrapper">
             <!-- Sidebar -->
@@ -147,7 +147,7 @@
                     </h1>
 
                     <!-- Update Form -->
-                    <form action="Update-Patient" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
+                    <form action="Patient-Update" method="post" class="bg-white shadow-lg rounded-4 border border-blue-100 p-5">
 
                         <!-- PATIENT INFO -->
                         <h4 class="text-blue-700 fw-bold mb-4">

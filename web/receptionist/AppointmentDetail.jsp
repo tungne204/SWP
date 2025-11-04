@@ -83,6 +83,13 @@
                 font-weight: 500;
             }
 
+            .value-wrap {
+                display: inline-block;
+                max-width: 100%;
+                word-break: break-word;      /* hoặc break-all nếu vẫn tràn */
+                overflow-wrap: break-word;
+            }
+
             .badge {
                 padding: 10px 24px;
                 border-radius: 30px;
@@ -110,7 +117,9 @@
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <c:if test="${sessionScope.acc != null and sessionScope.acc.roleId == 5}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -182,19 +191,25 @@
                                     <p><span class="label">🧍 Họ tên: </span> <span class="value">${appointment.patientName}</span></p>
                                     <p><span class="label">📧 Email: </span> <span class="value">${appointment.patientEmail}</span></p>
                                     <p><span class="label">🏠 Địa chỉ: </span> <span class="value">${appointment.patientAddress}</span></p>
-                                    <p><span class="label">💳 Bảo hiểm: </span> <span class="value">${appointment.patientInsurance}</span></p>
+                                    <p>
+                                        <span class="label">💳 Bảo hiểm: </span>
+                                        <span class="value value-wrap">${appointment.patientInsurance}</span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex justify-end mt-12">
-                            <a href="Appointment-Update?id=${appointment.appointmentId}"
-                               class="btn bg-[#3fbbc0] text-white hover:bg-[#35a4a8] shadow-md flex items-center gap-2">
-                                <i class="fa-solid fa-pen-to-square text-lg"></i>
-                                <span>Chỉnh sửa</span>
-                            </a>
-                        </div>
+                        <c:if test="${appointment.status ne 'Completed'}">
+                            <div class="flex justify-end mt-12">
+                                <a href="Appointment-Update?id=${appointment.appointmentId}"
+                                   class="btn bg-[#3fbbc0] text-white hover:bg-[#35a4a8] shadow-md flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-to-square text-lg"></i>
+                                    <span>Chỉnh sửa</span>
+                                </a>
+                            </div>
+                        </c:if>
+
                     </div>
                 </main>
             </div>
