@@ -1,26 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package control;
 
 import entity.ListUser.User;
 import entity.ListUser.Role;
 import dao.ListUser.RoleDAO;
 import dao.ListUser.UserDAO;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
-/**
- *
- * @author Quang Anh
- */
 @WebServlet(name = "UserServlet", urlPatterns = {"/admin/users"})
 public class UserServlet extends HttpServlet {
 
@@ -33,46 +27,23 @@ public class UserServlet extends HttpServlet {
         roleDAO = new RoleDAO();
     }
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
+            out.println("<!DOCTYPE html><html><head><title>Servlet UserServlet</title></head><body>");
             out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println("</body></html>");
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
             case "list":
@@ -84,6 +55,9 @@ public class UserServlet extends HttpServlet {
             case "view":
                 viewUserDetail(request, response);
                 break;
+            case "createForm":
+                showCreateForm(request, response);
+                break;
             default:
                 listUsers(request, response);
                 break;
@@ -94,7 +68,7 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         String group = request.getParameter("group");
         if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
-            group = "customers"; // mặc định vào trang sẽ là danh sách khách
+            group = "customers"; // mặc định danh sách khách
         }
 
         String search = request.getParameter("search");
@@ -123,12 +97,12 @@ public class UserServlet extends HttpServlet {
 
         int offset = (page - 1) * recordsPerPage;
 
-        // Lấy danh sách role names theo group
+        // role names theo group
         List<String> roleNamesForGroup = "staff".equals(group)
                 ? java.util.Arrays.asList("Receptionist", "Doctor", "MedicalAssistant")
                 : java.util.Arrays.asList("Patient");
 
-        // Lấy users + tổng số cho phân trang, có filter theo group
+        // users + tổng số cho phân trang
         List<User> users = userDAO.getAllUsers(
                 search, roleFilter, statusFilter,
                 offset, recordsPerPage, roleNamesForGroup
@@ -156,7 +130,7 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("id"));
         User user = userDAO.getUserById(userId);
-        // Giữ lại group để nút “Quay lại” trở về đúng tab
+
         String group = request.getParameter("group");
         if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
             group = "customers";
@@ -179,7 +153,7 @@ public class UserServlet extends HttpServlet {
 
     private void toggleUserStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String group = request.getParameter("group"); // để redirect về đúng tab
+        String group = request.getParameter("group");
         if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
             group = "customers";
         }
@@ -194,28 +168,144 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/users?action=list&group=" + group);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    // ============= NEW: hiển thị form tạo user =============
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String group = request.getParameter("group");
+        if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
+            group = "customers";
+        }
+        request.setAttribute("group", group);
+        if ("staff".equals(group)) {
+            List<String> staffNames = java.util.Arrays.asList("Receptionist", "Doctor", "MedicalAssistant");
+            List<Role> roles = roleDAO.getRolesByNames(staffNames);
+            request.setAttribute("roles", roles);
+        }
+        request.getRequestDispatcher("/admin/userForm.jsp").forward(request, response);
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        if ("create".equals(action)) {
+            handleCreate(request, response);
+        } else {
+            processRequest(request, response);
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    // ============= NEW: xử lý tạo user =============
+    private void handleCreate(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String group = request.getParameter("group");
+        if (group == null || (!group.equals("staff") && !group.equals("customers"))) {
+            group = "customers";
+        }
+
+        String username = trimOrNull(request.getParameter("username"));
+        String email = trimOrNull(request.getParameter("email"));
+        String phone = trimOrNull(request.getParameter("phone"));
+        String password = trimOrNull(request.getParameter("password"));
+        String confirm = trimOrNull(request.getParameter("confirm"));
+
+        // Validate cơ bản
+        if (username == null || email == null || password == null || confirm == null) {
+            setMessage(request, false, "", "Vui lòng điền đủ thông tin bắt buộc!");
+            backToForm(request, response, group);
+            return;
+        }
+        if (!password.equals(confirm)) {
+            setMessage(request, false, "", "Mật khẩu xác nhận không khớp!");
+            backToForm(request, response, group);
+            return;
+        }
+        if (userDAO.existsByUsernameOrEmail(username, email)) {
+            setMessage(request, false, "", "Username hoặc Email đã tồn tại!");
+            backToForm(request, response, group);
+            return;
+        }
+
+        // Xác định role
+        Integer roleId = null;
+        if ("customers".equals(group)) {
+            Role patient = roleDAO.getRoleByName("Patient");
+            if (patient == null) {
+                setMessage(request, false, "", "Không tìm thấy role Patient. Vui lòng kiểm tra dữ liệu Role.");
+                backToForm(request, response, group);
+                return;
+            }
+            roleId = patient.getRoleId();
+        } else { // staff
+            String roleIdStr = request.getParameter("roleId");
+            try {
+                roleId = Integer.parseInt(roleIdStr);
+            } catch (Exception e) {
+                setMessage(request, false, "", "Vai trò không hợp lệ!");
+                backToForm(request, response, group);
+                return;
+            }
+            // xác thực roleId thuộc nhóm staff
+            List<String> staffNames = java.util.Arrays.asList("Receptionist", "Doctor", "MedicalAssistant");
+            List<Role> allowed = roleDAO.getRolesByNames(staffNames);
+            boolean ok = false;
+            if (allowed != null) {
+                for (Role r : allowed) {
+                    if (r != null && r.getRoleId() == roleId) {
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!ok) {
+                setMessage(request, false, "", "Vai trò không thuộc nhóm nhân viên!");
+                backToForm(request, response, group);
+                return;
+            }
+        }
+
+        // Tạo entity
+        User u = new User();
+        u.setUsername(username);
+        u.setPassword(password); // TODO: hash ở môi trường thật
+        u.setEmail(email);
+        u.setPhone(phone);
+        u.setRoleId(roleId);
+        u.setStatus(true);
+
+        int newId = userDAO.createUser(u);
+        if (newId > 0) {
+            setMessage(request, true, "Tạo người dùng thành công!", "");
+            response.sendRedirect(request.getContextPath() + "/admin/users?action=list&group=" + group);
+        } else {
+            setMessage(request, false, "", "Tạo người dùng thất bại!");
+            backToForm(request, response, group);
+        }
+    }
+
+    private String trimOrNull(String s) {
+        if (s == null) {
+            return null;
+        }
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
+    }
+
+    private void backToForm(HttpServletRequest request, HttpServletResponse response, String group)
+            throws ServletException, IOException {
+        request.setAttribute("group", group);
+        if ("staff".equals(group)) {
+            List<String> staffNames = java.util.Arrays.asList("Receptionist", "Doctor", "MedicalAssistant");
+            List<Role> roles = roleDAO.getRolesByNames(staffNames);
+            request.setAttribute("roles", roles);
+        }
+        request.getRequestDispatcher("/admin/userForm.jsp").forward(request, response);
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "User management servlet";
+    }
 }

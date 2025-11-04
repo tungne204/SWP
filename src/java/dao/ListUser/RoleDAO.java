@@ -1,22 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao.ListUser;
 
 import context.DBContext;
 import entity.ListUser.Role;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author Quang Anh
- */
-public class RoleDAO extends DBContext{
+
+public class RoleDAO extends DBContext {
+
     public List<Role> getAllRoles() {
         List<Role> roles = new ArrayList<>();
-        String sql = "SELECT role_id, role_name FROM Role ORDER BY role_name";
+        String sql = "SELECT role_id, role_name FROM [Role] ORDER BY role_name";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -33,13 +28,14 @@ public class RoleDAO extends DBContext{
         }
         return roles;
     }
-    // NEW: lấy danh sách role theo tên (IN ...)
+
+    // Lấy danh sách role theo tên (IN ...)
     public List<Role> getRolesByNames(List<String> names) {
         List<Role> list = new ArrayList<>();
         if (names == null || names.isEmpty()) return list;
 
         String placeholders = String.join(",", java.util.Collections.nCopies(names.size(), "?"));
-        String sql = "SELECT role_id, role_name FROM Role WHERE role_name IN (" + placeholders + ") ORDER BY role_name";
+        String sql = "SELECT role_id, role_name FROM [Role] WHERE role_name IN (" + placeholders + ") ORDER BY role_name";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -59,7 +55,7 @@ public class RoleDAO extends DBContext{
 
     // Lấy role theo ID
     public Role getRoleById(int roleId) {
-        String sql = "SELECT role_id, role_name FROM Role WHERE role_id = ?";
+        String sql = "SELECT role_id, role_name FROM [Role] WHERE role_id = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -78,6 +74,24 @@ public class RoleDAO extends DBContext{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    // NEW: lấy role theo tên (exact)
+    public Role getRoleByName(String roleName) {
+        String sql = "SELECT role_id, role_name FROM [Role] WHERE role_name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, roleName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Role role = new Role();
+                    role.setRoleId(rs.getInt("role_id"));
+                    role.setRoleName(rs.getString("role_name"));
+                    return role;
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
         return null;
     }
 }

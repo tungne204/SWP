@@ -1,40 +1,33 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao.ListUser;
 
 import context.DBContext;
 import entity.ListUser.User;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Quang Anh
- */
 public class UserDAO extends DBContext {
 
     // ========================= LẤY DANH SÁCH USER =========================
     public List<User> getAllUsers(String search, Integer roleFilter, Integer statusFilter,
-            int offset, int limit, List<String> roleNamesInGroup) {
+                                  int offset, int limit, List<String> roleNamesInGroup) {
 
         List<User> users = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-                "SELECT u.user_id, u.username, u.password, u.email, u.phone, "
-                + "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry "
-                + "FROM [User] u "
-                + "LEFT JOIN Role r ON u.role_id = r.role_id "
-                + "WHERE 1=1 "
+                "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
+                "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry " +
+                "FROM [User] u " +
+                "LEFT JOIN [Role] r ON u.role_id = r.role_id " +
+                "WHERE 1=1 "
         );
 
         // filter theo group (role_name IN ...)
         if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
             sql.append("AND r.role_name IN (")
-                    .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
-                    .append(") ");
+               .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
+               .append(") ");
         }
 
         if (search != null && !search.trim().isEmpty()) {
@@ -50,7 +43,8 @@ public class UserDAO extends DBContext {
         sql.append("ORDER BY u.user_id DESC ");
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             int p = 1;
 
@@ -95,7 +89,7 @@ public class UserDAO extends DBContext {
 
         StringBuilder sql = new StringBuilder(
             "SELECT COUNT(*) " +
-            "FROM [User] u LEFT JOIN Role r ON u.role_id = r.role_id " +
+            "FROM [User] u LEFT JOIN [Role] r ON u.role_id = r.role_id " +
             "WHERE 1=1 "
         );
 
@@ -146,21 +140,17 @@ public class UserDAO extends DBContext {
 
     // ========================= LẤY USER THEO ID =========================
     public User getUserById(int userId) {
-        String sql = "SELECT u.user_id, u.username, u.password, u.email, u.phone, "
-                + "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry "
-                + "FROM [User] u "
-                + "LEFT JOIN Role r ON u.role_id = r.role_id "
-                + "WHERE u.user_id = ?";
+        String sql = "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
+                "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry " +
+                "FROM [User] u " +
+                "LEFT JOIN [Role] r ON u.role_id = r.role_id " +
+                "WHERE u.user_id = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return extractUser(rs);
-                }
+                if (rs.next()) return extractUser(rs);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,10 +162,8 @@ public class UserDAO extends DBContext {
         String sql = "UPDATE [User] SET password = ? WHERE user_id = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
-
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +175,6 @@ public class UserDAO extends DBContext {
     public boolean toggleUserStatus(int userId) {
         String sql = "UPDATE [User] SET status = CASE WHEN status = 1 THEN 0 ELSE 1 END WHERE user_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;
 
@@ -197,7 +184,47 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    // ========================= HELPER: CHUYỂN RESULTSET → USER =========================
+    // ========================= NEW: kiểm tra trùng =========================
+    public boolean existsByUsernameOrEmail(String username, String email) {
+        String sql = "SELECT 1 FROM [User] WHERE username = ? OR email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
+    // ========================= NEW: tạo user =========================
+    public int createUser(User u) {
+        String sql = "INSERT INTO [User] (username, password, email, phone, role_id, status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getPassword()); // TODO: hash trước khi lưu ở môi trường thật
+            ps.setString(3, u.getEmail());
+            if (u.getPhone() == null || u.getPhone().trim().isEmpty()) {
+                ps.setNull(4, Types.VARCHAR);
+            } else {
+                ps.setString(4, u.getPhone());
+            }
+            ps.setInt(5, u.getRoleId());
+            ps.setBoolean(6, u.isStatus()); // true: hoạt động
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return -1;
+    }
+
+    // ========================= HELPER =========================
     private User extractUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setUserId(rs.getInt("user_id"));
