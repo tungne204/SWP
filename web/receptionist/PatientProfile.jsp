@@ -133,7 +133,7 @@ PM Author : KienPC
 
                 <!-- ==================== BUTTONS (Không in vào PDF) ==================== -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <a href="Update-Patient?pid=${patient.patientId}"
+                    <a href="Patient-Update?pid=${patient.patientId}"
                        class="btn btn-primary d-flex align-items-center gap-2 px-4">
                         <i class="fa-regular fa-pen-to-square"></i> Cập Nhật
                     </a>

@@ -14,11 +14,12 @@
         <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-xl p-10 mt-10">
             <h1 class="text-3xl font-bold text-[#3fbbc0] mb-6">➕ Tạo lịch hẹn mới</h1>
 
-            <!-- Hiển thị lỗi -->
+            <!-- Hiển thị lỗi chung -->
             <c:if test="${not empty errorMsg}">
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">${errorMsg}</div>
             </c:if>
 
+            <!-- Hiển thị danh sách lỗi -->
             <c:if test="${not empty errors}">
                 <div class="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-4">
                     <ul class="list-disc ml-6">
@@ -34,57 +35,79 @@
                 <!-- LEFT -->
                 <div class="space-y-5">
                     <label class="block text-gray-700 font-medium">Tên bệnh nhân</label>
-                    <input type="text" name="patientName" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="patientName"
+                           value="${param.patientName}"
+                           class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Ngày sinh</label>
-                    <input type="date" name="patientDob" class="w-full border rounded-lg p-2" required>
+                    <input type="date" name="patientDob"
+                           value="${param.patientDob}"
+                           class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Địa chỉ</label>
-                    <input type="text" name="patientAddress" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="patientAddress"
+                           value="${param.patientAddress}"
+                           class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Thông tin bảo hiểm</label>
-                    <input type="text" name="insuranceInfo" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="insuranceInfo"
+                           value="${param.insuranceInfo}"
+                           class="w-full border rounded-lg p-2">
 
                     <label class="block text-gray-700 font-medium">Phụ huynh</label>
-                    <input type="text" name="parentName" value="${param.parentName}" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="parentName"
+                           value="${param.parentName}"
+                           class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Số điện thoại</label>
-                    <input type="text" name="parentPhone" value="${param.parentPhone}" class="w-full border rounded-lg p-2" required>
+                    <input type="text" name="parentPhone"
+                           value="${param.parentPhone}"
+                           class="w-full border rounded-lg p-2" required>
                 </div>
 
                 <!-- RIGHT -->
                 <div class="space-y-5">
                     <label class="block text-gray-700 font-medium">Ngày khám</label>
-                    <input type="text" name="appointmentDate" placeholder="dd/MM/yyyy"
+                    <input type="date" name="appointmentDate"
+                           value="${param.appointmentDate}"
                            class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Giờ khám</label>
-                    <input type="time" name="appointmentTime" class="w-full border rounded-lg p-2" required>
+                    <input type="time" name="appointmentTime"
+                           value="${param.appointmentTime}"
+                           class="w-full border rounded-lg p-2" required>
 
                     <label class="block text-gray-700 font-medium">Bác sĩ</label>
                     <select name="doctorId" class="w-full border rounded-lg p-2" required>
                         <option value="">-- Chọn bác sĩ --</option>
                         <c:forEach var="d" items="${doctors}">
-                            <option value="${d.doctorId}">${d.username} - ${d.introduce}</option>
+                            <option value="${d.doctorId}"
+                                    ${param.doctorId == d.doctorId ? 'selected' : ''}>
+                                ${d.username} - ${d.introduce}
+                            </option>
                         </c:forEach>
                     </select>
 
                     <label class="block text-gray-700 font-medium">Trạng thái</label>
                     <select name="status" class="w-full border rounded-lg p-2">
-                        <option value="Pending">Chờ xác nhận</option>
-                        <option value="Confirmed">Đã xác nhận</option>
-                        <option value="Cancelled">Đã hủy</option>
+                        <option value="Pending" selected>Chờ xác nhận</option>
+                        <!-- Nếu muốn Patient được tạo Confirmed/Hủy thì bật thêm 2 option dưới -->
+                        <!--
+                        <option value="Confirmed" ${param.status == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                        <option value="Cancelled" ${param.status == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
+                        -->
                     </select>
                 </div>
 
                 <!-- Buttons -->
                 <div class="col-span-2 flex justify-end gap-4 mt-6">
-                    <a href="Appointment-List" class="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                    <a href="Appointment-List"
+                       class="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                         Hủy
                     </a>
                     <button type="submit"
                             class="px-6 py-2 bg-[#3fbbc0] text-white rounded-lg hover:bg-[#2a9fa4] transition">
-                        💾 Lưu lịch hẹn
+                        💾 Tạo
                     </button>
                 </div>
             </form>

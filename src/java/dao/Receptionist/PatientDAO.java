@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import context.DBContext;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * DAO xử lý dữ liệu bệnh nhân cho module Receptionist - Hiển thị danh sách bệnh
@@ -15,246 +17,211 @@ import context.DBContext;
  */
 public class PatientDAO extends DBContext {
 
-    // ================== SELECT CƠ BẢN ==================
-    // Lấy đủ cho JSP: patientId, fullName, dob, address, insuranceInfo, email, phone
-    // Đồng thời lấy luôn thông tin phụ huynh để sau này em xem chi tiết không phải viết lại
-    private static final String BASE_SELECT = """
-        SELECT
-            p.patient_id,
-            p.user_id,
-            p.full_name,
-            p.dob,
-            p.[address],
-            p.insurance_info,
-            pa.parentname AS parent_name,
-            u.email,
-            u.phone,
-            u.[status]   AS user_status
-        FROM [dbo].[Patient] p
-        LEFT JOIN [dbo].[User]   u  ON p.user_id = u.user_id
-        LEFT JOIN [dbo].[Parent] pa ON p.parent_id = pa.parent_id
-    """;
+    // Tìm kiếm bệnh nhân theo nhiều tiêu chí + phân trang
+    public List<Patient> searchPatients(
+            String keyword,
+            String filterName,
+            String filterAddress,
+            String filterInsurance,
+            String filterPhone,
+            int page,
+            int pageSize) {
 
-    // ================== ĐẾM TẤT CẢ ==================
-    private static final String SQL_COUNT_ALL = """
-        SELECT COUNT(*) FROM [dbo].[Patient]
-    """;
-
-    // ================== LẤY THEO TRANG (KHÔNG FILTER) ==================
-    private static final String SQL_GET_BY_PAGE = BASE_SELECT + """
-        ORDER BY p.patient_id
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
-
-    // ================== ĐẾM KHI TÌM KIẾM ==================
-    // Tìm theo: tên, mã BN, địa chỉ, bệnh nền, email, phone
-    private static final String SQL_COUNT_SEARCH = """
-        SELECT COUNT(*)
-        FROM [dbo].[Patient] p
-        LEFT JOIN [dbo].[User] u ON p.user_id = u.user_id
-        WHERE
-              p.full_name LIKE ?
-           OR CAST(p.patient_id AS NVARCHAR(50)) LIKE ?
-           OR p.[address] LIKE ?
-           OR p.insurance_info LIKE ?
-           OR u.email LIKE ?
-           OR u.phone LIKE ?
-    """;
-
-    // ================== TÌM KIẾM THEO TRANG ==================
-    private static final String SQL_SEARCH_BY_PAGE = BASE_SELECT + """
-        WHERE
-              p.full_name LIKE ?
-           OR CAST(p.patient_id AS NVARCHAR(50)) LIKE ?
-           OR p.[address] LIKE ?
-           OR p.insurance_info LIKE ?
-           OR u.email LIKE ?
-           OR u.phone LIKE ?
-        ORDER BY p.patient_id
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
-
-    // =================================================================
-    // 1. Đếm tất cả bệnh nhân
-    // =================================================================
-    public int countAllPatients() throws Exception {
-        try (Connection con = new DBContext().getConnection(); PreparedStatement ps = con.prepareStatement(SQL_COUNT_ALL); ResultSet rs = ps.executeQuery()) {
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        }
-        return 0;
-    }
-
-    // =================================================================
-    // 2. Lấy danh sách bệnh nhân theo trang (không keyword)
-    // =================================================================
-    public List<Patient> getPatientsByPage(int offset, int pageSize) throws Exception {
         List<Patient> list = new ArrayList<>();
 
-        try (Connection con = new DBContext().getConnection(); PreparedStatement ps = con.prepareStatement(SQL_GET_BY_PAGE)) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT p.patient_id,
+                   p.full_name,
+                   p.dob,
+                   p.address,
+                   p.insurance_info,
+                   u.email,
+                   u.phone
+            FROM Patient p
+            JOIN [User] u ON p.user_id = u.user_id
+            WHERE 1 = 1
+        """);
 
-            ps.setInt(1, offset);
-            ps.setInt(2, pageSize);
+        // keyword: tên hoặc mã bệnh nhân
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (p.full_name LIKE ? OR CAST(p.patient_id AS NVARCHAR(50)) LIKE ?)");
+        }
+
+        if (filterName != null && !filterName.isEmpty()) {
+            sql.append(" AND p.full_name LIKE ?");
+        }
+        if (filterAddress != null && !filterAddress.isEmpty()) {
+            sql.append(" AND p.address LIKE ?");
+        }
+        if (filterInsurance != null && !filterInsurance.isEmpty()) {
+            sql.append(" AND p.insurance_info LIKE ?");
+        }
+        if (filterPhone != null && !filterPhone.isEmpty()) {
+            sql.append(" AND u.phone LIKE ?");
+        }
+
+        sql.append(" ORDER BY p.patient_id ASC");
+        sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            String like;
+
+            if (keyword != null && !keyword.isEmpty()) {
+                like = "%" + keyword + "%";
+                ps.setString(index++, like); // full_name
+                ps.setString(index++, like); // patient_id
+            }
+            if (filterName != null && !filterName.isEmpty()) {
+                like = "%" + filterName + "%";
+                ps.setString(index++, like);
+            }
+            if (filterAddress != null && !filterAddress.isEmpty()) {
+                like = "%" + filterAddress + "%";
+                ps.setString(index++, like);
+            }
+            if (filterInsurance != null && !filterInsurance.isEmpty()) {
+                like = "%" + filterInsurance + "%";
+                ps.setString(index++, like);
+            }
+            if (filterPhone != null && !filterPhone.isEmpty()) {
+                like = "%" + filterPhone + "%";
+                ps.setString(index++, like);
+            }
+
+            ps.setInt(index++, (page - 1) * pageSize);
+            ps.setInt(index, pageSize);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(mapRowToPatient(rs));
+                    Patient p = new Patient();
+                    p.setPatientId(rs.getInt("patient_id"));
+                    p.setFullName(rs.getString("full_name"));
+                    p.setDob(rs.getDate("dob"));
+                    p.setAddress(rs.getString("address"));
+                    p.setInsuranceInfo(rs.getString("insurance_info"));
+                    p.setEmail(rs.getString("email"));
+                    p.setPhone(rs.getString("phone"));
+                    list.add(p);
                 }
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return list;
     }
 
-    // =================================================================
-    // 3. Đếm kết quả khi tìm kiếm theo keyword
-    // =================================================================
-    public int countSearchPatients(String keyword) throws Exception {
-        String like = "%" + keyword + "%";
+    // Đếm tổng số bản ghi thỏa filter (phân trang)
+    public int countPatients(
+            String keyword,
+            String filterName,
+            String filterAddress,
+            String filterInsurance,
+            String filterPhone) {
 
-        try (Connection con = new DBContext().getConnection(); PreparedStatement ps = con.prepareStatement(SQL_COUNT_SEARCH)) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM Patient p
+            JOIN [User] u ON p.user_id = u.user_id
+            WHERE 1 = 1
+        """);
 
-            // 6 chỗ LIKE giống nhau
-            ps.setString(1, like);
-            ps.setString(2, like);
-            ps.setString(3, like);
-            ps.setString(4, like);
-            ps.setString(5, like);
-            ps.setString(6, like);
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (p.full_name LIKE ? OR CAST(p.patient_id AS NVARCHAR(50)) LIKE ?)");
+        }
+        if (filterName != null && !filterName.isEmpty()) {
+            sql.append(" AND p.full_name LIKE ?");
+        }
+        if (filterAddress != null && !filterAddress.isEmpty()) {
+            sql.append(" AND p.address LIKE ?");
+        }
+        if (filterInsurance != null && !filterInsurance.isEmpty()) {
+            sql.append(" AND p.insurance_info LIKE ?");
+        }
+        if (filterPhone != null && !filterPhone.isEmpty()) {
+            sql.append(" AND u.phone LIKE ?");
+        }
+
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            String like;
+
+            if (keyword != null && !keyword.isEmpty()) {
+                like = "%" + keyword + "%";
+                ps.setString(index++, like);
+                ps.setString(index++, like);
+            }
+            if (filterName != null && !filterName.isEmpty()) {
+                like = "%" + filterName + "%";
+                ps.setString(index++, like);
+            }
+            if (filterAddress != null && !filterAddress.isEmpty()) {
+                like = "%" + filterAddress + "%";
+                ps.setString(index++, like);
+            }
+            if (filterInsurance != null && !filterInsurance.isEmpty()) {
+                like = "%" + filterInsurance + "%";
+                ps.setString(index++, like);
+            }
+            if (filterPhone != null && !filterPhone.isEmpty()) {
+                like = "%" + filterPhone + "%";
+                ps.setString(index++, like);
+            }
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return 0;
     }
+    // ===================== PROFILE =====================
 
-    // =================================================================
-    // 4. Tìm kiếm theo trang
-    // =================================================================
-    public List<Patient> searchPatientsByPage(String keyword, int offset, int pageSize) throws Exception {
-        List<Patient> list = new ArrayList<>();
-        String like = "%" + keyword + "%";
-
-        try (Connection con = new DBContext().getConnection(); PreparedStatement ps = con.prepareStatement(SQL_SEARCH_BY_PAGE)) {
-
-            // 6 điều kiện LIKE
-            ps.setString(1, like);
-            ps.setString(2, like);
-            ps.setString(3, like);
-            ps.setString(4, like);
-            ps.setString(5, like);
-            ps.setString(6, like);
-
-            // phân trang
-            ps.setInt(7, offset);
-            ps.setInt(8, pageSize);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapRowToPatient(rs));
-                }
-            }
-        }
-
-        return list;
-    }
-
-    // =================================================================
-    // 5. Map ResultSet -> entity.Receptionist.Patient
-    // =================================================================
-    private Patient mapRowToPatient(ResultSet rs) throws SQLException {
-        Patient p = new Patient();
-
-        p.setPatientId(rs.getInt("patient_id"));
-        p.setUserId(rs.getInt("user_id"));
-        p.setFullName(rs.getString("full_name"));
-        p.setDob(rs.getDate("dob"));
-        p.setAddress(rs.getString("address"));
-        p.setInsuranceInfo(rs.getString("insurance_info"));
-
-        // từ bảng Parent
-        p.setParentName(rs.getString("parent_name"));
-
-        // từ bảng User
-        p.setEmail(rs.getString("email"));
-        p.setPhone(rs.getString("phone"));
-
-        // status đã đổi sang NVARCHAR → set luôn
-        p.setStatus(rs.getString("user_status"));
-
-        // các field mở rộng khác trong entity nhưng query này chưa lấy được
-        // để tránh NullPointer ở JSP khác thì set default = null:
-        p.setDoctorName(null);
-        p.setDoctorExperienceYears(null);
-        p.setDoctorIntroduce(null);
-        p.setDoctorCertificate(null);
-        p.setAppointmentDate(null);
-        p.setAppointmentTime(null);
-
-        return p;
-    }
-
-    public Patient getPatientById(int patientId) throws Exception {
-        // dùng OUTER APPLY để lấy lịch hẹn gần nhất của đúng bệnh nhân này
+    /**
+     * Lấy hồ sơ bệnh nhân + appointment gần nhất + bác sĩ + phụ huynh
+     */
+    public Patient getPatientProfileById(int patientId) {
         String sql = """
-        SELECT
-            p.patient_id,
-            p.user_id,
-            p.full_name,
-            p.dob,
-            p.[address],
-            p.insurance_info,
-            p.parent_id,
+            SELECT TOP 1
+                   p.patient_id,
+                   p.user_id,
+                   p.full_name,
+                   p.dob,
+                   p.address,
+                   p.insurance_info,
+                   p.parent_id,
 
-            -- phụ huynh
-            pa.parentname AS parent_name,
+                   pa.parentname,
+                   pa.id_info,
 
-            -- account của bệnh nhân (thực chất là phụ huynh đăng ký)
-            u.email,
-            u.phone,
-            u.[status] AS user_status,
+                   u.email,
+                   u.phone,
 
-            -- lịch hẹn mới nhất (có thể null)
-            ap.appointment_id,
-            CONVERT(varchar(10), ap.date_time, 120) AS appointment_date, -- yyyy-MM-dd
-            CONVERT(varchar(5),  ap.date_time, 108) AS appointment_time, -- HH:mm
-            CASE 
-                WHEN ap.status = 1 THEN N'Confirmed'
-                WHEN ap.status = 0 THEN N'Pending'
-                ELSE N'Unknown'
-            END AS appointment_status,
+                   a.status,
+                   a.date_time,
 
-            -- bác sĩ của lịch hẹn
-            d.doctor_id,
-            ud.username AS doctor_name,
-            d.experienceYears AS doctor_experience_years,
-            d.introduce       AS doctor_introduce,
-            d.certificate     AS doctor_certificate
-
-        FROM [dbo].[Patient] p
-        LEFT JOIN [dbo].[Parent] pa ON p.parent_id = pa.parent_id
-        LEFT JOIN [dbo].[User]   u  ON p.user_id   = u.user_id
-
-        OUTER APPLY (
-            SELECT TOP 1 a.*
-            FROM [dbo].[Appointment] a
-            WHERE a.patient_id = p.patient_id
+                   d.experienceYears AS doctorExperienceYears,
+                   du.username AS doctor_name
+            FROM Patient p
+            LEFT JOIN Parent pa       ON p.parent_id = pa.parent_id
+            LEFT JOIN [User] u        ON p.user_id   = u.user_id
+            LEFT JOIN Appointment a   ON a.patient_id = p.patient_id
+            LEFT JOIN Doctor d        ON a.doctor_id  = d.doctor_id
+            LEFT JOIN [User] du       ON d.user_id    = du.user_id
+            WHERE p.patient_id = ?
             ORDER BY a.date_time DESC
-        ) ap
+            """;
 
-        LEFT JOIN [dbo].[Doctor] d ON ap.doctor_id = d.doctor_id
-        LEFT JOIN [dbo].[User]   ud ON d.user_id   = ud.user_id
-
-        WHERE p.patient_id = ?
-        """;
-
-        try (Connection con = new DBContext().getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, patientId);
 
@@ -262,7 +229,7 @@ public class PatientDAO extends DBContext {
                 if (rs.next()) {
                     Patient p = new Patient();
 
-                    // ====== từ bảng Patient ======
+                    // --- Thông tin bệnh nhân ---
                     p.setPatientId(rs.getInt("patient_id"));
                     p.setUserId(rs.getInt("user_id"));
                     p.setFullName(rs.getString("full_name"));
@@ -271,40 +238,153 @@ public class PatientDAO extends DBContext {
                     p.setInsuranceInfo(rs.getString("insurance_info"));
                     p.setParentId(rs.getInt("parent_id"));
 
-                    // ====== phụ huynh (chỉ tên, KHÔNG CCCD) ======
-                    p.setParentName(rs.getString("parent_name"));
-                    p.setParentIdNumber(null); // KHÔNG show CCCD
+                    // --- Phụ huynh ---
+                    p.setParentName(rs.getString("parentname"));
+                    p.setParentIdNumber(rs.getString("id_info"));
 
-                    // ====== account / liên hệ ======
+                    // --- Liên lạc ---
                     p.setEmail(rs.getString("email"));
                     p.setPhone(rs.getString("phone"));
 
-                    // ====== lịch hẹn mới nhất ======
-                    p.setAppointmentDate(rs.getString("appointment_date"));  // có thể null
-                    p.setAppointmentTime(rs.getString("appointment_time"));  // có thể null
-
-                    // JSP của em đang dùng ${patient.status} để check Confirmed/Pending
-                    // nên ở trang profile anh cho status = status của lịch hẹn
-                    p.setStatus(rs.getString("appointment_status"));
-
-                    // ====== bác sĩ ======
-                    p.setDoctorName(rs.getString("doctor_name"));
-                    // experienceYears trong DB là int, trong entity là String → convert nhẹ
-                    int exp = rs.getInt("doctor_experience_years");
-                    if (rs.wasNull()) {
-                        p.setDoctorExperienceYears(null);
-                    } else {
-                        p.setDoctorExperienceYears(String.valueOf(exp));
+                    // --- Lịch hẹn gần nhất ---
+                    Timestamp ts = rs.getTimestamp("date_time");
+                    if (ts != null) {
+                        LocalDateTime dt = ts.toLocalDateTime();
+                        p.setAppointmentDate(dt.toLocalDate().toString()); // yyyy-MM-dd
+                        p.setAppointmentTime(dt.toLocalTime().toString()); // HH:mm:ss
                     }
-                    p.setDoctorIntroduce(rs.getString("doctor_introduce"));
-                    p.setDoctorCertificate(rs.getString("doctor_certificate"));
+
+                    // --- Status: map từ DB -> String cho JSP dùng ${patient.status} ---
+                    Object statusObj = rs.getObject("status");
+                    String statusStr;
+                    if (statusObj == null) {
+                        statusStr = "Pending";              // mặc định nếu null
+                    } else if (statusObj instanceof Boolean) {
+                        // Nếu cột là bit
+                        statusStr = ((Boolean) statusObj) ? "Confirmed" : "Cancelled";
+                    } else {
+                        // Nếu sau này bạn đổi sang NVARCHAR('Confirmed', 'Pending',...)
+                        statusStr = statusObj.toString();
+                    }
+                    p.setStatus(statusStr);
+
+                    // --- Bác sĩ ---
+                    p.setDoctorName(rs.getString("doctor_name"));
+                    // experienceYears là INT, entity dùng String -> convert
+                    int expYears = rs.getInt("doctorExperienceYears");
+                    if (!rs.wasNull()) {
+                        p.setDoctorExperienceYears(String.valueOf(expYears));
+                    }
 
                     return p;
                 }
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
+    }
+    // ====== UPDATE patient + parent + user (email/phone) ======
+
+    public boolean updatePatientProfile(Patient p) {
+        String sqlUpdatePatient = """
+            UPDATE Patient
+            SET full_name = ?, dob = ?, address = ?, insurance_info = ?
+            WHERE patient_id = ?
+        """;
+
+        String sqlUpdateParent = """
+            UPDATE Parent
+            SET parentname = ?
+            WHERE parent_id = ?
+        """;
+
+        String sqlUpdateUser = """
+            UPDATE [User]
+            SET email = ?, phone = ?
+            WHERE user_id = ?
+        """;
+
+        Connection con = null;
+        try {
+            con = getConnection();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = con.prepareStatement(sqlUpdatePatient)) {
+                ps1.setString(1, p.getFullName());
+                ps1.setDate(2, p.getDob());        // có thể null
+                ps1.setString(3, p.getAddress());
+                ps1.setString(4, p.getInsuranceInfo());
+                ps1.setInt(5, p.getPatientId());
+                ps1.executeUpdate();
+            }
+
+            // Parent (nếu có)
+            if (p.getParentId() > 0) {
+                try (PreparedStatement ps2 = con.prepareStatement(sqlUpdateParent)) {
+                    ps2.setString(1, p.getParentName());
+                    ps2.setInt(2, p.getParentId());
+                    ps2.executeUpdate();
+                }
+            }
+
+            // User (email/phone) nếu có user_id
+            if (p.getUserId() > 0) {
+                try (PreparedStatement ps3 = con.prepareStatement(sqlUpdateUser)) {
+                    ps3.setString(1, p.getEmail());
+                    ps3.setString(2, p.getPhone());
+                    ps3.setInt(3, p.getUserId());
+                    ps3.executeUpdate();
+                }
+            }
+
+            con.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // (Optional) check email đã tồn tại cho user khác chưa – dùng nếu muốn validate trùng email
+    public boolean isEmailUsedByAnotherUser(String email, int currentUserId) {
+        String sql = """
+            SELECT COUNT(*)
+            FROM [User]
+            WHERE email = ? AND user_id <> ?
+        """;
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, currentUserId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

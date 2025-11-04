@@ -88,8 +88,9 @@
         <jsp:include page="../includes/header.jsp" />
 
         <div class="main-wrapper">
-            <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <!-- Sidebar --><c:if test="${sessionScope.role eq 'Receptionist'}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
 
             <!-- Main Content -->
             <div class="content-area">
@@ -204,7 +205,7 @@
 
                             <!-- BUTTONS -->
                             <div class="flex justify-end gap-4 mt-10">
-                                <a href="${pageContext.request.contextPath}/Appointment-Details?id=${appointment.appointmentId}"
+                                <a href="${pageContext.request.contextPath}/Appointment-Detail?id=${appointment.appointmentId}"
                                    class="px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                                     Hủy
                                 </a>

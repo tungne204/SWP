@@ -2,57 +2,62 @@ package control.ReceptionistControl;
 
 import dao.Receptionist.PatientDAO;
 import entity.Receptionist.Patient;
-import jakarta.servlet.*;
+import entity.User;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/Patient-Profile")
 public class PatientProfileServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doPost(request, response);
-    }
+    private final PatientDAO patientDAO = new PatientDAO();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
-
-        // Không có id → quay lại màn search
-        if (id == null || id.isEmpty()) {
-            response.sendRedirect("Patient-Search");
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("acc") == null) {
+            resp.sendRedirect("Login.jsp");
             return;
         }
 
-        try {
-            int patientId = Integer.parseInt(id);
-            PatientDAO dao = new PatientDAO();
-            Patient patient = dao.getPatientById(patientId);
-
-            if (patient == null) {
-                // KHÔNG forward sang /error.jsp nữa
-                request.setAttribute("error", "Không tìm thấy bệnh nhân với ID: " + id);
-                request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
-                return;
-            }
-
-            // Có dữ liệu → show lên JSP
-            request.setAttribute("patient", patient);
-            request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            // id không phải số
-            request.setAttribute("error", "ID bệnh nhân không hợp lệ!");
-            request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Lỗi DB, lỗi SQL, lỗi DAO → vẫn đẩy về profile.jsp
-            request.setAttribute("error", "Lỗi khi tải thông tin bệnh nhân: " + e.getMessage());
-            request.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(request, response);
+        User acc = (User) session.getAttribute("acc");
+        // Chỉ cho lễ tân (roleId = 5) xem, muốn mở rộng thì thêm role khác ở đây
+        if (acc.getRoleId() != 5) {
+            req.setAttribute("errorMsg", "Bạn không có quyền xem hồ sơ bệnh nhân.");
+            req.getRequestDispatcher("/receptionist/PatientList.jsp").forward(req, resp);
+            return;
         }
+
+        String idRaw = req.getParameter("id");
+        int patientId;
+
+        try {
+            patientId = Integer.parseInt(idRaw);
+        } catch (Exception e) {
+            resp.sendRedirect("Patient-List?error=invalidId");
+            return;
+        }
+
+        Patient patient = patientDAO.getPatientProfileById(patientId);
+
+        if (patient == null) {
+            resp.sendRedirect("Patient-List?error=notfound");
+            return;
+        }
+
+        req.setAttribute("patient", patient);
+        req.getRequestDispatcher("/receptionist/PatientProfile.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        doGet(req, resp);
     }
 }

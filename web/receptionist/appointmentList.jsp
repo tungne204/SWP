@@ -90,7 +90,7 @@
         <!-- Header -->
         <jsp:include page="../includes/header.jsp" />
 
-        <!-- 👇 NỚI RỘNG CARD Ở ĐÂY: max-w-7xl (rộng hơn 6xl) -->
+        <!--NỚI RỘNG CARD Ở ĐÂY: max-w-7xl (rộng hơn 6xl) -->
         <div class="p-6 w-[70%] max-w-none mx-auto">
             <!-- Sidebar -->
             <c:if test="${sessionScope.role eq 'Receptionist'}">
@@ -102,7 +102,12 @@
             </c:if>
 
             <h1 class="text-2xl font-bold text-teal-600 mb-4">Danh sách lịch hẹn</h1>
-
+            <!-- Thông báo tạo lịch hẹn thành công -->
+            <c:if test="${param.msg eq 'created'}">
+                <div class="mb-4 px-4 py-2 rounded bg-green-100 text-green-700 border border-green-300">
+                    ✅ Tạo lịch hẹn mới thành công!
+                </div>
+            </c:if>
             <!--Nếu là Patient thì có nút tạo mới -->
             <c:if test="${sessionScope.role eq 'Patient'}">
                 <div class="mb-4">

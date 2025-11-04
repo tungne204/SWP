@@ -151,150 +151,6 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
-    //Lấy danh sách theo Patient ID-Appointment-List
-    public List<Appointment> getAppointmentsByPatientId(
-            int patientId, String keyword, String status, String sort, int page, int pageSize) {
-
-        List<Appointment> list = new ArrayList<>();
-
-        StringBuilder sql = new StringBuilder("""
-        SELECT 
-            a.appointment_id,
-            a.date_time,
-            a.status,
-            p.full_name AS patientName,
-            p.address AS patientAddress,
-            p.insurance_info AS patientInsurance,
-            d.doctor_id,
-            uD.username AS doctorName,
-            d.experienceYears AS doctorExperienceYears
-        FROM dbo.Appointment a
-        JOIN dbo.Patient p ON a.patient_id = p.patient_id
-        JOIN dbo.Doctor d ON a.doctor_id = d.doctor_id
-        JOIN dbo.[User] uD ON d.user_id = uD.user_id
-        WHERE a.patient_id = ?
-    """);
-
-        // ✅ Tìm kiếm theo keyword
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append("""
-            AND (
-                p.full_name LIKE ? OR
-                uD.username LIKE ? OR
-                p.address LIKE ? OR
-                p.insurance_info LIKE ?
-            )
-        """);
-        }
-
-        // ✅ Lọc theo status (ignore case)
-        if (status != null && !status.equalsIgnoreCase("all")) {
-            sql.append(" AND LOWER(a.status) = LOWER(?) ");
-        }
-
-        // ✅ Sắp xếp (sort)
-        switch (sort == null ? "" : sort) {
-            case "date_asc" ->
-                sql.append(" ORDER BY a.date_time ASC ");
-            case "today" ->
-                sql.append(" AND CAST(a.date_time AS DATE) = CAST(GETDATE() AS DATE) ORDER BY a.date_time ASC ");
-            default ->
-                sql.append(" ORDER BY a.date_time DESC ");
-        }
-
-        // ✅ Phân trang
-        sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
-
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
-            int index = 1;
-            ps.setInt(index++, patientId);
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String kw = "%" + keyword.trim() + "%";
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
-            }
-
-            if (status != null && !status.equalsIgnoreCase("all")) {
-                ps.setString(index++, status);
-            }
-
-            ps.setInt(index++, (page - 1) * pageSize);
-            ps.setInt(index, pageSize);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Appointment a = new Appointment();
-                    a.setAppointmentId(rs.getInt("appointment_id"));
-                    a.setDateTime(rs.getTimestamp("date_time"));
-                    a.setStatus(rs.getString("status"));
-                    a.setPatientName(rs.getString("patientName"));
-                    a.setPatientAddress(rs.getString("patientAddress"));
-                    a.setPatientInsurance(rs.getString("patientInsurance"));
-                    a.setDoctorName(rs.getString("doctorName"));
-                    a.setDoctorExperienceYears(rs.getInt("doctorExperienceYears"));
-                    list.add(a);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
-    public List<Appointment> getAppointmentsByUserId(int userId, String keyword, String status, String sort, int page, int pageSize) {
-        List<Appointment> list = new ArrayList<>();
-
-        StringBuilder sql = new StringBuilder("""
-        SELECT a.appointment_id, uD.username AS doctorName, a.date_time AS dateTime, a.status
-        FROM Appointment a
-        JOIN Doctor d ON a.doctor_id = d.doctor_id
-        JOIN [User] uD ON d.user_id = uD.user_id
-        JOIN Patient p ON a.patient_id = p.patient_id
-        JOIN [User] uP ON p.user_id = uP.user_id
-        WHERE uP.user_id = ?
-    """);
-
-        if (status != null && !status.equals("all")) {
-            sql.append(" AND a.status = ?");
-        }
-
-        sql.append(" ORDER BY a.date_time DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            int index = 1;
-            ps.setInt(index++, userId);
-
-            if (status != null && !status.equals("all")) {
-                ps.setString(index++, status);
-            }
-
-            ps.setInt(index++, (page - 1) * pageSize);
-            ps.setInt(index, pageSize);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Appointment a = new Appointment();
-                    a.setAppointmentId(rs.getInt("appointment_id"));
-                    a.setDoctorName(rs.getString("doctorName"));
-                    a.setDateTime(rs.getTimestamp("dateTime"));
-                    a.setStatus(rs.getString("status"));
-                    list.add(a);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
     // Đếm tổng số bản ghi (phục vụ paging)-Appointment-List
     public int countAppointments(String keyword, String status, String role, int userId) {
         StringBuilder sql = new StringBuilder("""
@@ -344,31 +200,6 @@ public class AppointmentDAO extends DBContext {
         }
 
         return 0;
-    }
-    //Lấy patientId từ userId (dành cho Patient role)-Appointment-List
-
-    public int getPatientIdByUserId(int userId) {
-        String sql = """
-        SELECT patient_id
-        FROM Patient
-        WHERE user_id = ?
-    """;
-
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, userId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("patient_id");
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return 0; // Không tìm thấy
     }
 
     //Cập nhật trạng thái của lịch hẹn (dùng cho Receptionist / Doctor / Patient/ Appointment-Status)
@@ -474,198 +305,7 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
-    // Create appointment with patient and parent info
-    public boolean createAppointment(String patientName, String patientDob, String parentName, String patientAddress, String insuranceInfo,
-            String patientEmail, String parentPhone, String dateTimeStr,
-            int doctorId, String status) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            conn.setAutoCommit(false); // Start transaction
-
-            // 1. Create or find Parent
-            int parentId = getOrCreateParent(conn, parentName, parentPhone);
-
-            // 2. Create or find User for patient's email
-            int userId = getOrCreateUser(conn, patientEmail, parentPhone);
-
-            // 3. Create Patient
-            int patientId = createOrFindPatient(conn, patientName, patientDob, patientAddress, insuranceInfo, userId, parentId);
-
-            // 4. Parse datetime
-            Timestamp appointmentDateTime = parseDateTime(dateTimeStr);
-
-            // 5. Create Appointment
-            String sql = """
-                INSERT INTO Appointment (patient_id, doctor_id, date_time, status)
-                VALUES (?, ?, ?, ?)
-            """;
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, patientId);
-                ps.setInt(2, doctorId);
-                ps.setTimestamp(3, appointmentDateTime);
-                ps.setString(4, status);
-
-                int rows = ps.executeUpdate();
-
-                if (rows > 0) {
-                    conn.commit(); // Commit transaction
-                    return true;
-                } else {
-                    conn.rollback(); // Rollback on failure
-                    return false;
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback(); // Rollback on error
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            return false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    // Helper method to get or create Parent
-    private int getOrCreateParent(Connection conn, String parentName, String parentPhone) throws SQLException {
-        // Try to find existing parent by name and phone
-        String findSql = """
-            SELECT TOP 1 parent_id FROM Parent p
-            JOIN Patient pa ON p.parent_id = pa.parent_id
-            JOIN [User] u ON pa.user_id = u.user_id
-            WHERE p.parentname = ? AND u.phone = ?
-        """;
-
-        try (PreparedStatement ps = conn.prepareStatement(findSql)) {
-            ps.setString(1, parentName);
-            ps.setString(2, parentPhone);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("parent_id");
-                }
-            }
-        }
-
-        // Create new parent
-        String insertSql = "INSERT INTO Parent (parentname, id_info) VALUES (?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, parentName);
-            ps.setString(2, parentPhone); // Use phone as id_info
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-
-        throw new SQLException("Failed to create parent");
-    }
-
-    // Helper method to get or create User
-    private int getOrCreateUser(Connection conn, String email, String phone) throws SQLException {
-        // Try to find existing user by email
-        String findSql = "SELECT user_id FROM [User] WHERE email = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(findSql)) {
-            ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("user_id");
-                }
-            }
-        }
-
-        // Create new user
-        String insertSql = """
-            INSERT INTO [User] (username, password, email, phone, role_id, status)
-            VALUES (?, ?, ?, ?, 3, 1)
-        """;
-        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, email); // Use email as username
-            ps.setString(2, "password"); // Default password
-            ps.setString(3, email);
-            ps.setString(4, phone);
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-
-        throw new SQLException("Failed to create user");
-    }
-
-    // Helper method to create or find Patient
-    private int createOrFindPatient(Connection conn, String patientName, String patientDob, String patientAddress, String insuranceInfo,
-            int userId, int parentId) throws SQLException {
-        // Try to find existing patient by name and parent
-        String findSql = """
-            SELECT TOP 1 patient_id FROM Patient
-            WHERE full_name = ? AND parent_id = ?
-        """;
-
-        try (PreparedStatement ps = conn.prepareStatement(findSql)) {
-            ps.setString(1, patientName);
-            ps.setInt(2, parentId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("patient_id");
-                }
-            }
-        }
-
-        // Create new patient
-        String insertSql = """
-            INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
-        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setObject(1, userId > 0 ? userId : null, java.sql.Types.INTEGER);
-            ps.setString(2, patientName);
-            // Parse DOB string to Date
-            if (patientDob != null && !patientDob.trim().isEmpty()) {
-                try {
-                    java.sql.Date dobDate = java.sql.Date.valueOf(patientDob);
-                    ps.setDate(3, dobDate);
-                } catch (IllegalArgumentException e) {
-                    ps.setDate(3, null); // Set null if invalid date
-                }
-            } else {
-                ps.setDate(3, null);
-            }
-            ps.setString(4, patientAddress);
-            ps.setString(5, insuranceInfo != null ? insuranceInfo : "");
-            ps.setInt(6, parentId);
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-
-        throw new SQLException("Failed to create patient");
-    }
-
-    // Helper method to parse datetime string
+    //Helper method to parse datetime string
     private Timestamp parseDateTime(String dateTimeStr) throws ParseException {
         // Try multiple date formats
         String[] formats = {
@@ -810,6 +450,241 @@ public class AppointmentDAO extends DBContext {
                     conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+// Lấy danh sách lịch hẹn theo user_id của Patient (Appointment-List cho Patient)
+
+    public List<Appointment> getAppointmentsByPatientUserId(
+            int userId, String keyword, String status, String sort, int page, int pageSize) {
+
+        List<Appointment> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT a.appointment_id,
+               p.full_name      AS patientName,
+               p.address        AS patientAddress,
+               p.insurance_info AS patientInsurance,
+               u.username       AS doctorName,
+               d.experienceYears AS doctorExperienceYears,
+               a.date_time      AS dateTime,
+               a.status
+        FROM Appointment a
+        JOIN Patient p ON a.patient_id = p.patient_id
+        JOIN Doctor d  ON a.doctor_id = d.doctor_id
+        JOIN [User] u  ON d.user_id = u.user_id
+        WHERE p.user_id = ?
+    """);
+
+        // Search
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (p.full_name LIKE ? OR u.username LIKE ? OR p.address LIKE ?)");
+        }
+
+        // ⚙️ Filter theo status
+        if (status != null && !"all".equals(status)) {
+            sql.append(" AND a.status = ?");
+        }
+
+        // 🔽 Sort
+        if (sort == null || sort.isEmpty()) {
+            sort = "date_desc";
+        }
+
+        switch (sort) {
+            case "date_asc" ->
+                sql.append(" ORDER BY a.date_time ASC");
+            case "today" -> {
+                sql.append(" AND CAST(a.date_time AS DATE) = CAST(GETDATE() AS DATE)");
+                sql.append(" ORDER BY a.date_time DESC");
+            }
+            default ->
+                sql.append(" ORDER BY a.date_time DESC");
+        }
+
+        // Paging
+        sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+
+            // user_id của Patient
+            ps.setInt(index++, userId);
+
+            if (keyword != null && !keyword.isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+                ps.setString(index++, "%" + keyword + "%");
+                ps.setString(index++, "%" + keyword + "%");
+            }
+
+            if (status != null && !"all".equals(status)) {
+                ps.setString(index++, status);
+            }
+
+            ps.setInt(index++, (page - 1) * pageSize);
+            ps.setInt(index, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Appointment a = new Appointment();
+                    a.setAppointmentId(rs.getInt("appointment_id"));
+                    a.setPatientName(rs.getString("patientName"));
+                    a.setPatientAddress(rs.getString("patientAddress"));
+                    a.setPatientInsurance(rs.getString("patientInsurance"));
+                    a.setDoctorName(rs.getString("doctorName"));
+                    a.setDoctorExperienceYears(rs.getInt("doctorExperienceYears"));
+                    a.setDateTime(rs.getTimestamp("dateTime"));
+                    a.setStatus(rs.getString("status"));
+                    list.add(a);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // Tạo lịch hẹn mới cho Patient (theo user_id + thông tin form)
+    public boolean createAppointmentWithPatientInfo(
+            int userId,
+            String patientName,
+            java.time.LocalDate patientDob,
+            String patientAddress,
+            String insuranceInfo,
+            String parentName,
+            String parentPhone,
+            int doctorId,
+            java.sql.Timestamp appointmentDateTime,
+            String status) {
+
+        java.sql.Connection conn = null;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            int patientId = 0;
+            int parentId = 0;
+
+            // 1. Tìm patient hiện có theo user_id
+            String findSql = "SELECT patient_id, parent_id FROM Patient WHERE user_id = ?";
+            try (java.sql.PreparedStatement ps = conn.prepareStatement(findSql)) {
+                ps.setInt(1, userId);
+                try (java.sql.ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        patientId = rs.getInt("patient_id");
+                        parentId = rs.getInt("parent_id");
+                    }
+                }
+            }
+
+            // 2. Nếu chưa có patient -> tạo mới Parent + Patient
+            if (patientId == 0) {
+                // 2.1 insert Parent
+                String insertParent = "INSERT INTO Parent (parentname, id_info) VALUES (?, ?)";
+                try (java.sql.PreparedStatement ps = conn.prepareStatement(
+                        insertParent, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, parentName);
+                    ps.setString(2, null);
+                    ps.executeUpdate();
+                    try (java.sql.ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            parentId = rs.getInt(1);
+                        }
+                    }
+                }
+
+                // 2.2 insert Patient
+                String insertPatient = """
+                    INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """;
+                try (java.sql.PreparedStatement ps = conn.prepareStatement(
+                        insertPatient, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, userId);
+                    ps.setString(2, patientName);
+                    ps.setDate(3, patientDob != null ? java.sql.Date.valueOf(patientDob) : null);
+                    ps.setString(4, patientAddress);
+                    ps.setString(5, insuranceInfo);
+                    ps.setInt(6, parentId);
+                    ps.executeUpdate();
+                    try (java.sql.ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            patientId = rs.getInt(1);
+                        }
+                    }
+                }
+            } else {
+                // 3. Nếu đã có patient -> cập nhật Parent + Patient
+                if (parentId > 0) {
+                    String updateParent = "UPDATE Parent SET parentname = ? WHERE parent_id = ?";
+                    try (java.sql.PreparedStatement ps = conn.prepareStatement(updateParent)) {
+                        ps.setString(1, parentName);
+                        ps.setInt(2, parentId);
+                        ps.executeUpdate();
+                    }
+                }
+
+                String updatePatient = """
+                    UPDATE Patient
+                    SET full_name = ?, dob = ?, address = ?, insurance_info = ?
+                    WHERE patient_id = ?
+                    """;
+                try (java.sql.PreparedStatement ps = conn.prepareStatement(updatePatient)) {
+                    ps.setString(1, patientName);
+                    ps.setDate(2, patientDob != null ? java.sql.Date.valueOf(patientDob) : null);
+                    ps.setString(3, patientAddress);
+                    ps.setString(4, insuranceInfo);
+                    ps.setInt(5, patientId);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 4. Cập nhật phone của User (email dùng email login nên không đổi)
+            String updateUser = "UPDATE [User] SET phone = ? WHERE user_id = ?";
+            try (java.sql.PreparedStatement ps = conn.prepareStatement(updateUser)) {
+                ps.setString(1, parentPhone);
+                ps.setInt(2, userId);
+                ps.executeUpdate();
+            }
+
+            // 5. Insert Appointment mới
+            String insertAppointment = """
+                INSERT INTO Appointment (patient_id, doctor_id, date_time, status)
+                VALUES (?, ?, ?, ?)
+                """;
+            try (java.sql.PreparedStatement ps = conn.prepareStatement(insertAppointment)) {
+                ps.setInt(1, patientId);
+                ps.setInt(2, doctorId);
+                ps.setTimestamp(3, appointmentDateTime);
+                ps.setString(4, status);
+                ps.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (java.sql.SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (java.sql.SQLException ex) {
                     ex.printStackTrace();
                 }
             }

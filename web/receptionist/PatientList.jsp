@@ -67,8 +67,9 @@
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
-
+            <c:if test="${sessionScope.acc != null and sessionScope.acc.roleId == 5}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
             <!-- Main Content -->
             <div class="content-area">
                 <main class="w-[95%] mx-auto px-8 pt-0 pb-10 flex-grow">
@@ -92,7 +93,7 @@
                     </c:if>
 
                     <!-- Search Form -->
-                    <form id="searchForm" action="Patient-Search" method="post"
+                    <form id="searchForm" action="Patient-List" method="get"
                           class="flex flex-col sm:flex-row gap-3 mb-10 justify-center max-w-3xl mx-auto w-full">
                         <input type="text" name="keyword" placeholder="Nhập tên hoặc mã Bệnh Nhân..."
                                value="${keyword}"
@@ -103,9 +104,10 @@
                         </button>
                     </form>
 
+
                     <!-- Action buttons -->
                     <div class="flex justify-end mb-6 gap-3">
-                        <button type="button" onclick="window.location.href = 'Patient-Search'"
+                        <button type="button" onclick="window.location.href = 'Patient-List'"
                                 class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-md">
                             🔄 Làm mới
                         </button>
@@ -122,15 +124,24 @@
 
                     <!-- Advanced Filter -->
                     <div class="flex flex-wrap gap-3 mb-6 bg-blue-100 border border-blue-200 p-4 rounded-lg shadow-sm">
-                        <input type="text" id="filterName" placeholder="Lọc theo tên"
+                        <input type="text" id="filterName" name="filterName" form="searchForm"
+                               placeholder="Lọc theo tên"
+                               value="${filterName}"
                                class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                        <input type="text" id="filterAddress" placeholder="Lọc theo địa chỉ"
+                        <input type="text" id="filterAddress" name="filterAddress" form="searchForm"
+                               placeholder="Lọc theo địa chỉ"
+                               value="${filterAddress}"
                                class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                        <input type="text" id="filterInsurance" placeholder="Lọc theo bệnh nền"
+                        <input type="text" id="filterInsurance" name="filterInsurance" form="searchForm"
+                               placeholder="Lọc theo bệnh nền"
+                               value="${filterInsurance}"
                                class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                        <input type="text" id="filterPhone" placeholder="Lọc theo SĐT"
+                        <input type="text" id="filterPhone" name="filterPhone" form="searchForm"
+                               placeholder="Lọc theo SĐT"
+                               value="${filterPhone}"
                                class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
                     </div>
+
 
                     <!-- Table Result -->
                     <c:if test="${not empty patients}">
@@ -148,16 +159,7 @@
                                         <th class="px-4 py-4 w-[10%] text-center">Chi tiết</th>
                                     </tr>
                                     <!-- Filter Row -->
-                                    <tr class="bg-gray-50 text-gray-600 text-sm">
-                                        <td></td>
-                                        <td><input type="text" onkeyup="filterTable(1, this.value)" class="w-full px-2 py-1 border rounded" placeholder="Lọc tên..." /></td>
-                                        <td></td>
-                                        <td><input type="text" onkeyup="filterTable(3, this.value)" class="w-full px-2 py-1 border rounded" placeholder="Lọc địa chỉ..." /></td>
-                                        <td><input type="text" onkeyup="filterTable(4, this.value)" class="w-full px-2 py-1 border rounded" placeholder="Lọc bệnh nền..." /></td>
-                                        <td></td>
-                                        <td><input type="text" onkeyup="filterTable(6, this.value)" class="w-full px-2 py-1 border rounded" placeholder="Lọc SĐT..." /></td>
-                                        <td></td>
-                                    </tr>
+
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
                                     <c:forEach var="p" items="${patients}">
@@ -184,25 +186,25 @@
                             <c:if test="${totalPages > 1}">
                                 <div class="flex justify-center mt-6 gap-2">
                                     <c:if test="${currentPage > 1}">
-                                        <a href="Patient-Search?page=${currentPage - 1}&keyword=${keyword}"
+                                        <a href="Patient-List?page=${currentPage - 1}&keyword=${keyword}"
                                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">Trước</a>
                                     </c:if>
 
                                     <c:forEach var="i" begin="1" end="${totalPages}">
                                         <c:choose>
                                             <c:when test="${i == currentPage}">
-                                                <a href="Patient-Search?page=${i}&keyword=${keyword}"
+                                                <a href="Patient-List?page=${i}&keyword=${keyword}"
                                                    class="px-3 py-1 rounded bg-blue-600 text-white">${i}</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="Patient-Search?page=${i}&keyword=${keyword}"
+                                                <a href="Patient-List?page=${i}&keyword=${keyword}"
                                                    class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">${i}</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
 
                                     <c:if test="${currentPage < totalPages}">
-                                        <a href="Patient-Search?page=${currentPage + 1}&keyword=${keyword}"
+                                        <a href="Patient-List?page=${currentPage + 1}&keyword=${keyword}"
                                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">Tiếp</a>
                                     </c:if>
                                 </div>
@@ -234,5 +236,65 @@
 
         <!-- Footer -->
         <%@ include file="../includes/footer.jsp" %>
+        <!-- Export libraries -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+        <script>
+                                                    // Ẩn/hiện cột "Chi tiết" (cột cuối)
+                                                    function toggleDetailColumn(hide) {
+                                                        const table = document.getElementById('patientTable');
+                                                        if (!table)
+                                                            return;
+
+                                                        Array.from(table.rows).forEach(row => {
+                                                            const lastIndex = row.cells.length - 1;
+                                                            if (lastIndex >= 0) {
+                                                                row.cells[lastIndex].style.display = hide ? 'none' : '';
+                                                            }
+                                                        });
+                                                    }
+
+                                                    // Export Excel: ẩn cột "Chi tiết" -> export -> hiện lại
+                                                    function exportTableToExcel(tableId, fileName) {
+                                                        const table = document.getElementById(tableId);
+                                                        if (!table) {
+                                                            alert('Không tìm thấy bảng để export.');
+                                                            return;
+                                                        }
+
+                                                        toggleDetailColumn(true); // ẩn cột chi tiết
+
+                                                        const wb = XLSX.utils.table_to_book(table, {sheet: "BenhNhan"});
+                                                        XLSX.writeFile(wb, fileName + ".xlsx");
+
+                                                        toggleDetailColumn(false); // hiện lại
+                                                    }
+
+                                                    // Export PDF: ẩn cột "Chi tiết" -> export -> hiện lại
+                                                    function exportTableToPDF() {
+                                                        const table = document.getElementById('patientTable');
+                                                        if (!table) {
+                                                            alert('Không tìm thấy bảng để export.');
+                                                            return;
+                                                        }
+
+                                                        toggleDetailColumn(true); // ẩn cột chi tiết
+
+                                                        const opt = {
+                                                            margin: 10,
+                                                            filename: 'DanhSachBenhNhan.pdf',
+                                                            image: {type: 'jpeg', quality: 0.98},
+                                                            html2canvas: {scale: 2, useCORS: true},
+                                                            jsPDF: {unit: 'mm', format: 'a4', orientation: 'landscape'}
+                                                        };
+
+                                                        html2pdf().set(opt).from(table).save().then(() => {
+                                                            toggleDetailColumn(false); // hiện lại sau khi export xong
+                                                        });
+                                                    }
+        </script>
+
+
     </body>
 </html>
