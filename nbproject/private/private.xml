@@ -3,25 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/PatientDAO.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentUpdate.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientProfile.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/payment/VNPayIPNServlet.java</file>
             <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/sidebar-receptionist.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/Receptionist/AppointmentDAO.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentList.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentCreateServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentUpdateSearch.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentUpdateSearchServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/PatientList.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/entity/Receptionist/Patient.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/includes/sidebar-doctor.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/PatientProfileServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentCreate.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/AppointmentDetail.jsp</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/UpdatePatientServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentListServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/AppointmentUpdateServlet.java</file>
-            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/ReceptionistControl/PatientListServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/views/payment/list-medical-report.jsp</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/payment/CreateVNPayServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/payment/ListMedicalReportsServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/control/payment/VNPayReturnServlet.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/src/java/dao/payment/MedicalReportViewDAO.java</file>
+            <file>file:/D:/SE-5-nodeJS-FALL25/SWP391/SWP/web/receptionist/appointmentList.jsp</file>
         </group>
     </open-files>
 </project-private>
