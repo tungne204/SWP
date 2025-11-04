@@ -3,11 +3,11 @@
     .sidebar-nav {
         padding: 20px 0;
     }
-    
+
     .nav-section {
         margin-bottom: 30px;
     }
-    
+
     .nav-section-title {
         font-size: 12px;
         font-weight: 600;
@@ -17,11 +17,11 @@
         margin-bottom: 10px;
         padding: 0 20px;
     }
-    
+
     .nav-item {
         margin-bottom: 5px;
     }
-    
+
     .nav-link {
         display: flex;
         align-items: center;
@@ -31,30 +31,30 @@
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
     }
-    
+
     .nav-link:hover {
         background-color: #f8f9fa;
         color: var(--primary-color);
         border-left-color: var(--primary-color);
     }
-    
+
     .nav-link.active {
         background-color: rgba(63, 187, 192, 0.1);
         color: var(--primary-color);
         border-left-color: var(--primary-color);
         font-weight: 500;
     }
-    
+
     .nav-link i {
         width: 20px;
         margin-right: 12px;
         font-size: 16px;
     }
-    
+
     .nav-link-text {
         flex: 1;
     }
-    
+
     .nav-badge {
         background: #dc3545;
         color: white;
@@ -77,20 +77,32 @@
                 </a>
             </div>
         </div>
-      <div class="nav-section">
+        <div class="nav-section">
             <div class="nav-section-title">Danh sách người dùng</div>
+
+            <!-- Danh sách khách (Patient) -->
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/users" class="nav-link">
-                    <i class="bi bi-clipboard-data"></i>
-                    <span class="nav-link-text">Danh sách user</span>
+                <a href="${pageContext.request.contextPath}/admin/users?action=list&group=customers"
+                   class="nav-link ${param.group == 'customers' ? 'active' : ''}">
+                    <i class="bi bi-people"></i>
+                    <span class="nav-link-text">Danh sách khách</span>
                 </a>
             </div>
-           
+
+            <!-- Danh sách nhân viên (Receptionist, Doctor, Medical Assistant) -->
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/users?action=list&group=staff"
+                   class="nav-link ${param.group == 'staff' ? 'active' : ''}">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="nav-link-text">Danh sách nhân viên</span>
+                </a>
+            </div>
         </div>
-        
-        
-        
-       
-        
+
+
+
+
+
+
     </nav>
 </div>

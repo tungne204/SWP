@@ -335,6 +335,65 @@
                         </div>
                     </div>
                 </div>
+                <!-- Test Results -->
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-vials"></i> Kết quả xét nghiệm</div>
+                    <div class="card-body">
+                        <c:choose>
+                            <c:when test="${empty testResults}">
+                                <div class="alert alert-info mb-0">
+                                    Chưa có kết quả xét nghiệm cho hồ sơ này.
+                                    <c:if test="${report.testRequest}">
+                                        <a class="btn btn-sm btn-primary ms-2"
+                                           href="testresult?action=add&recordId=${report.recordId}">
+                                            <i class="fas fa-plus"></i> Thêm kết quả
+                                        </a>
+                                    </c:if>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="table-responsive">
+                                    <table class="table table-striped align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Loại XN</th>
+                                                <th>Kết quả</th>
+                                                <th>Ngày</th>
+                                                <th>Consultation ID</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="r" items="${testResults}" varStatus="st">
+                                                <tr>
+                                                    <td>${st.index + 1}</td>
+                                                    <td>${r.testType}</td>
+                                                    <td>${r.result}</td>
+                                                    <td>${r.date}</td>
+                                                    <td><c:out value="${r.consultationId}"/></td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a class="btn btn-primary"
+                                       href="testresult?action=list&recordId=${report.recordId}">
+                                        <i class="fas fa-list"></i> Xem danh sách xét nghiệm
+                                    </a>
+                                    <c:if test="${report.testRequest}">
+<!--                                        <a class="btn btn-success"
+                                           href="testresult?action=add&recordId=${report.recordId}">
+                                            <i class="fas fa-plus"></i> Thêm kết quả
+                                        </a>-->
+                                    </c:if>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+
 
                 <!-- Print Signature -->
                 <div class="card d-none d-print-block">

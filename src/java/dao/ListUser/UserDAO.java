@@ -18,29 +18,31 @@ public class UserDAO extends DBContext {
 
     // ========================= LẤY DANH SÁCH USER =========================
     public List<User> getAllUsers(String search, Integer roleFilter, Integer statusFilter,
-                                  int offset, int limit) {
+            int offset, int limit, List<String> roleNamesInGroup) {
 
         List<User> users = new ArrayList<>();
+
         StringBuilder sql = new StringBuilder(
-                "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
-                        "u.role_id, r.role_name, u.status, " +
-                        "u.reset_token, u.reset_expiry " +
-                        "FROM [User] u " +
-                        "LEFT JOIN Role r ON u.role_id = r.role_id " +
-                        "WHERE 1=1 "
+                "SELECT u.user_id, u.username, u.password, u.email, u.phone, "
+                + "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry "
+                + "FROM [User] u "
+                + "LEFT JOIN Role r ON u.role_id = r.role_id "
+                + "WHERE 1=1 "
         );
 
-        // ✅ Lọc theo từ khóa
+        // filter theo group (role_name IN ...)
+        if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+            sql.append("AND r.role_name IN (")
+                    .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
+                    .append(") ");
+        }
+
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND (u.username LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ");
         }
-
-        // ✅ Lọc theo vai trò
         if (roleFilter != null) {
             sql.append("AND u.role_id = ? ");
         }
-
-        // ✅ Lọc theo trạng thái (active/inactive)
         if (statusFilter != null) {
             sql.append("AND u.status = ? ");
         }
@@ -48,33 +50,38 @@ public class UserDAO extends DBContext {
         sql.append("ORDER BY u.user_id DESC ");
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
+            int p = 1;
+
+            // bind group names
+            if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+                for (String rn : roleNamesInGroup) {
+                    ps.setString(p++, rn);
+                }
+            }
 
             if (search != null && !search.trim().isEmpty()) {
                 String pattern = "%" + search + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
             }
             if (roleFilter != null) {
-                ps.setInt(paramIndex++, roleFilter);
+                ps.setInt(p++, roleFilter);
             }
             if (statusFilter != null) {
-                ps.setInt(paramIndex++, statusFilter);
+                ps.setInt(p++, statusFilter);
             }
 
-            ps.setInt(paramIndex++, offset);
-            ps.setInt(paramIndex, limit);
+            ps.setInt(p++, offset);
+            ps.setInt(p, limit);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     users.add(extractUser(rs));
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,9 +90,20 @@ public class UserDAO extends DBContext {
     }
 
     // ========================= ĐẾM USER =========================
-    public int getTotalUsers(String search, Integer roleFilter, Integer statusFilter) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM [User] u WHERE 1=1 ");
+    public int getTotalUsers(String search, Integer roleFilter, Integer statusFilter,
+                             List<String> roleNamesInGroup) {
 
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(*) " +
+            "FROM [User] u LEFT JOIN Role r ON u.role_id = r.role_id " +
+            "WHERE 1=1 "
+        );
+
+        if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+            sql.append("AND r.role_name IN (")
+               .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
+               .append(") ");
+        }
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND (u.username LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ");
         }
@@ -99,46 +117,48 @@ public class UserDAO extends DBContext {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
+            int p = 1;
 
+            if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+                for (String rn : roleNamesInGroup) ps.setString(p++, rn);
+            }
             if (search != null && !search.trim().isEmpty()) {
                 String pattern = "%" + search + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
             }
             if (roleFilter != null) {
-                ps.setInt(paramIndex++, roleFilter);
+                ps.setInt(p++, roleFilter);
             }
             if (statusFilter != null) {
-                ps.setInt(paramIndex, statusFilter);
+                ps.setInt(p++, statusFilter);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt(1);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
     // ========================= LẤY USER THEO ID =========================
     public User getUserById(int userId) {
-        String sql = "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
-                "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry " +
-                "FROM [User] u " +
-                "LEFT JOIN Role r ON u.role_id = r.role_id " +
-                "WHERE u.user_id = ?";
+        String sql = "SELECT u.user_id, u.username, u.password, u.email, u.phone, "
+                + "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry "
+                + "FROM [User] u "
+                + "LEFT JOIN Role r ON u.role_id = r.role_id "
+                + "WHERE u.user_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return extractUser(rs);
+                if (rs.next()) {
+                    return extractUser(rs);
+                }
             }
 
         } catch (Exception e) {
@@ -151,8 +171,7 @@ public class UserDAO extends DBContext {
     public boolean updatePassword(int userId, String newPassword) {
         String sql = "UPDATE [User] SET password = ? WHERE user_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
@@ -167,8 +186,7 @@ public class UserDAO extends DBContext {
     // ========================= BẬT / TẮT TRẠNG THÁI =========================
     public boolean toggleUserStatus(int userId) {
         String sql = "UPDATE [User] SET status = CASE WHEN status = 1 THEN 0 ELSE 1 END WHERE user_id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;
