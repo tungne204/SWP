@@ -145,44 +145,29 @@
                         <span class="nav-link-text">Thêm bệnh nhân mới</span>
                     </a>
                 </div>
-
-                <!-- Contact Management -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Contact Management</div>
-                    <div class="nav-item">
-                        <a href="${pageContext.request.contextPath}/manage-contacts" class="nav-link">
-                            <i class="bi bi-envelope-check"></i>
-                            <span class="nav-link-text">Quản lý liên hệ</span>
-                        </a>
-                    </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/appointmentList" class="nav-link">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span class="nav-link-text">Đặt lịch hẹn</span>
+                    </a>
                 </div>
-        </nav>
-    </div>
-    <div class="nav-item">
-        <a href="${pageContext.request.contextPath}/appointmentList" class="nav-link">
-            <i class="bi bi-calendar-plus"></i>
-            <span class="nav-link-text">Đặt lịch hẹn</span>
-        </a>
-    </div>
-    <div class="nav-item">
-        <a href="${pageContext.request.contextPath}/blog?action=add" class="nav-link">
-            <i class="bi bi-journal-text"></i>
-            <span class="nav-link-text">Tạo bài viết</span>
-        </a>
-    </div>
-    </div>
-    <!-- Payment -->
-    <div class="nav-section">
-        <div class="nav-section-title">Thanh toán</div>
-        <div class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/reception/medical-reports">
-                <i class="bi bi-credit-card"></i>
-                <span class="nav-link-text">Thanh toán hồ sơ</span>
-            </a>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/blog?action=add" class="nav-link">
+                        <i class="bi bi-journal-text"></i>
+                        <span class="nav-link-text">Tạo bài viết</span>
+                    </a>
+                </div>
+            </div>
+                        
+        <!-- Contact Management -->
+        <div class="nav-section">
+            <div class="nav-section-title">Contact Management</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/manage-contacts" class="nav-link">
+                    <i class="bi bi-envelope-check"></i>
+                    <span class="nav-link-text">Quản lý liên hệ</span>
+                </a>
+            </div>
         </div>
-    </div>
-
-
-
-    </nav>
+        </nav>
     </div>
