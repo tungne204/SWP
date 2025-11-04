@@ -60,8 +60,8 @@
 <body>
 <jsp:include page="includes/header.jsp"/>
 <div class="login-container">
-    <h3 class="text-center mb-2">Welcome Back</h3>
-    <p class="text-center text-muted">Sign in to continue to your account</p>
+    <h3 class="text-center mb-2">Chào mừng trở lại</h3>
+    <p class="text-center text-muted">Đăng nhập để trở về tài khoản của bạn</p>
 <!-- Hiển thị thông báo lỗi/thành công -->
 <% String error = (String) request.getAttribute("error"); %>
 <% if (error != null) { %>
@@ -76,33 +76,33 @@
     <form action="Login" method="post">
         <!-- Email -->
         <div class="mb-3">
-            <label for="email" class="form-label">Email Address</label>
+            <label for="email" class="form-label">Địa chỉ email</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
             </div>
         </div>
 
         <!-- Password -->
         <div class="mb-2">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">Mật khẩu</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
             </div>
         </div>
 
         <div class="d-flex justify-content-end mb-3">
-            <a href="Forgot_password" class="text-decoration-none">Forgot password?</a>
+            <a href="Forgot_password" class="text-decoration-none">Quên mật khẩu?</a>
         </div>
 
         <!-- Sign In button -->
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Sign In</button>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
         </div>
 
         <!-- Divider -->
-        <div class="divider">Or continue with</div>
+        <div class="divider">Hoặc tiếp tục với</div>
 
         <!-- Google login -->
         <div class="d-grid mb-3">
@@ -112,10 +112,10 @@
         </div>
 
         <!-- Sign Up -->
-        <p class="text-center">Don't have an account? <a href="Register">Sign up</a></p>
+        <p class="text-center">Chưa có tài khoản? <a href="Register">Đăng ký</a></p>
         <p class="text-center">
-  Go back to home page 
-  <a href="${pageContext.request.contextPath}/">HOME</a>
+  Trở về trang chủ
+  <a href="${pageContext.request.contextPath}/">Trang chủ</a>
 </p>
 
     </form>

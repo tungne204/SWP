@@ -44,13 +44,13 @@
 <body>
 <jsp:include page="includes/header.jsp"/>
 <div class="forgot-container">
-    <h4 class="mb-2">Forgot Password</h4>
-    <p class="text-muted">Enter your email to reset your password</p>
+    <h4 class="mb-2">Quên mật khẩu</h4>
+    <p class="text-muted">Nhập gmail để lấy lại mật khẩu </p>
 
     <form action="Forgot_password" method="post">
         <!-- Email -->
         <div class="mb-3 text-start">
-            <label for="email" class="form-label">Email Address</label>
+            <label for="email" class="form-label">Địa chỉ email</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your Gmail address" required>
@@ -59,11 +59,11 @@
 
         <!-- Submit -->
         <div class="d-grid mb-3">
-            <button type="submit" class="btn btn-primary">Reset Password</button>
+            <button type="submit" class="btn btn-primary">Reset mật khẩu</button>
         </div>
 
         <!-- Back to login -->
-        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Back to Login</a>
+        <a href="Login" class="back-link"><i class="bi bi-arrow-left"></i> Trở lại trang đăng nhập</a>
     </form>
     <% if (request.getAttribute("error") != null) { %>
     <div class="alert alert-danger mt-3">

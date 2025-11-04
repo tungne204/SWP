@@ -225,4 +225,36 @@ public class StatisticsDAO extends DBContext {
         }
         return 0;
     }
+    
+    // Get total number of receptionists (role_id = 5)
+    public int getTotalReceptionists() {
+        String sql = "SELECT COUNT(*) FROM [User] WHERE role_id = 5";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    // Get total number of medical assistants (role_id = 4)
+    public int getTotalMedicalAssistants() {
+        String sql = "SELECT COUNT(*) FROM [User] WHERE role_id = 4";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
