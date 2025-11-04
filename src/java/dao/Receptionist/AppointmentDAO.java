@@ -691,4 +691,241 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
+
+
+    // Create new appointment with patient and parent information
+    public boolean createAppointment(String patientName, String parentName, String patientAddress,
+                                   String patientEmail, String parentPhone, String dateTimeStr,
+                                   int doctorId, String status) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false); // Start transaction
+
+            // First, create or find user for patient
+            int userId = createOrFindUser(conn, patientEmail, parentPhone);
+            if (userId == -1) {
+                conn.rollback();
+                return false;
+            }
+
+            // Create or find parent
+            int parentId = createOrFindParent(conn, parentName, parentPhone);
+            if (parentId == -1) {
+                conn.rollback();
+                return false;
+            }
+
+            // Create patient
+            int patientId = createPatient(conn, userId, patientName, patientAddress, parentId);
+            if (patientId == -1) {
+                conn.rollback();
+                return false;
+            }
+
+            // Create appointment
+            String appointmentSql = """
+                INSERT INTO Appointment (patient_id, doctor_id, date_time, status)
+                VALUES (?, ?, ?, ?)
+            """;
+
+            try (PreparedStatement ps = conn.prepareStatement(appointmentSql)) {
+                ps.setInt(1, patientId);
+                ps.setInt(2, doctorId);
+                ps.setString(3, dateTimeStr);
+                ps.setString(4, status);
+
+                int rows = ps.executeUpdate();
+                if (rows > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Helper method to create or find user
+    private int createOrFindUser(Connection conn, String email, String phone) throws SQLException {
+        // First try to find existing user by email
+        String findSql = "SELECT user_id FROM [User] WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(findSql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
+            }
+        }
+
+        // Create new user if not found
+        String insertSql = """
+            INSERT INTO [User] (username, password, email, phone, role_id, status)
+            VALUES (?, 'defaultpass', ?, ?, 4, 1)
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, email); // Use email as username
+            ps.setString(2, email);
+            ps.setString(3, phone);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Helper method to create or find parent
+    private int createOrFindParent(Connection conn, String parentName, String parentPhone) throws SQLException {
+        // Try to find existing parent by phone
+        String findSql = "SELECT parent_id FROM Parent WHERE parentname = ? AND phone = ?";
+        try (PreparedStatement ps = conn.prepareStatement(findSql)) {
+            ps.setString(1, parentName);
+            ps.setString(2, parentPhone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("parent_id");
+                }
+            }
+        }
+
+        // Create new parent if not found
+        String insertSql = "INSERT INTO Parent (parentname, phone) VALUES (?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, parentName);
+            ps.setString(2, parentPhone);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Helper method to create patient
+    private int createPatient(Connection conn, int userId, String patientName, String patientAddress, int parentId) throws SQLException {
+        String insertSql = """
+            INSERT INTO Patient (user_id, full_name, address, parent_id)
+            VALUES (?, ?, ?, ?)
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, userId);
+            ps.setString(2, patientName);
+            ps.setString(3, patientAddress);
+            ps.setInt(4, parentId);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Helper method to update patient information
+    private void updatePatientInfo(Connection conn, int appointmentId, String patientName, String patientAddress) throws SQLException {
+        String sql = """
+            UPDATE Patient 
+            SET full_name = ?, address = ?
+            WHERE patient_id = (SELECT patient_id FROM Appointment WHERE appointment_id = ?)
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, patientName);
+            ps.setString(2, patientAddress);
+            ps.setInt(3, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Helper method to update parent information
+    private void updateParentInfo(Connection conn, int appointmentId, String parentName, String parentPhone) throws SQLException {
+        String sql = """
+            UPDATE Parent 
+            SET parentname = ?, phone = ?
+            WHERE parent_id = (
+                SELECT p.parent_id 
+                FROM Patient p 
+                JOIN Appointment a ON p.patient_id = a.patient_id 
+                WHERE a.appointment_id = ?
+            )
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, parentName);
+            ps.setString(2, parentPhone);
+            ps.setInt(3, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Helper method to update user email
+    private void updateUserEmail(Connection conn, int appointmentId, String patientEmail) throws SQLException {
+        String sql = """
+            UPDATE [User] 
+            SET email = ?
+            WHERE user_id = (
+                SELECT p.user_id 
+                FROM Patient p
+                JOIN Appointment a ON p.patient_id = a.patient_id
+                WHERE a.appointment_id = ?
+            )
+        """;
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, patientEmail);
+            ps.setInt(2, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Delete appointment by ID
+    public boolean deleteAppointment(int appointmentId) {
+        String sql = "DELETE FROM Appointment WHERE appointment_id = ?";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, appointmentId);
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -160,6 +160,21 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    // Update appointment status with String (NVARCHAR)
+    public void updateAppointmentStatus(int appointmentId, String status) {
+        String sql = "UPDATE Appointment SET status = ? WHERE appointment_id = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setInt(2, appointmentId);
+
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Update appointment date and time
     public void updateAppointmentDateTime(int appointmentId, java.util.Date dateTime) {
@@ -572,6 +587,76 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorSpecialty(rs.getString("doctor_specialty"));
                 
                 apt.setHasMedicalReport(false);
+                
+                list.add(apt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    /**
+     * Search appointments for check-in by keyword
+     * Search criteria: appointment ID, patient name, parent name, parent CCCD, phone number
+     */
+    public List<Appointment> searchAppointmentsForCheckin(String keyword) {
+        List<Appointment> list = new ArrayList<>();
+        
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return list;
+        }
+        
+        String sql = "SELECT a.appointment_id, a.patient_id, a.doctor_id, a.date_time, a.status, " +
+                    "p.full_name as patient_name, p.dob as patient_dob, " +
+                    "p.address as patient_address, p.insurance_info, " +
+                    "pa.parentname as parent_name, pa.id_info as parent_cccd, " +
+                    "u.username as doctor_name, uP.phone as patient_phone " +
+                    "FROM Appointment a " +
+                    "JOIN Patient p ON a.patient_id = p.patient_id " +
+                    "LEFT JOIN Parent pa ON p.parent_id = pa.parent_id " +
+                    "LEFT JOIN [User] uP ON p.user_id = uP.user_id " +
+                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                    "JOIN [User] u ON d.user_id = u.user_id " +
+                    "WHERE CAST(a.date_time AS DATE) = CAST(GETDATE() AS DATE) " +
+                    "AND (CAST(a.appointment_id AS VARCHAR) LIKE ? " +
+                    "     OR p.full_name LIKE ? " +
+                    "     OR pa.parentname LIKE ? " +
+                    "     OR pa.id_info LIKE ? " +
+                    "     OR uP.phone LIKE ?) " +
+                    "ORDER BY a.date_time DESC";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            String searchPattern = "%" + keyword.trim() + "%";
+            ps.setString(1, searchPattern); // appointment_id
+            ps.setString(2, searchPattern); // patient_name
+            ps.setString(3, searchPattern); // parent_name
+            ps.setString(4, searchPattern); // parent_cccd
+            ps.setString(5, searchPattern); // phone
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Appointment apt = new Appointment();
+                apt.setAppointmentId(rs.getInt("appointment_id"));
+                apt.setPatientId(rs.getInt("patient_id"));
+                apt.setDoctorId(rs.getInt("doctor_id"));
+                apt.setDateTime(rs.getTimestamp("date_time"));
+                
+                // Handle status as String (NVARCHAR)
+                String statusStr = rs.getString("status");
+                apt.setStatus(statusStr != null ? statusStr : "Pending");
+                
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setPatientDob(rs.getString("patient_dob") != null ? rs.getString("patient_dob") : "");
+                apt.setPatientAddress(rs.getString("patient_address"));
+                apt.setPatientInsurance(rs.getString("insurance_info"));
+                apt.setParentName(rs.getString("parent_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
+                // Some databases may not have doctor.specialty column; keep empty when unavailable
+                apt.setDoctorSpecialty("");
                 
                 list.add(apt);
             }

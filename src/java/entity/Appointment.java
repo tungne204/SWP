@@ -7,7 +7,7 @@ public class Appointment {
     private int patientId;
     private int doctorId;
     private Date dateTime;
-    private boolean status; // true = Active, false = Inactive
+    private String status; // NVARCHAR status (e.g., Pending, Confirmed, Cancelled)
     // Thông tin bổ sung từ join
     private String patientName;
     private String patientDob;
@@ -29,7 +29,8 @@ public class Appointment {
         this.patientId = patientId;
         this.doctorId = doctorId;
         this.dateTime = dateTime;
-        this.status = status;
+        // Backward-compatible: map boolean to string
+        this.status = status ? "Confirmed" : "Pending";
     }
 
     public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, boolean status, String patientName, String patientDob, String patientAddress, String patientInsurance, String parentName, String doctorName, String doctorSpecialty, boolean hasMedicalReport, Integer recordId, String diagnosis) {
@@ -37,7 +38,8 @@ public class Appointment {
         this.patientId = patientId;
         this.doctorId = doctorId;
         this.dateTime = dateTime;
-        this.status = status;
+        // Backward-compatible: map boolean to string
+        this.status = status ? "Confirmed" : "Pending";
         this.patientName = patientName;
         this.patientDob = patientDob;
         this.patientAddress = patientAddress;
@@ -48,6 +50,15 @@ public class Appointment {
         this.hasMedicalReport = hasMedicalReport;
         this.recordId = recordId;
         this.diagnosis = diagnosis;
+    }
+
+    // New constructor with String status
+    public Appointment(int appointmentId, int patientId, int doctorId, Date dateTime, String status) {
+        this.appointmentId = appointmentId;
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+        this.dateTime = dateTime;
+        this.status = status;
     }
     
 
@@ -84,12 +95,27 @@ public class Appointment {
         this.dateTime = dateTime;
     }
 
-    public boolean isStatus() {
+    // New getters/setters for String status
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
+    }
+
+    // Backward-compatible boolean helpers
+    public boolean isStatus() {
+        if (status == null) return false;
+        String s = status.trim();
+        return "1".equals(s) ||
+               "true".equalsIgnoreCase(s) ||
+               "active".equalsIgnoreCase(s) ||
+               "confirmed".equalsIgnoreCase(s);
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status ? "Confirmed" : "Pending";
     }
 
     public String getPatientName() {

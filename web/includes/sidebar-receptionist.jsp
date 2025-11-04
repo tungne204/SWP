@@ -89,7 +89,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Quản lý bệnh nhân</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/receptionist/checkin.jsp" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/receptionist/checkin-form" class="nav-link">
                         <i class="bi bi-person-plus"></i>
                         <span class="nav-link-text">Tiếp nhận bệnh nhân</span>
                     </a>
@@ -140,7 +140,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Thao tác nhanh</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/receptionist/checkin.jsp" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/receptionist/checkin-form" class="nav-link">
                         <i class="bi bi-plus-circle"></i>
                         <span class="nav-link-text">Thêm bệnh nhân mới</span>
                     </a>
