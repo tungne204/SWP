@@ -70,8 +70,9 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
             .table-cell-truncate {
-                max-width: 200px;           /* Giới hạn chiều rộng mỗi ô */
+                max-width: 200px;
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -82,8 +83,6 @@
                 white-space: normal;
                 word-break: break-word;
             }
-
-
         </style>
     </head>
 
@@ -91,7 +90,8 @@
         <!-- Header -->
         <jsp:include page="../includes/header.jsp" />
 
-        <div class="p-6 max-w-6xl mx-auto">
+        <!-- 👇 NỚI RỘNG CARD Ở ĐÂY: max-w-7xl (rộng hơn 6xl) -->
+        <div class="p-6 w-[70%] max-w-none mx-auto">
             <!-- Sidebar -->
             <c:if test="${sessionScope.role eq 'Receptionist'}">
                 <%@ include file="../includes/sidebar-receptionist.jsp" %>
@@ -100,7 +100,6 @@
             <c:if test="${sessionScope.role eq 'Doctor'}">
                 <%@ include file="../includes/sidebar-doctor.jsp" %>
             </c:if>
-
 
             <h1 class="text-2xl font-bold text-teal-600 mb-4">Danh sách lịch hẹn</h1>
 
@@ -141,7 +140,7 @@
                 </button>
             </form>
 
-            <!--Table -->
+            <!--Table (card trắng) -->
             <div class="overflow-x-auto bg-white border rounded-lg shadow">
                 <table class="min-w-full w-full text-sm">
                     <thead class="bg-gray-100 text-gray-600">
@@ -167,7 +166,9 @@
                                 <td class="p-3 table-cell-truncate" title="${a.patientInsurance}">${a.patientInsurance}</td>
                                 <td class="p-3">${a.doctorName}</td>
                                 <td class="p-3">${a.doctorExperienceYears}</td>
-                                <td class="p-3"><fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                <td class="p-3">
+                                    <fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </td>
                                 <td class="p-3">
                                     <span class="px-2 py-1 rounded-full text-white
                                           ${a.status == 'Confirmed' ? 'bg-green-500' :
@@ -179,7 +180,6 @@
                                     </td>
 
                                     <td class="p-3 text-center">
-
                                         <!-- Receptionist -->
                                         <c:if test="${sessionScope.role eq 'Receptionist'}">
                                             <a href="Appointment-Detail?id=${a.appointmentId}"
@@ -188,7 +188,7 @@
                                             <form method="post" action="Appointment-Status" class="inline">
                                                 <input type="hidden" name="id" value="${a.appointmentId}">
                                                 <select name="status" class="border rounded-md p-1 text-sm">
-                                                    <option value="Pending" ${a.status == 'Pending' ? 'selected' : ''}>Chờ</option>
+                                                    <option value="Pending"   ${a.status == 'Pending'   ? 'selected' : ''}>Chờ</option>
                                                     <option value="Confirmed" ${a.status == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
                                                     <option value="Cancelled" ${a.status == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                                     <option value="Completed" ${a.status == 'Completed' ? 'selected' : ''}>Đã khám</option>
@@ -237,6 +237,7 @@
                         </tbody>
                     </table>
                 </div>
+
                 <!-- Paging -->
                 <div class="flex justify-center mt-4 gap-2">
                     <c:forEach var="i" begin="1" end="${totalPages}">
@@ -249,31 +250,32 @@
                 </div>
 
             </div>
-        </div>
-        <!-- Footer -->
-        <%@ include file="../includes/footer.jsp" %>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('.table-cell-truncate').forEach(cell => {
-                    const fullText = cell.textContent.trim();
-                    const limit = 30; // giới hạn số ký tự hiển thị ban đầu
-                    if (fullText.length > limit) {
-                        const shortText = fullText.substring(0, limit) + '...';
-                        cell.textContent = shortText;
-                        cell.dataset.full = fullText;
-                        cell.dataset.short = shortText;
-                        cell.dataset.expanded = "false";
-                    }
 
-                    cell.addEventListener('click', () => {
-                        const expanded = cell.dataset.expanded === "true";
-                        cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
-                        cell.dataset.expanded = expanded ? "false" : "true";
-                        cell.classList.toggle('table-cell-expanded', !expanded);
+            <!-- Footer -->
+            <%@ include file="../includes/footer.jsp" %>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.table-cell-truncate').forEach(cell => {
+                        const fullText = cell.textContent.trim();
+                        const limit = 30;
+                        if (fullText.length > limit) {
+                            const shortText = fullText.substring(0, limit) + '...';
+                            cell.textContent = shortText;
+                            cell.dataset.full = fullText;
+                            cell.dataset.short = shortText;
+                            cell.dataset.expanded = "false";
+                        }
+
+                        cell.addEventListener('click', () => {
+                            const expanded = cell.dataset.expanded === "true";
+                            cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
+                            cell.dataset.expanded = expanded ? "false" : "true";
+                            cell.classList.toggle('table-cell-expanded', !expanded);
+                        });
                     });
                 });
-            });
-        </script>
+            </script>
 
-    </body>
-</html>
+        </body>
+    </html>

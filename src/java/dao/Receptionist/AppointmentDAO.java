@@ -476,8 +476,8 @@ public class AppointmentDAO extends DBContext {
 
     // Create appointment with patient and parent info
     public boolean createAppointment(String patientName, String patientDob, String parentName, String patientAddress, String insuranceInfo,
-                                     String patientEmail, String parentPhone, String dateTimeStr,
-                                     int doctorId, String status) {
+            String patientEmail, String parentPhone, String dateTimeStr,
+            int doctorId, String status) {
         Connection conn = null;
         try {
             conn = getConnection();
@@ -485,30 +485,30 @@ public class AppointmentDAO extends DBContext {
 
             // 1. Create or find Parent
             int parentId = getOrCreateParent(conn, parentName, parentPhone);
-            
+
             // 2. Create or find User for patient's email
             int userId = getOrCreateUser(conn, patientEmail, parentPhone);
-            
+
             // 3. Create Patient
             int patientId = createOrFindPatient(conn, patientName, patientDob, patientAddress, insuranceInfo, userId, parentId);
-            
+
             // 4. Parse datetime
             Timestamp appointmentDateTime = parseDateTime(dateTimeStr);
-            
+
             // 5. Create Appointment
             String sql = """
                 INSERT INTO Appointment (patient_id, doctor_id, date_time, status)
                 VALUES (?, ?, ?, ?)
             """;
-            
+
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, patientId);
                 ps.setInt(2, doctorId);
                 ps.setTimestamp(3, appointmentDateTime);
                 ps.setString(4, status);
-                
+
                 int rows = ps.executeUpdate();
-                
+
                 if (rows > 0) {
                     conn.commit(); // Commit transaction
                     return true;
@@ -548,7 +548,7 @@ public class AppointmentDAO extends DBContext {
             JOIN [User] u ON pa.user_id = u.user_id
             WHERE p.parentname = ? AND u.phone = ?
         """;
-        
+
         try (PreparedStatement ps = conn.prepareStatement(findSql)) {
             ps.setString(1, parentName);
             ps.setString(2, parentPhone);
@@ -558,21 +558,21 @@ public class AppointmentDAO extends DBContext {
                 }
             }
         }
-        
+
         // Create new parent
         String insertSql = "INSERT INTO Parent (parentname, id_info) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, parentName);
             ps.setString(2, parentPhone); // Use phone as id_info
             ps.executeUpdate();
-            
+
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
         }
-        
+
         throw new SQLException("Failed to create parent");
     }
 
@@ -580,7 +580,7 @@ public class AppointmentDAO extends DBContext {
     private int getOrCreateUser(Connection conn, String email, String phone) throws SQLException {
         // Try to find existing user by email
         String findSql = "SELECT user_id FROM [User] WHERE email = ?";
-        
+
         try (PreparedStatement ps = conn.prepareStatement(findSql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -589,7 +589,7 @@ public class AppointmentDAO extends DBContext {
                 }
             }
         }
-        
+
         // Create new user
         String insertSql = """
             INSERT INTO [User] (username, password, email, phone, role_id, status)
@@ -601,26 +601,26 @@ public class AppointmentDAO extends DBContext {
             ps.setString(3, email);
             ps.setString(4, phone);
             ps.executeUpdate();
-            
+
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
         }
-        
+
         throw new SQLException("Failed to create user");
     }
 
     // Helper method to create or find Patient
     private int createOrFindPatient(Connection conn, String patientName, String patientDob, String patientAddress, String insuranceInfo,
-                                   int userId, int parentId) throws SQLException {
+            int userId, int parentId) throws SQLException {
         // Try to find existing patient by name and parent
         String findSql = """
             SELECT TOP 1 patient_id FROM Patient
             WHERE full_name = ? AND parent_id = ?
         """;
-        
+
         try (PreparedStatement ps = conn.prepareStatement(findSql)) {
             ps.setString(1, patientName);
             ps.setInt(2, parentId);
@@ -630,7 +630,7 @@ public class AppointmentDAO extends DBContext {
                 }
             }
         }
-        
+
         // Create new patient
         String insertSql = """
             INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id)
@@ -654,14 +654,14 @@ public class AppointmentDAO extends DBContext {
             ps.setString(5, insuranceInfo != null ? insuranceInfo : "");
             ps.setInt(6, parentId);
             ps.executeUpdate();
-            
+
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
         }
-        
+
         throw new SQLException("Failed to create patient");
     }
 
@@ -675,7 +675,7 @@ public class AppointmentDAO extends DBContext {
             "dd/MM/yyyy HH:mm:ss",
             "yyyy-MM-dd HH:mm:ss"
         };
-        
+
         for (String format : formats) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -684,8 +684,136 @@ public class AppointmentDAO extends DBContext {
                 // Try next format
             }
         }
-        
+
         throw new ParseException("Unable to parse datetime: " + dateTimeStr, 0);
+    }
+
+    // Cập nhật đầy đủ thông tin lịch hẹn + bệnh nhân + phụ huynh
+    public boolean updateAppointmentFull(
+            int appointmentId,
+            String dateTimeStr,
+            int doctorId,
+            String status,
+            String patientName,
+            String parentName,
+            String patientAddress,
+            String patientEmail,
+            String parentPhone) {
+
+        Connection conn = null;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false); // bắt đầu transaction
+
+            // 1. Lấy ra patient_id, parent_id, user_id từ appointment
+            String selectSql = """
+                SELECT p.patient_id, p.parent_id, p.user_id
+                FROM Appointment a
+                JOIN Patient p ON a.patient_id = p.patient_id
+                WHERE a.appointment_id = ?
+                """;
+
+            int patientId = 0;
+            int parentId = 0;
+            int userId = 0;
+
+            try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
+                ps.setInt(1, appointmentId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        patientId = rs.getInt("patient_id");
+                        parentId = rs.getInt("parent_id");
+                        userId = rs.getInt("user_id");
+                    } else {
+                        // không tìm thấy appointment
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // 2. Cập nhật Parent (nếu có)
+            if (parentId > 0) {
+                String updateParent = "UPDATE Parent SET parentname = ? WHERE parent_id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(updateParent)) {
+                    ps.setString(1, parentName);
+                    ps.setInt(2, parentId);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 3. Cập nhật User (email + phone) – account của bệnh nhân
+            if (userId > 0) {
+                String updateUser = "UPDATE [User] SET email = ?, phone = ? WHERE user_id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(updateUser)) {
+                    ps.setString(1, patientEmail);
+                    ps.setString(2, parentPhone);
+                    ps.setInt(3, userId);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 4. Cập nhật Patient (tên + địa chỉ)
+            String updatePatient = "UPDATE Patient SET full_name = ?, address = ? WHERE patient_id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(updatePatient)) {
+                ps.setString(1, patientName);
+                ps.setString(2, patientAddress);
+                ps.setInt(3, patientId);
+                ps.executeUpdate();
+            }
+
+            // 5. Parse lại datetime
+            Timestamp ts = null;
+            if (dateTimeStr != null && !dateTimeStr.trim().isEmpty()) {
+                // dùng lại hàm parseDateTime đã có ở dưới DAO
+                ts = parseDateTime(dateTimeStr);
+            }
+
+            // 6. Cập nhật Appointment
+            String updateAppointment = """
+                UPDATE Appointment
+                SET doctor_id = ?, date_time = ?, status = ?
+                WHERE appointment_id = ?
+                """;
+
+            int rows;
+            try (PreparedStatement ps = conn.prepareStatement(updateAppointment)) {
+                ps.setInt(1, doctorId);
+                ps.setTimestamp(2, ts);
+                ps.setString(3, status);
+                ps.setInt(4, appointmentId);
+                rows = ps.executeUpdate();
+            }
+
+            if (rows == 0) {
+                conn.rollback();
+                return false;
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
 }

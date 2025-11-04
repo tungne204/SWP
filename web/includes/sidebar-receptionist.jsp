@@ -76,7 +76,7 @@
             <div class="nav-section">
                 <br>
                 <br>
-                <div class="nav-section-title">Dashboard</div>
+                <div class="nav-section-title">Bảng điều khiển</div>
                 <div class="nav-item">
                     <a href="${pageContext.request.contextPath}/Receptionist-Dashboard" class="nav-link">
                         <i class="bi bi-speedometer2"></i>
