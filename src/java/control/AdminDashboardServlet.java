@@ -45,18 +45,82 @@ public class AdminDashboardServlet extends HttpServlet {
         }
         
         try {
-            // Get all statistics data
-            int totalPatients = statisticsDAO.getTotalPatients();
-            int totalDoctors = statisticsDAO.getTotalDoctors();
-            int totalReceptionists = statisticsDAO.getTotalReceptionists();
-            int totalMedicalAssistants = statisticsDAO.getTotalMedicalAssistants();
-            int totalBlogs = blogDAO.getTotalBlogs();
+            // Get all statistics data with default values
+            int totalPatients = 0;
+            int totalDoctors = 0;
+            int totalReceptionists = 0;
+            int totalMedicalAssistants = 0;
+            int totalBlogs = 0;
+            int totalAppointments = 0;
+            int activeAppointments = 0;
+            int recentAppointments = 0;
+            List<Map<String, Object>> appointmentsByStatus = new java.util.ArrayList<>();
             
-            // Get appointment statistics
-            int totalAppointments = statisticsDAO.getTotalAppointments();
-            int activeAppointments = statisticsDAO.getActiveAppointments();
-            int recentAppointments = statisticsDAO.getRecentAppointments();
-            List<Map<String, Object>> appointmentsByStatus = statisticsDAO.getAppointmentsByStatus();
+            try {
+                totalPatients = statisticsDAO.getTotalPatients();
+            } catch (Exception e) {
+                System.err.println("Error getting totalPatients: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                totalDoctors = statisticsDAO.getTotalDoctors();
+            } catch (Exception e) {
+                System.err.println("Error getting totalDoctors: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                totalReceptionists = statisticsDAO.getTotalReceptionists();
+            } catch (Exception e) {
+                System.err.println("Error getting totalReceptionists: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                totalMedicalAssistants = statisticsDAO.getTotalMedicalAssistants();
+            } catch (Exception e) {
+                System.err.println("Error getting totalMedicalAssistants: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                totalBlogs = blogDAO.getTotalBlogs();
+            } catch (Exception e) {
+                System.err.println("Error getting totalBlogs: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                totalAppointments = statisticsDAO.getTotalAppointments();
+            } catch (Exception e) {
+                System.err.println("Error getting totalAppointments: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                activeAppointments = statisticsDAO.getActiveAppointments();
+            } catch (Exception e) {
+                System.err.println("Error getting activeAppointments: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                recentAppointments = statisticsDAO.getRecentAppointments();
+            } catch (Exception e) {
+                System.err.println("Error getting recentAppointments: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            try {
+                appointmentsByStatus = statisticsDAO.getAppointmentsByStatus();
+                if (appointmentsByStatus == null) {
+                    appointmentsByStatus = new java.util.ArrayList<>();
+                }
+            } catch (Exception e) {
+                System.err.println("Error getting appointmentsByStatus: " + e.getMessage());
+                e.printStackTrace();
+            }
             
             // Set attributes for JSP
             request.setAttribute("totalPatients", totalPatients);
@@ -74,8 +138,27 @@ public class AdminDashboardServlet extends HttpServlet {
             
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Fatal error in AdminDashboardServlet: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Set default values even on error
+            request.setAttribute("totalPatients", 0);
+            request.setAttribute("totalDoctors", 0);
+            request.setAttribute("totalReceptionists", 0);
+            request.setAttribute("totalMedicalAssistants", 0);
+            request.setAttribute("totalBlogs", 0);
+            request.setAttribute("totalAppointments", 0);
+            request.setAttribute("activeAppointments", 0);
+            request.setAttribute("recentAppointments", 0);
+            request.setAttribute("appointmentsByStatus", new java.util.ArrayList<>());
             request.setAttribute("error", "Error loading dashboard: " + e.getMessage());
-            request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
+            
+            try {
+                request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading dashboard");
+            }
         }
     }
     
