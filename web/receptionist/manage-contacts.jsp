@@ -1,16 +1,17 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page import="entity.Contact" %>
 <%@ page import="java.util.List" %>
 <fmt:setLocale value="vi_VN"/>
 <fmt:setTimeZone value="Asia/Ho_Chi_Minh"/>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 
 
 <!DOCTYPE html>
 <html lang="vi">
     <head>
-        <meta charset="UTF-8">
+<!--        <meta charset="UTF-8">-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Quản lý liên hệ - Medilab</title>
         
@@ -156,7 +157,8 @@
 
         <div class="main-wrapper">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <jsp:include page="../includes/sidebar-receptionist.jsp" />
+
 
             <!-- Main Content -->
             <div class="content-area">
