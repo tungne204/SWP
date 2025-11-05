@@ -19,7 +19,9 @@ public class MedicalReportServlet extends HttpServlet {
     private MedicalReportDAO dao;
 
     @Override
-    public void init() throws ServletException { dao = new MedicalReportDAO(); }
+    public void init() throws ServletException {
+        dao = new MedicalReportDAO();
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -34,19 +36,34 @@ public class MedicalReportServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
-            case "list":   listReports(request, response); break;
+            case "list":
+                listReports(request, response);
+                break;
             case "add": {
                 User acc = (User) request.getSession().getAttribute("acc");
-                if (acc == null || acc.getRoleId() != 2) { response.sendRedirect("403.jsp"); return; }
-                showAddForm(request, response); break;
+                if (acc == null || acc.getRoleId() != 2) {
+                    response.sendRedirect("403.jsp");
+                    return;
+                }
+                showAddForm(request, response);
+                break;
             }
-            case "edit":   showEditForm(request, response); break;
-            case "delete": deleteReport(request, response); break;
-            case "view":   viewReport(request, response); break;
-            default:       listReports(request, response);
+            case "edit":
+                showEditForm(request, response);
+                break;
+            case "delete":
+                deleteReport(request, response);
+                break;
+            case "view":
+                viewReport(request, response);
+                break;
+            default:
+                listReports(request, response);
         }
     }
 
@@ -55,23 +72,36 @@ public class MedicalReportServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
-            case "insert": insertReport(request, response); break;
-            case "update": updateReport(request, response); break;
-            default:       listReports(request, response);
+            case "insert":
+                insertReport(request, response);
+                break;
+            case "update":
+                updateReport(request, response);
+                break;
+            default:
+                listReports(request, response);
         }
     }
 
     @Override
-    public String getServletInfo() { return "MedicalReport CRUD + Draft/Finalize"; }
+    public String getServletInfo() {
+        return "MedicalReport CRUD + Draft/Finalize";
+    }
 
     private Integer getDoctorIdFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) return null;
+        if (session == null) {
+            return null;
+        }
         User acc = (User) session.getAttribute("acc");
-        if (acc == null) return null;
+        if (acc == null) {
+            return null;
+        }
         try {
             int doctorId = dao.getDoctorIdByUserId(acc.getUserId());
             return doctorId > 0 ? doctorId : null;
@@ -85,18 +115,30 @@ public class MedicalReportServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             HttpSession session = request.getSession(false);
-            if (session == null) { response.sendRedirect("Login.jsp"); return; }
+            if (session == null) {
+                response.sendRedirect("Login.jsp");
+                return;
+            }
             User acc = (User) session.getAttribute("acc");
-            if (acc == null) { response.sendRedirect("Login.jsp"); return; }
+            if (acc == null) {
+                response.sendRedirect("Login.jsp");
+                return;
+            }
 
             int roleId = acc.getRoleId();
             String keyword = request.getParameter("keyword");
             String filterType = request.getParameter("filterType");
-            if (filterType == null) filterType = "all";
+            if (filterType == null) {
+                filterType = "all";
+            }
 
             int page = 1, pageSize = 10;
-            try { if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page")); }
-            catch (NumberFormatException ignore) {}
+            try {
+                if (request.getParameter("page") != null) {
+                    page = Integer.parseInt(request.getParameter("page"));
+                }
+            } catch (NumberFormatException ignore) {
+            }
             int offset = (page - 1) * pageSize;
 
             List<MedicalReport> reports;
@@ -139,7 +181,10 @@ public class MedicalReportServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             Integer doctorId = getDoctorIdFromSession(request);
-            if (doctorId == null) { response.sendRedirect("Login.jsp"); return; }
+            if (doctorId == null) {
+                response.sendRedirect("Login.jsp");
+                return;
+            }
             List<MedicalReportDAO.Appointment> appointments = dao.getAppointmentsWithoutReport(doctorId);
             request.setAttribute("appointments", appointments);
             request.getRequestDispatcher("doctor/medical-report-form.jsp").forward(request, response);
@@ -171,19 +216,34 @@ public class MedicalReportServlet extends HttpServlet {
             String prescription = request.getParameter("prescription");
             boolean testRequest = request.getParameter("testRequest") != null;
 
+            // Nếu KHÔNG yêu cầu xét nghiệm -> phải có đơn thuốc để chốt ngay
+            if (!testRequest && (prescription == null || prescription.isBlank())) {
+                request.getSession().setAttribute("message", "Vui lòng nhập đơn thuốc khi không yêu cầu xét nghiệm.");
+                request.getSession().setAttribute("messageType", "error");
+                response.sendRedirect("medical-report?action=add");
+                return;
+            }
+
             MedicalReport r = new MedicalReport();
             r.setAppointmentId(appointmentId);
             r.setDiagnosis(diagnosis);
             r.setPrescription((prescription == null || prescription.isBlank()) ? null : prescription);
             r.setTestRequest(testRequest);
-            r.setFinal(false); // luôn Draft
+            // CHỈ tạo Draft khi có yêu cầu xét nghiệm, ngược lại chốt Final luôn
+            r.setFinal(!testRequest);
 
             boolean ok = dao.insert(r);
 
-            request.getSession().setAttribute("message", ok
-                    ? "Đã tạo báo cáo khám (Draft). Hãy gửi/đợi kết quả xét nghiệm."
-                    : "Lỗi khi tạo báo cáo khám!");
-            request.getSession().setAttribute("messageType", ok ? "success" : "error");
+            if (ok) {
+                String msg = testRequest
+                        ? "Đã tạo báo cáo khám (Draft) vì yêu cầu xét nghiệm."
+                        : "Đã tạo và chốt đơn thuốc (Final).";
+                request.getSession().setAttribute("message", msg);
+                request.getSession().setAttribute("messageType", "success");
+            } else {
+                request.getSession().setAttribute("message", "Lỗi khi tạo báo cáo khám!");
+                request.getSession().setAttribute("messageType", "error");
+            }
             response.sendRedirect("medical-report?action=list");
         } catch (Exception ex) {
             Logger.getLogger(MedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -196,15 +256,24 @@ public class MedicalReportServlet extends HttpServlet {
             int recordId = Integer.parseInt(request.getParameter("recordId"));
             String diagnosis = request.getParameter("diagnosis");
             String prescription = request.getParameter("prescription");
-            boolean testRequest = request.getParameter("testRequest") != null;
+            boolean testRequest = request.getParameter("testRequest") != null;  // trạng thái mới trên form
             boolean finalizeFlag = request.getParameter("finalize") != null;
 
-            // Nếu finalize mà chưa có prescription -> từ chối
-            if (finalizeFlag && (prescription == null || prescription.isBlank())) {
-                request.getSession().setAttribute("message", "Không thể chốt: cần nhập đơn thuốc.");
-                request.getSession().setAttribute("messageType", "error");
-                response.sendRedirect("medical-report?action=edit&id=" + recordId);
-                return;
+            // Validate khi finalize
+            if (finalizeFlag) {
+                if (prescription == null || prescription.isBlank()) {
+                    request.getSession().setAttribute("message", "Không thể chốt: cần nhập đơn thuốc.");
+                    request.getSession().setAttribute("messageType", "error");
+                    response.sendRedirect("medical-report?action=edit&id=" + recordId);
+                    return;
+                }
+                // Nếu vẫn yêu cầu xét nghiệm thì cần có kết quả
+                if (testRequest && !dao.hasTestResults(recordId)) {
+                    request.getSession().setAttribute("message", "Không thể chốt: chưa có kết quả xét nghiệm.");
+                    request.getSession().setAttribute("messageType", "error");
+                    response.sendRedirect("medical-report?action=edit&id=" + recordId);
+                    return;
+                }
             }
 
             MedicalReport r = new MedicalReport();
@@ -217,11 +286,10 @@ public class MedicalReportServlet extends HttpServlet {
             boolean ok = dao.update(r);
 
             if (ok) {
-                request.getSession().setAttribute("message", finalizeFlag ? "Đã chốt đơn thuốc (Final)." : "Đã lưu bản nháp.");
+                request.getSession().setAttribute("message", finalizeFlag ? "Đã chốt đơn thuốc (Final)." : "Đã lưu.");
                 request.getSession().setAttribute("messageType", "success");
             } else {
-                request.getSession().setAttribute("message",
-                        finalizeFlag ? "Không thể chốt: chưa có kết quả xét nghiệm." : "Lỗi khi cập nhật báo cáo.");
+                request.getSession().setAttribute("message", "Lỗi khi cập nhật báo cáo.");
                 request.getSession().setAttribute("messageType", "error");
             }
             response.sendRedirect("medical-report?action=list");
