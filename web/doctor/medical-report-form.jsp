@@ -328,30 +328,47 @@
                                     <div class="form-text">Mô tả tình trạng của bệnh nhân.</div>
                                 </div>
 
-                                <!-- Prescription (KHÔNG required: cho Draft) -->
+                                <!-- Prescription -->
                                 <div class="mb-4">
                                     <label class="form-label"><i class="fas fa-prescription"></i> Đơn thuốc</label>
-                                    <textarea class="form-control" name="prescription" maxlength="255">${report != null ? report.prescription : ''}</textarea>
-                                    <div class="form-text">Có thể để trống khi lưu bản nháp. Khi chốt (Finalize) phải có đơn thuốc.</div>
+                                    <textarea class="form-control" name="prescription" id="prescription" maxlength="255">
+                                        ${report != null ? report.prescription : ''}
+                                    </textarea>
+                                    <div class="form-text">Nếu KHÔNG yêu cầu xét nghiệm, đơn thuốc là bắt buộc và sẽ được chốt (Final) ngay.</div>
                                 </div>
 
                                 <!-- Yêu cầu xét nghiệm -->
                                 <div class="mb-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="testRequest" ${report != null && report.testRequest ? 'checked' : ''}>
-                                        <label class="form-check-label"><i class="fas fa-flask me-2"></i>Yêu cầu xét nghiệm</label>
+                                        <input class="form-check-input" type="checkbox" name="testRequest" id="testRequest"
+                                               ${report != null && report.testRequest ? 'checked' : ''}>
+                                        <label class="form-check-label" for="testRequest">
+                                            <i class="fas fa-flask me-2"></i>Yêu cầu xét nghiệm
+                                        </label>
                                     </div>
                                 </div>
+
+
+
 
                                 <!-- Finalize ONLY on edit -->
                                 <c:if test="${report != null}">
                                     <div class="mb-4">
-                                        <div class="alert ${hasTestResults ? 'alert-info' : 'alert-warning'}">
+                                        <div class="alert ${report.testRequest ? (hasTestResults ? 'alert-info' : 'alert-warning') : 'alert-info'}">
                                             <i class="fas fa-flask me-2"></i>
-                                            ${hasTestResults ? 'Đã có kết quả xét nghiệm cho hồ sơ này.' : 'Chưa có kết quả xét nghiệm. Không thể chốt đơn thuốc.'}
+                                            <c:choose>
+                                                <c:when test="${!report.testRequest}">
+                                                    Hồ sơ này <strong>KHÔNG</strong> yêu cầu xét nghiệm. Có thể chốt đơn nếu đã có đơn thuốc.
+                                                </c:when>
+                                                <c:otherwise>
+                                                    ${hasTestResults ? 'Đã có kết quả xét nghiệm cho hồ sơ này.' : 'Chưa có kết quả xét nghiệm. Không thể chốt đơn thuốc.'}
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
+
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="finalize" id="finalizeCheck" ${hasTestResults ? '' : 'disabled'}>
+                                            <input class="form-check-input" type="checkbox" name="finalize" id="finalizeCheck"
+                                                   ${ (report.testRequest && !hasTestResults) ? 'disabled' : '' }>
                                             <label class="form-check-label" for="finalizeCheck">
                                                 <i class="fas fa-lock me-1"></i> Chốt đơn (Finalize)
                                             </label>
@@ -359,13 +376,18 @@
                                     </div>
                                 </c:if>
 
-                                <!-- Buttons -->
+
+                                <!-- BUTTONS -->
                                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                                    <a href="medical-report?action=list" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                                    <a href="medical-report?action=list" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Quay lại
+                                    </a>
+
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> ${report != null ? 'Lưu' : 'Tạo Draft'}
+                                        <i class="fas fa-save"></i> ${report != null ? 'Lưu' : 'Tạo hồ sơ'}
                                     </button>
                                 </div>
+
                             </form>
 
                         </div>
@@ -421,5 +443,24 @@
                 AOS.init({once: true, duration: 600});
             }
         </script>
+        <script>
+            (function () {
+                const testCb = document.getElementById('testRequest');
+                const rx = document.getElementById('prescription');
+                if (testCb && rx) {
+                    const syncRequired = () => {
+                        // KHÔNG yêu cầu xét nghiệm => bắt buộc nhập đơn thuốc
+                        if (!testCb.checked) {
+                            rx.setAttribute('required', 'required');
+                        } else {
+                            rx.removeAttribute('required');
+                        }
+                    };
+                    testCb.addEventListener('change', syncRequired);
+                    syncRequired(); // chạy lần đầu
+                }
+            })();
+        </script>
+
     </body>
 </html>
