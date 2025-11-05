@@ -1,34 +1,33 @@
-﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<fmt:setLocale value="vi_VN" />
-<fmt:setTimeZone value="Asia/Ho_Chi_Minh" />
-
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Manage Appointments - Medilab</title>
+        <title>Danh sách lịch hẹn - Medilab</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Include all CSS files -->
+        <jsp:include page="../includes/head-includes.jsp" />
+        <!-- Sort icons + hover style -->
         <style>
             :root {
                 --primary-color: #3fbbc0;
                 --primary-dark: #2a9fa4;
                 --secondary-color: #2c4964;
             }
-            
+
             body {
                 background: linear-gradient(135deg, #e8f5f6 0%, #d4eef0 100%);
                 min-height: 100vh;
                 font-family: 'Roboto', sans-serif;
             }
-            
+
             .main-wrapper {
                 display: flex;
                 min-height: 100vh;
                 padding-top: 70px;
             }
-            
+
             .sidebar-fixed {
                 width: 280px;
                 background: white;
@@ -40,282 +39,248 @@
                 overflow-y: auto;
                 z-index: 1000;
             }
-            
+
             .content-area {
                 flex: 1;
                 margin-left: 280px;
                 padding: 2rem;
             }
-            
+
             .sortable:hover {
                 cursor: pointer;
                 background-color: #e2e8f0;
                 transition: background-color 0.2s ease;
             }
+
             .sort-icon {
                 font-size: 0.8rem;
                 margin-left: 4px;
                 opacity: 0.6;
             }
+
+            /* Prevent text from overflowing into other columns */
+            #patientTable {
+                table-layout: fixed;
+                width: 100%;
+            }
+
+            #patientTable th,
+            #patientTable td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .table-cell-truncate {
+                max-width: 200px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                cursor: pointer;
+            }
+
+            .table-cell-expanded {
+                white-space: normal;
+                word-break: break-word;
+            }
         </style>
     </head>
 
-    <body>
+    <body class="bg-gray-50">
         <!-- Header -->
-        <%@ include file="../includes/header.jsp" %>
+        <jsp:include page="../includes/header.jsp" />
 
-        <div class="main-wrapper">
+        <!--NỚI RỘNG CARD Ở ĐÂY: max-w-7xl (rộng hơn 6xl) -->
+        <div class="p-6 w-[70%] max-w-none mx-auto">
             <!-- Sidebar -->
-            <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            <c:if test="${sessionScope.role eq 'Receptionist'}">
+                <%@ include file="../includes/sidebar-receptionist.jsp" %>
+            </c:if>
 
-            <!-- Main Content -->
-            <div class="content-area">
-            <h2 class="text-3xl font-bold mb-6 text-blue-700 text-center">
-                Appointment Management
-            </h2>
+            <c:if test="${sessionScope.role eq 'Doctor'}">
+                <%@ include file="../includes/sidebar-doctor.jsp" %>
+            </c:if>
 
-            <!-- Thông báo lỗi -->
-            <c:if test="${not empty errorMessage}">
-                <div class="bg-red-100 text-red-700 font-semibold p-3 mb-5 rounded-lg text-center">
-                    ⚠ ${errorMessage}
+            <h1 class="text-2xl font-bold text-teal-600 mb-4">Danh sách lịch hẹn</h1>
+            <!-- Thông báo tạo lịch hẹn thành công -->
+            <c:if test="${param.msg eq 'created'}">
+                <div class="mb-4 px-4 py-2 rounded bg-green-100 text-green-700 border border-green-300">
+                    ✅ Tạo lịch hẹn mới thành công!
+                </div>
+            </c:if>
+            <!--Nếu là Patient thì có nút tạo mới -->
+            <c:if test="${sessionScope.role eq 'Patient'}">
+                <div class="mb-4">
+                    <a href="Appointment-Create"
+                       class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">
+                        ➕ Tạo lịch hẹn mới
+                    </a>
                 </div>
             </c:if>
 
-            <!-- Không có dữ liệu -->
-            <c:if test="${empty appointments}">
-                <div class="text-center text-gray-600 mt-8 text-lg">
-                    No appointments found in the system.
-                </div>
-            </c:if>
+            <!--Search & Filter (cho mọi role) -->
+            <form method="get" action="Appointment-List" class="flex gap-3 mb-4">
+                <input type="text" name="keyword" placeholder="Tìm theo tên bệnh nhân, bác sĩ, địa chỉ,..."
+                       value="${keyword}" class="border p-2 flex-1 rounded-md">
+                <select name="status" class="border p-2 rounded-md">
+                    <option value="all">Tất cả</option>
+                    <option value="confirmed" ${status == 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                    <option value="pending" ${status == 'pending' ? 'selected' : ''}>Chờ</option>
+                    <option value="cancelled" ${status == 'cancelled' ? 'selected' : ''}>Huỷ</option>
+                    <option value="completed" ${status == 'completed' ? 'selected' : ''}>Đã khám</option>
+                </select>
 
-            <!-- Bảng hiển thị -->
-            <c:if test="${not empty appointments}">
-                <!-- 🔍 Advanced Filter Bar -->
-                <div class="flex flex-wrap gap-3 mb-6 bg-blue-100 border border-blue-200 p-4 rounded-lg shadow-sm">
-                    <input type="text" id="filterPatient" placeholder="Filter by Patient Name"
-                           class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                    <input type="text" id="filterDoctor" placeholder="Filter by Doctor Name"
-                           class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                    <input type="text" id="filterAddress" placeholder="Filter by Address"
-                           class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                    <input type="text" id="filterParent" placeholder="Filter by Parent Name"
-                           class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
-                    <select id="filterStatus" class="px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Status</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Pending">Pending</option>
-                    </select>
+                <select name="sort" class="border p-2 rounded-md">
+                    <option value="date_desc" ${sort == 'date_desc' ? 'selected' : ''}>Mới nhất</option>
+                    <option value="date_asc" ${sort == 'date_asc' ? 'selected' : ''}>Cũ nhất</option>
+                    <option value="today" ${sort == 'today' ? 'selected' : ''}>Hôm nay</option>
+                </select>
 
-                    <!-- Date Range -->
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm font-semibold text-gray-700">From:</label>
-                        <input type="date" id="dateFrom" class="border rounded-md px-2 py-1">
-                        <label class="text-sm font-semibold text-gray-700">To:</label>
-                        <input type="date" id="dateTo" class="border rounded-md px-2 py-1">
-                    </div>
+                <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded-md">Lọc</button>
 
-                    <!-- Export Buttons -->
-                    <div class="flex gap-2 ml-auto">
-                        <button onclick="exportTableToExcel('appointmentTable')" 
-                                class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition">
-                            📗 Export Excel
-                        </button>
-                        <button onclick="window.print()" 
-                                class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition">
-                            🧾 Print / PDF
-                        </button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto bg-white border border-blue-200 rounded-xl shadow-md">
-                    <table id="appointmentTable" class="min-w-full w-full text-base text-left border-collapse">
-                        <thead class="bg-blue-100 text-blue-800 text-sm uppercase">
-                            <tr>
-                                <th class="px-5 py-3">Appointment ID</th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(1)">Patient Name <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(2)">Parent Name <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(7)">Address <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3">Patient Email</th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(4)">Parent Phone <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(5)">Doctor Name <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(6)">Doctor Specialty <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3">Date</th>
-                                <th class="px-5 py-3 sortable" onclick="sortTable(9)">Status <span class="sort-icon">⇅</span></th>
-                                <th class="px-5 py-3 text-center sticky right-0 bg-blue-50 z-[20] shadow-inner">Actions</th>
-                            </tr>
+                <button type="button"
+                        onclick="window.location.href = 'Appointment-List'"
+                        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+                    🔄 Reload
+                </button>
+            </form>
 
-                            <!-- Hàng filter -->
-                            <tr class="bg-blue-50 text-blue-700 text-sm">
-                                <td></td>
-                                <td><input type="text" onkeyup="filterTable(1, this.value)" placeholder="Filter Patient..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td><input type="text" onkeyup="filterTable(2, this.value)" placeholder="Filter Parent..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td><input type="text" onkeyup="filterTable(7, this.value)" placeholder="Filter Address..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td></td>
-                                <td><input type="text" onkeyup="filterTable(4, this.value)" placeholder="Filter Phone..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td><input type="text" onkeyup="filterTable(5, this.value)" placeholder="Filter Doctor..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td><input type="text" onkeyup="filterTable(6, this.value)" placeholder="Filter Specialty..." class="w-full px-2 py-1 border rounded"/></td>
-                                <td></td>
-                                <td class="relative z-[10] bg-blue-50">
-                                    <input type="text" onkeyup="filterTable(9, this.value)"
-                                           placeholder="Filter Status..."
-                                           class="w-full px-2 py-1 border rounded bg-white" />
+            <!--Table (card trắng) -->
+            <div class="overflow-x-auto bg-white border rounded-lg shadow">
+                <table class="min-w-full w-full text-sm">
+                    <thead class="bg-gray-100 text-gray-600">
+                        <tr>
+                            <th class="p-3 text-left">ID</th>
+                            <th class="p-3 text-left">Bệnh nhân</th>
+                            <th class="p-3 text-left">Địa chỉ</th>
+                            <th class="p-3 text-left">Bệnh nền</th>
+                            <th class="p-3 text-left">Bác sĩ</th>
+                            <th class="p-3 text-left">Năm kinh nghiệm</th>
+                            <th class="p-3 text-left">Ngày khám</th>
+                            <th class="p-3 text-left">Trạng thái</th>
+                            <th class="p-3 text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <c:forEach var="a" items="${list}">
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="p-3">${a.appointmentId}</td>
+                                <td class="p-3">${a.patientName}</td>
+                                <td class="p-3 table-cell-truncate" title="${a.patientAddress}">${a.patientAddress}</td>
+                                <td class="p-3 table-cell-truncate" title="${a.patientInsurance}">${a.patientInsurance}</td>
+                                <td class="p-3">${a.doctorName}</td>
+                                <td class="p-3">${a.doctorExperienceYears}</td>
+                                <td class="p-3">
+                                    <fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm"/>
                                 </td>
-                                <td class="sticky right-0 bg-blue-50 z-[20]"></td>
-
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-blue-100">
-                            <c:forEach var="a" items="${appointments}">
-                                <tr class="hover:bg-blue-50 transition">
-                                    <td class="px-5 py-3 font-medium">${a.appointmentId}</td>
-                                    <td class="px-5 py-3">${a.patientName}</td>
-                                    <td class="px-5 py-3">${a.parentName}</td>
-                                    <td class="px-5 py-3">${a.patientAddress}</td>
-                                    <td class="px-5 py-3">${a.patientEmail}</td>
-                                    <td class="px-5 py-3">${a.parentPhone}</td>
-                                    <td class="px-5 py-3">${a.doctorName}</td>
-                                    <td class="px-5 py-3">${a.doctorSpecialty}</td>
-                                    <td class="px-5 py-3"><fmt:formatDate value="${a.dateTime}" pattern="dd/MM/yyyy HH:mm" /></td>
-                                    <td class="px-5 py-3">
-                                        <c:choose>
-                                            <c:when test="${a.status}">Confirmed</c:when>
-                                            <c:otherwise>Pending</c:otherwise>
-                                        </c:choose>
+                                <td class="p-3">
+                                    <span class="px-2 py-1 rounded-full text-white
+                                          ${a.status == 'Confirmed' ? 'bg-green-500' :
+                                            (a.status == 'Pending' ? 'bg-yellow-500' :
+                                            (a.status == 'Cancelled' ? 'bg-red-500' :
+                                            (a.status == 'Completed' ? 'bg-blue-500' : 'bg-gray-400')))}">
+                                              ${a.status}
+                                          </span>
                                     </td>
 
-                                    <!-- Actions -->
-                                    <td class="px-5 py-3 text-center sticky right-0 bg-white shadow-md">
-                                        <div class="flex justify-center gap-2">
-                                            <form action="${pageContext.request.contextPath}/Appointment-Status" method="post">
-                                                <input type="hidden" name="appointmentId" value="${a.appointmentId}">
-                                                <input type="hidden" name="status" value="${!a.status}">
-                                                <button type="submit"
-                                                        class="bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition text-sm">
-                                                    Change
-                                                </button>
-                                            </form>
+                                    <td class="p-3 text-center">
+                                        <!-- Receptionist -->
+                                        <c:if test="${sessionScope.role eq 'Receptionist'}">
+                                            <a href="Appointment-Detail?id=${a.appointmentId}"
+                                               class="text-blue-600 hover:underline mr-2">👁 Xem</a>
 
-                                            <form action="${pageContext.request.contextPath}/Appointment-Update" method="post">
-                                                <input type="hidden" name="appointmentId" value="${a.appointmentId}">
-                                                <input type="hidden" name="action" value="load">
+                                            <form method="post" action="Appointment-Status" class="inline">
+                                                <input type="hidden" name="id" value="${a.appointmentId}">
+                                                <select name="status" class="border rounded-md p-1 text-sm">
+                                                    <option value="Pending"   ${a.status == 'Pending'   ? 'selected' : ''}>Chờ</option>
+                                                    <option value="Confirmed" ${a.status == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                                                    <option value="Cancelled" ${a.status == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
+                                                    <option value="Completed" ${a.status == 'Completed' ? 'selected' : ''}>Đã khám</option>
+                                                </select>
                                                 <button type="submit"
-                                                        class="bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition text-sm">
-                                                    Edit
+                                                        class="ml-2 bg-teal-600 text-white px-3 py-1 rounded-md hover:bg-teal-700 transition">
+                                                    Lưu
                                                 </button>
                                             </form>
+                                        </c:if>
 
-                                            <form action="${pageContext.request.contextPath}/Appointment-Delete" method="post"
-                                                  onsubmit="return confirm('Are you sure you want to delete this appointment?');">
-                                                <input type="hidden" name="appointmentId" value="${a.appointmentId}">
+                                        <!-- Doctor -->
+                                        <c:if test="${sessionScope.role eq 'Doctor'}">
+                                            <form method="post" action="Appointment-Status" class="inline">
+                                                <input type="hidden" name="id" value="${a.appointmentId}">
+                                                <input type="hidden" name="status" value="Completed">
                                                 <button type="submit"
-                                                        class="bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-700 transition text-sm">
-                                                    Delete
+                                                        class="bg-orange-500 text-white px-3 py-1 rounded-md hover:bg-orange-600 transition">
+                                                    ✅ Đánh dấu đã khám
                                                 </button>
                                             </form>
-                                        </div>
+                                        </c:if>
+
+                                        <!-- Patient -->
+                                        <c:if test="${sessionScope.role eq 'Patient'}">
+                                            <a href="Appointment-Detail?id=${a.appointmentId}"
+                                               class="text-blue-600 hover:underline mr-2">👁 Xem</a>
+
+                                            <c:if test="${a.status eq 'Pending'}">
+                                                <a href="Appointment-Update?id=${a.appointmentId}"
+                                                   class="text-green-600 hover:underline mr-2">📝 Sửa</a>
+                                                <form method="post" action="Appointment-Status" class="inline">
+                                                    <input type="hidden" name="id" value="${a.appointmentId}">
+                                                    <input type="hidden" name="status" value="Cancelled">
+                                                    <button type="submit"
+                                                            class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">
+                                                        ❌ Hủy
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </c:if>
+
                                     </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
                 </div>
-            </c:if>
-        </main>
 
-        <!-- Footer -->
-        <footer class="bg-[#f7f9fc] text-gray-700 py-8 border-top border-gray-200 mt-5">
-            <div class="max-w-5xl mx-auto text-center space-y-3">
-                <h2 class="text-2xl fw-bold text-gray-800">Medilab</h2>
-                <p>FPT University, Hoa Lac Hi-Tech Park, Thach That, Hanoi</p>
-                <p><strong>Phone:</strong> +84 987 654 321<br>
-                    <strong>Email:</strong> medilab.contact@gmail.com</p>
-                <p class="text-sm text-gray-500 mt-4">
-                    © <span class="fw-semibold text-gray-800">Medilab</span> — All Rights Reserved<br>
-                    Designed by BootstrapMade | Customized by Medilab Team
-                </p>
+                <!-- Paging -->
+                <div class="flex justify-center mt-4 gap-2">
+                    <c:forEach var="i" begin="1" end="${totalPages}">
+                        <a href="Appointment-List?page=${i}&keyword=${keyword}&status=${status}&sort=${sort}"
+                           class="px-3 py-1 border rounded
+                           ${i == page ? 'bg-teal-600 text-white' : 'bg-white hover:bg-gray-100'}">
+                            ${i}
+                        </a>
+                    </c:forEach>
+                </div>
+
             </div>
-        </footer>
 
-        <!-- Script Sort + Filter -->
-        <script>
-            function sortTable(colIndex) {
-                const table = document.getElementById("appointmentTable");
-                const tbody = table.querySelector("tbody");
-                const rows = Array.from(tbody.querySelectorAll("tr"));
-                const asc = table.dataset.sortOrder !== "asc";
-                table.dataset.sortOrder = asc ? "asc" : "desc";
-                rows.sort((a, b) => {
-                    const aText = a.children[colIndex].innerText.trim().toLowerCase();
-                    const bText = b.children[colIndex].innerText.trim().toLowerCase();
-                    return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            <!-- Footer -->
+            <%@ include file="../includes/footer.jsp" %>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.table-cell-truncate').forEach(cell => {
+                        const fullText = cell.textContent.trim();
+                        const limit = 30;
+                        if (fullText.length > limit) {
+                            const shortText = fullText.substring(0, limit) + '...';
+                            cell.textContent = shortText;
+                            cell.dataset.full = fullText;
+                            cell.dataset.short = shortText;
+                            cell.dataset.expanded = "false";
+                        }
+
+                        cell.addEventListener('click', () => {
+                            const expanded = cell.dataset.expanded === "true";
+                            cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
+                            cell.dataset.expanded = expanded ? "false" : "true";
+                            cell.classList.toggle('table-cell-expanded', !expanded);
+                        });
+                    });
                 });
-                tbody.innerHTML = "";
-                rows.forEach(r => tbody.appendChild(r));
-            }
+            </script>
 
-            function filterTable(colIndex, keyword) {
-                keyword = keyword.toLowerCase();
-                const rows = document.querySelectorAll("#appointmentTable tbody tr");
-                rows.forEach(row => {
-                    const text = row.children[colIndex].innerText.toLowerCase();
-                    row.style.display = text.includes(keyword) ? "" : "none";
-                });
-            }
-            // === Filter nâng cao & xuất Excel ===
-            const filterInputs = ["filterPatient", "filterDoctor", "filterAddress", "filterParent", "filterStatus", "dateFrom", "dateTo"];
-            filterInputs.forEach(id => {
-                document.getElementById(id)?.addEventListener("input", advancedFilter);
-            });
-
-            function advancedFilter() {
-                const patient = document.getElementById("filterPatient").value.toLowerCase();
-                const doctor = document.getElementById("filterDoctor").value.toLowerCase();
-                const address = document.getElementById("filterAddress").value.toLowerCase();
-                const parent = document.getElementById("filterParent").value.toLowerCase();
-                const status = document.getElementById("filterStatus").value.toLowerCase();
-                const from = document.getElementById("dateFrom").value ? new Date(document.getElementById("dateFrom").value) : null;
-                const to = document.getElementById("dateTo").value ? new Date(document.getElementById("dateTo").value) : null;
-                document.querySelectorAll("#appointmentTable tbody tr").forEach(row => {
-                    const rowData = {
-                        patient: row.children[1]?.innerText.toLowerCase(),
-                        parent: row.children[2]?.innerText.toLowerCase(),
-                        address: row.children[3]?.innerText.toLowerCase(),
-                        doctor: row.children[6]?.innerText.toLowerCase(),
-                        specialty: row.children[7]?.innerText.toLowerCase(),
-                        date: new Date(row.children[8]?.innerText.split("/").reverse().join("-")),
-                        status: row.children[9]?.innerText.toLowerCase()
-                    };
-                    let visible =
-                            (!patient || rowData.patient.includes(patient)) &&
-                            (!doctor || rowData.doctor.includes(doctor)) &&
-                            (!address || rowData.address.includes(address)) &&
-                            (!parent || rowData.parent.includes(parent)) &&
-                            (!status || rowData.status.includes(status)) &&
-                            (!from || rowData.date >= from) &&
-                            (!to || rowData.date <= to);
-                    row.style.display = visible ? "" : "none";
-                });
-            }
-
-            // === Xuất Excel ===
-            function exportTableToExcel(tableID, filename = '') {
-                const table = document.getElementById(tableID);
-                const tableHTML = table.outerHTML.replace(/ /g, '%20');
-                const name = filename ? filename + '.xls' : 'appointments.xls';
-                const link = document.createElement("a");
-                document.body.appendChild(link);
-                link.href = 'data:application/vnd.ms-excel,' + tableHTML;
-                link.download = name;
-                link.click();
-            }
-
-        </script>
-
-            </div> <!-- End content-area -->
-        </div> <!-- End main-wrapper -->
-
-        <!-- Footer -->
-        <%@ include file="../includes/footer.jsp" %>
-
-    </body>
-</html>
+        </body>
+    </html>

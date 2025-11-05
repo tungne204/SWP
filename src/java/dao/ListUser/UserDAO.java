@@ -1,46 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao.ListUser;
 
 import context.DBContext;
 import entity.ListUser.User;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Quang Anh
- */
 public class UserDAO extends DBContext {
 
     // ========================= LẤY DANH SÁCH USER =========================
     public List<User> getAllUsers(String search, Integer roleFilter, Integer statusFilter,
-                                  int offset, int limit) {
+                                  int offset, int limit, List<String> roleNamesInGroup) {
 
         List<User> users = new ArrayList<>();
+
         StringBuilder sql = new StringBuilder(
                 "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
-                        "u.role_id, r.role_name, u.status, " +
-                        "u.reset_token, u.reset_expiry " +
-                        "FROM [User] u " +
-                        "LEFT JOIN Role r ON u.role_id = r.role_id " +
-                        "WHERE 1=1 "
+                "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry " +
+                "FROM [User] u " +
+                "LEFT JOIN [Role] r ON u.role_id = r.role_id " +
+                "WHERE 1=1 "
         );
 
-        // ✅ Lọc theo từ khóa
+        // filter theo group (role_name IN ...)
+        if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+            sql.append("AND r.role_name IN (")
+               .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
+               .append(") ");
+        }
+
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND (u.username LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ");
         }
-
-        // ✅ Lọc theo vai trò
         if (roleFilter != null) {
             sql.append("AND u.role_id = ? ");
         }
-
-        // ✅ Lọc theo trạng thái (active/inactive)
         if (statusFilter != null) {
             sql.append("AND u.status = ? ");
         }
@@ -51,30 +46,36 @@ public class UserDAO extends DBContext {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
+            int p = 1;
+
+            // bind group names
+            if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+                for (String rn : roleNamesInGroup) {
+                    ps.setString(p++, rn);
+                }
+            }
 
             if (search != null && !search.trim().isEmpty()) {
                 String pattern = "%" + search + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
             }
             if (roleFilter != null) {
-                ps.setInt(paramIndex++, roleFilter);
+                ps.setInt(p++, roleFilter);
             }
             if (statusFilter != null) {
-                ps.setInt(paramIndex++, statusFilter);
+                ps.setInt(p++, statusFilter);
             }
 
-            ps.setInt(paramIndex++, offset);
-            ps.setInt(paramIndex, limit);
+            ps.setInt(p++, offset);
+            ps.setInt(p, limit);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     users.add(extractUser(rs));
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,9 +84,20 @@ public class UserDAO extends DBContext {
     }
 
     // ========================= ĐẾM USER =========================
-    public int getTotalUsers(String search, Integer roleFilter, Integer statusFilter) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM [User] u WHERE 1=1 ");
+    public int getTotalUsers(String search, Integer roleFilter, Integer statusFilter,
+                             List<String> roleNamesInGroup) {
 
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(*) " +
+            "FROM [User] u LEFT JOIN [Role] r ON u.role_id = r.role_id " +
+            "WHERE 1=1 "
+        );
+
+        if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+            sql.append("AND r.role_name IN (")
+               .append(String.join(",", java.util.Collections.nCopies(roleNamesInGroup.size(), "?")))
+               .append(") ");
+        }
         if (search != null && !search.trim().isEmpty()) {
             sql.append("AND (u.username LIKE ? OR u.email LIKE ? OR u.phone LIKE ?) ");
         }
@@ -99,29 +111,30 @@ public class UserDAO extends DBContext {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
+            int p = 1;
 
+            if (roleNamesInGroup != null && !roleNamesInGroup.isEmpty()) {
+                for (String rn : roleNamesInGroup) ps.setString(p++, rn);
+            }
             if (search != null && !search.trim().isEmpty()) {
                 String pattern = "%" + search + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
+                ps.setString(p++, pattern);
             }
             if (roleFilter != null) {
-                ps.setInt(paramIndex++, roleFilter);
+                ps.setInt(p++, roleFilter);
             }
             if (statusFilter != null) {
-                ps.setInt(paramIndex, statusFilter);
+                ps.setInt(p++, statusFilter);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt(1);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -130,17 +143,14 @@ public class UserDAO extends DBContext {
         String sql = "SELECT u.user_id, u.username, u.password, u.email, u.phone, " +
                 "u.role_id, r.role_name, u.status, u.reset_token, u.reset_expiry " +
                 "FROM [User] u " +
-                "LEFT JOIN Role r ON u.role_id = r.role_id " +
+                "LEFT JOIN [Role] r ON u.role_id = r.role_id " +
                 "WHERE u.user_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return extractUser(rs);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,12 +161,9 @@ public class UserDAO extends DBContext {
     public boolean updatePassword(int userId, String newPassword) {
         String sql = "UPDATE [User] SET password = ? WHERE user_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
-
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,9 +174,7 @@ public class UserDAO extends DBContext {
     // ========================= BẬT / TẮT TRẠNG THÁI =========================
     public boolean toggleUserStatus(int userId) {
         String sql = "UPDATE [User] SET status = CASE WHEN status = 1 THEN 0 ELSE 1 END WHERE user_id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;
 
@@ -179,7 +184,47 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    // ========================= HELPER: CHUYỂN RESULTSET → USER =========================
+    // ========================= NEW: kiểm tra trùng =========================
+    public boolean existsByUsernameOrEmail(String username, String email) {
+        String sql = "SELECT 1 FROM [User] WHERE username = ? OR email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
+    // ========================= NEW: tạo user =========================
+    public int createUser(User u) {
+        String sql = "INSERT INTO [User] (username, password, email, phone, role_id, status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getPassword()); // TODO: hash trước khi lưu ở môi trường thật
+            ps.setString(3, u.getEmail());
+            if (u.getPhone() == null || u.getPhone().trim().isEmpty()) {
+                ps.setNull(4, Types.VARCHAR);
+            } else {
+                ps.setString(4, u.getPhone());
+            }
+            ps.setInt(5, u.getRoleId());
+            ps.setBoolean(6, u.isStatus()); // true: hoạt động
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return -1;
+    }
+
+    // ========================= HELPER =========================
     private User extractUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setUserId(rs.getInt("user_id"));

@@ -18,42 +18,26 @@ import jakarta.servlet.*;
 
 /**
  * Handling status change requests
- * 
+ *
  * URL: /Appointment-Status
  *
  * @author Kiên
  */
-@WebServlet(name = "AppointmentStatusServlet", urlPatterns = {"/Appointment-Status"})
+@WebServlet("/Appointment-Status")
 public class AppointmentStatusServlet extends HttpServlet {
 
-    // Xử lý yêu cầu GET (khi truy cập trực tiếp bằng URL)
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Gọi lại doPost để xử lý tương tự
-        doPost(request, response);
-    }
-
-    @Override
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
-        boolean newStatus = Boolean.parseBoolean(request.getParameter("status"));
+        int appointmentId = Integer.parseInt(req.getParameter("id"));
+        String newStatus = req.getParameter("status");  
 
         AppointmentDAO dao = new AppointmentDAO();
-        dao.updateAppointmentStatus(appointmentId, newStatus);
+        dao.updateStatus(appointmentId, newStatus);
 
-        // Quay lại trang danh sách sau khi cập nhật
-        response.sendRedirect("Appointment-List");
+        resp.sendRedirect("Appointment-List");
     }
-
 }
-/**
- * Tạm thời để kiểu boolean ở class AppointmentDAO.java trong package dao true:
- * Confirmed (hoặc Completed) false: Pending (hoặc Canceled) sau này sửa thành
- * string vì còn nhiều trạng thái ví dụ:(Pending, Confirmed, Canceled,
- * Completed).
- *
- */
+
+

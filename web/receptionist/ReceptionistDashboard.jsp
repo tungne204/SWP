@@ -1,7 +1,7 @@
 <%-- 
     Document   : Receptionist Dashboard
     Created on : Oct 18, 2025, 10:37:08 PM
-    Author     : KiÃªnPC
+    Author     : KiênPC
 --%>
 <!DOCTYPE html>
 <html lang="en">
@@ -179,14 +179,14 @@
                     </a>
 
                     <!-- Search Patients -->
-                    <a href="search-patients" class="action-card">
+                    <a href="Patient-Search" class="action-card">
                         <i class="fas fa-search"></i>
                         <h3>Search Patients</h3>
                         <p>Find and view patient information quickly and efficiently</p>
                     </a>
 
                     <!-- Appointment Management -->
-                    <a href="appointment-list" class="action-card">
+                    <a href="Appointment-List" class="action-card">
                         <i class="fas fa-calendar-alt"></i>
                         <h3>Appointments</h3>
                         <p>View and manage today's appointments and schedules</p>

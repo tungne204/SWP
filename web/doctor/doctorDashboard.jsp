@@ -460,7 +460,7 @@
                         </h4>
                         <div class="row g-4 mb-4">
                             <div class="col-xl-2 col-lg-4 col-md-6">
-                                <a href="appointment?action=list" class="quick-link">
+                                <a href="Appointment-List" class="quick-link">
                                     <div class="icon text-primary">
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>

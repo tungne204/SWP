@@ -211,31 +211,42 @@ public class CheckinFormServlet extends HttpServlet {
             PatientQueue patientQueue = new PatientQueue();
             patientQueue.setPatientId(patientId);
             
-            // If this is a booked patient, get appointment ID
+            Date checkInTime = new Date();
+            int priority = 0;
+            
+            // If this is a booked patient, get appointment ID and calculate priority
             if ("booked".equals(patientType)) {
                 String appointmentIdStr = request.getParameter("appointmentId");
                 if (appointmentIdStr != null && !appointmentIdStr.trim().isEmpty()) {
                     int appointmentId = Integer.parseInt(appointmentIdStr);
                     patientQueue.setAppointmentId(appointmentId);
                     
-                    // Update appointment status to active
-                    appointmentDAO.updateAppointmentStatus(appointmentId, true);
+                    // Get appointment details to check appointment time
+                    Appointment appointment = appointmentDAO.getById(appointmentId);
+                    if (appointment != null && appointment.getDateTime() != null) {
+                        Date appointmentTime = appointment.getDateTime();
+                        long timeDifference = appointmentTime.getTime() - checkInTime.getTime();
+                        long minutesDifference = timeDifference / (60 * 1000); // Convert to minutes
+                        
+                        // Only give priority if check-in is within 30 minutes before appointment time
+                        // and not after appointment time
+                        if (minutesDifference >= 0 && minutesDifference <= 30) {
+                            priority = 1; // High priority
+                        } else {
+                            priority = 0; // Normal priority (too early or too late)
+                        }
+                    }
+                    
+                    // Update appointment status to "Confirmed"
+                    appointmentDAO.updateAppointmentStatus(appointmentId, "Confirmed");
                 }
             }
             
             patientQueue.setQueueNumber(nextQueueNumber);
             patientQueue.setQueueType("booked".equals(patientType) ? "Booked" : "Walk-in");
             patientQueue.setStatus("Waiting");
-            
-            // Set priority based on configuration
-            int priority = 0;
-            if ("booked".equals(patientType)) {
-                // Booked patients get higher priority
-                priority = 1;
-            }
             patientQueue.setPriority(priority);
-            
-            patientQueue.setCheckInTime(new Date());
+            patientQueue.setCheckInTime(checkInTime);
             patientQueue.setUpdatedTime(new Date());
             
             // Add patient to queue
@@ -256,10 +267,19 @@ public class CheckinFormServlet extends HttpServlet {
             
             // Set success message
              Patient patient = patientDAO.getPatientById(patientId);
+             String priorityMessage = "";
+             if ("booked".equals(patientType)) {
+                 if (priority == 1) {
+                     priorityMessage = " (Da dat lich - Uu tien cao)";
+                 } else {
+                     priorityMessage = " (Da dat lich)";
+                 }
+             } else {
+                 priorityMessage = " (Truc tiep)";
+             }
              request.getSession().setAttribute("successMessage", 
                  "Dang ky thanh cong cho benh nhan: " + patient.getFullName() + 
-                 " - So thu tu: " + nextQueueNumber +
-                 ("booked".equals(patientType) ? " (Da dat lich - Uu tien cao)" : " (Truc tiep)"));
+                 " - So thu tu: " + nextQueueNumber + priorityMessage);
             
             // Redirect to waiting screen
             response.sendRedirect(request.getContextPath() + "/patient-queue?action=view");

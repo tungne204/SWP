@@ -39,35 +39,35 @@ public class RegisterControl extends HttpServlet {
 
         // ✅ Validate email format
         if (!EmailValidator.isValidEmailFormat(email)) {
-            request.setAttribute("error", "Invalid email format!");
+            request.setAttribute("error", "Format email đang sai!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
         // ✅ Validate password length (ít nhất 6 ký tự)
         if (password == null || password.length() < 6) {
-            request.setAttribute("error", "Password must be at least 6 characters!");
+            request.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
         // ✅ Validate số điện thoại
         if (phone == null || !phone.matches("\\d{10}")) {
-            request.setAttribute("error", "Phone number must be exactly 10 digits!");
+            request.setAttribute("error", "Số điện thoại phải có 10 số!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
         // ✅ Kiểm tra confirm password
         if (!password.equals(confirm)) {
-            request.setAttribute("error", "Passwords do not match!");
+            request.setAttribute("error", "Mật khẩu không khớp!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
         // ✅ Kiểm tra email tồn tại trong database
         if (dao.checkEmailExists(email)) {
-            request.setAttribute("error", "Email already exists!");
+            request.setAttribute("error", "Email đã tồn tại!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }

@@ -28,7 +28,6 @@ public class ParentDAO extends DBContext {
                     Parent parent = new Parent();
                     parent.setParentId(rs.getInt("parent_id"));
                     parent.setParentName(rs.getString("parentname"));
-                    parent.setIdInfo(rs.getString("id_info"));
                     return parent;
                 }
             }
@@ -61,7 +60,6 @@ public class ParentDAO extends DBContext {
                     Parent parent = new Parent();
                     parent.setParentId(rs.getInt("parent_id"));
                     parent.setParentName(rs.getString("parentname"));
-                    parent.setIdInfo(rs.getString("id_info"));
                     return parent;
                 }
             }
@@ -86,7 +84,6 @@ public class ParentDAO extends DBContext {
         """;
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, parent.getParentName());
-            ps.setString(2, parent.getIdInfo());
             ps.setInt(3, patientId);
             ps.executeUpdate();
         } catch (SQLException e) {

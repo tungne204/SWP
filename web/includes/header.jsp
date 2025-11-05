@@ -1,5 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="entity.User" %>
+﻿<%@ page import="entity.User" %>
 <%
     User acc = (User) session.getAttribute("acc");
 %>
@@ -109,7 +108,7 @@
           <!-- Hiển thị menu "Cuộc hẹn của tôi" cho Patient (roleId = 3) -->
           <% if (acc != null && acc.getRoleId() == 3) { %>
           <li>
-            <a href="${pageContext.request.contextPath}/patient-appointment">Cuộc hẹn của tôi</a>
+            <a href="${pageContext.request.contextPath}/Appointment-List">Cuộc hẹn của tôi</a>
           </li>
           <% } %>
           <% if (acc != null && acc.getRoleId() == 3) { %>
@@ -119,6 +118,9 @@
           <% } %>
           <li>
             <a href="${pageContext.request.contextPath}/blog">Blog</a>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/contact">Liên hệ</a>
           </li>
         </ul>
       </nav>
@@ -151,3 +153,4 @@
   </div>
 </header>
 
+ 
