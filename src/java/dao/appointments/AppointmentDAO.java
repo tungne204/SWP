@@ -22,13 +22,23 @@ public class AppointmentDAO extends DBContext {
 
     public List<Appointment> getAppointmentsByDoctorUserIdAndStatus(int userId, String status) {
         List<Appointment> list = new ArrayList<>();
+
+        // Nếu đang load hàng đợi WAITING: sort theo waiting_since DESC (mới vào queue đứng đầu)
+        String orderBy = "Waiting".equalsIgnoreCase(status)
+                ? "ORDER BY CASE WHEN a.waiting_since IS NULL THEN 1 ELSE 0 END, a.waiting_since DESC, a.date_time ASC"
+                : "ORDER BY a.date_time DESC";
+
         String sql = """
-        SELECT a.*
+        SELECT a.*, 
+               p.full_name AS patient_name,
+               u.username AS doctor_name
         FROM Appointment a
         JOIN Doctor d ON a.doctor_id = d.doctor_id
+        LEFT JOIN Patient p ON a.patient_id = p.patient_id
+        LEFT JOIN [User] u ON d.user_id = u.user_id
         WHERE d.user_id = ? AND a.status = ?
-        ORDER BY CASE WHEN a.status = 'Waiting' THEN 0 ELSE 1 END, a.date_time DESC
-    """;
+    """ + " " + orderBy;
+
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, status);
@@ -40,6 +50,8 @@ public class AppointmentDAO extends DBContext {
                     apt.setDoctorId(rs.getInt("doctor_id"));
                     apt.setDateTime(rs.getTimestamp("date_time"));
                     apt.setStatus(rs.getString("status"));
+                    apt.setPatientName(rs.getString("patient_name"));
+                    apt.setDoctorName(rs.getString("doctor_name"));
                     list.add(apt);
                 }
             }
@@ -50,14 +62,28 @@ public class AppointmentDAO extends DBContext {
     }
 
     // Lấy tất cả appointments theo status
+    // Lấy tất cả appointments theo status: ưu tiên lịch sắp tới trước, gần nhất lên đầu
     public List<Appointment> getAppointmentsByStatus(String status) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment WHERE status = ? ORDER BY date_time DESC";
+        String sql
+                = "SELECT a.*, "
+                + "       p.full_name AS patient_name, "
+                + "       u.username AS doctor_name "
+                + "FROM Appointment a "
+                + "LEFT JOIN Patient p ON a.patient_id = p.patient_id "
+                + "LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "LEFT JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE a.status = ? "
+                + "ORDER BY "
+                + "  CASE WHEN a.date_time >= GETDATE() THEN 0 ELSE 1 END, "
+                + // tương lai trước
+                "  CASE WHEN a.date_time >= GETDATE() THEN a.date_time END ASC, "
+                + // tương lai: tăng dần
+                "  CASE WHEN a.date_time <  GETDATE() THEN a.date_time END DESC";   // quá khứ: giảm dần
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Appointment apt = new Appointment();
                 apt.setAppointmentId(rs.getInt("appointment_id"));
@@ -65,6 +91,8 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
             }
         } catch (SQLException e) {
@@ -78,8 +106,15 @@ public class AppointmentDAO extends DBContext {
     // Lấy appointments theo doctor và status
     public List<Appointment> getAppointmentsByDoctorAndStatus(int doctorId, String status) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment WHERE doctor_id = ? AND status = ? "
-                + "ORDER BY CASE WHEN status = 'Waiting' THEN 0 ELSE 1 END, date_time DESC";
+        String sql = "SELECT a.*, "
+                + "       p.full_name AS patient_name, "
+                + "       u.username AS doctor_name "
+                + "FROM Appointment a "
+                + "LEFT JOIN Patient p ON a.patient_id = p.patient_id "
+                + "LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "LEFT JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE a.doctor_id = ? AND a.status = ? "
+                + "ORDER BY CASE WHEN a.status = 'Waiting' THEN 0 ELSE 1 END, a.date_time DESC";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, doctorId);
@@ -93,6 +128,8 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
             }
         } catch (SQLException e) {
@@ -105,7 +142,14 @@ public class AppointmentDAO extends DBContext {
 
     // Lấy appointment theo ID
     public Appointment getAppointmentById(int appointmentId) {
-        String sql = "SELECT * FROM Appointment WHERE appointment_id = ?";
+        String sql = "SELECT a.*, "
+                + "       p.full_name AS patient_name, "
+                + "       u.username AS doctor_name "
+                + "FROM Appointment a "
+                + "LEFT JOIN Patient p ON a.patient_id = p.patient_id "
+                + "LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "LEFT JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE a.appointment_id = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointmentId);
@@ -118,6 +162,8 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
                 return apt;
             }
         } catch (SQLException e) {
@@ -130,11 +176,17 @@ public class AppointmentDAO extends DBContext {
 
     // Cập nhật status của appointment
     public boolean updateAppointmentStatus(int appointmentId, String newStatus) {
-        String sql = "UPDATE Appointment SET status = ? WHERE appointment_id = ?";
+        String sql = """
+        UPDATE Appointment
+        SET status = ?,
+            waiting_since = CASE WHEN ? = 'Waiting' THEN GETDATE() ELSE waiting_since END
+        WHERE appointment_id = ?
+    """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newStatus);
-            ps.setInt(2, appointmentId);
+            ps.setString(2, newStatus); // dùng 2 lần trong CASE
+            ps.setInt(3, appointmentId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -314,15 +366,28 @@ public class AppointmentDAO extends DBContext {
     }
 
     // Lấy appointments theo patient ID
+    // Lấy appointments theo patient ID: sắp xếp "gần nhất" từ trên xuống
     public List<Appointment> getAppointmentsByPatientId(int patientId) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment WHERE patient_id = ? "
-                + "ORDER BY date_time DESC";
+        String sql
+                = "SELECT a.*, "
+                + "       p.full_name AS patient_name, "
+                + "       u.username AS doctor_name "
+                + "FROM Appointment a "
+                + "LEFT JOIN Patient p ON a.patient_id = p.patient_id "
+                + "LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id "
+                + "LEFT JOIN [User] u ON d.user_id = u.user_id "
+                + "WHERE a.patient_id = ? "
+                + "ORDER BY "
+                + "  CASE WHEN a.date_time >= GETDATE() THEN 0 ELSE 1 END, "
+                + // nhóm lịch tương lai trước
+                "  CASE WHEN a.date_time >= GETDATE() THEN a.date_time END ASC, "
+                + // tương lai: tăng dần (gần nhất trước)
+                "  CASE WHEN a.date_time <  GETDATE() THEN a.date_time END DESC";   // quá khứ: giảm dần (mới nhất trước) 
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Appointment apt = new Appointment();
                 apt.setAppointmentId(rs.getInt("appointment_id"));
@@ -330,6 +395,8 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
             }
         } catch (SQLException e) {
@@ -381,5 +448,176 @@ public class AppointmentDAO extends DBContext {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    // Lấy appointments với search, filter và paging
+    public List<Appointment> getAppointmentsWithFilter(int roleId, Integer userId, Integer patientId, 
+            String searchKeyword, String statusFilter, String dateFrom, String dateTo, 
+            int page, int pageSize) {
+        List<Appointment> list = new ArrayList<>();
+        
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT a.*, ");
+        sql.append("       p.full_name AS patient_name, ");
+        sql.append("       u.username AS doctor_name ");
+        sql.append("FROM Appointment a ");
+        sql.append("LEFT JOIN Patient p ON a.patient_id = p.patient_id ");
+        sql.append("LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id ");
+        sql.append("LEFT JOIN [User] u ON d.user_id = u.user_id ");
+        sql.append("WHERE 1=1 ");
+        
+        List<Object> params = new ArrayList<>();
+        
+        // Filter theo role
+        if (roleId == 2) { // Doctor - chỉ hiển thị WAITING
+            sql.append("AND d.user_id = ? ");
+            params.add(userId);
+            sql.append("AND a.status = 'Waiting' ");
+        } else if (roleId == 3) { // Patient
+            sql.append("AND a.patient_id = ? ");
+            params.add(patientId);
+        } else if (roleId == 4) { // Medical Assistant - chỉ TESTING
+            sql.append("AND a.status = 'Testing' ");
+        } else if (roleId == 5) { // Receptionist - PENDING + CONFIRMED
+            sql.append("AND a.status IN ('Pending', 'Confirmed') ");
+        }
+        
+        // Filter theo status (bỏ qua nếu roleId == 2 vì đã force Waiting)
+        if (roleId != 2 && statusFilter != null && !statusFilter.trim().isEmpty() && !"all".equals(statusFilter)) {
+            sql.append("AND a.status = ? ");
+            params.add(statusFilter);
+        }
+        
+        // Search keyword (tìm trong patient name, doctor name, appointment ID)
+        if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+            sql.append("AND (p.full_name LIKE ? OR u.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ?) ");
+            String searchPattern = "%" + searchKeyword.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        
+        // Filter theo date range
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append("AND CAST(a.date_time AS DATE) >= ? ");
+            params.add(dateFrom);
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append("AND CAST(a.date_time AS DATE) <= ? ");
+            params.add(dateTo);
+        }
+        
+        // Order by
+        sql.append("ORDER BY ");
+        sql.append("  CASE WHEN a.date_time >= GETDATE() THEN 0 ELSE 1 END, ");
+        sql.append("  CASE WHEN a.date_time >= GETDATE() THEN a.date_time END ASC, ");
+        sql.append("  CASE WHEN a.date_time < GETDATE() THEN a.date_time END DESC ");
+        
+        // Paging
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add((page - 1) * pageSize);
+        params.add(pageSize);
+        
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) param);
+                } else if (param instanceof String) {
+                    ps.setString(i + 1, (String) param);
+                }
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Appointment apt = new Appointment();
+                apt.setAppointmentId(rs.getInt("appointment_id"));
+                apt.setPatientId(rs.getInt("patient_id"));
+                apt.setDoctorId(rs.getInt("doctor_id"));
+                apt.setDateTime(rs.getTimestamp("date_time"));
+                apt.setStatus(rs.getString("status"));
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
+                list.add(apt);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+    
+    // Đếm tổng số appointments với filter (cho paging)
+    public int countAppointmentsWithFilter(int roleId, Integer userId, Integer patientId,
+            String searchKeyword, String statusFilter, String dateFrom, String dateTo) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM Appointment a ");
+        sql.append("LEFT JOIN Patient p ON a.patient_id = p.patient_id ");
+        sql.append("LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id ");
+        sql.append("LEFT JOIN [User] u ON d.user_id = u.user_id ");
+        sql.append("WHERE 1=1 ");
+        
+        List<Object> params = new ArrayList<>();
+        
+        // Filter theo role
+        if (roleId == 2) { // Doctor - chỉ hiển thị WAITING
+            sql.append("AND d.user_id = ? ");
+            params.add(userId);
+            sql.append("AND a.status = 'Waiting' ");
+        } else if (roleId == 3) { // Patient
+            sql.append("AND a.patient_id = ? ");
+            params.add(patientId);
+        } else if (roleId == 4) { // Medical Assistant
+            sql.append("AND a.status = 'Testing' ");
+        } else if (roleId == 5) { // Receptionist
+            sql.append("AND a.status IN ('Pending', 'Confirmed') ");
+        }
+        
+        // Filter theo status (bỏ qua nếu roleId == 2 vì đã force Waiting)
+        if (roleId != 2 && statusFilter != null && !statusFilter.trim().isEmpty() && !"all".equals(statusFilter)) {
+            sql.append("AND a.status = ? ");
+            params.add(statusFilter);
+        }
+        
+        // Search keyword
+        if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+            sql.append("AND (p.full_name LIKE ? OR u.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ?) ");
+            String searchPattern = "%" + searchKeyword.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        
+        // Filter theo date range
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append("AND CAST(a.date_time AS DATE) >= ? ");
+            params.add(dateFrom);
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append("AND CAST(a.date_time AS DATE) <= ? ");
+            params.add(dateTo);
+        }
+        
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) param);
+                } else if (param instanceof String) {
+                    ps.setString(i + 1, (String) param);
+                }
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
 }

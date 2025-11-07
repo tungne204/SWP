@@ -160,7 +160,13 @@ public class DoctorServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        String testType = request.getParameter("testType");    // bác sĩ đã chọn ở form của bác sĩ
+        String testType = request.getParameter("testType");
+        if (testType == null || testType.isBlank()) {
+            sessionMessage(request, "Please choose a test type.", "error");
+            response.sendRedirect(request.getContextPath() + "/doctor/examine/" + appointmentId);
+            return;
+        }
+        // bác sĩ đã chọn ở form của bác sĩ
         String diagnosis = request.getParameter("diagnosis");
 
         MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
@@ -189,11 +195,22 @@ public class DoctorServlet extends HttpServlet {
 
     // Hoàn thành khám bệnh
     private void completeExamination(int appointmentId, HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+            HttpServletResponse response) throws ServletException, IOException {
 
         String diagnosis = request.getParameter("diagnosis");
         String prescription = request.getParameter("prescription");
+
+        // Bắt buộc có diagnosis & prescription khi hoàn tất
+        if (diagnosis == null || diagnosis.trim().isEmpty()) {
+            sessionMessage(request, "Diagnosis is required to complete the examination!", "error");
+            response.sendRedirect(request.getContextPath() + "/doctor/examine/" + appointmentId);
+            return;
+        }
+        if (prescription == null || prescription.trim().isEmpty()) {
+            sessionMessage(request, "Prescription is required to complete the examination!", "error");
+            response.sendRedirect(request.getContextPath() + "/doctor/examine/" + appointmentId);
+            return;
+        }
 
         MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
         if (report != null) {
@@ -211,7 +228,6 @@ public class DoctorServlet extends HttpServlet {
         } else {
             sessionMessage(request, "Failed to complete examination!", "error");
         }
-
         response.sendRedirect(request.getContextPath() + "/doctor");
     }
 

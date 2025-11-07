@@ -3,41 +3,43 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Details</title>
+    <title>Appointment Details - Medilab</title>
+    
+    <!-- Include all CSS files -->
+    <jsp:include page="../../includes/head-includes.jsp"/>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        /* Scope CSS chỉ cho content, không ảnh hưởng header/sidebar */
+        .main * {
             box-sizing: border-box;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            min-height: 100vh;
+        .main {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
         }
         
-        .container {
+        .main .container {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 20px auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .main .container .header {
+            background: linear-gradient(135deg, #1977cc 0%, #2c4964 100%);
             color: white;
             padding: 40px;
         }
         
-        .back-link {
+        .main .container .back-link {
             display: inline-block;
             color: white;
             text-decoration: none;
@@ -46,16 +48,16 @@
             transition: opacity 0.3s;
         }
         
-        .back-link:hover {
+        .main .container .back-link:hover {
             opacity: 1;
         }
         
-        .header h1 {
+        .main .container .header h1 {
             font-size: 28px;
             margin-bottom: 10px;
         }
         
-        .status-badge {
+        .main .container .status-badge {
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;
@@ -63,29 +65,29 @@
             display: inline-block;
         }
         
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-confirmed { background: #d1ecf1; color: #0c5460; }
-        .status-waiting { background: #ffeaa7; color: #d63031; }
-        .status-in-progress { background: #d4edda; color: #155724; }
-        .status-testing { background: #cce5ff; color: #004085; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .main .container .status-pending { background: #fff3cd; color: #856404; }
+        .main .container .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .main .container .status-waiting { background: #ffeaa7; color: #d63031; }
+        .main .container .status-in-progress { background: #d4edda; color: #155724; }
+        .main .container .status-testing { background: #cce5ff; color: #004085; }
+        .main .container .status-completed { background: #d4edda; color: #155724; }
+        .main .container .status-cancelled { background: #f8d7da; color: #721c24; }
         
-        .content {
+        .main .container .content {
             padding: 40px;
         }
         
-        .section {
+        .main .container .section {
             margin-bottom: 30px;
             padding-bottom: 30px;
             border-bottom: 2px solid #e0e0e0;
         }
         
-        .section:last-child {
+        .main .container .section:last-child {
             border-bottom: none;
         }
         
-        .section-title {
+        .main .container .section-title {
             font-size: 20px;
             font-weight: 600;
             color: #2c3e50;
@@ -95,34 +97,34 @@
             gap: 10px;
         }
         
-        .info-grid {
+        .main .container .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
         }
         
-        .info-item {
+        .main .container .info-item {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 12px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1977cc;
         }
         
-        .info-label {
+        .main .container .info-label {
             font-size: 13px;
             color: #6c757d;
             margin-bottom: 8px;
             font-weight: 600;
         }
         
-        .info-value {
+        .main .container .info-value {
             font-size: 16px;
             color: #2c3e50;
             font-weight: 500;
         }
         
-        .doctor-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .main .container .doctor-card {
+            background: linear-gradient(135deg, #1977cc 0%, #2c4964 100%);
             color: white;
             padding: 25px;
             border-radius: 15px;
@@ -131,7 +133,7 @@
             gap: 20px;
         }
         
-        .doctor-avatar {
+        .main .container .doctor-avatar {
             width: 80px;
             height: 80px;
             border-radius: 50%;
@@ -139,17 +141,17 @@
             border: 4px solid white;
         }
         
-        .doctor-info h3 {
+        .main .container .doctor-info h3 {
             font-size: 22px;
             margin-bottom: 8px;
         }
         
-        .doctor-info p {
+        .main .container .doctor-info p {
             opacity: 0.9;
             font-size: 14px;
         }
         
-        .medical-box {
+        .main .container .medical-box {
             background: #e8f5e9;
             border-left: 4px solid #4caf50;
             padding: 20px;
@@ -157,24 +159,24 @@
             margin-top: 15px;
         }
         
-        .medical-box h4 {
+        .main .container .medical-box h4 {
             color: #2e7d32;
             margin-bottom: 10px;
             font-size: 16px;
         }
         
-        .medical-box p {
+        .main .container .medical-box p {
             color: #1b5e20;
             white-space: pre-wrap;
             line-height: 1.6;
         }
         
-        .timeline {
+        .main .container .timeline {
             position: relative;
             padding-left: 40px;
         }
         
-        .timeline::before {
+        .main .container .timeline::before {
             content: '';
             position: absolute;
             left: 15px;
@@ -184,13 +186,13 @@
             background: #e0e0e0;
         }
         
-        .timeline-item {
+        .main .container .timeline-item {
             position: relative;
             margin-bottom: 20px;
             padding-left: 30px;
         }
         
-        .timeline-item::before {
+        .main .container .timeline-item::before {
             content: '✓';
             position: absolute;
             left: -26px;
@@ -198,7 +200,7 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: #667eea;
+            background: #1977cc;
             color: white;
             display: flex;
             align-items: center;
@@ -206,29 +208,29 @@
             font-weight: bold;
         }
         
-        .timeline-item.pending::before {
+        .main .container .timeline-item.pending::before {
             content: '⏳';
             background: #ffc107;
         }
         
-        .timeline-title {
+        .main .container .timeline-title {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 5px;
         }
         
-        .timeline-desc {
+        .main .container .timeline-desc {
             font-size: 14px;
             color: #6c757d;
         }
         
-        .btn-group {
+        .main .container .btn-group {
             display: flex;
             gap: 15px;
             margin-top: 30px;
         }
         
-        .btn {
+        .main .container .btn {
             flex: 1;
             padding: 14px 28px;
             border: none;
@@ -242,21 +244,21 @@
             display: inline-block;
         }
         
-        .btn-back {
+        .main .container .btn-back {
             background: #95a5a6;
             color: white;
         }
         
-        .btn-back:hover {
+        .main .container .btn-back:hover {
             background: #7f8c8d;
         }
         
-        .btn-cancel {
+        .main .container .btn-cancel {
             background: #e74c3c;
             color: white;
         }
         
-        .btn-cancel:hover {
+        .main .container .btn-cancel:hover {
             background: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
@@ -268,10 +270,14 @@
         }
     </script>
 </head>
-<body>
-    <div class="container">
+<body class="index-page">
+    <!-- Header -->
+    <jsp:include page="../../includes/header.jsp"/>
+    
+    <main class="main" style="padding-top: 80px;">
+        <div class="container">
         <div class="header">
-            <a href="${pageContext.request.contextPath}/patient" class="back-link">
+            <a href="${pageContext.request.contextPath}/appointments" class="back-link">
                 ← Back to My Appointments
             </a>
             <h1>📋 Appointment Details</h1>
@@ -359,9 +365,9 @@
                     </c:if>
                     
                     <c:if test="${not empty medicalReport.prescription}">
-                        <div class="medical-box" style="background: #e3f2fd; border-left-color: #2196f3;">
-                            <h4 style="color: #1565c0;">Prescription (Đơn thuốc)</h4>
-                            <p style="color: #0d47a1;">${medicalReport.prescription}</p>
+                        <div class="medical-box" style="background: #e3f2fd; border-left-color: #1977cc;">
+                            <h4 style="color: #2c4964;">Prescription (Đơn thuốc)</h4>
+                            <p style="color: #2c4964;">${medicalReport.prescription}</p>
                         </div>
                     </c:if>
                     
@@ -433,7 +439,7 @@
             
             <!-- Actions -->
             <div class="btn-group">
-                <a href="${pageContext.request.contextPath}/patient" class="btn btn-back">
+                <a href="${pageContext.request.contextPath}/appointments" class="btn btn-back">
                     ← Back to List
                 </a>
                 
@@ -450,5 +456,9 @@
             </div>
         </div>
     </div>
+    </main>
+    
+    <!-- Include all JS files -->
+    <jsp:include page="../../includes/footer-includes.jsp"/>
 </body>
 </html>
