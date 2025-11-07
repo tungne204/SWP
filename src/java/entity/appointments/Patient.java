@@ -24,6 +24,7 @@ public class Patient {
     private String username;
     private String email;
     private String phone;
+    private String parentName;
 
     // Constructor
     public Patient() {
@@ -121,5 +122,13 @@ public class Patient {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }

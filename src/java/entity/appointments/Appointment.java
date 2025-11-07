@@ -19,6 +19,7 @@ public class Appointment {
     private String status;
     private String patientName;
     private String doctorName;
+    private String patientPhone;
     // Constructor
     public Appointment() {
     }
@@ -89,5 +90,13 @@ public class Appointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPatientPhone() {
+        return patientPhone;
+    }
+
+    public void setPatientPhone(String patientPhone) {
+        this.patientPhone = patientPhone;
     }
 }

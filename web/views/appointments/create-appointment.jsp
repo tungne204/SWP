@@ -240,12 +240,73 @@
             color: #2c4964;
             font-size: 14px;
         }
+
+        .main .container .form-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: #f9fbfd;
+        }
+
+        .main .container .form-section h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #2c4964;
+        }
+
+        .main .container .form-section p {
+            margin-bottom: 20px;
+            color: #607d8b;
+            font-size: 14px;
+        }
+
+        .main .container .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .main .container input[type="text"],
+        .main .container input[type="tel"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
     </style>
     <script>
         function validateForm() {
             const doctorId = document.querySelector('input[name="doctorId"]:checked');
             const date = document.getElementById('appointmentDate').value;
             const time = document.getElementById('appointmentTime').value;
+            const patientName = document.getElementById('patientName').value.trim();
+            const patientDob = document.getElementById('patientDob').value;
+            const patientAddress = document.getElementById('patientAddress').value.trim();
+            const patientPhone = document.getElementById('patientPhone').value.trim();
+
+            if (!patientName) {
+                alert('Please enter patient full name!');
+                return false;
+            }
+
+            if (!patientDob) {
+                alert('Please select patient date of birth!');
+                return false;
+            }
+
+            if (!patientAddress) {
+                alert('Please enter patient address!');
+                return false;
+            }
+
+            if (!patientPhone) {
+                alert('Please enter patient phone number!');
+                return false;
+            }
             
             if (!doctorId) {
                 alert('Please select a doctor!');
@@ -310,10 +371,51 @@
                 <p>• You will receive a confirmation from our receptionist</p>
             </div>
             
+            <c:set var="dobValue" value="" />
+            <c:if test="${not empty patientProfile.dob}">
+                <fmt:formatDate value="${patientProfile.dob}" pattern="yyyy-MM-dd" var="dobValue" />
+            </c:if>
+
             <form method="post" action="${pageContext.request.contextPath}/appointments" 
                   onsubmit="return validateForm()">
                 <input type="hidden" name="action" value="create">
-                
+
+                <div class="form-section">
+                    <h2>Patient Information</h2>
+                    <p>Provide the patient's details so we can store medical records correctly.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patientName">Patient Full Name <span class="required">*</span></label>
+                            <input type="text" id="patientName" name="patientName" placeholder="Enter full name"
+                                   value="${not empty patientProfile.fullName ? patientProfile.fullName : ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientDob">Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="patientDob" name="patientDob" value="${dobValue}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientPhone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="patientPhone" name="patientPhone" placeholder="Enter phone number"
+                                   value="${not empty patientProfile.phone ? patientProfile.phone : ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="parentName">Parent / Guardian</label>
+                            <input type="text" id="parentName" name="parentName" placeholder="Enter parent or guardian name"
+                                   value="${not empty patientProfile.parentName ? patientProfile.parentName : ''}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 18px;">
+                        <label for="patientAddress">Address <span class="required">*</span></label>
+                        <textarea id="patientAddress" name="patientAddress" required
+                                  placeholder="Enter current address">${not empty patientProfile.address ? patientProfile.address : ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="insuranceInfo">Insurance Information</label>
+                        <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Enter insurance details if any"
+                               value="${not empty patientProfile.insuranceInfo ? patientProfile.insuranceInfo : ''}">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Select Doctor <span class="required">*</span></label>
                     <c:choose>

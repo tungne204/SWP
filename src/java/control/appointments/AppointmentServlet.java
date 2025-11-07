@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +46,14 @@ public class AppointmentServlet extends HttpServlet {
 
         // --- /appointments/new : mở form tạo lịch cho Patient ---
         if ("/new".equals(path) && acc.getRoleId() == 3) {
+            var patientProfile = patientDAO.getPatientByUserId(acc.getUserId());
+            if (patientProfile == null) {
+                Integer pid = patientDAO.createPatientMinimalIfAbsent(acc.getUserId());
+                if (pid != null) {
+                    patientProfile = patientDAO.getPatientByUserId(acc.getUserId());
+                }
+            }
+            request.setAttribute("patientProfile", patientProfile);
             request.setAttribute("doctors", doctorDAO.getAllDoctors());
             request.setAttribute("pageTitle", "Book New Appointment");
             request.getRequestDispatcher("/views/appointments/create-appointment.jsp")
@@ -204,7 +213,49 @@ public class AppointmentServlet extends HttpServlet {
         if (acc.getRoleId() == 3 && "create".equals(action)) {
             var patient = patientDAO.getPatientByUserId(acc.getUserId());
             if (patient == null) {
+                Integer pid = patientDAO.createPatientMinimalIfAbsent(acc.getUserId());
+                if (pid != null) {
+                    patient = patientDAO.getPatientByUserId(acc.getUserId());
+                }
+            }
+
+            if (patient == null) {
                 backWithMsg(request, response, "Patient profile not found!", "error");
+                return;
+            }
+
+            String patientName = nvl(request.getParameter("patientName")).trim();
+            String dobStr = nvl(request.getParameter("patientDob"));
+            String address = nvl(request.getParameter("patientAddress")).trim();
+            String insuranceInfo = nvl(request.getParameter("insuranceInfo"));
+            String parentName = nvl(request.getParameter("parentName"));
+            String phone = nvl(request.getParameter("patientPhone")).trim();
+
+            if (isBlank(patientName) || isBlank(dobStr) || isBlank(address) || isBlank(phone)) {
+                backWithMsg(request, response, "Please provide patient name, date of birth, address and phone!", "error");
+                return;
+            }
+
+            Date dobDate;
+            try {
+                dobDate = Date.valueOf(dobStr);
+            } catch (IllegalArgumentException ex) {
+                backWithMsg(request, response, "Invalid date of birth format!", "error");
+                return;
+            }
+
+            if (dobDate.after(new Date(System.currentTimeMillis()))) {
+                backWithMsg(request, response, "Date of birth must be in the past!", "error");
+                return;
+            }
+
+            try {
+                patientDAO.savePatientDetails(patient, patientName, dobDate, address,
+                        isBlank(insuranceInfo) ? null : insuranceInfo.trim(),
+                        parentName, phone);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                backWithMsg(request, response, "Failed to update patient information!", "error");
                 return;
             }
 

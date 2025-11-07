@@ -431,6 +431,9 @@
                   <th>#</th>
                   <th>Appointment ID</th>
                   <th>Patient Name</th>
+                  <c:if test="${roleId == 5}">
+                    <th>Phone</th>
+                  </c:if>
                   <th>Doctor Name</th>
                   <th>Date &amp; Time</th>
                   <th>Status</th>
@@ -450,6 +453,18 @@
                         <c:otherwise>Patient #${apt.patientId}</c:otherwise>
                       </c:choose>
                     </td>
+                    <c:if test="${roleId == 5}">
+                      <td>
+                        <c:choose>
+                          <c:when test="${not empty apt.patientPhone}">
+                            ${apt.patientPhone}
+                          </c:when>
+                          <c:otherwise>
+                            N/A
+                          </c:otherwise>
+                        </c:choose>
+                      </td>
+                    </c:if>
                     <td>
                       <c:choose>
                         <c:when test="${not empty apt.doctorName}"

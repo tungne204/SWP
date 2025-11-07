@@ -459,11 +459,13 @@ public class AppointmentDAO extends DBContext {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT a.*, ");
         sql.append("       p.full_name AS patient_name, ");
-        sql.append("       u.username AS doctor_name ");
+        sql.append("       pu.phone AS patient_phone, ");
+        sql.append("       du.username AS doctor_name ");
         sql.append("FROM Appointment a ");
         sql.append("LEFT JOIN Patient p ON a.patient_id = p.patient_id ");
         sql.append("LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id ");
-        sql.append("LEFT JOIN [User] u ON d.user_id = u.user_id ");
+        sql.append("LEFT JOIN [User] du ON d.user_id = du.user_id ");
+        sql.append("LEFT JOIN [User] pu ON p.user_id = pu.user_id ");
         sql.append("WHERE 1=1 ");
         
         List<Object> params = new ArrayList<>();
@@ -490,8 +492,9 @@ public class AppointmentDAO extends DBContext {
         
         // Search keyword (tìm trong patient name, doctor name, appointment ID)
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-            sql.append("AND (p.full_name LIKE ? OR u.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ?) ");
+            sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
             String searchPattern = "%" + searchKeyword.trim() + "%";
+            params.add(searchPattern);
             params.add(searchPattern);
             params.add(searchPattern);
             params.add(searchPattern);
@@ -537,6 +540,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
                 apt.setPatientName(rs.getString("patient_name"));
+                apt.setPatientPhone(rs.getString("patient_phone"));
                 apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
             }
@@ -555,7 +559,8 @@ public class AppointmentDAO extends DBContext {
         sql.append("SELECT COUNT(*) FROM Appointment a ");
         sql.append("LEFT JOIN Patient p ON a.patient_id = p.patient_id ");
         sql.append("LEFT JOIN Doctor d ON a.doctor_id = d.doctor_id ");
-        sql.append("LEFT JOIN [User] u ON d.user_id = u.user_id ");
+        sql.append("LEFT JOIN [User] du ON d.user_id = du.user_id ");
+        sql.append("LEFT JOIN [User] pu ON p.user_id = pu.user_id ");
         sql.append("WHERE 1=1 ");
         
         List<Object> params = new ArrayList<>();
@@ -582,8 +587,9 @@ public class AppointmentDAO extends DBContext {
         
         // Search keyword
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-            sql.append("AND (p.full_name LIKE ? OR u.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ?) ");
+            sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
             String searchPattern = "%" + searchKeyword.trim() + "%";
+            params.add(searchPattern);
             params.add(searchPattern);
             params.add(searchPattern);
             params.add(searchPattern);

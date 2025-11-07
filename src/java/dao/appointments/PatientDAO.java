@@ -48,13 +48,18 @@ public class PatientDAO extends DBContext {
     
     // Lấy patient theo user_id
     public Patient getPatientByUserId(int userId) {
-        String sql = "SELECT * FROM Patient WHERE user_id = ?";
-        
-        try ( Connection conn = getConnection(); 
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT p.patient_id, p.user_id, p.full_name, p.dob, p.address, p.insurance_info, p.parent_id, "
+                + "u.username, u.email, u.phone, pa.parentname "
+                + "FROM Patient p "
+                + "LEFT JOIN [User] u ON p.user_id = u.user_id "
+                + "LEFT JOIN Parent pa ON p.parent_id = pa.parent_id "
+                + "WHERE p.user_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 Patient patient = new Patient();
                 patient.setPatientId(rs.getInt("patient_id"));
@@ -63,7 +68,11 @@ public class PatientDAO extends DBContext {
                 patient.setDob(rs.getDate("dob"));
                 patient.setAddress(rs.getString("address"));
                 patient.setInsuranceInfo(rs.getString("insurance_info"));
-                patient.setParentId(rs.getInt("parent_id"));
+                patient.setParentId(rs.getObject("parent_id") != null ? rs.getInt("parent_id") : null);
+                patient.setUsername(rs.getString("username"));
+                patient.setEmail(rs.getString("email"));
+                patient.setPhone(rs.getString("phone"));
+                patient.setParentName(rs.getString("parentname"));
                 return patient;
             }
         } catch (SQLException e) {
@@ -104,10 +113,11 @@ public class PatientDAO extends DBContext {
     
     // Lấy patient với thông tin user
     public Patient getPatientWithUserInfo(int patientId) {
-        String sql = "SELECT p.*, u.username, u.email, u.phone, u.avatar " +
-                    "FROM Patient p " +
-                    "LEFT JOIN [User] u ON p.user_id = u.user_id " +
-                    "WHERE p.patient_id = ?";
+        String sql = "SELECT p.*, u.username, u.email, u.phone, u.avatar, pa.parentname "
+                + "FROM Patient p "
+                + "LEFT JOIN [User] u ON p.user_id = u.user_id "
+                + "LEFT JOIN Parent pa ON p.parent_id = pa.parent_id "
+                + "WHERE p.patient_id = ?";
         
         try (Connection conn = getConnection(); 
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -130,6 +140,7 @@ public class PatientDAO extends DBContext {
                     patient.setPhone(rs.getString("phone"));
                     patient.setUsername(rs.getString("username"));
                 }
+                patient.setParentName(rs.getString("parentname"));
                 
                 return patient;
             }
@@ -137,6 +148,111 @@ public class PatientDAO extends DBContext {
             e.printStackTrace();
         } catch (Exception ex) {
             Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public Patient savePatientDetails(Patient patient, String fullName, Date dob, String address,
+                                      String insuranceInfo, String parentName, String phone) throws SQLException {
+        if (patient == null) {
+            throw new IllegalArgumentException("Patient entity must not be null");
+        }
+
+        String updatePatientSql = "UPDATE Patient SET full_name = ?, dob = ?, address = ?, insurance_info = ?, parent_id = ? WHERE patient_id = ?";
+        String updateParentSql = "UPDATE Parent SET parentname = ? WHERE parent_id = ?";
+        String insertParentSql = "INSERT INTO Parent (parentname) VALUES (?)";
+        String updateUserSql = "UPDATE [User] SET phone = ? WHERE user_id = ?";
+
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            Integer parentId = patient.getParentId();
+            boolean hasParentName = parentName != null && !parentName.trim().isEmpty();
+
+            if (hasParentName) {
+                if (parentId != null && parentId > 0) {
+                    try (PreparedStatement ps = conn.prepareStatement(updateParentSql)) {
+                        ps.setString(1, parentName.trim());
+                        ps.setInt(2, parentId);
+                        ps.executeUpdate();
+                    }
+                } else {
+                    try (PreparedStatement ps = conn.prepareStatement(insertParentSql, Statement.RETURN_GENERATED_KEYS)) {
+                        ps.setString(1, parentName.trim());
+                        ps.executeUpdate();
+                        try (ResultSet generated = ps.getGeneratedKeys()) {
+                            if (generated.next()) {
+                                parentId = generated.getInt(1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(updatePatientSql)) {
+                ps.setString(1, fullName);
+                if (dob != null) {
+                    ps.setDate(2, dob);
+                } else {
+                    ps.setNull(2, Types.DATE);
+                }
+                ps.setString(3, address);
+                if (insuranceInfo != null && !insuranceInfo.trim().isEmpty()) {
+                    ps.setString(4, insuranceInfo.trim());
+                } else {
+                    ps.setNull(4, Types.NVARCHAR);
+                }
+                if (parentId != null && parentId > 0) {
+                    ps.setInt(5, parentId);
+                } else {
+                    ps.setNull(5, Types.INTEGER);
+                }
+                ps.setInt(6, patient.getPatientId());
+                ps.executeUpdate();
+            }
+
+            if (phone != null && !phone.trim().isEmpty() && patient.getUserId() != null) {
+                try (PreparedStatement ps = conn.prepareStatement(updateUserSql)) {
+                    ps.setString(1, phone.trim());
+                    ps.setInt(2, patient.getUserId());
+                    ps.executeUpdate();
+                }
+            }
+
+            conn.commit();
+
+            patient.setFullName(fullName);
+            patient.setDob(dob);
+            patient.setAddress(address);
+            patient.setInsuranceInfo(insuranceInfo != null && !insuranceInfo.trim().isEmpty() ? insuranceInfo.trim() : null);
+            patient.setParentId(parentId);
+            patient.setParentName(hasParentName ? parentName.trim() : null);
+            if (phone != null && !phone.trim().isEmpty()) {
+                patient.setPhone(phone.trim());
+            }
+            return patient;
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            throw ex;
+        } catch (Exception ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }
