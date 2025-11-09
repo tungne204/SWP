@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -107,7 +108,20 @@ public class CreateVNPayServlet extends HttpServlet {
             }
 
             long amountVND = Long.parseLong(amountStr);
-            String orderInfo = "Thanh toan ho so kham Appointment#" + appointmentId;
+            
+            // Lấy thông tin bệnh nhân và đơn thuốc
+            PaymentDAO.PatientInfo patientInfo = paymentDAO.getPatientInfoByAppointmentId(appointmentId);
+            String patientName = (patientInfo != null && patientInfo.patientName != null && !patientInfo.patientName.trim().isEmpty()) 
+                ? patientInfo.patientName : "Bệnh nhân";
+            String prescription = (patientInfo != null && patientInfo.prescription != null && !patientInfo.prescription.trim().isEmpty())
+                ? patientInfo.prescription : "Chưa có đơn thuốc";
+            
+            // Giới hạn độ dài đơn thuốc để hiển thị trên VNPay (tối đa 100 ký tự)
+            if (prescription != null && prescription.length() > 100) {
+                prescription = prescription.substring(0, 97) + "...";
+            }
+            
+            String orderInfo = "Thanh toan - " + patientName + " - Don thuoc: " + prescription;
 
             // Sinh vnp_TxnRef duy nhất
             String vnp_TxnRef = "CLINIC" + System.currentTimeMillis();
@@ -123,7 +137,18 @@ public class CreateVNPayServlet extends HttpServlet {
             vnp_Params.put("vnp_OrderInfo", orderInfo);
             vnp_Params.put("vnp_OrderType", "healthcare");
             vnp_Params.put("vnp_Locale", VNPayConfig.DEFAULT_LOCALE);
-            vnp_Params.put("vnp_ReturnUrl", VNPayConfig.getReturnUrl(getServletContext()));
+            // Tự động tạo return URL với context path
+            String returnUrl = VNPayConfig.getReturnUrl(getServletContext());
+            if (returnUrl == null || returnUrl.isEmpty()) {
+                // Fallback: tự động tạo từ request
+                String scheme = req.getScheme(); // http hoặc https
+                String serverName = req.getServerName();
+                int serverPort = req.getServerPort();
+                String contextPath = req.getContextPath();
+                returnUrl = scheme + "://" + serverName + (serverPort != 80 && serverPort != 443 ? ":" + serverPort : "") 
+                           + contextPath + "/reception/payment/return";
+            }
+            vnp_Params.put("vnp_ReturnUrl", returnUrl);
             vnp_Params.put("vnp_IpAddr", VNPayUtil.getClientIp(req));
             vnp_Params.put("vnp_CreateDate", VNPayUtil.now("yyyyMMddHHmmss"));
             vnp_Params.put("vnp_ExpireDate", VNPayUtil.plusMinutes(15, "yyyyMMddHHmmss"));
@@ -139,8 +164,13 @@ public class CreateVNPayServlet extends HttpServlet {
 
             resp.sendRedirect(payUrl);
 
+        } catch (NumberFormatException ex) {
+            resp.sendError(400, "Số tiền không hợp lệ: " + ex.getMessage());
+        } catch (SQLException ex) {
+            resp.sendError(500, "Lỗi database: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new ServletException(ex);
+            ex.printStackTrace();
+            resp.sendError(500, "Lỗi hệ thống: " + ex.getMessage());
         }
     }
     

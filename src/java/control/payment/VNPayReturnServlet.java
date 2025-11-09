@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author Quang Anh
  */
-@WebServlet(name="VNPayReturnServlet", urlPatterns={"/reception/payment/return"})
+@WebServlet(name="VNPayReturnServlet", urlPatterns={"/reception/payment/return", "/payment/return"})
 public class VNPayReturnServlet extends HttpServlet {
     private Connection getConnection() throws Exception {
         return new DBContext().getConnection();

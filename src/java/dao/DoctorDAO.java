@@ -101,7 +101,7 @@ public class DoctorDAO extends DBContext {
         return null;
     }
 
-    // Thêm bác sĩ mới
+    // Thêm bác sĩ mới (chỉ specialty - giữ lại để tương thích)
     public boolean insertDoctor(int userId, String specialty) {
         String sql = "INSERT INTO Doctor (user_id, specialty) VALUES (?, ?)";
 
@@ -117,6 +117,138 @@ public class DoctorDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (Exception ex) {
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    // Thêm bác sĩ mới với đầy đủ thông tin profile
+    public boolean insertDoctorWithProfile(int userId, String specialty, Integer experienceYears, String certificate, String introduce) {
+        // Thử insert với specialty trước
+        String sqlWithSpecialty = "INSERT INTO Doctor (user_id, specialty, experienceYears, certificate, introduce) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sqlWithSpecialty)) {
+
+            st.setInt(1, userId);
+            st.setString(2, specialty != null ? specialty : "General Medicine");
+            
+            if (experienceYears != null && experienceYears >= 0) {
+                st.setInt(3, experienceYears);
+            } else {
+                st.setNull(3, java.sql.Types.INTEGER);
+            }
+            
+            if (certificate != null && !certificate.trim().isEmpty()) {
+                st.setString(4, certificate.trim());
+            } else {
+                st.setNull(4, java.sql.Types.VARCHAR);
+            }
+            
+            if (introduce != null && !introduce.trim().isEmpty()) {
+                st.setString(5, introduce.trim());
+            } else {
+                st.setNull(5, java.sql.Types.VARCHAR);
+            }
+
+            int rowsAffected = st.executeUpdate();
+            System.out.println("Doctor record inserted successfully (with specialty) for userId: " + userId + ", rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            // Nếu lỗi do không có cột specialty, thử lại không có specialty
+            String errorMsg = e.getMessage();
+            if (errorMsg != null && (errorMsg.contains("Invalid column name 'specialty'") 
+                    || errorMsg.contains("specialty") && errorMsg.contains("invalid"))) {
+                System.out.println("Specialty column not found, retrying without specialty...");
+                return insertDoctorWithoutSpecialty(userId, experienceYears, certificate, introduce);
+            } else {
+                System.err.println("SQL Error inserting Doctor: " + errorMsg);
+                System.err.println("SQL State: " + e.getSQLState());
+                System.err.println("Error Code: " + e.getErrorCode());
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.err.println("Error inserting Doctor: " + ex.getMessage());
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+    
+    // Thêm bác sĩ không có cột specialty (fallback)
+    private boolean insertDoctorWithoutSpecialty(int userId, Integer experienceYears, String certificate, String introduce) {
+        String sql = "INSERT INTO Doctor (user_id, experienceYears, certificate, introduce) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+
+            st.setInt(1, userId);
+            
+            if (experienceYears != null && experienceYears >= 0) {
+                st.setInt(2, experienceYears);
+            } else {
+                st.setNull(2, java.sql.Types.INTEGER);
+            }
+            
+            if (certificate != null && !certificate.trim().isEmpty()) {
+                st.setString(3, certificate.trim());
+            } else {
+                st.setNull(3, java.sql.Types.VARCHAR);
+            }
+            
+            if (introduce != null && !introduce.trim().isEmpty()) {
+                st.setString(4, introduce.trim());
+            } else {
+                st.setNull(4, java.sql.Types.VARCHAR);
+            }
+
+            int rowsAffected = st.executeUpdate();
+            System.out.println("Doctor record inserted successfully (without specialty) for userId: " + userId + ", rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            // Nếu lỗi do không có các cột profile, thử insert chỉ với user_id
+            String errorMsg = e.getMessage();
+            if (errorMsg != null && (errorMsg.contains("Invalid column name") 
+                    || errorMsg.contains("experienceYears") || errorMsg.contains("certificate") || errorMsg.contains("introduce"))) {
+                System.out.println("Profile columns not found, inserting only user_id...");
+                return insertDoctorMinimal(userId);
+            } else {
+                System.err.println("SQL Error inserting Doctor (without specialty): " + errorMsg);
+                System.err.println("SQL State: " + e.getSQLState());
+                System.err.println("Error Code: " + e.getErrorCode());
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.err.println("Error inserting Doctor (without specialty): " + ex.getMessage());
+            Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+    
+    // Thêm bác sĩ chỉ với user_id (fallback cuối cùng)
+    private boolean insertDoctorMinimal(int userId) {
+        String sql = "INSERT INTO Doctor (user_id) VALUES (?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+
+            st.setInt(1, userId);
+
+            int rowsAffected = st.executeUpdate();
+            System.out.println("Doctor record inserted successfully (minimal - only user_id) for userId: " + userId + ", rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("SQL Error inserting Doctor (minimal): " + e.getMessage());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
+        } catch (Exception ex) {
+            System.err.println("Error inserting Doctor (minimal): " + ex.getMessage());
             Logger.getLogger(DoctorDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 

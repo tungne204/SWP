@@ -4,6 +4,7 @@ import entity.ListUser.User;
 import entity.ListUser.Role;
 import dao.ListUser.RoleDAO;
 import dao.ListUser.UserDAO;
+import dao.DoctorDAO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,11 +21,13 @@ public class UserServlet extends HttpServlet {
 
     private UserDAO userDAO;
     private RoleDAO roleDAO;
+    private DoctorDAO doctorDAO;
 
     @Override
     public void init() throws ServletException {
         userDAO = new UserDAO();
         roleDAO = new RoleDAO();
+        doctorDAO = new DoctorDAO();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -227,6 +230,22 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+        // Validate số điện thoại
+        if (phone != null && !phone.trim().isEmpty()) {
+            // Validate format số điện thoại (10 số, bắt đầu bằng 0 hoặc +84)
+            if (!isValidPhoneNumber(phone)) {
+                setMessage(request, false, "", "Số điện thoại không hợp lệ! Vui lòng nhập 10 số (bắt đầu bằng 0) hoặc định dạng quốc tế (+84).");
+                backToForm(request, response, group);
+                return;
+            }
+            // Kiểm tra số điện thoại trùng
+            if (userDAO.existsByPhone(phone)) {
+                setMessage(request, false, "", "Số điện thoại đã được sử dụng!");
+                backToForm(request, response, group);
+                return;
+            }
+        }
+
         // Xác định role
         Integer roleId = null;
         if ("customers".equals(group)) {
@@ -277,6 +296,46 @@ public class UserServlet extends HttpServlet {
 
         int newId = userDAO.createUser(u);
         if (newId > 0) {
+            // Nếu role là Doctor, tự động tạo Doctor record với đầy đủ profile
+            Role selectedRole = roleDAO.getRoleById(roleId);
+            if (selectedRole != null && "Doctor".equals(selectedRole.getRoleName())) {
+                String specialty = trimOrNull(request.getParameter("specialty"));
+                if (specialty == null || specialty.isEmpty()) {
+                    specialty = "General Medicine"; // Mặc định nếu không nhập
+                }
+                
+                // Lấy thông tin profile doctor
+                String experienceYearsStr = trimOrNull(request.getParameter("experienceYears"));
+                Integer experienceYears = null;
+                if (experienceYearsStr != null && !experienceYearsStr.isEmpty()) {
+                    try {
+                        int years = Integer.parseInt(experienceYearsStr);
+                        if (years >= 0) {
+                            experienceYears = years;
+                        }
+                    } catch (NumberFormatException e) {
+                        // Bỏ qua nếu không parse được
+                    }
+                }
+                
+                String certificate = trimOrNull(request.getParameter("certificate"));
+                String introduce = trimOrNull(request.getParameter("introduce"));
+                
+                // Tạo Doctor record với đầy đủ thông tin
+                boolean doctorCreated = doctorDAO.insertDoctorWithProfile(
+                    newId, specialty, experienceYears, certificate, introduce
+                );
+                
+                if (!doctorCreated) {
+                    // Nếu tạo Doctor record thất bại, vẫn thông báo thành công tạo user
+                    // nhưng có thể log lỗi
+                    System.err.println("Warning: User created but Doctor record creation failed for userId: " + newId);
+                    setMessage(request, false, "", "Tạo tài khoản thành công nhưng không thể tạo profile Doctor. Vui lòng kiểm tra lại!");
+                    backToForm(request, response, group);
+                    return;
+                }
+            }
+            
             setMessage(request, true, "Tạo người dùng thành công!", "");
             response.sendRedirect(request.getContextPath() + "/admin/users?action=list&group=" + group);
         } else {
@@ -291,6 +350,26 @@ public class UserServlet extends HttpServlet {
         }
         String t = s.trim();
         return t.isEmpty() ? null : t;
+    }
+
+    // ============= NEW: Validate số điện thoại =============
+    private boolean isValidPhoneNumber(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return true; // Cho phép để trống
+        }
+        String cleaned = phone.trim().replaceAll("[\\s\\-\\(\\)]", ""); // Loại bỏ khoảng trắng, dấu gạch, ngoặc
+        
+        // Kiểm tra format Việt Nam: 10 số bắt đầu bằng 0
+        if (cleaned.matches("^0[0-9]{9}$")) {
+            return true;
+        }
+        
+        // Kiểm tra format quốc tế: +84 hoặc 84 + 9 số
+        if (cleaned.matches("^(\\+84|84)[0-9]{9}$")) {
+            return true;
+        }
+        
+        return false;
     }
 
     private void backToForm(HttpServletRequest request, HttpServletResponse response, String group)

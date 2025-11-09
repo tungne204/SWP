@@ -198,6 +198,22 @@ public class UserDAO extends DBContext {
         return false;
     }
 
+    // ========================= NEW: kiểm tra số điện thoại trùng =========================
+    public boolean existsByPhone(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false; // Số điện thoại null/empty không coi là trùng
+        }
+        String sql = "SELECT 1 FROM [User] WHERE phone = ? AND phone IS NOT NULL";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
     // ========================= NEW: tạo user =========================
     public int createUser(User u) {
         String sql = "INSERT INTO [User] (username, password, email, phone, role_id, status) " +
