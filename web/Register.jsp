@@ -70,7 +70,8 @@
                 <label class="form-label">Họ và tên</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <input type="text" name="fullname" class="form-control" placeholder="Nhập họ và tên" required>
+                    <input type="text" name="fullname" class="form-control" placeholder="Nhập họ và tên" 
+                           value="<%= request.getParameter("fullname") != null ? request.getParameter("fullname") : "" %>" required>
                 </div>
             </div>
 
@@ -79,7 +80,8 @@
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                    <input type="email" name="email" class="form-control" placeholder="Nhập email" required>
+                    <input type="email" name="email" class="form-control" placeholder="Nhập email" 
+                           value="<%= request.getParameter("email") != null ? request.getParameter("email") : "" %>" required>
                 </div>
             </div>
 
@@ -89,8 +91,9 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-phone"></i></span>
                     <input type="tel" name="phone" class="form-control"
-                           placeholder="Enter your phone (10 digits)"
-                           pattern="\d{10}" title="Số điện thoại phải có 10 số" required>
+                           placeholder="Nhập số điện thoại của bạn (10 số)"
+                           pattern="\d{10}" title="Số điện thoại phải có 10 số" 
+                           value="<%= request.getParameter("phone") != null ? request.getParameter("phone") : "" %>" required>
                 </div>
             </div>
 

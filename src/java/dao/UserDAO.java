@@ -369,24 +369,65 @@ public class UserDAO extends DBContext {
     public void saveEmailVerificationCode(String email, String code) {
         String sql = "UPDATE [User] SET email_verification_code = ?, email_verification_expiry = DATEADD(MINUTE, 15, GETDATE()) WHERE email = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, code);
+            // Trim code before saving to ensure consistency
+            ps.setString(1, code.trim());
             ps.setString(2, email);
-            ps.executeUpdate();
+            int rowsUpdated = ps.executeUpdate();
+            
+            // Debug logging (can be removed in production)
+            if (rowsUpdated > 0) {
+                System.out.println("Verification code saved - Email: " + email + ", Code: '" + code.trim() + "'");
+            } else {
+                System.err.println("Warning: No user found with email: " + email);
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error saving email verification code: " + e.getMessage());
         }
     }
     
     // ✅ Verify email verification code
     public boolean verifyEmailCode(String email, String code) {
-        String sql = "SELECT 1 FROM [User] WHERE email = ? AND email_verification_code = ? AND email_verification_expiry > GETDATE()";
+        // Use LTRIM/RTRIM to handle any whitespace issues in database
+        String sql = "SELECT email_verification_code, email_verification_expiry FROM [User] WHERE email = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
-            ps.setString(2, code);
             ResultSet rs = ps.executeQuery();
-            return rs.next();
+            
+            if (rs.next()) {
+                String storedCode = rs.getString("email_verification_code");
+                java.sql.Timestamp expiry = rs.getTimestamp("email_verification_expiry");
+                
+                // Debug logging
+                System.out.println("=== Email Verification Debug ===");
+                System.out.println("Email: " + email);
+                System.out.println("Stored Code: '" + (storedCode != null ? storedCode : "NULL") + "'");
+                System.out.println("Input Code: '" + code.trim() + "'");
+                System.out.println("Expiry: " + (expiry != null ? expiry.toString() : "NULL"));
+                System.out.println("Current Time: " + new java.sql.Timestamp(System.currentTimeMillis()));
+                
+                // Check if code matches
+                boolean codeMatches = storedCode != null && storedCode.trim().equals(code.trim());
+                // Check if not expired
+                boolean notExpired = expiry != null && expiry.after(new java.sql.Timestamp(System.currentTimeMillis()));
+                
+                System.out.println("Code Match: " + codeMatches);
+                System.out.println("Not Expired: " + notExpired);
+                
+                if (codeMatches && notExpired) {
+                    System.out.println("Verification SUCCESS - Email: " + email);
+                    return true;
+                } else {
+                    System.out.println("Verification FAILED - Code Match: " + codeMatches + ", Not Expired: " + notExpired);
+                    return false;
+                }
+            } else {
+                System.out.println("No user found with email: " + email);
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error verifying email code: " + e.getMessage());
         }
         return false;
     }
@@ -426,6 +467,21 @@ public class UserDAO extends DBContext {
             ps.setString(2, PasswordUtil.hashPassword(password));
             ps.setString(3, email);
             ps.setString(4, phone);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // ✅ Update unverified user information and reset verification code
+    public void updateUnverifiedUser(String username, String password, String email, String phone) {
+        String sql = "UPDATE [User] SET username = ?, password = ?, phone = ?, status = 0, email_verified = 0 WHERE email = ? AND (email_verified = 0 OR email_verified IS NULL)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            // Hash password before storing
+            ps.setString(2, PasswordUtil.hashPassword(password));
+            ps.setString(3, phone);
+            ps.setString(4, email);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

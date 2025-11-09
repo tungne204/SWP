@@ -31,15 +31,15 @@
 
                         <div class="mb-3">
                             <label for="oldPassword" class="form-label">Mật khẩu hiện tại</label>
-                            <input type="password" name="oldPassword" class="form-control" required>
+                            <input type="password" name="oldPassword" class="form-control" value="<%= request.getParameter("oldPassword") != null ? request.getParameter("oldPassword") : "" %>" required>
                         </div>
                         <div class="mb-3">
                             <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                            <input type="password" name="newPassword" class="form-control" required>
+                            <input type="password" name="newPassword" class="form-control" value="<%= request.getParameter("newPassword") != null ? request.getParameter("newPassword") : "" %>" required>
                         </div>
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" name="confirmPassword" class="form-control" required>
+                            <input type="password" name="confirmPassword" class="form-control" value="<%= request.getParameter("confirmPassword") != null ? request.getParameter("confirmPassword") : "" %>" required>
                         </div>
                         <% if (request.getAttribute("error") != null) { %>
                             <div class="alert alert-danger"><%= request.getAttribute("error") %></div>
