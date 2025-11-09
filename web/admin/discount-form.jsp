@@ -222,7 +222,7 @@
                         ${error}
                     </div>
                 </c:if>
-                <form id="promotionForm" method="POST" action="${pageContext.request.contextPath}/manager/discount">
+                <form id="promotionForm" method="POST" action="${pageContext.request.contextPath}/admin/discount">
                     <input type="hidden" name="action" value="${isEdit ? 'update' : 'create'}">
                     <c:if test="${isEdit}">
                         <input type="hidden" name="discountId" value="${promotion.discountId}">
@@ -306,7 +306,7 @@
 
                     <!-- Action Buttons -->
                     <div style="display: flex; justify-content: end; gap: 10px; margin-top: 30px;">
-                        <a href="${pageContext.request.contextPath}/manager/discount?action=list" class="btn btn-secondary">
+                        <a href="${pageContext.request.contextPath}/admin/discount?action=list" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Hủy
                         </a>
                         <button type="submit" class="btn btn-primary">

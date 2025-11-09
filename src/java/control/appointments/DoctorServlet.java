@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(name = "DoctorServlet", urlPatterns = {"/doctor/*"})
+@WebServlet(name = "DoctorServlet", urlPatterns = {"/doctor"})
 public class DoctorServlet extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;

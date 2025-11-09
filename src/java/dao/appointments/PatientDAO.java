@@ -284,6 +284,7 @@ public class PatientDAO extends DBContext {
                     + "AND (p.address = ? OR (u.phone = ? AND u.phone IS NOT NULL))";
             
             Integer patientId = null;
+            Integer existingUserId = null;
             try (PreparedStatement ps = conn.prepareStatement(findSql)) {
                 ps.setString(1, fullName);
                 if (dob != null) {
@@ -296,6 +297,28 @@ public class PatientDAO extends DBContext {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         patientId = rs.getInt("patient_id");
+                    }
+                }
+            }
+            
+            // Nếu tìm thấy patient đã tồn tại, kiểm tra và cập nhật user_id nếu cần
+            if (patientId != null && userId != null && userId > 0) {
+                String checkUserIdSql = "SELECT user_id FROM Patient WHERE patient_id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(checkUserIdSql)) {
+                    ps.setInt(1, patientId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            Object userIdObj = rs.getObject("user_id");
+                            if (userIdObj == null) {
+                                // Patient chưa có user_id, cập nhật
+                                String updateUserIdSql = "UPDATE Patient SET user_id = ? WHERE patient_id = ?";
+                                try (PreparedStatement updatePs = conn.prepareStatement(updateUserIdSql)) {
+                                    updatePs.setInt(1, userId);
+                                    updatePs.setInt(2, patientId);
+                                    updatePs.executeUpdate();
+                                }
+                            }
+                        }
                     }
                 }
             }

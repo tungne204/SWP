@@ -6,6 +6,8 @@
 package control.payment;
 import context.DBContext;
 import dao.payment.MedicalReportViewDAO;
+import dao.DiscountDAO;
+import entity.Discount;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -103,6 +105,10 @@ public class ListMedicalReportsServlet extends HttpServlet {
             int totalCount = dao.getTotalCount(searchKeyword, paymentStatus);
             int totalPages = totalCount > 0 ? (int) Math.ceil((double) totalCount / pageSize) : 1;
             
+            // Load active discounts for discount selection
+            DiscountDAO discountDAO = new DiscountDAO();
+            List<Discount> activeDiscounts = discountDAO.getActiveDiscounts();
+            
             // Set attributes cho JSP
             req.setAttribute("medicalReports", rows);
             req.setAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
@@ -111,6 +117,7 @@ public class ListMedicalReportsServlet extends HttpServlet {
             req.setAttribute("pageSize", pageSize);
             req.setAttribute("totalCount", totalCount);
             req.setAttribute("totalPages", totalPages);
+            req.setAttribute("activeDiscounts", activeDiscounts);
             
             req.getRequestDispatcher("/views/payment/list-medical-report.jsp")
                .forward(req, resp);

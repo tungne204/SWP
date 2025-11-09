@@ -360,19 +360,25 @@
                 <a href="${pageContext.request.contextPath}/appointments" class="back-link">
                     ← Quay lại danh sách chờ
                 </a>
-                <h1>Examination Form</h1>
+                <h1>Phiếu khám bệnh</h1>
                 <div class="patient-info">
-                    <p><strong>Appointment ID:</strong> #${appointment.appointmentId}</p>
-                    <p><strong>Patient ID:</strong> ${appointment.patientId}</p>
-                    <p><strong>Date & Time:</strong> 
+                    <p><strong>Mã lịch hẹn:</strong> #${appointment.appointmentId}</p>
+                    <p><strong>Tên bệnh nhân:</strong> ${patient != null ? patient.fullName : 'N/A'}</p>
+                    <p><strong>Ngày & Giờ:</strong> 
                         <fmt:formatDate value="${appointment.dateTime}" 
                                         pattern="dd/MM/yyyy HH:mm"/>
                     </p>
-                    <p><strong>Status:</strong> 
+                    <p><strong>Trạng thái:</strong> 
                         <span class="status-badge status-${appointment.status.toLowerCase().replace(' ', '-')}">
                             ${appointment.status}
                         </span>
                     </p>
+                    <c:if test="${not empty appointment.symptoms}">
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px; border-left: 4px solid #fff;">
+                            <p style="margin-bottom: 8px;"><strong>📋 Symptoms (Triệu chứng):</strong></p>
+                            <p style="white-space: pre-wrap; word-wrap: break-word; margin: 0;">${appointment.symptoms}</p>
+                        </div>
+                    </c:if>
                 </div>
             </div>
             <c:if test="${not empty sessionScope.message}">
@@ -392,7 +398,7 @@
                         <input type="hidden" name="action" value="start">
                         <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
                         <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            🩺 Start Examination
+                            🩺 Bắt đầu khám
                         </button>
                     </form>
                 </c:if>
@@ -401,18 +407,18 @@
                     <!-- Hiển thị kết quả xét nghiệm nếu có -->
                     <c:if test="${not empty testResults}">
                         <div class="test-results-section">
-                            <h3>📋 Test Results (Kết quả xét nghiệm)</h3>
+                            <h3>📋 Kết quả xét nghiệm</h3>
                             <c:forEach var="testResult" items="${testResults}">
                                 <div class="test-result-item">
                                     <h4>
                                         <span class="test-type">${testResult.testType}</span>
                                     </h4>
                                     <p class="test-date">
-                                        <strong>Date:</strong> 
+                                        <strong>Ngày:</strong> 
                                         <fmt:formatDate value="${testResult.date}" pattern="dd/MM/yyyy"/>
                                     </p>
                                     <div class="test-result-content">
-                                        <strong>Result:</strong><br/>
+                                        <strong>Kết quả:</strong><br/>
                                         ${testResult.result}
                                     </div>
                                 </div>
@@ -425,28 +431,28 @@
                         <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
 
                         <div class="form-group">
-                            <label for="diagnosis">Diagnosis (Chẩn đoán)</label>
+                            <label for="diagnosis">Chẩn đoán</label>
                             <textarea id="diagnosis" name="diagnosis"
-                                      placeholder="Enter diagnosis...">${medicalReport != null ? medicalReport.diagnosis : ''}</textarea>
+                                      placeholder="Nhập chẩn đoán...">${medicalReport != null ? medicalReport.diagnosis : ''}</textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="prescription">Prescription (Đơn thuốc) *</label>
+                            <label for="prescription">Đơn thuốc *</label>
                             <textarea id="prescription" name="prescription"
-                                      placeholder="Enter prescription..." required>${medicalReport != null ? medicalReport.prescription : ''}</textarea>
+                                      placeholder="Nhập đơn thuốc..." required>${medicalReport != null ? medicalReport.prescription : ''}</textarea>
                         </div>
 
                         <div class="btn-group">
                             <!-- Chỉ hiển thị nút Request Test khi status là In Progress -->
                             <c:if test="${appointment.status == 'In Progress'}">
                                 <button type="button" class="btn btn-warning" onclick="toggleTestOptions()">
-                                    🧪 Request Test
+                                    🧪 Yêu cầu xét nghiệm
                                 </button>
                             </c:if>
 
                             <!-- BỎ onclick=validateComplete() -->
                             <button type="submit" name="action" value="complete" class="btn btn-success">
-                                ✓ Complete Examination
+                                ✓ Hoàn tất khám
                             </button>
                         </div>
 
@@ -454,7 +460,7 @@
                         <c:if test="${appointment.status == 'In Progress'}">
                             <div id="testOptions" class="test-options">
                                 <div class="form-group">
-                                    <label for="testType">Test Type (Loại xét nghiệm) *</label>
+                                    <label for="testType">Loại xét nghiệm *</label>
                                     <select id="testType" name="testType" required>
                                         <option value="">-- Chọn loại xét nghiệm --</option>
                                         <option value="Xét nghiệm máu">Xét nghiệm máu</option>
@@ -470,7 +476,7 @@
                                 </div>
                                 <button type="submit" name="action" value="requestTest"
                                         class="btn btn-warning" formnovalidate>
-                                    Send Test Request
+                                    Gửi yêu cầu xét nghiệm
                                 </button>
                             </div>
                         </c:if>
@@ -481,10 +487,10 @@
                 <c:if test="${appointment.status == 'Testing'}">
                     <div style="text-align: center; padding: 40px; background: #fff3cd;
                          border-radius: 10px;">
-                        <h2 style="color: #856404;">⏳ Waiting for Test Results</h2>
+                        <h2 style="color: #856404;">⏳ Đang chờ kết quả xét nghiệm</h2>
                         <p style="margin-top: 15px; color: #856404;">
-                            The patient is currently undergoing laboratory tests. 
-                            Please wait for the medical assistant to complete the tests.
+                            Bệnh nhân đang được thực hiện xét nghiệm. 
+                            Vui lòng chờ trợ lý y tế hoàn tất các xét nghiệm.
                         </p>
                     </div>
                 </c:if>
@@ -492,9 +498,9 @@
                 <c:if test="${appointment.status == 'Completed'}">
                     <div style="text-align: center; padding: 40px; background: #d4edda;
                          border-radius: 10px;">
-                        <h2 style="color: #155724;">✓ Examination Completed</h2>
+                        <h2 style="color: #155724;">✓ Đã hoàn tất khám</h2>
                         <p style="margin-top: 15px; color: #155724;">
-                            This examination has been completed successfully.
+                            Cuộc khám này đã được hoàn tất thành công.
                         </p>
                     </div>
                 </c:if>

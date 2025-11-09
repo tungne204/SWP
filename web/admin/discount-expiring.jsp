@@ -231,11 +231,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div></div>
                     <div class="d-flex gap-2">
-                        <a href="manager/discount?action=list" class="btn btn-outline-primary">
+                        <a href="admin/discount?action=list" class="btn btn-outline-primary">
                             <i class="fas fa-arrow-left me-1"></i>
                             Quay Lại Danh Sách
                         </a>
-                        <a href="manager/discount?action=add" class="btn btn-primary">
+                        <a href="admin/discount?action=add" class="btn btn-primary">
                             <i class="fas fa-plus me-1"></i>
                             Thêm Khuyến Mãi Mới
                         </a>
@@ -345,7 +345,7 @@
                                     <i class="fas fa-smile"></i>
                                     <h4>Tuyệt vời!</h4>
                                     <p>Hiện tại không có khuyến mãi nào sắp hết hạn.</p>
-                                    <a href="manager/discount?action=add" class="btn btn-primary">
+                                    <a href="admin/discount?action=add" class="btn btn-primary">
                                         <i class="fas fa-plus me-1"></i>
                                         Tạo Khuyến Mãi Mới
                                     </a>
@@ -393,12 +393,12 @@
                                                     </div>
                                                     
                                                     <div class="d-flex gap-2">
-                                                        <a href="manager/discount?action=view&id=${promotion.discountId}" 
+                                                        <a href="admin/discount?action=view&id=${promotion.discountId}" 
                                                            class="btn btn-outline-primary flex-fill" style="font-size: 0.875rem;">
                                                             <i class="fas fa-eye me-1"></i>
                                                             Xem
                                                         </a>
-                                                        <a href="manager/discount?action=edit&id=${promotion.discountId}" 
+                                                        <a href="admin/discount?action=edit&id=${promotion.discountId}" 
                                                            class="btn btn-outline-warning flex-fill" style="font-size: 0.875rem;">
                                                             <i class="fas fa-edit me-1"></i>
                                                             Sửa

@@ -209,7 +209,7 @@
 
             <!-- Bộ lọc và thêm mới -->
             <div class="search-box">
-                <form method="get" action="${pageContext.request.contextPath}/manager/discount">
+                <form method="get" action="${pageContext.request.contextPath}/admin/discount">
                     <input type="hidden" name="action" value="list">
                     <input type="text" name="search" placeholder="Tìm theo mã khuyến mãi..." value="${searchKeyword}">
                     <select name="sort">
@@ -220,7 +220,7 @@
                         <i class="fas fa-search"></i> Tìm kiếm
                     </button>
                 </form>
-                <a href="${pageContext.request.contextPath}/manager/discount?action=add" class="btn btn-success">
+                <a href="${pageContext.request.contextPath}/admin/discount?action=add" class="btn btn-success">
                     <i class="fas fa-plus"></i> Thêm khuyến mãi
                 </a>
             </div>
@@ -251,10 +251,10 @@
                                 <td><fmt:formatDate value="${promotion.validFrom}" pattern="dd/MM/yyyy"/></td>
                                 <td><fmt:formatDate value="${promotion.validTo}" pattern="dd/MM/yyyy"/></td>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/manager/discount?action=view&id=${promotion.discountId}" class="btn btn-primary btn-sm">
+                                    <a href="${pageContext.request.contextPath}/admin/discount?action=view&id=${promotion.discountId}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i> Xem
                                     </a>
-                                    <a href="${pageContext.request.contextPath}/manager/discount?action=edit&id=${promotion.discountId}" class="btn btn-warning btn-sm">
+                                    <a href="${pageContext.request.contextPath}/admin/discount?action=edit&id=${promotion.discountId}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i> Sửa
                                     </a>
                                     <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promotion.discountId}, '${promotion.code}')">
@@ -304,7 +304,7 @@
             cancelButtonText: 'Hủy'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '${pageContext.request.contextPath}/manager/discount?action=delete&id=' + discountId;
+                window.location.href = '${pageContext.request.contextPath}/admin/discount?action=delete&id=' + discountId;
             }
         });
     }

@@ -125,6 +125,30 @@
           <span class="nav-link-text">Màn hình chờ</span>
         </a>
       </div>
+      <div class="nav-item">
+        <a
+          href="${pageContext.request.contextPath}/patient-queue?action=public-view"
+          class="nav-link"
+          target="_blank"
+        >
+          <i class="bi bi-display"></i>
+          <span class="nav-link-text">Hàng chờ công khai</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Revenue Management -->
+    <div class="nav-section">
+      <div class="nav-section-title">Quản lý doanh thu</div>
+      <div class="nav-item">
+        <a
+          href="${pageContext.request.contextPath}/receptionist/revenue"
+          class="nav-link"
+        >
+          <i class="bi bi-cash-stack"></i>
+          <span class="nav-link-text">Doanh thu</span>
+        </a>
+      </div>
     </div>
 
     <!-- Quick Actions -->

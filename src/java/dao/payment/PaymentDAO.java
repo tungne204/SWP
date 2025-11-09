@@ -17,16 +17,26 @@ public class PaymentDAO {
 
     public Payment createPending(int appointmentId, String orderInfo, long amountVnd,
                                  String vnpTxnRef, String payUrl) throws SQLException {
+        return createPending(appointmentId, orderInfo, amountVnd, vnpTxnRef, payUrl, null);
+    }
+    
+    public Payment createPending(int appointmentId, String orderInfo, long amountVnd,
+                                 String vnpTxnRef, String payUrl, Integer discountId) throws SQLException {
         String sql = "INSERT INTO dbo.Payment(appointment_id, discount_id, amount, method, status, payment_date, " +
                 "vnp_txn_ref, order_info, pay_url) " +
-                "VALUES (?, NULL, ?, N'VNPAY', 0, NULL, ?, ?, ?);" +
+                "VALUES (?, ?, ?, N'VNPAY', 0, NULL, ?, ?, ?);" +
                 "SELECT SCOPE_IDENTITY() AS new_id;";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointmentId);
-            ps.setBigDecimal(2, new java.math.BigDecimal(amountVnd));
-            ps.setString(3, vnpTxnRef);
-            ps.setString(4, orderInfo);
-            ps.setString(5, payUrl);
+            if (discountId != null) {
+                ps.setInt(2, discountId);
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+            }
+            ps.setBigDecimal(3, new java.math.BigDecimal(amountVnd));
+            ps.setString(4, vnpTxnRef);
+            ps.setString(5, orderInfo);
+            ps.setString(6, payUrl);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt(1);

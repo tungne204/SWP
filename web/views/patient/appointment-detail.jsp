@@ -266,7 +266,7 @@
     </style>
     <script>
         function confirmCancel() {
-            return confirm('Are you sure you want to cancel this appointment? This action cannot be undone.');
+            return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này? Hành động này không thể hoàn tác.');
         }
     </script>
 </head>
@@ -278,9 +278,9 @@
         <div class="container">
         <div class="header">
             <a href="${pageContext.request.contextPath}/appointments" class="back-link">
-                ← Back to My Appointments
+                ← Quay lại lịch hẹn của tôi
             </a>
-            <h1>📋 Appointment Details</h1>
+            <h1>📋 Chi tiết lịch hẹn</h1>
             <span class="status-badge status-${appointment.status.toLowerCase().replace(' ', '-')}">
                 ${appointment.status}
             </span>
@@ -290,29 +290,29 @@
             <!-- Appointment Information -->
             <div class="section">
                 <div class="section-title">
-                    📅 Appointment Information
+                    📅 Thông tin lịch hẹn
                 </div>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">Appointment ID</div>
+                        <div class="info-label">Mã lịch hẹn</div>
                         <div class="info-value">#${appointment.appointmentId}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Date & Time</div>
+                        <div class="info-label">Ngày & Giờ</div>
                         <div class="info-value">
                             <fmt:formatDate value="${appointment.dateTime}" 
                                            pattern="dd/MM/yyyy HH:mm"/>
                         </div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Day of Week</div>
+                        <div class="info-label">Thứ trong tuần</div>
                         <div class="info-value">
                             <fmt:formatDate value="${appointment.dateTime}" 
                                            pattern="EEEE"/>
                         </div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Status</div>
+                        <div class="info-label">Trạng thái</div>
                         <div class="info-value">${appointment.status}</div>
                     </div>
                 </div>
@@ -321,7 +321,7 @@
             <!-- Doctor Information -->
             <div class="section">
                 <div class="section-title">
-                    👨‍⚕️ Doctor Information
+                    👨‍⚕️ Thông tin bác sĩ
                 </div>
                 <c:choose>
                     <c:when test="${not empty doctor}">
@@ -333,19 +333,19 @@
                             <div class="doctor-info">
                                 <h3>Dr. ${doctor.username}</h3>
                                 <c:if test="${not empty doctor.experienceYears}">
-                                    <p>Experience: ${doctor.experienceYears} years</p>
+                                    <p>Kinh nghiệm: ${doctor.experienceYears} năm</p>
                                 </c:if>
                                 <c:if test="${not empty doctor.email}">
                                     <p>Email: ${doctor.email}</p>
                                 </c:if>
                                 <c:if test="${not empty doctor.phone}">
-                                    <p>Phone: ${doctor.phone}</p>
+                                    <p>Điện thoại: ${doctor.phone}</p>
                                 </c:if>
                             </div>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <p style="color: #6c757d;">Doctor information not available</p>
+                        <p style="color: #6c757d;">Không có thông tin bác sĩ</p>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -354,84 +354,121 @@
             <c:if test="${not empty medicalReport}">
                 <div class="section">
                     <div class="section-title">
-                        📝 Medical Report
+                        📝 Báo cáo y tế
                     </div>
                     
                     <c:if test="${not empty medicalReport.diagnosis}">
                         <div class="medical-box">
-                            <h4>Diagnosis (Chẩn đoán)</h4>
+                            <h4>Chẩn đoán</h4>
                             <p>${medicalReport.diagnosis}</p>
                         </div>
                     </c:if>
                     
                     <c:if test="${not empty medicalReport.prescription}">
                         <div class="medical-box" style="background: #e3f2fd; border-left-color: #1977cc;">
-                            <h4 style="color: #2c4964;">Prescription (Đơn thuốc)</h4>
+                            <h4 style="color: #2c4964;">Đơn thuốc</h4>
                             <p style="color: #2c4964;">${medicalReport.prescription}</p>
                         </div>
                     </c:if>
                     
                     <c:if test="${medicalReport.testRequest}">
                         <div class="medical-box" style="background: #fff3e0; border-left-color: #ff9800;">
-                            <h4 style="color: #e65100;">Test Requested</h4>
-                            <p style="color: #e65100;">Laboratory tests have been requested for this appointment.</p>
+                            <h4 style="color: #e65100;">Đã yêu cầu xét nghiệm</h4>
+                            <p style="color: #e65100;">Đã yêu cầu xét nghiệm cho lịch hẹn này.</p>
                         </div>
                     </c:if>
+                </div>
+            </c:if>
+            
+            <!-- Test Results (if available and appointment is completed) -->
+            <c:if test="${appointment.status == 'Completed' && not empty testResults}">
+                <div class="section">
+                    <div class="section-title">
+                        🧪 Kết quả xét nghiệm
+                    </div>
+                    <c:forEach var="testResult" items="${testResults}">
+                        <div class="medical-box" style="background: #f3e5f5; border-left-color: #9c27b0; margin-bottom: 15px;">
+                            <h4 style="color: #6a1b9a; margin-bottom: 10px;">
+                                ${testResult.testType}
+                                <c:if test="${not empty testResult.date}">
+                                    <span style="font-size: 12px; font-weight: normal; color: #9c27b0;">
+                                        - <fmt:formatDate value="${testResult.date}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </c:if>
+                            </h4>
+                            <p style="color: #4a148c; white-space: pre-wrap; line-height: 1.6;">
+                                ${testResult.result}
+                            </p>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:if>
+            
+            <!-- Show message if completed but no test results -->
+            <c:if test="${appointment.status == 'Completed' && (empty testResults || testResults.size() == 0)}">
+                <div class="section">
+                    <div class="section-title">
+                        🧪 Test Results (Kết quả xét nghiệm)
+                    </div>
+                    <div class="medical-box" style="background: #fff3e0; border-left-color: #ff9800;">
+                        <h4 style="color: #e65100;">Không có kết quả xét nghiệm</h4>
+                        <p style="color: #e65100;">Không có xét nghiệm nào được thực hiện cho lịch hẹn này.</p>
+                    </div>
                 </div>
             </c:if>
             
             <!-- Appointment Status Timeline -->
             <div class="section">
                 <div class="section-title">
-                    🔄 Status Timeline
+                    🔄 Lịch sử trạng thái
                 </div>
                 <div class="timeline">
                     <div class="timeline-item ${appointment.status == 'Pending' ? 'pending' : ''}">
-                        <div class="timeline-title">Appointment Created</div>
-                        <div class="timeline-desc">Your appointment has been created and is waiting for confirmation</div>
+                        <div class="timeline-title">Đã tạo lịch hẹn</div>
+                        <div class="timeline-desc">Lịch hẹn của bạn đã được tạo và đang chờ xác nhận</div>
                     </div>
                     
                     <c:if test="${appointment.status != 'Pending' && appointment.status != 'Cancelled'}">
                         <div class="timeline-item">
-                            <div class="timeline-title">Confirmed by Receptionist</div>
-                            <div class="timeline-desc">Your appointment has been confirmed</div>
+                            <div class="timeline-title">Đã xác nhận bởi lễ tân</div>
+                            <div class="timeline-desc">Lịch hẹn của bạn đã được xác nhận</div>
                         </div>
                     </c:if>
                     
                     <c:if test="${appointment.status == 'Waiting' || appointment.status == 'In Progress' || 
                                   appointment.status == 'Testing' || appointment.status == 'Completed'}">
                         <div class="timeline-item">
-                            <div class="timeline-title">Checked In</div>
-                            <div class="timeline-desc">You have been checked in and are waiting for the doctor</div>
+                            <div class="timeline-title">Đã check-in</div>
+                            <div class="timeline-desc">Bạn đã check-in và đang chờ bác sĩ</div>
                         </div>
                     </c:if>
                     
                     <c:if test="${appointment.status == 'In Progress' || appointment.status == 'Testing' || 
                                   appointment.status == 'Completed'}">
                         <div class="timeline-item">
-                            <div class="timeline-title">Examination Started</div>
-                            <div class="timeline-desc">Doctor has started the examination</div>
+                            <div class="timeline-title">Đã bắt đầu khám</div>
+                            <div class="timeline-desc">Bác sĩ đã bắt đầu khám</div>
                         </div>
                     </c:if>
                     
                     <c:if test="${appointment.status == 'Testing'}">
                         <div class="timeline-item pending">
-                            <div class="timeline-title">Laboratory Testing</div>
-                            <div class="timeline-desc">Tests are being conducted</div>
+                            <div class="timeline-title">Đang xét nghiệm</div>
+                            <div class="timeline-desc">Đang thực hiện xét nghiệm</div>
                         </div>
                     </c:if>
                     
                     <c:if test="${appointment.status == 'Completed'}">
                         <div class="timeline-item">
-                            <div class="timeline-title">Completed</div>
-                            <div class="timeline-desc">Your appointment has been completed</div>
+                            <div class="timeline-title">Đã hoàn thành</div>
+                            <div class="timeline-desc">Lịch hẹn của bạn đã được hoàn thành</div>
                         </div>
                     </c:if>
                     
                     <c:if test="${appointment.status == 'Cancelled'}">
                         <div class="timeline-item" style="border-left-color: #e74c3c;">
-                            <div class="timeline-title" style="color: #e74c3c;">Cancelled</div>
-                            <div class="timeline-desc">This appointment has been cancelled</div>
+                            <div class="timeline-title" style="color: #e74c3c;">Đã hủy</div>
+                            <div class="timeline-desc">Lịch hẹn này đã bị hủy</div>
                         </div>
                     </c:if>
                 </div>
@@ -440,7 +477,7 @@
             <!-- Actions -->
             <div class="btn-group">
                 <a href="${pageContext.request.contextPath}/appointments" class="btn btn-back">
-                    ← Back to List
+                    ← Quay lại danh sách
                 </a>
                 
                 <c:if test="${appointment.status == 'Pending' || appointment.status == 'Confirmed'}">
@@ -449,7 +486,7 @@
                         <input type="hidden" name="action" value="cancel">
                         <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
                         <button type="submit" class="btn btn-cancel" style="width: 100%;">
-                            ❌ Cancel Appointment
+                            ❌ Hủy lịch hẹn
                         </button>
                     </form>
                 </c:if>

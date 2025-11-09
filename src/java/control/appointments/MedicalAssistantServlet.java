@@ -129,6 +129,13 @@ public class MedicalAssistantServlet extends HttpServlet {
         int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
         String testResult = request.getParameter("testResult");
 
+        // Validate test result length (max 255 characters for nvarchar(255))
+        if (testResult != null && testResult.length() > 255) {
+            sessionMessage(request, "Kết quả xét nghiệm quá dài! Tối đa 255 ký tự. Hiện tại: " + testResult.length() + " ký tự.", "error");
+            response.sendRedirect(request.getContextPath() + "/medicalassistant");
+            return;
+        }
+
         MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
         if (report == null) {
             sessionMessage(request, "Medical report not found!", "error");

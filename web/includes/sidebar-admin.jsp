@@ -112,6 +112,17 @@
                 </a>
             </div>
         </div>
+
+        <!-- Quản lý khuyến mãi -->
+        <div class="nav-section">
+            <div class="nav-section-title">Quản lý khuyến mãi</div>
+            <div class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/discount" class="nav-link">
+                    <i class="bi bi-tag"></i>
+                    <span class="nav-link-text">Quản lý mã giảm giá</span>
+                </a>
+            </div>
+        </div>
     </nav>
 </div>
 
