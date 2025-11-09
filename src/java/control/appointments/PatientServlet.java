@@ -22,7 +22,7 @@ import dao.appointments.PatientDAO;
 import dao.appointments.DoctorDAO;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(name = "PatientServlet", urlPatterns = {"/patient/*"})
+@WebServlet(name = "PatientServlet", urlPatterns = {"/patient"})
 public class PatientServlet extends HttpServlet {
 
     private AppointmentDAO appointmentDAO;
