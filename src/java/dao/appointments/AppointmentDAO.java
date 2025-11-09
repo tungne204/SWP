@@ -50,6 +50,7 @@ public class AppointmentDAO extends DBContext {
                     apt.setDoctorId(rs.getInt("doctor_id"));
                     apt.setDateTime(rs.getTimestamp("date_time"));
                     apt.setStatus(rs.getString("status"));
+                    apt.setSymptoms(rs.getString("symptoms"));
                     apt.setPatientName(rs.getString("patient_name"));
                     apt.setDoctorName(rs.getString("doctor_name"));
                     list.add(apt);
@@ -91,6 +92,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setSymptoms(rs.getString("symptoms"));
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
@@ -128,6 +130,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setSymptoms(rs.getString("symptoms"));
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
@@ -162,6 +165,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setSymptoms(rs.getString("symptoms"));
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
                 return apt;
@@ -395,6 +399,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setSymptoms(rs.getString("symptoms"));
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
                 list.add(apt);
@@ -409,14 +414,19 @@ public class AppointmentDAO extends DBContext {
 
     // Tạo appointment mới
     public boolean createAppointment(Appointment appointment) {
-        String sql = "INSERT INTO Appointment (patient_id, doctor_id, date_time, status) "
-                + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Appointment (patient_id, doctor_id, date_time, status, symptoms) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointment.getPatientId());
             ps.setInt(2, appointment.getDoctorId());
             ps.setTimestamp(3, appointment.getDateTime());
             ps.setString(4, appointment.getStatus());
+            if (appointment.getSymptoms() != null && !appointment.getSymptoms().trim().isEmpty()) {
+                ps.setString(5, appointment.getSymptoms());
+            } else {
+                ps.setNull(5, Types.NVARCHAR);
+            }
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -488,14 +498,26 @@ public class AppointmentDAO extends DBContext {
             }
         } else if (roleId == 4) { // Medical Assistant - chỉ TESTING
             sql.append("AND a.status = 'Testing' ");
-        } else if (roleId == 5) { // Receptionist - PENDING + CONFIRMED
-            sql.append("AND a.status IN ('Pending', 'Confirmed') ");
+        } else if (roleId == 5) { // Receptionist - mặc định PENDING, nhưng có thể chọn tất cả status
+            // Không hardcode status filter ở đây, để cho phép filter theo statusFilter
         }
         
-        // Filter theo status (bỏ qua nếu roleId == 2 vì đã force Waiting)
-        if (roleId != 2 && statusFilter != null && !statusFilter.trim().isEmpty() && !"all".equals(statusFilter)) {
-            sql.append("AND a.status = ? ");
-            params.add(statusFilter);
+        // Filter theo status
+        if (roleId == 2) {
+            // Doctor đã được force Waiting ở trên, không cần filter thêm
+        } else if (roleId == 5) {
+            // Receptionist: nếu có statusFilter cụ thể thì dùng, nếu "all" thì hiển thị tất cả
+            if (statusFilter != null && !statusFilter.trim().isEmpty() && !"all".equals(statusFilter)) {
+                sql.append("AND a.status = ? ");
+                params.add(statusFilter);
+            }
+            // Nếu statusFilter là null/empty hoặc "all", không thêm filter (hiển thị tất cả)
+        } else {
+            // Các role khác: filter theo statusFilter nếu có
+            if (statusFilter != null && !statusFilter.trim().isEmpty() && !"all".equals(statusFilter)) {
+                sql.append("AND a.status = ? ");
+                params.add(statusFilter);
+            }
         }
         
         // Search keyword
@@ -555,6 +577,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
                 apt.setStatus(rs.getString("status"));
+                apt.setSymptoms(rs.getString("symptoms"));
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setPatientPhone(rs.getString("patient_phone"));
                 apt.setDoctorName(rs.getString("doctor_name"));
@@ -657,5 +680,27 @@ public class AppointmentDAO extends DBContext {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
+    }
+    
+    // Kiểm tra xem appointment có thuộc về user không (dùng cho Patient)
+    public boolean isAppointmentOwnedByUser(int appointmentId, int userId) {
+        String sql = "SELECT COUNT(*) FROM Appointment a " +
+                     "LEFT JOIN Patient p ON a.patient_id = p.patient_id " +
+                     "WHERE a.appointment_id = ? AND p.user_id = ?";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

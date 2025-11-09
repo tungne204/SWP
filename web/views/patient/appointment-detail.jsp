@@ -380,6 +380,43 @@
                 </div>
             </c:if>
             
+            <!-- Test Results (if available and appointment is completed) -->
+            <c:if test="${appointment.status == 'Completed' && not empty testResults}">
+                <div class="section">
+                    <div class="section-title">
+                        🧪 Test Results (Kết quả xét nghiệm)
+                    </div>
+                    <c:forEach var="testResult" items="${testResults}">
+                        <div class="medical-box" style="background: #f3e5f5; border-left-color: #9c27b0; margin-bottom: 15px;">
+                            <h4 style="color: #6a1b9a; margin-bottom: 10px;">
+                                ${testResult.testType}
+                                <c:if test="${not empty testResult.date}">
+                                    <span style="font-size: 12px; font-weight: normal; color: #9c27b0;">
+                                        - <fmt:formatDate value="${testResult.date}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </c:if>
+                            </h4>
+                            <p style="color: #4a148c; white-space: pre-wrap; line-height: 1.6;">
+                                ${testResult.result}
+                            </p>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:if>
+            
+            <!-- Show message if completed but no test results -->
+            <c:if test="${appointment.status == 'Completed' && (empty testResults || testResults.size() == 0)}">
+                <div class="section">
+                    <div class="section-title">
+                        🧪 Test Results (Kết quả xét nghiệm)
+                    </div>
+                    <div class="medical-box" style="background: #fff3e0; border-left-color: #ff9800;">
+                        <h4 style="color: #e65100;">No Test Results</h4>
+                        <p style="color: #e65100;">No laboratory tests were performed for this appointment.</p>
+                    </div>
+                </div>
+            </c:if>
+            
             <!-- Appointment Status Timeline -->
             <div class="section">
                 <div class="section-title">

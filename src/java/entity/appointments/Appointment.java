@@ -17,6 +17,7 @@ public class Appointment {
     private int doctorId;
     private Timestamp dateTime;
     private String status;
+    private String symptoms;
     private String patientName;
     private String doctorName;
     private String patientPhone;
@@ -98,5 +99,13 @@ public class Appointment {
 
     public void setPatientPhone(String patientPhone) {
         this.patientPhone = patientPhone;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
     }
 }

@@ -235,16 +235,54 @@ User acc = (User) session.getAttribute("acc"); %>
       }
     </style>
     <script>
+      const MAX_LENGTH = 255;
+
       function validateForm() {
         const testResult = document.getElementById("testResult").value.trim();
         if (!testResult) {
-          alert("Please fill in the test result!");
+          alert("Vui lòng nhập kết quả xét nghiệm!");
+          return false;
+        }
+        if (testResult.length > MAX_LENGTH) {
+          alert(
+            "Kết quả xét nghiệm quá dài! Tối đa " +
+              MAX_LENGTH +
+              " ký tự. Hiện tại: " +
+              testResult.length +
+              " ký tự."
+          );
           return false;
         }
         return confirm(
           "Submit this test result and return patient to the doctor?"
         );
       }
+
+      function updateCharCount() {
+        const textarea = document.getElementById("testResult");
+        const counter = document.getElementById("charCount");
+        const currentLength = textarea.value.length;
+        const remaining = MAX_LENGTH - currentLength;
+
+        counter.textContent = currentLength + " / " + MAX_LENGTH + " ký tự";
+
+        if (remaining < 0) {
+          counter.style.color = "#dc3545";
+        } else if (remaining < 50) {
+          counter.style.color = "#ffc107";
+        } else {
+          counter.style.color = "#6c757d";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        const textarea = document.getElementById("testResult");
+        if (textarea) {
+          textarea.addEventListener("input", updateCharCount);
+          updateCharCount();
+        }
+      });
     </script>
   </head>
   <body class="index-page">
@@ -357,7 +395,19 @@ User acc = (User) session.getAttribute("acc"); %>
                                   - Hemoglobin: 13.5 g/dL (Normal)
                                   - Platelet: 250,000/mm³ (Normal)"
                       required
+                      maxlength="255"
                     ></textarea>
+                    <small
+                      id="charCount"
+                      style="
+                        display: block;
+                        margin-top: 5px;
+                        color: #6c757d;
+                        font-size: 12px;
+                      "
+                    >
+                      0 / 255 ký tự
+                    </small>
                   </div>
 
                   <div class="alert alert-warning">
@@ -372,7 +422,7 @@ User acc = (User) session.getAttribute("acc"); %>
                   </button>
 
                   <a
-                    href="${pageContext.request.contextPath}/medicalassistant"
+                    href="${pageContext.request.contextPath}/appointments"
                     class="btn btn-secondary"
                   >
                     Cancel

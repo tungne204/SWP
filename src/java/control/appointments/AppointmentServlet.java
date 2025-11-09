@@ -6,7 +6,9 @@ import dao.appointments.PatientDAO;
 import entity.User;
 import entity.appointments.Appointment;
 import entity.appointments.AppointmentStatus;
+import entity.appointments.Doctor;
 import entity.appointments.MedicalReport;
+import entity.appointments.Patient;
 import entity.appointments.TestResult;
 
 import jakarta.servlet.ServletException;
@@ -63,6 +65,64 @@ public class AppointmentServlet extends HttpServlet {
 
         if (path != null) {
             String[] parts = path.split("/");
+            
+            // /appointments/detail/{id}  (View detail - Patient, Doctor, Receptionist, Medical Assistant)
+            if (path.startsWith("/detail/") && parts.length >= 3) {
+                Integer appointmentId = parseIntOrNull(parts[2]);
+                if (appointmentId == null) {
+                    backWithMsg(request, response, "Invalid appointment id!", "error");
+                    return;
+                }
+                
+                Appointment appt = appointmentDAO.getAppointmentById(appointmentId);
+                if (appt == null) {
+                    backWithMsg(request, response, "Appointment not found!", "error");
+                    return;
+                }
+                
+                // Kiểm tra quyền truy cập
+                boolean hasAccess = false;
+                switch (acc.getRoleId()) {
+                    case 2: // Doctor - chỉ xem được appointment của mình
+                        hasAccess = doctorOwnsAppointment(acc, appt);
+                        break;
+                    case 3: // Patient - chỉ xem được appointment của mình
+                        // Kiểm tra trực tiếp trong database vì patient có thể được tạo mới
+                        // mà không có user_id liên kết, hoặc tìm thấy patient đã tồn tại
+                        hasAccess = appointmentDAO.isAppointmentOwnedByUser(appointmentId, acc.getUserId());
+                        break;
+                    case 4: // Medical Assistant - xem được tất cả
+                    case 5: // Receptionist - xem được tất cả
+                    case 1: // Admin - xem được tất cả
+                        hasAccess = true;
+                        break;
+                }
+                
+                if (!hasAccess) {
+                    backWithMsg(request, response, "Access denied!", "error");
+                    return;
+                }
+                
+                // Load doctor info
+                Doctor doctor = doctorDAO.getDoctorById(appt.getDoctorId());
+                
+                // Load medical report nếu có
+                MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
+                List<TestResult> testResults = null;
+                if (report != null && report.getRecordId() > 0) {
+                    testResults = appointmentDAO.getTestResultsByRecordId(report.getRecordId());
+                }
+                
+                request.setAttribute("appointment", appt);
+                request.setAttribute("doctor", doctor);
+                request.setAttribute("medicalReport", report);
+                request.setAttribute("testResults", testResults);
+                request.setAttribute("pageTitle", "Appointment Details");
+                request.getRequestDispatcher("/views/patient/appointment-detail.jsp")
+                       .forward(request, response);
+                return;
+            }
+            
             // /appointments/examine/{id}  (Doctor)
             if (path.startsWith("/examine/") && acc.getRoleId() == 2 && parts.length >= 3) {
                 Integer appointmentId = parseIntOrNull(parts[2]);
@@ -88,7 +148,10 @@ public class AppointmentServlet extends HttpServlet {
                 if (report != null && report.getRecordId() > 0) {
                     testResults = appointmentDAO.getTestResultsByRecordId(report.getRecordId());
                 }
+                // Load patient information để hiển thị tên bệnh nhân
+                Patient patient = patientDAO.getPatientWithUserInfo(appt.getPatientId());
                 request.setAttribute("appointment", appt);
+                request.setAttribute("patient", patient);
                 request.setAttribute("medicalReport", report);
                 request.setAttribute("testResults", testResults);
                 request.getRequestDispatcher("/views/doctor/examination-form.jsp")
@@ -161,12 +224,13 @@ public class AppointmentServlet extends HttpServlet {
             case 4: // Medical Assistant
                 pageTitle = "Lab Queue – Testing Appointments";
                 break;
-            case 5: // Receptionist - chỉ hiển thị PENDING
+            case 5: // Receptionist - mặc định hiển thị PENDING, nhưng có thể chọn các status khác
                 pageTitle = "Reception Desk – Appointments";
-                // Force status filter = Pending cho receptionist
-                if (statusFilter == null || statusFilter.trim().isEmpty() || "all".equals(statusFilter)) {
+                // Set mặc định status filter = Pending cho receptionist (chỉ khi không có filter)
+                if (statusFilter == null || statusFilter.trim().isEmpty()) {
                     statusFilter = "Pending";
                 }
+                // Cho phép "all" và các status khác
                 break;
             default:
                 pageTitle = "Appointments";
@@ -295,11 +359,20 @@ public class AppointmentServlet extends HttpServlet {
                 return;
             }
 
+            String symptoms = nvl(request.getParameter("symptoms")).trim();
+            
+            // Validate symptoms length (max 400 characters)
+            if (symptoms != null && symptoms.length() > 400) {
+                backWithMsg(request, response, "Triệu chứng quá dài! Tối đa 400 ký tự. Hiện tại: " + symptoms.length() + " ký tự.", "error");
+                return;
+            }
+            
             Appointment a = new Appointment();
             a.setPatientId(patientId);
             a.setDoctorId(doctorId);
             a.setDateTime(ts);
             a.setStatus(AppointmentStatus.PENDING.getValue());
+            a.setSymptoms(isBlank(symptoms) ? null : symptoms);
 
             boolean ok = appointmentDAO.createAppointment(a);
             backWithMsg(request, response, ok ? "Appointment created! Please wait for confirmation."
@@ -438,6 +511,13 @@ public class AppointmentServlet extends HttpServlet {
                         return;
                     }
                     String testResult = nvl(request.getParameter("testResult"));
+                    
+                    // Validate test result length (max 255 characters for nvarchar(255))
+                    if (testResult != null && testResult.length() > 255) {
+                        backWithMsg(request, response, "Kết quả xét nghiệm quá dài! Tối đa 255 ký tự. Hiện tại: " + testResult.length() + " ký tự.", "error");
+                        return;
+                    }
+                    
                     MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
                     if (report == null || isBlank(report.getRequestedTestType())) {
                         backWithMsg(request, response, "No test request from doctor!", "error");

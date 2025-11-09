@@ -363,7 +363,7 @@
                 <h1>Examination Form</h1>
                 <div class="patient-info">
                     <p><strong>Appointment ID:</strong> #${appointment.appointmentId}</p>
-                    <p><strong>Patient ID:</strong> ${appointment.patientId}</p>
+                    <p><strong>Patient Name:</strong> ${patient != null ? patient.fullName : 'N/A'}</p>
                     <p><strong>Date & Time:</strong> 
                         <fmt:formatDate value="${appointment.dateTime}" 
                                         pattern="dd/MM/yyyy HH:mm"/>
@@ -373,6 +373,12 @@
                             ${appointment.status}
                         </span>
                     </p>
+                    <c:if test="${not empty appointment.symptoms}">
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px; border-left: 4px solid #fff;">
+                            <p style="margin-bottom: 8px;"><strong>📋 Symptoms (Triệu chứng):</strong></p>
+                            <p style="white-space: pre-wrap; word-wrap: break-word; margin: 0;">${appointment.symptoms}</p>
+                        </div>
+                    </c:if>
                 </div>
             </div>
             <c:if test="${not empty sessionScope.message}">

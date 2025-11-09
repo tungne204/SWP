@@ -221,6 +221,15 @@ public class TestResultServlet extends HttpServlet {
             int recordId = Integer.parseInt(request.getParameter("recordId"));
             String testType = request.getParameter("testType");
             String result = request.getParameter("result");
+            
+            // Validate test result length (max 255 characters for nvarchar(255))
+            if (result != null && result.length() > 255) {
+                request.getSession().setAttribute("message", "Kết quả xét nghiệm quá dài! Tối đa 255 ký tự. Hiện tại: " + result.length() + " ký tự.");
+                request.getSession().setAttribute("messageType", "error");
+                response.sendRedirect("testresult?action=list");
+                return;
+            }
+            
             Date date = Date.valueOf(request.getParameter("date"));
             String consultationIdStr = request.getParameter("consultationId");
             Integer consultationId = null;
@@ -270,6 +279,15 @@ public class TestResultServlet extends HttpServlet {
             int recordId = Integer.parseInt(request.getParameter("recordId"));
             String testType = request.getParameter("testType");
             String result = request.getParameter("result");
+            
+            // Validate test result length (max 255 characters for nvarchar(255))
+            if (result != null && result.length() > 255) {
+                request.getSession().setAttribute("message", "Kết quả xét nghiệm quá dài! Tối đa 255 ký tự. Hiện tại: " + result.length() + " ký tự.");
+                request.getSession().setAttribute("messageType", "error");
+                response.sendRedirect("testresult?action=list");
+                return;
+            }
+            
             Date date = Date.valueOf(request.getParameter("date"));
             String consultationIdStr = request.getParameter("consultationId");
             Integer consultationId = null;
