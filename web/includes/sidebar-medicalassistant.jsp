@@ -67,7 +67,7 @@
 
 <div class="sidebar-fixed">
     <nav class="sidebar-nav">
-        <!-- Báº£ng Äiá»u khiá»n -->
+       
         <div class="nav-section">
             
             <div class="nav-item">
@@ -79,11 +79,11 @@
         </div>
         
       <div class="nav-section">
-            <div class="nav-section-title">Kết quả xét nghiệm</div>
+            <div class="nav-section-title">Danh sách xét nghiệm</div>
             <div class="nav-item">
-                <a href="${pageContext.request.contextPath}/testresult" class="nav-link">
+                <a href="${pageContext.request.contextPath}/appointments" class="nav-link">
                     <i class="bi bi-clipboard-data"></i>
-                    <span class="nav-link-text">Danh sách kết quả xét nghiệm</span>
+                    <span class="nav-link-text">Danh sách xét nghiệm</span>
                 </a>
             </div>
            

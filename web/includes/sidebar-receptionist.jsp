@@ -78,7 +78,7 @@
                 <br>
                 <div class="nav-section-title">Bảng điều khiển</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Receptionist-Dashboard" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/" class="nav-link">
                         <i class="bi bi-speedometer2"></i>
                         <span class="nav-link-text">Trang tổng quan</span>
                     </a>
@@ -94,36 +94,19 @@
                         <span class="nav-link-text">Tiếp nhận bệnh nhân</span>
                     </a>
                 </div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Patient-List" class="nav-link">
-                        <i class="bi bi-search"></i>
-                        <span class="nav-link-text">Danh sách bệnh nhân</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/PatientProfile" class="nav-link">
-                        <i class="bi bi-person-lines-fill"></i>
-                        <span class="nav-link-text">Hồ sơ bệnh nhân</span>
-                    </a>
-                </div>
+                
             </div>
 
             <!-- Appointments -->
             <div class="nav-section">
                 <div class="nav-section-title">Cuộc hẹn</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Appointment-List" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/appointments" class="nav-link">
                         <i class="bi bi-calendar-check"></i>
                         <span class="nav-link-text">Danh sách cuộc hẹn</span>
                     </a>
                 </div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Appointment-UpdateSearch" class="nav-link">
-                        <i class="bi bi-calendar-event"></i>
-                        <span class="nav-link-text">Cập nhật cuộc hẹn</span>
-                    </a>
-                </div>
-            </div>
+                            </div>
 
             <!-- Queue Management -->
             <div class="nav-section">
@@ -144,13 +127,7 @@
                         <i class="bi bi-plus-circle"></i>
                         <span class="nav-link-text">Thanh toán đơn thuốc</span>
                     </a>
-                </div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/appointmentList" class="nav-link">
-                        <i class="bi bi-calendar-plus"></i>
-                        <span class="nav-link-text">Đặt lịch hẹn</span>
-                    </a>
-                </div>
+                </div>              
                 <div class="nav-item">
                     <a href="${pageContext.request.contextPath}/blog?action=add" class="nav-link">
                         <i class="bi bi-journal-text"></i>

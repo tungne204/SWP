@@ -498,14 +498,22 @@ public class AppointmentDAO extends DBContext {
             params.add(statusFilter);
         }
         
-        // Search keyword (tìm trong patient name, doctor name, appointment ID)
+        // Search keyword
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-            sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
             String searchPattern = "%" + searchKeyword.trim() + "%";
-            params.add(searchPattern);
-            params.add(searchPattern);
-            params.add(searchPattern);
-            params.add(searchPattern);
+            // Receptionist: chỉ search theo patient name và phone
+            if (roleId == 5) {
+                sql.append("AND (p.full_name LIKE ? OR pu.phone LIKE ?) ");
+                params.add(searchPattern);
+                params.add(searchPattern);
+            } else {
+                // Các role khác: search trong patient name, doctor name, appointment ID, phone
+                sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+            }
         }
         
         // Filter theo date range
@@ -603,12 +611,20 @@ public class AppointmentDAO extends DBContext {
         
         // Search keyword
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-            sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
             String searchPattern = "%" + searchKeyword.trim() + "%";
-            params.add(searchPattern);
-            params.add(searchPattern);
-            params.add(searchPattern);
-            params.add(searchPattern);
+            // Receptionist: chỉ search theo patient name và phone
+            if (roleId == 5) {
+                sql.append("AND (p.full_name LIKE ? OR pu.phone LIKE ?) ");
+                params.add(searchPattern);
+                params.add(searchPattern);
+            } else {
+                // Các role khác: search trong patient name, doctor name, appointment ID, phone
+                sql.append("AND (p.full_name LIKE ? OR du.username LIKE ? OR CAST(a.appointment_id AS VARCHAR) LIKE ? OR pu.phone LIKE ?) ");
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+                params.add(searchPattern);
+            }
         }
         
         // Filter theo date range

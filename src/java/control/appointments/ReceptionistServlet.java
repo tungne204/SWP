@@ -45,9 +45,8 @@ public class ReceptionistServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            showPendingAppointments(request, response);
-        } else if (pathInfo.equals("/confirmed")) {
+        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/confirmed")) {
+            // Chỉ hiển thị appointments ở trạng thái CONFIRMED
             showConfirmedAppointments(request, response);
         } else {
             // Không hợp lệ -> quay về trang chính
@@ -90,28 +89,73 @@ public class ReceptionistServlet extends HttpServlet {
 
     // ========== CÁC HÀM NGHIỆP VỤ ==========
 
-    // Hiển thị danh sách các lịch hẹn đang chờ xác nhận
-    private void showPendingAppointments(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        List<Appointment> pendingList = appointmentDAO.getAppointmentsByStatus(
-                AppointmentStatus.PENDING.getValue());
-
-        request.setAttribute("appointments", pendingList);
-        request.setAttribute("pageTitle", "Appointments Pending Confirmation");
-        request.getRequestDispatcher("/views/receptionist/pending-appointments.jsp")
-                .forward(request, response);
-    }
-
-    // Hiển thị danh sách các lịch hẹn đã được xác nhận
+    // Hiển thị danh sách các lịch hẹn đã được xác nhận với search, filter và paging
     private void showConfirmedAppointments(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Appointment> confirmedList = appointmentDAO.getAppointmentsByStatus(
-                AppointmentStatus.CONFIRMED.getValue());
-
+        // Lấy các tham số từ request
+        String searchKeyword = request.getParameter("search");
+        String dateFrom = request.getParameter("dateFrom");
+        String dateTo = request.getParameter("dateTo");
+        
+        // Paging parameters
+        int page = 1;
+        int pageSize = 10; // Số records mỗi trang
+        try {
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            }
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        
+        // Lấy user từ session
+        HttpSession session = request.getSession();
+        User acc = (User) session.getAttribute("acc");
+        Integer userId = acc != null ? acc.getUserId() : null;
+        
+        // Chỉ hiển thị CONFIRMED appointments
+        String statusFilter = AppointmentStatus.CONFIRMED.getValue();
+        
+        // Lấy danh sách appointments với filter và paging
+        List<Appointment> confirmedList = appointmentDAO.getAppointmentsWithFilter(
+                5, // roleId = 5 (Receptionist)
+                userId,
+                null, // patientId
+                searchKeyword,
+                statusFilter, // Chỉ lấy CONFIRMED
+                dateFrom,
+                dateTo,
+                page,
+                pageSize
+        );
+        
+        // Đếm tổng số records để tính pagination
+        int totalRecords = appointmentDAO.countAppointmentsWithFilter(
+                5, // roleId = 5 (Receptionist)
+                userId,
+                null, // patientId
+                searchKeyword,
+                statusFilter, // Chỉ đếm CONFIRMED
+                dateFrom,
+                dateTo
+        );
+        
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        
+        // Set attributes cho JSP
         request.setAttribute("appointments", confirmedList);
         request.setAttribute("pageTitle", "Confirmed Appointments");
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalRecords", totalRecords);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
+        request.setAttribute("dateFrom", dateFrom != null ? dateFrom : "");
+        request.setAttribute("dateTo", dateTo != null ? dateTo : "");
+        
         request.getRequestDispatcher("/views/receptionist/confirmed-appointments.jsp")
                 .forward(request, response);
     }
@@ -145,7 +189,7 @@ public class ReceptionistServlet extends HttpServlet {
             sessionMessage(request, "Failed to check in patient!", "error");
         }
 
-        response.sendRedirect(request.getContextPath() + "/receptionist/confirmed");
+        response.sendRedirect(request.getContextPath() + "/receptionist");
     }
 
     // ✅ Hàm tiện ích để set thông báo session

@@ -161,8 +161,12 @@ public class AppointmentServlet extends HttpServlet {
             case 4: // Medical Assistant
                 pageTitle = "Lab Queue – Testing Appointments";
                 break;
-            case 5: // Receptionist
+            case 5: // Receptionist - chỉ hiển thị PENDING
                 pageTitle = "Reception Desk – Appointments";
+                // Force status filter = Pending cho receptionist
+                if (statusFilter == null || statusFilter.trim().isEmpty() || "all".equals(statusFilter)) {
+                    statusFilter = "Pending";
+                }
                 break;
             default:
                 pageTitle = "Appointments";

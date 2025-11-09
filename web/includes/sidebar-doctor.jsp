@@ -72,7 +72,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Bảng điều khiển</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/doctor-dashboard" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/" class="nav-link">
                         <i class="bi bi-speedometer2"></i>
                         <span class="nav-link-text">Trang tổng quan</span>
                     </a>
@@ -83,7 +83,7 @@
             <div class="nav-section">
                 <div class="nav-section-title">Lịch hẹn</div>
                 <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/Appointment-List" class="nav-link">
+                    <a href="${pageContext.request.contextPath}/appointments" class="nav-link">
                         <i class="bi bi-calendar-check"></i>
                         <span class="nav-link-text">Danh sách lịch hẹn</span>
                     </a>
@@ -91,18 +91,7 @@
                
             </div>
 
-            <!-- Medical Records -->
-            <div class="nav-section">
-                <div class="nav-section-title">Đơn thuốc & khám bệnh</div>
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/medical-report" class="nav-link">
-                        <i class="bi bi-file-medical"></i>
-                        <span class="nav-link-text">Danh sách đơn thuốc</span>
-                    </a>
-                </div>
-
-            </div>
-
+            
             <!-- Test Results -->
             <div class="nav-section">
                 <div class="nav-section-title">Kết quả xét nghiệm</div>
@@ -114,16 +103,7 @@
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="nav-section">
-                <div class="nav-section-title">Tác vụ nhanh</div>
-
-                <div class="nav-item">
-                    <a href="${pageContext.request.contextPath}/doctor/appointment-list.jsp" class="nav-link">
-                        <i class="bi bi-calendar-plus"></i>
-                        <span class="nav-link-text">Lịch hẹn hôm nay</span>
-                    </a>
-                </div>
-            </div>
+            
+            
         </nav>
     </div>

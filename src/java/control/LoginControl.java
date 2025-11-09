@@ -58,7 +58,7 @@ public class LoginControl extends HttpServlet {
                     break;
                 case 5: // Receptionist
 
-                    response.sendRedirect(request.getContextPath() + "/");
+                    response.sendRedirect(request.getContextPath() + "/appointments");
                     break;
                 default:
                     response.sendRedirect(request.getContextPath() + "/");
