@@ -254,7 +254,7 @@ User acc = (User) session.getAttribute("acc"); %>
           return false;
         }
         return confirm(
-          "Submit this test result and return patient to the doctor?"
+          "Gửi kết quả xét nghiệm này và trả bệnh nhân về cho bác sĩ?"
         );
       }
 
@@ -306,17 +306,17 @@ User acc = (User) session.getAttribute("acc"); %>
                   href="${pageContext.request.contextPath}/appointments"
                   class="back-link"
                 >
-                  ← Back to Testing List
+                  ← Quay lại danh sách xét nghiệm
                 </a>
-                <h1>🧪 Laboratory Test Form</h1>
+                <h1>🧪 Phiếu xét nghiệm</h1>
                 <div class="appointment-info">
                   <p>
-                    <strong>Appointment ID:</strong>
+                    <strong>Mã lịch hẹn:</strong>
                     #${appointment.appointmentId}
                   </p>
-                  <p><strong>Patient ID:</strong> ${appointment.patientId}</p>
+                  <p><strong>Mã bệnh nhân:</strong> ${appointment.patientId}</p>
                   <p>
-                    <strong>Date & Time:</strong>
+                    <strong>Ngày & Giờ:</strong>
                     <fmt:formatDate
                       value="${appointment.dateTime}"
                       pattern="dd/MM/yyyy HH:mm"
@@ -335,10 +335,10 @@ User acc = (User) session.getAttribute("acc"); %>
                 </c:if>
 
                 <div class="info-box">
-                  <h3>📋 Diagnosis from Doctor</h3>
+                  <h3>📋 Chẩn đoán từ bác sĩ</h3>
                   <p>
-                    ${medicalReport != null ? medicalReport.diagnosis : 'No
-                    diagnosis available'}
+                    ${medicalReport != null ? medicalReport.diagnosis : 'Chưa có
+                    chẩn đoán'}
                   </p>
                 </div>
 
@@ -355,9 +355,7 @@ User acc = (User) session.getAttribute("acc"); %>
                   />
 
                   <div class="form-group">
-                    <label for="testTypeDisplay"
-                      >Test Type (Loại xét nghiệm) *</label
-                    >
+                    <label for="testTypeDisplay">Loại xét nghiệm *</label>
                     <input
                       type="text"
                       id="testTypeDisplay"
@@ -382,18 +380,16 @@ User acc = (User) session.getAttribute("acc"); %>
                   </div>
 
                   <div class="form-group">
-                    <label for="testResult"
-                      >Test Result (Kết quả xét nghiệm) *</label
-                    >
+                    <label for="testResult">Kết quả xét nghiệm *</label>
                     <textarea
                       id="testResult"
                       name="testResult"
-                      placeholder="Enter detailed test results here...
-                                  Example:
-                                  - WBC: 12,000/mm³ (High)
-                                  - RBC: 4.5 million/mm³ (Normal)
-                                  - Hemoglobin: 13.5 g/dL (Normal)
-                                  - Platelet: 250,000/mm³ (Normal)"
+                      placeholder="Nhập kết quả xét nghiệm chi tiết tại đây...
+                                  Ví dụ:
+                                  - WBC: 12,000/mm³ (Cao)
+                                  - RBC: 4.5 triệu/mm³ (Bình thường)
+                                  - Hemoglobin: 13.5 g/dL (Bình thường)
+                                  - Platelet: 250,000/mm³ (Bình thường)"
                       required
                       maxlength="255"
                     ></textarea>
@@ -411,38 +407,37 @@ User acc = (User) session.getAttribute("acc"); %>
                   </div>
 
                   <div class="alert alert-warning">
-                    <strong>⚠️ Important:</strong> After submitting this test
-                    result, the patient will be automatically moved back to the
-                    waiting queue for the doctor to review and continue
-                    examination.
+                    <strong>⚠️ Quan trọng:</strong> Sau khi gửi kết quả xét
+                    nghiệm này, bệnh nhân sẽ tự động được chuyển lại hàng chờ để
+                    bác sĩ xem xét và tiếp tục khám bệnh.
                   </div>
 
                   <button type="submit" class="btn btn-success">
-                    ✓ Submit Test Result & Return to Doctor
+                    ✓ Gửi kết quả xét nghiệm & Trả về bác sĩ
                   </button>
 
                   <a
                     href="${pageContext.request.contextPath}/appointments"
                     class="btn btn-secondary"
                   >
-                    Cancel
+                    Hủy
                   </a>
                 </form>
 
                 <c:if test="${not empty existingTests}">
                   <div class="existing-tests">
-                    <h3>Previous Test Results</h3>
+                    <h3>Kết quả xét nghiệm trước đó</h3>
                     <c:forEach var="test" items="${existingTests}">
                       <div class="test-item">
                         <h4>${test.testType}</h4>
                         <p>
-                          <strong>Date:</strong>
+                          <strong>Ngày:</strong>
                           <fmt:formatDate
                             value="${test.date}"
                             pattern="dd/MM/yyyy"
                           />
                         </p>
-                        <p><strong>Result:</strong></p>
+                        <p><strong>Kết quả:</strong></p>
                         <p style="white-space: pre-wrap">${test.result}</p>
                       </div>
                     </c:forEach>

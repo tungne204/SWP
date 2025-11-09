@@ -7,7 +7,7 @@
     User acc = (User) session.getAttribute("acc");
 %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -344,16 +344,16 @@
                                         <div class="muted">
                                             <c:choose>
                                                 <c:when test="${roleId == 5}"
-                                                        >You are signed in as <strong>Receptionist</strong></c:when
+                                                        >Bạn đang đăng nhập với vai trò <strong>Lễ tân</strong></c:when
                                                 >
                                                 <c:when test="${roleId == 2}"
-                                                        >You are signed in as <strong>Doctor</strong></c:when
+                                                        >Bạn đang đăng nhập với vai trò <strong>Bác sĩ</strong></c:when
                                                 >
                                                 <c:when test="${roleId == 4}"
-                                                        >You are signed in as <strong>Medical Assistant</strong></c:when
+                                                        >Bạn đang đăng nhập với vai trò <strong>Trợ lý y tế</strong></c:when
                                                 >
                                                 <c:otherwise
-                                                    >You are signed in as <strong>Patient</strong></c:otherwise
+                                                    >Bạn đang đăng nhập với vai trò <strong>Bệnh nhân</strong></c:otherwise
                                                 >
                                             </c:choose>
                                         </div>
@@ -365,7 +365,7 @@
                                                 <a
                                                     class="btn btn-primary"
                                                     href="${pageContext.request.contextPath}/appointments/new"
-                                                    >➕ New Appointment</a
+                                                    >➕ Đặt lịch mới</a
                                                 >
                                             </div>
                                         </c:if>
@@ -385,52 +385,52 @@
                                                     <input
                                                         type="text"
                                                         name="search"
-                                                        placeholder="Search by name or ID..."
+                                                        placeholder="Tìm kiếm theo tên hoặc ID..."
                                                         value="${not empty searchKeyword ? searchKeyword : ''}"
                                                         />
                                                     <c:if test="${roleId != 2}">
                                                         <select name="statusFilter">
-                                                            <option value="all" ${empty statusFilter || statusFilter == 'all' ? 'selected' : ''}>All Status</option>
-                                                            <option value="Pending" ${statusFilter == 'Pending' ? 'selected' : ''}>Pending</option>
-                                                            <option value="Confirmed" ${statusFilter == 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-                                                            <option value="Waiting" ${statusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
-                                                            <option value="In Progress" ${statusFilter == 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                                            <option value="Testing" ${statusFilter == 'Testing' ? 'selected' : ''}>Testing</option>
-                                                            <option value="Completed" ${statusFilter == 'Completed' ? 'selected' : ''}>Completed</option>
-                                                            <option value="Cancelled" ${statusFilter == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                                                            <option value="all" ${empty statusFilter || statusFilter == 'all' ? 'selected' : ''}>Tất cả trạng thái</option>
+                                                            <option value="Pending" ${statusFilter == 'Pending' ? 'selected' : ''}>Chờ xác nhận</option>
+                                                            <option value="Confirmed" ${statusFilter == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                                                            <option value="Waiting" ${statusFilter == 'Waiting' ? 'selected' : ''}>Đang chờ</option>
+                                                            <option value="In Progress" ${statusFilter == 'In Progress' ? 'selected' : ''}>Đang khám</option>
+                                                            <option value="Testing" ${statusFilter == 'Testing' ? 'selected' : ''}>Đang xét nghiệm</option>
+                                                            <option value="Completed" ${statusFilter == 'Completed' ? 'selected' : ''}>Hoàn thành</option>
+                                                            <option value="Cancelled" ${statusFilter == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                                         </select>
                                                     </c:if>
                                                     <c:if test="${roleId == 2}">
                                                         <input type="hidden" name="statusFilter" value="Waiting" />
                                                         <div style="padding: 10px 14px; border: 1px solid #dee2e6; border-radius: 6px; background: #f8f9fa; color: #6c757d;">
-                                                            Status: <strong>Waiting</strong> (Only waiting patients are shown)
+                                                            Trạng thái: <strong>Đang chờ</strong> (Chỉ hiển thị bệnh nhân đang chờ)
                                                         </div>
                                                     </c:if>
                                                     <input
                                                         type="date"
                                                         name="dateFrom"
-                                                        placeholder="From Date"
+                                                        placeholder="Từ ngày"
                                                         value="${not empty dateFrom ? dateFrom : ''}"
                                                         />
                                                     <input
                                                         type="date"
                                                         name="dateTo"
-                                                        placeholder="To Date"
+                                                        placeholder="Đến ngày"
                                                         value="${not empty dateTo ? dateTo : ''}"
                                                         />
                                                     <select name="pageSize">
-                                                        <option value="5" ${pageSize == 5 ? 'selected' : ''}>5 per page</option>
-                                                        <option value="10" ${pageSize == 10 ? 'selected' : ''}>10 per page</option>
-                                                        <option value="20" ${pageSize == 20 ? 'selected' : ''}>20 per page</option>
-                                                        <option value="50" ${pageSize == 50 ? 'selected' : ''}>50 per page</option>
+                                                        <option value="5" ${pageSize == 5 ? 'selected' : ''}>5 mỗi trang</option>
+                                                        <option value="10" ${pageSize == 10 ? 'selected' : ''}>10 mỗi trang</option>
+                                                        <option value="20" ${pageSize == 20 ? 'selected' : ''}>20 mỗi trang</option>
+                                                        <option value="50" ${pageSize == 50 ? 'selected' : ''}>50 mỗi trang</option>
                                                     </select>
                                                 </div>
                                                 <div class="filter-actions">
-                                                    <button type="submit" class="btn btn-primary">🔍 Search & Filter</button>
+                                                    <button type="submit" class="btn btn-primary">🔍 Tìm kiếm & Lọc</button>
                                                     <a
                                                         href="${pageContext.request.contextPath}/appointments"
                                                         class="btn btn-secondary"
-                                                        >🔄 Reset</a
+                                                        >🔄 Đặt lại</a
                                                     >
                                                 </div>
                                                 <input type="hidden" name="page" value="1" id="pageInput" />
@@ -443,15 +443,15 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>Appointment ID</th>
-                                                            <th>Patient Name</th>
+                                                            <th>Mã lịch hẹn</th>
+                                                            <th>Tên bệnh nhân</th>
                                                                 <c:if test="${roleId == 5}">
-                                                                <th>Phone</th>
+                                                                <th>Số điện thoại</th>
                                                                 </c:if>
-                                                            <th>Doctor Name</th>
-                                                            <th>Date &amp; Time</th>
-                                                            <th>Status</th>
-                                                            <th style="width: 320px">Action</th>
+                                                            <th>Tên bác sĩ</th>
+                                                            <th>Ngày &amp; Giờ</th>
+                                                            <th>Trạng thái</th>
+                                                            <th style="width: 320px">Thao tác</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -464,7 +464,7 @@
                                                                         <c:when test="${not empty apt.patientName}"
                                                                                 >${apt.patientName}</c:when
                                                                         >
-                                                                        <c:otherwise>Patient #${apt.patientId}</c:otherwise>
+                                                                        <c:otherwise>Bệnh nhân #${apt.patientId}</c:otherwise>
                                                                     </c:choose>
                                                                 </td>
                                                                 <c:if test="${roleId == 5}">
@@ -484,7 +484,7 @@
                                                                         <c:when test="${not empty apt.doctorName}"
                                                                                 >${apt.doctorName}</c:when
                                                                         >
-                                                                        <c:otherwise>Doctor #${apt.doctorId}</c:otherwise>
+                                                                        <c:otherwise>Bác sĩ #${apt.doctorId}</c:otherwise>
                                                                     </c:choose>
                                                                 </td>
                                                                 <td>
@@ -526,7 +526,7 @@
                                                                                         value="${apt.appointmentId}"
                                                                                         />
                                                                                     <button class="btn btn-green" type="submit">
-                                                                                        Confirm
+                                                                                        Xác nhận
                                                                                     </button>
                                                                                 </form>
                                                                             </c:if>
@@ -546,7 +546,7 @@
                                                                                         value="${apt.appointmentId}"
                                                                                         />
                                                                                     <button class="btn btn-green" type="submit">
-                                                                                        Check In
+                                                                                        Check-in
                                                                                     </button>
                                                                                 </form>
                                                                             </c:if>
@@ -571,7 +571,7 @@
                                                                                         value="${apt.appointmentId}"
                                                                                         />
                                                                                     <button class="btn btn-green" type="submit">
-                                                                                        🩺 Start &amp; Examine
+                                                                                        🩺 Bắt đầu khám
                                                                                     </button>
                                                                                 </form>
                                                                             </c:if>
@@ -583,7 +583,7 @@
                                                                                 <a
                                                                                     class="btn btn-green"
                                                                                     href="${pageContext.request.contextPath}/appointments/test/${apt.appointmentId}"
-                                                                                    >🧪 Enter Results</a
+                                                                                    >🧪 Nhập kết quả</a
                                                                                 >
                                                                             </c:if>
                                                                         </c:if>
@@ -593,7 +593,7 @@
                                                                             <a
                                                                                 class="btn btn-primary"
                                                                                 href="${pageContext.request.contextPath}/appointments/detail/${apt.appointmentId}"
-                                                                                >👁️ View</a
+                                                                                >👁️ Xem</a
                                                                             >
                                                                             <c:if
                                                                                 test="${apt.status == 'Pending' || apt.status == 'Confirmed'}"
@@ -601,7 +601,7 @@
                                                                                 <form
                                                                                     method="post"
                                                                                     action="${pageContext.request.contextPath}/appointments"
-                                                                                    onsubmit="return confirm('Cancel this appointment?');"
+                                                                                    onsubmit="return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?');"
                                                                                     >
                                                                                     <input
                                                                                         type="hidden"
@@ -614,7 +614,7 @@
                                                                                         value="${apt.appointmentId}"
                                                                                         />
                                                                                     <button class="btn btn-red" type="submit">
-                                                                                        ❌ Cancel
+                                                                                        ❌ Hủy
                                                                                     </button>
                                                                                 </form>
                                                                             </c:if>
@@ -633,11 +633,11 @@
                                                             <c:when test="${currentPage > 1}">
                                                                 <a
                                                                     href="${pageContext.request.contextPath}/appointments?page=${currentPage - 1}&search=${not empty searchKeyword ? searchKeyword : ''}&statusFilter=${not empty statusFilter ? statusFilter : 'all'}&dateFrom=${not empty dateFrom ? dateFrom : ''}&dateTo=${not empty dateTo ? dateTo : ''}&pageSize=${pageSize}"
-                                                                    >« Previous</a
+                                                                    >« Trước</a
                                                                 >
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="disabled">« Previous</span>
+                                                                <span class="disabled">« Trước</span>
                                                             </c:otherwise>
                                                         </c:choose>
 
@@ -666,16 +666,16 @@
                                                             <c:when test="${currentPage < totalPages}">
                                                                 <a
                                                                     href="${pageContext.request.contextPath}/appointments?page=${currentPage + 1}&search=${not empty searchKeyword ? searchKeyword : ''}&statusFilter=${not empty statusFilter ? statusFilter : 'all'}&dateFrom=${not empty dateFrom ? dateFrom : ''}&dateTo=${not empty dateTo ? dateTo : ''}&pageSize=${pageSize}"
-                                                                    >Next »</a
+                                                                    >Sau »</a
                                                                 >
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="disabled">Next »</span>
+                                                                <span class="disabled">Sau »</span>
                                                             </c:otherwise>
                                                         </c:choose>
 
                                                         <span class="page-info"
-                                                              >Page ${currentPage} of ${totalPages} (${totalRecords} total)</span
+                                                              >Trang ${currentPage} / ${totalPages} (Tổng ${totalRecords} bản ghi)</span
                                                         >
                                                     </div>
                                                 </c:if>
@@ -685,8 +685,8 @@
                                                     <div style="font-size: 72px; opacity: 0.3; margin-bottom: 12px">
                                                         📋
                                                     </div>
-                                                    <h3>No appointments</h3>
-                                                    <p>Nothing to display for your role right now.</p>
+                                                    <h3>Không có lịch hẹn</h3>
+                                                    <p>Hiện tại không có lịch hẹn nào để hiển thị cho vai trò của bạn.</p>
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>

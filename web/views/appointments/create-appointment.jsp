@@ -318,44 +318,44 @@
                 const symptoms = document.getElementById('symptoms') ? document.getElementById('symptoms').value.trim() : '';
 
                 if (!patientName) {
-                    alert('Please enter patient full name!');
+                    alert('Vui lòng nhập họ và tên bệnh nhân!');
                     return false;
                 }
 
                 if (!patientDob) {
-                    alert('Please select patient date of birth!');
+                    alert('Vui lòng chọn ngày sinh của bệnh nhân!');
                     return false;
                 }
 
                 if (!patientAddress) {
-                    alert('Please enter patient address!');
+                    alert('Vui lòng nhập địa chỉ bệnh nhân!');
                     return false;
                 }
 
                 if (!patientPhone) {
-                    alert('Please enter patient phone number!');
+                    alert('Vui lòng nhập số điện thoại bệnh nhân!');
                     return false;
                 }
 
                 // Validate format số điện thoại
                 const phoneRegex = /^(0[0-9]{9}|\+84[0-9]{9})$/;
                 if (!phoneRegex.test(patientPhone)) {
-                    alert('Invalid phone number format! Phone must be 10 digits starting with 0 (e.g., 0123456789) or +84 format (e.g., +84123456789)!');
+                    alert('Định dạng số điện thoại không hợp lệ! Số điện thoại phải có 10 chữ số bắt đầu bằng 0 (ví dụ: 0123456789) hoặc định dạng +84 (ví dụ: +84123456789)!');
                     return false;
                 }
 
                 if (!doctorId) {
-                    alert('Please select a doctor!');
+                    alert('Vui lòng chọn bác sĩ!');
                     return false;
                 }
 
                 if (!date) {
-                    alert('Please select appointment date!');
+                    alert('Vui lòng chọn ngày khám!');
                     return false;
                 }
 
                 if (!time) {
-                    alert('Please select appointment time!');
+                    alert('Vui lòng chọn giờ khám!');
                     return false;
                 }
                 
@@ -370,11 +370,11 @@
                 const now = new Date();
 
                 if (selectedDateTime <= now) {
-                    alert('Appointment date and time must be in the future!');
+                    alert('Ngày và giờ khám phải trong tương lai!');
                     return false;
                 }
 
-                return confirm('Are you sure you want to create this appointment?');
+                return confirm('Bạn có chắc chắn muốn tạo lịch hẹn này?');
             }
             
             // Initialize character counter on page load
@@ -403,8 +403,8 @@
         <main class="main" style="padding-top: 80px;">
             <div class="container">
                 <div class="header">
-                    <h1>📅 Create New Appointment</h1>
-                    <p>Book your appointment with our doctors</p>
+                    <h1>📅 Đặt lịch hẹn mới</h1>
+                    <p>Đặt lịch hẹn với bác sĩ của chúng tôi</p>
                 </div>
 
                 <div class="content">
@@ -417,11 +417,11 @@
                     </c:if>
 
                     <div class="info-box">
-                        <p><strong>📌 Important Information:</strong></p>
-                        <p>• Please select your preferred doctor and appointment time</p>
-                        <p>• Appointments must be scheduled at least 24 hours in advance</p>
-                        <p>• You will receive a confirmation from our receptionist</p>
-                        <p>• You can book an appointment for yourself or for another patient</p>
+                        <p><strong>📌 Thông tin quan trọng:</strong></p>
+                        <p>• Vui lòng chọn bác sĩ và thời gian khám mong muốn</p>
+                        <p>• Lịch hẹn phải được đặt trước ít nhất 24 giờ</p>
+                        <p>• Bạn sẽ nhận được xác nhận từ lễ tân</p>
+                        <p>• Bạn có thể đặt lịch cho chính mình hoặc cho bệnh nhân khác</p>
                     </div>
 
                     <form method="post" action="${pageContext.request.contextPath}/appointments" 
@@ -429,40 +429,40 @@
                         <input type="hidden" name="action" value="create">
 
                         <div class="form-section">
-                            <h2>Patient Information</h2>
-                            <p>Provide the patient's details so we can store medical records correctly. You can book for yourself or for another patient.</p>
+                            <h2>Thông tin bệnh nhân</h2>
+                            <p>Vui lòng cung cấp thông tin bệnh nhân để chúng tôi có thể lưu trữ hồ sơ y tế chính xác. Bạn có thể đặt lịch cho chính mình hoặc cho bệnh nhân khác.</p>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="patientName">Patient Full Name <span class="required">*</span></label>
-                                    <input type="text" id="patientName" name="patientName" placeholder="Enter full name" required>
+                                    <label for="patientName">Họ và tên bệnh nhân <span class="required">*</span></label>
+                                    <input type="text" id="patientName" name="patientName" placeholder="Nhập họ và tên đầy đủ" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="patientDob">Date of Birth <span class="required">*</span></label>
+                                    <label for="patientDob">Ngày sinh <span class="required">*</span></label>
                                     <input type="date" id="patientDob" name="patientDob" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="patientPhone">Phone Number <span class="required">*</span></label>
-                                    <input type="tel" id="patientPhone" name="patientPhone" placeholder="Enter phone number" required>
+                                    <label for="patientPhone">Số điện thoại <span class="required">*</span></label>
+                                    <input type="tel" id="patientPhone" name="patientPhone" placeholder="Nhập số điện thoại" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="parentName">Parent / Guardian</label>
-                                    <input type="text" id="parentName" name="parentName" placeholder="Enter parent or guardian name" required>
+                                    <label for="parentName">Phụ huynh / Người giám hộ</label>
+                                    <input type="text" id="parentName" name="parentName" placeholder="Nhập tên phụ huynh hoặc người giám hộ" required>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 18px;">
-                                <label for="patientAddress">Address <span class="required">*</span></label>
+                                <label for="patientAddress">Địa chỉ <span class="required">*</span></label>
                                 <textarea id="patientAddress" name="patientAddress" required
-                                          placeholder="Enter current address"></textarea>
+                                          placeholder="Nhập địa chỉ hiện tại"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="insuranceInfo">Insurance Information</label>
-                                <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Enter insurance details if any">
+                                <label for="insuranceInfo">Thông tin bảo hiểm</label>
+                                <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Nhập thông tin bảo hiểm (nếu có)">
                             </div>
                         </div>
 
                         <div class="form-section">
-                            <h2>Symptoms / Reason for Visit</h2>
-                            <p>Please describe the patient's symptoms or reason for the appointment. This information will help the doctor prepare for the examination.</p>
+                            <h2>Triệu chứng / Lý do khám</h2>
+                            <p>Vui lòng mô tả các triệu chứng hoặc lý do khám của bệnh nhân. Thông tin này sẽ giúp bác sĩ chuẩn bị cho việc khám bệnh.</p>
                             <div class="form-group">
                                 <label for="symptoms">Symptoms (Triệu chứng)</label>
                                 <textarea id="symptoms" name="symptoms" 
@@ -475,7 +475,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Select Doctor <span class="required">*</span></label>
+                            <label>Chọn bác sĩ <span class="required">*</span></label>
                             <c:choose>
                                 <c:when test="${not empty doctors}">
                                     <c:forEach var="doctor" items="${doctors}">
@@ -511,7 +511,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <p style="color: #e74c3c; padding: 15px;">
-                                        No doctors available at the moment.
+                                        Hiện tại không có bác sĩ nào khả dụng.
                                     </p>
                                 </c:otherwise>
                             </c:choose>
@@ -520,14 +520,14 @@
                         <div class="time-grid">
                             <div class="form-group">
                                 <label for="appointmentDate">
-                                    Appointment Date <span class="required">*</span>
+                                    Ngày khám <span class="required">*</span>
                                 </label>
                                 <input type="date" id="appointmentDate" name="appointmentDate" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="appointmentTime">
-                                    Appointment Time <span class="required">*</span>
+                                    Giờ khám <span class="required">*</span>
                                 </label>
                                 <input type="time" id="appointmentTime" name="appointmentTime" 
                                        min="08:00" max="17:00" step="1800" required>
@@ -537,10 +537,10 @@
                         <div class="btn-group">
                             <a href="${pageContext.request.contextPath}/appointments" 
                                class="btn btn-secondary">
-                                ← Back
+                                ← Quay lại
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                📅 Create Appointment
+                                📅 Đặt lịch hẹn
                             </button>
                         </div>
                     </form>
