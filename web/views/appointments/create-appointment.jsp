@@ -308,6 +308,13 @@
                 return false;
             }
             
+            // Validate format số điện thoại
+            const phoneRegex = /^(0[0-9]{9}|\+84[0-9]{9})$/;
+            if (!phoneRegex.test(patientPhone)) {
+                alert('Invalid phone number format! Phone must be 10 digits starting with 0 (e.g., 0123456789) or +84 format (e.g., +84123456789)!');
+                return false;
+            }
+            
             if (!doctorId) {
                 alert('Please select a doctor!');
                 return false;
@@ -369,12 +376,8 @@
                 <p>• Please select your preferred doctor and appointment time</p>
                 <p>• Appointments must be scheduled at least 24 hours in advance</p>
                 <p>• You will receive a confirmation from our receptionist</p>
+                <p>• You can book an appointment for yourself or for another patient</p>
             </div>
-            
-            <c:set var="dobValue" value="" />
-            <c:if test="${not empty patientProfile.dob}">
-                <fmt:formatDate value="${patientProfile.dob}" pattern="yyyy-MM-dd" var="dobValue" />
-            </c:if>
 
             <form method="post" action="${pageContext.request.contextPath}/appointments" 
                   onsubmit="return validateForm()">
@@ -382,37 +385,33 @@
 
                 <div class="form-section">
                     <h2>Patient Information</h2>
-                    <p>Provide the patient's details so we can store medical records correctly.</p>
+                    <p>Provide the patient's details so we can store medical records correctly. You can book for yourself or for another patient.</p>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="patientName">Patient Full Name <span class="required">*</span></label>
-                            <input type="text" id="patientName" name="patientName" placeholder="Enter full name"
-                                   value="${not empty patientProfile.fullName ? patientProfile.fullName : ''}" required>
+                            <input type="text" id="patientName" name="patientName" placeholder="Enter full name" required>
                         </div>
                         <div class="form-group">
                             <label for="patientDob">Date of Birth <span class="required">*</span></label>
-                            <input type="date" id="patientDob" name="patientDob" value="${dobValue}" required>
+                            <input type="date" id="patientDob" name="patientDob" required>
                         </div>
                         <div class="form-group">
                             <label for="patientPhone">Phone Number <span class="required">*</span></label>
-                            <input type="tel" id="patientPhone" name="patientPhone" placeholder="Enter phone number"
-                                   value="${not empty patientProfile.phone ? patientProfile.phone : ''}" required>
+                            <input type="tel" id="patientPhone" name="patientPhone" placeholder="Enter phone number" required>
                         </div>
                         <div class="form-group">
                             <label for="parentName">Parent / Guardian</label>
-                            <input type="text" id="parentName" name="parentName" placeholder="Enter parent or guardian name"
-                                   value="${not empty patientProfile.parentName ? patientProfile.parentName : ''}">
+                            <input type="text" id="parentName" name="parentName" placeholder="Enter parent or guardian name">
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 18px;">
                         <label for="patientAddress">Address <span class="required">*</span></label>
                         <textarea id="patientAddress" name="patientAddress" required
-                                  placeholder="Enter current address">${not empty patientProfile.address ? patientProfile.address : ''}</textarea>
+                                  placeholder="Enter current address"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="insuranceInfo">Insurance Information</label>
-                        <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Enter insurance details if any"
-                               value="${not empty patientProfile.insuranceInfo ? patientProfile.insuranceInfo : ''}">
+                        <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Enter insurance details if any">
                     </div>
                 </div>
 
@@ -476,11 +475,11 @@
                     </div>
                 </div>
                 
-                <div class="form-group">
+<!--                <div class="form-group">
                     <label for="reason">Reason for Visit (Optional)</label>
                     <textarea id="reason" name="reason" 
                               placeholder="Please describe your symptoms or reason for visit..."></textarea>
-                </div>
+                </div>-->
                 
                 <div class="btn-group">
                     <a href="${pageContext.request.contextPath}/appointments" 

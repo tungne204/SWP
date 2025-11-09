@@ -256,4 +256,171 @@ public class PatientDAO extends DBContext {
         }
         return null;
     }
+    
+    /**
+     * Tìm patient đã tồn tại dựa trên fullName, dob, và phone
+     * Nếu không tìm thấy, tạo patient mới
+     * @param fullName Tên bệnh nhân
+     * @param dob Ngày sinh
+     * @param phone Số điện thoại
+     * @param address Địa chỉ
+     * @param insuranceInfo Thông tin bảo hiểm
+     * @param parentName Tên phụ huynh/người giám hộ
+     * @param userId User ID của người đặt (có thể null)
+     * @return Patient ID của patient đã tồn tại hoặc mới tạo
+     */
+    public Integer findOrCreatePatient(String fullName, Date dob, String phone, String address,
+                                       String insuranceInfo, String parentName, Integer userId) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+            
+            // Tìm patient đã tồn tại với thông tin khớp
+            // Tìm theo fullName, dob, và address (hoặc phone từ User table nếu có)
+            String findSql = "SELECT TOP 1 p.patient_id FROM Patient p "
+                    + "LEFT JOIN [User] u ON p.user_id = u.user_id "
+                    + "WHERE p.full_name = ? AND p.dob = ? "
+                    + "AND (p.address = ? OR (u.phone = ? AND u.phone IS NOT NULL))";
+            
+            Integer patientId = null;
+            try (PreparedStatement ps = conn.prepareStatement(findSql)) {
+                ps.setString(1, fullName);
+                if (dob != null) {
+                    ps.setDate(2, dob);
+                } else {
+                    ps.setNull(2, Types.DATE);
+                }
+                ps.setString(3, address);
+                ps.setString(4, phone);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        patientId = rs.getInt("patient_id");
+                    }
+                }
+            }
+            
+            // Nếu không tìm thấy, tạo patient mới
+            if (patientId == null) {
+                Integer parentId = null;
+                
+                // Tạo parent nếu có parentName
+                if (parentName != null && !parentName.trim().isEmpty()) {
+                    String insertParentSql = "INSERT INTO Parent (parentname) VALUES (?)";
+                    try (PreparedStatement ps = conn.prepareStatement(insertParentSql, Statement.RETURN_GENERATED_KEYS)) {
+                        ps.setString(1, parentName.trim());
+                        ps.executeUpdate();
+                        try (ResultSet generated = ps.getGeneratedKeys()) {
+                            if (generated.next()) {
+                                parentId = generated.getInt(1);
+                            }
+                        }
+                    }
+                }
+                
+                // Tạo patient mới
+                String insertPatientSql = "INSERT INTO Patient (user_id, full_name, dob, address, insurance_info, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(insertPatientSql, Statement.RETURN_GENERATED_KEYS)) {
+                    if (userId != null && userId > 0) {
+                        ps.setInt(1, userId);
+                    } else {
+                        ps.setNull(1, Types.INTEGER);
+                    }
+                    ps.setString(2, fullName);
+                    if (dob != null) {
+                        ps.setDate(3, dob);
+                    } else {
+                        ps.setNull(3, Types.DATE);
+                    }
+                    ps.setString(4, address);
+                    if (insuranceInfo != null && !insuranceInfo.trim().isEmpty()) {
+                        ps.setString(5, insuranceInfo.trim());
+                    } else {
+                        ps.setNull(5, Types.NVARCHAR);
+                    }
+                    if (parentId != null) {
+                        ps.setInt(6, parentId);
+                    } else {
+                        ps.setNull(6, Types.INTEGER);
+                    }
+                    ps.executeUpdate();
+                    try (ResultSet generated = ps.getGeneratedKeys()) {
+                        if (generated.next()) {
+                            patientId = generated.getInt(1);
+                        }
+                    }
+                }
+                
+                // Cập nhật phone trong User table nếu có userId và phone
+                if (userId != null && userId > 0 && phone != null && !phone.trim().isEmpty()) {
+                    String updateUserSql = "UPDATE [User] SET phone = ? WHERE user_id = ?";
+                    try (PreparedStatement ps = conn.prepareStatement(updateUserSql)) {
+                        ps.setString(1, phone.trim());
+                        ps.setInt(2, userId);
+                        ps.executeUpdate();
+                    }
+                }
+            }
+            
+            conn.commit();
+            return patientId;
+            
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Kiểm tra số điện thoại đã tồn tại trong database chưa (trừ user hiện tại)
+     * @param phone Số điện thoại cần kiểm tra
+     * @param excludeUserId User ID cần loại trừ (thường là user hiện tại)
+     * @return true nếu số điện thoại đã tồn tại (của user khác), false nếu chưa hoặc là của user hiện tại
+     */
+    public boolean isPhoneExists(String phone, Integer excludeUserId) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM [User] WHERE phone = ?";
+        if (excludeUserId != null && excludeUserId > 0) {
+            sql += " AND user_id != ?";
+        }
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone.trim());
+            if (excludeUserId != null && excludeUserId > 0) {
+                ps.setInt(2, excludeUserId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(PatientDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

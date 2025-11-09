@@ -63,8 +63,55 @@ public class ListMedicalReportsServlet extends HttpServlet {
     throws ServletException, IOException {
         try (Connection c = getConn()) {
             MedicalReportViewDAO dao = new MedicalReportViewDAO(c);
-            List<MedicalReportViewDAO.Row> rows = dao.listAll();
+            
+            // Lấy các tham số từ request
+            String searchKeyword = req.getParameter("search");
+            String paymentStatus = req.getParameter("status");
+            String pageStr = req.getParameter("page");
+            String pageSizeStr = req.getParameter("pageSize");
+            
+            // Giá trị mặc định
+            int page = 1;
+            int pageSize = 10;
+            
+            // Parse page và pageSize
+            try {
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    page = Integer.parseInt(pageStr);
+                    if (page < 1) page = 1;
+                }
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+            
+            try {
+                if (pageSizeStr != null && !pageSizeStr.trim().isEmpty()) {
+                    pageSize = Integer.parseInt(pageSizeStr);
+                    if (pageSize < 1) pageSize = 10;
+                    if (pageSize > 100) pageSize = 100; // Giới hạn tối đa
+                }
+            } catch (NumberFormatException e) {
+                pageSize = 10;
+            }
+            
+            // Lấy danh sách với search, filter và paging
+            List<MedicalReportViewDAO.Row> rows = dao.listWithSearchFilterPaging(
+                searchKeyword, paymentStatus, page, pageSize
+            );
+            
+            // Lấy tổng số bản ghi để tính số trang
+            int totalCount = dao.getTotalCount(searchKeyword, paymentStatus);
+            int totalPages = totalCount > 0 ? (int) Math.ceil((double) totalCount / pageSize) : 1;
+            
+            // Set attributes cho JSP
             req.setAttribute("medicalReports", rows);
+            req.setAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
+            req.setAttribute("paymentStatus", paymentStatus != null ? paymentStatus : "all");
+            req.setAttribute("currentPage", page);
+            req.setAttribute("pageSize", pageSize);
+            req.setAttribute("totalCount", totalCount);
+            req.setAttribute("totalPages", totalPages);
+            
             req.getRequestDispatcher("/views/payment/list-medical-report.jsp")
                .forward(req, resp);
         } catch (Exception e) {

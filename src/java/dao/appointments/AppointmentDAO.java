@@ -475,9 +475,17 @@ public class AppointmentDAO extends DBContext {
             sql.append("AND d.user_id = ? ");
             params.add(userId);
             sql.append("AND a.status = 'Waiting' ");
-        } else if (roleId == 3) { // Patient
-            sql.append("AND a.patient_id = ? ");
-            params.add(patientId);
+        } else if (roleId == 3) { // Patient - hiển thị tất cả appointments của user
+            // Filter theo user_id của patient để hiển thị tất cả appointments
+            // (kể cả các patient mới được tạo với user_id này)
+            if (userId != null) {
+                sql.append("AND p.user_id = ? ");
+                params.add(userId);
+            } else if (patientId != null) {
+                // Fallback: nếu không có userId, dùng patientId
+                sql.append("AND a.patient_id = ? ");
+                params.add(patientId);
+            }
         } else if (roleId == 4) { // Medical Assistant - chỉ TESTING
             sql.append("AND a.status = 'Testing' ");
         } else if (roleId == 5) { // Receptionist - PENDING + CONFIRMED
@@ -570,9 +578,17 @@ public class AppointmentDAO extends DBContext {
             sql.append("AND d.user_id = ? ");
             params.add(userId);
             sql.append("AND a.status = 'Waiting' ");
-        } else if (roleId == 3) { // Patient
-            sql.append("AND a.patient_id = ? ");
-            params.add(patientId);
+        } else if (roleId == 3) { // Patient - hiển thị tất cả appointments của user
+            // Filter theo user_id của patient để hiển thị tất cả appointments
+            // (kể cả các patient mới được tạo với user_id này)
+            if (userId != null) {
+                sql.append("AND p.user_id = ? ");
+                params.add(userId);
+            } else if (patientId != null) {
+                // Fallback: nếu không có userId, dùng patientId
+                sql.append("AND a.patient_id = ? ");
+                params.add(patientId);
+            }
         } else if (roleId == 4) { // Medical Assistant
             sql.append("AND a.status = 'Testing' ");
         } else if (roleId == 5) { // Receptionist

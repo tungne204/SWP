@@ -153,10 +153,9 @@ public class AppointmentServlet extends HttpServlet {
                 }
                 break;
             case 3: // Patient
-                var patient = patientDAO.getPatientByUserId(acc.getUserId());
-                if (patient != null) {
-                    patientId = patient.getPatientId();
-                }
+                // Không cần patientId cụ thể, sẽ filter theo user_id trong AppointmentDAO
+                // để hiển thị tất cả appointments của user (kể cả các patient mới được tạo)
+                userId = acc.getUserId();
                 pageTitle = "My Appointments";
                 break;
             case 4: // Medical Assistant
@@ -211,19 +210,6 @@ public class AppointmentServlet extends HttpServlet {
 
         // ================== PATIENT: CREATE (không cần appointmentId) ==================
         if (acc.getRoleId() == 3 && "create".equals(action)) {
-            var patient = patientDAO.getPatientByUserId(acc.getUserId());
-            if (patient == null) {
-                Integer pid = patientDAO.createPatientMinimalIfAbsent(acc.getUserId());
-                if (pid != null) {
-                    patient = patientDAO.getPatientByUserId(acc.getUserId());
-                }
-            }
-
-            if (patient == null) {
-                backWithMsg(request, response, "Patient profile not found!", "error");
-                return;
-            }
-
             String patientName = nvl(request.getParameter("patientName")).trim();
             String dobStr = nvl(request.getParameter("patientDob"));
             String address = nvl(request.getParameter("patientAddress")).trim();
@@ -249,13 +235,27 @@ public class AppointmentServlet extends HttpServlet {
                 return;
             }
 
+            // Tìm hoặc tạo patient mới cho appointment này
+            // KHÔNG cập nhật patient profile hiện có để tránh ảnh hưởng đến các appointment khác
+            Integer patientId = null;
             try {
-                patientDAO.savePatientDetails(patient, patientName, dobDate, address,
-                        isBlank(insuranceInfo) ? null : insuranceInfo.trim(),
-                        parentName, phone);
+                patientId = patientDAO.findOrCreatePatient(
+                    patientName, 
+                    dobDate, 
+                    phone, 
+                    address,
+                    isBlank(insuranceInfo) ? null : insuranceInfo.trim(),
+                    isBlank(parentName) ? null : parentName.trim(),
+                    acc.getUserId() // User ID của người đặt appointment
+                );
             } catch (Exception ex) {
                 ex.printStackTrace();
-                backWithMsg(request, response, "Failed to update patient information!", "error");
+                backWithMsg(request, response, "Failed to create or find patient record!", "error");
+                return;
+            }
+
+            if (patientId == null) {
+                backWithMsg(request, response, "Failed to create patient record!", "error");
                 return;
             }
 
@@ -292,7 +292,7 @@ public class AppointmentServlet extends HttpServlet {
             }
 
             Appointment a = new Appointment();
-            a.setPatientId(patient.getPatientId());
+            a.setPatientId(patientId);
             a.setDoctorId(doctorId);
             a.setDateTime(ts);
             a.setStatus(AppointmentStatus.PENDING.getValue());

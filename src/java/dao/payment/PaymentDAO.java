@@ -76,4 +76,30 @@ public class PaymentDAO {
         }
         return -1;
     }
+
+    /** Lấy tên bệnh nhân và đơn thuốc từ appointment_id */
+    public static class PatientInfo {
+        public String patientName;
+        public String prescription;
+    }
+
+    public PatientInfo getPatientInfoByAppointmentId(int appointmentId) throws SQLException {
+        String sql = "SELECT p.full_name AS patient_name, mr.prescription " +
+                     "FROM dbo.Appointment a " +
+                     "INNER JOIN dbo.Patient p ON a.patient_id = p.patient_id " +
+                     "LEFT JOIN dbo.MedicalReport mr ON a.appointment_id = mr.appointment_id " +
+                     "WHERE a.appointment_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    PatientInfo info = new PatientInfo();
+                    info.patientName = rs.getString("patient_name");
+                    info.prescription = rs.getString("prescription");
+                    return info;
+                }
+            }
+        }
+        return null;
+    }
 }
