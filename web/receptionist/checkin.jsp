@@ -73,6 +73,8 @@
                     box-shadow: 0 8px 20px rgba(2, 8, 23, 0.06);
                     margin-bottom: 24px;
                     border: 1px solid var(--neutral-200);
+                    max-width: 600px;
+                    margin: 0 auto;
                 }
 
                 .card-header {
@@ -303,6 +305,19 @@
                         padding: 16px;
                     }
                 }
+
+                /* Responsive doctor selection grid */
+                @media (max-width: 992px) {
+                    .doctor-grid {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                    }
+                }
+
+                @media (max-width: 576px) {
+                    .doctor-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
             </style>
         </head>
 
@@ -392,6 +407,45 @@
                                             <input type="text" class="form-control" id="insuranceInfo"
                                                 name="insuranceInfo" placeholder="Số thẻ/nhà cung cấp (tùy chọn)">
                                         </div>
+                                    </div>
+
+                                    <!-- Doctor Selection -->
+                                    <div class="form-group">
+                                        <label class="form-label">Chọn Bác Sĩ <span class="text-red-500">*</span></label>
+                                        <c:choose>
+                                            <c:when test="${not empty doctors}">
+                                                <div class="doctor-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px;">
+                                                    <c:forEach var="doctor" items="${doctors}">
+                                                        <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #ffffff;" 
+                                                               onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#eef7ff';" 
+                                                               onmouseout="this.style.borderColor='#d1d5db'; this.style.backgroundColor='#ffffff';">
+                                                            <input type="radio" name="doctorId" value="${doctor.doctorId}" required 
+                                                                   style="margin-right: 12px; width: 18px; height: 18px; cursor: pointer; flex-shrink: 0;">
+                                                            <div style="flex: 1; min-width: 0;">
+                                                                <div style="font-weight: 600; color: #1e293b; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                    👨‍⚕️ ${doctor.username}
+                                                                </div>
+                                                                <c:if test="${not empty doctor.experienceYears && doctor.experienceYears > 0}">
+                                                                    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">
+                                                                        ${doctor.experienceYears} năm kinh nghiệm
+                                                                    </div>
+                                                                </c:if>
+                                                                <c:if test="${not empty doctor.introduce}">
+                                                                    <div style="font-size: 12px; color: #6b7280; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                        ${doctor.introduce}
+                                                                    </div>
+                                                                </c:if>
+                                                            </div>
+                                                        </label>
+                                                    </c:forEach>
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p style="color: #e74c3c; padding: 15px; background: #f8d7da; border-radius: 8px;">
+                                                    Không có bác sĩ nào trong hệ thống.
+                                                </p>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
 

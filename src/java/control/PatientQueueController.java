@@ -126,10 +126,17 @@ public class PatientQueueController extends HttpServlet {
                 Patient patient = patientDAO.getPatientById(pq.getPatientId());
                 details.put("patient", patient);
                 
-                // Get appointment information if exists
+                // Get appointment information if exists (with join to Doctor and User)
                 if (pq.getAppointmentId() != null) {
-                    Appointment appointment = appointmentDAO.getAppointmentById(pq.getAppointmentId());
+                    // Use getById() which joins with Doctor and User to get doctor_name
+                    Appointment appointment = appointmentDAO.getById(pq.getAppointmentId());
                     details.put("appointment", appointment);
+                    
+                    // Get doctor information from appointment for additional details (experienceYears, etc.)
+                    if (appointment != null && appointment.getDoctorId() > 0) {
+                        Doctor doctor = doctorDAO.getDoctorById(appointment.getDoctorId());
+                        details.put("doctor", doctor);
+                    }
                 }
                 
                 queueDetails.add(details);
@@ -682,15 +689,9 @@ public class PatientQueueController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int queueId = Integer.parseInt(request.getParameter("queueId"));
-            String roomNumber = request.getParameter("roomNumber");
 
             // Update patient queue status to "Ready for Examination"
             patientQueueDAO.updatePatientQueueStatus(queueId, "Ready for Examination");
-            
-            // Optionally assign room number if provided
-            if (roomNumber != null && roomNumber.trim().length() > 0) {
-                patientQueueDAO.updatePatientQueueRoomNumber(queueId, roomNumber.trim());
-            }
 
             // Broadcast WebSocket update for status change
             try {

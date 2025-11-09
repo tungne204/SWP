@@ -198,7 +198,9 @@ prefix="c"%>
                         <form
                           action="${pageContext.request.contextPath}/reception/payment/create"
                           method="post"
-                          class="flex gap-2 items-center"
+                          class="payment-form"
+                          data-record-id="${mr.recordId}"
+                          onsubmit="return validatePaymentForm(this)"
                         >
                           <input
                             type="hidden"
@@ -211,22 +213,77 @@ prefix="c"%>
                             value="${mr.appointmentId}"
                           />
 
-                          <input
-                            type="number"
-                            name="amount"
-                            min="1000"
-                            step="1000"
-                            required
-                            placeholder="Nhập số tiền (VND)"
-                            class="border rounded px-2 py-1 text-sm w-40"
-                          />
+                          <div class="flex flex-col gap-2 min-w-[280px]">
+                            <!-- Amount Input -->
+                            <div class="flex gap-2 items-center flex-wrap">
+                              <input
+                                type="number"
+                                id="original-amount-${mr.recordId}"
+                                class="original-amount-input border rounded px-2 py-1 text-sm w-32"
+                                data-record-id="${mr.recordId}"
+                                min="1000"
+                                step="1000"
+                                placeholder="Số tiền gốc"
+                                required
+                              />
+                              
+                              <!-- Discount Code Selection -->
+                              <div class="flex items-center gap-1 flex-1 min-w-[150px]">
+                                <select
+                                  id="discount-select-${mr.recordId}"
+                                  class="discount-select border rounded px-2 py-1 text-sm w-full"
+                                  data-record-id="${mr.recordId}"
+                                >
+                                  <option value="" data-percentage="0" data-discount-id="">Không giảm giá</option>
+                                  <c:forEach var="discount" items="${activeDiscounts}">
+                                    <option 
+                                      value="${discount.code}" 
+                                      data-percentage="${discount.percentage.doubleValue()}" 
+                                      data-discount-id="${discount.discountId}"
+                                    >
+                                      ${discount.code} (${discount.percentage}%)
+                                    </option>
+                                  </c:forEach>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <!-- Display Final Amount -->
+                            <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded border final-amount-display-${mr.recordId}" style="display: none;">
+                              <div class="flex justify-between items-center gap-2 mb-1">
+                                <span>Tiền gốc:</span>
+                                <span id="display-original-${mr.recordId}" class="font-medium"></span>
+                              </div>
+                              <div class="flex justify-between items-center gap-2 mb-1">
+                                <span>Giảm giá:</span>
+                                <span id="display-discount-${mr.recordId}" class="font-medium text-red-600"></span>
+                              </div>
+                              <div class="flex justify-between items-center gap-2 border-t border-gray-300 pt-1 mt-1">
+                                <span class="font-semibold">Thành tiền:</span>
+                                <span id="display-final-${mr.recordId}" class="font-bold text-green-600 text-base"></span>
+                              </div>
+                            </div>
+                            
+                            <!-- Hidden inputs for form submission -->
+                            <input
+                              type="hidden"
+                              id="amount-${mr.recordId}"
+                              name="amount"
+                            />
+                            <input
+                              type="hidden"
+                              id="discount-id-${mr.recordId}"
+                              name="discountId"
+                              value=""
+                            />
 
-                          <button
-                            type="submit"
-                            class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-3 py-1 rounded"
-                          >
-                            Thu tiền (VNPay)
-                          </button>
+                            <button
+                              type="submit"
+                              class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-3 py-1 rounded w-full mt-1"
+                            >
+                              Thu tiền (VNPay)
+                            </button>
+                          </div>
                         </form>
                       </c:when>
                       <c:otherwise>
@@ -367,6 +424,134 @@ prefix="c"%>
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+
+    <script>
+      // Format số tiền VNĐ
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', {
+          style: 'currency',
+          currency: 'VND'
+        }).format(amount);
+      }
+
+      // Tính toán số tiền cuối cùng sau khi áp dụng discount
+      function calculateFinalAmount(recordId) {
+        const originalAmountInput = document.getElementById('original-amount-' + recordId);
+        const discountSelect = document.getElementById('discount-select-' + recordId);
+        const amountInput = document.getElementById('amount-' + recordId); // Hidden input for form submission
+        const discountIdInput = document.getElementById('discount-id-' + recordId); // Hidden input for discount ID
+        const displayDiv = document.querySelector('.final-amount-display-' + recordId);
+        const displayOriginalSpan = document.getElementById('display-original-' + recordId);
+        const displayDiscountSpan = document.getElementById('display-discount-' + recordId);
+        const displayFinalSpan = document.getElementById('display-final-' + recordId);
+
+        if (!originalAmountInput || !discountSelect || !amountInput) {
+          return;
+        }
+
+        const originalAmount = parseFloat(originalAmountInput.value) || 0;
+        const selectedOption = discountSelect.options[discountSelect.selectedIndex];
+        const discountPercent = parseFloat(selectedOption.getAttribute('data-percentage')) || 0;
+        const discountId = selectedOption.getAttribute('data-discount-id') || '';
+        const discountCode = selectedOption.value || '';
+
+        if (originalAmount > 0) {
+          // Tính toán
+          const discountAmount = (originalAmount * discountPercent) / 100;
+          const finalAmount = Math.max(0, originalAmount - discountAmount);
+
+          // Hiển thị kết quả
+          if (displayOriginalSpan) {
+            displayOriginalSpan.textContent = formatCurrency(originalAmount);
+          }
+          if (displayDiscountSpan) {
+            if (discountPercent > 0 && discountCode) {
+              displayDiscountSpan.textContent = '-' + formatCurrency(discountAmount) + ' (' + discountCode + ': ' + discountPercent.toFixed(1) + '%)';
+            } else {
+              displayDiscountSpan.textContent = formatCurrency(0);
+            }
+          }
+          if (displayFinalSpan) {
+            displayFinalSpan.textContent = formatCurrency(finalAmount);
+          }
+          if (displayDiv) {
+            displayDiv.style.display = 'block';
+          }
+
+          // Cập nhật giá trị trong hidden inputs
+          amountInput.value = Math.floor(finalAmount);
+          discountIdInput.value = discountId;
+        } else {
+          if (displayDiv) {
+            displayDiv.style.display = 'none';
+          }
+          amountInput.value = '';
+          discountIdInput.value = '';
+        }
+      }
+
+      // Validate form trước khi submit
+      function validatePaymentForm(form) {
+        const recordId = form.getAttribute('data-record-id');
+        const originalAmountInput = document.getElementById('original-amount-' + recordId);
+        const discountSelect = document.getElementById('discount-select-' + recordId);
+        const amountInput = document.getElementById('amount-' + recordId);
+        const discountIdInput = document.getElementById('discount-id-' + recordId);
+
+        if (!originalAmountInput || !discountSelect || !amountInput) {
+          alert('Có lỗi xảy ra khi xử lý form');
+          return false;
+        }
+
+        const originalAmount = parseFloat(originalAmountInput.value) || 0;
+        const selectedOption = discountSelect.options[discountSelect.selectedIndex];
+        const discountPercent = parseFloat(selectedOption.getAttribute('data-percentage')) || 0;
+        const discountId = selectedOption.getAttribute('data-discount-id') || '';
+
+        // Validate số tiền gốc
+        if (originalAmount < 1000) {
+          alert('Số tiền gốc phải lớn hơn hoặc bằng 1,000 VND');
+          originalAmountInput.focus();
+          return false;
+        }
+
+        // Tính toán số tiền cuối cùng
+        const discountAmount = (originalAmount * discountPercent) / 100;
+        const finalAmount = Math.max(0, originalAmount - discountAmount);
+
+        // Validate số tiền sau giảm giá
+        if (finalAmount < 1000) {
+          alert('Số tiền sau giảm giá (' + formatCurrency(finalAmount) + ') phải lớn hơn hoặc bằng 1,000 VND. Vui lòng chọn mã giảm giá khác hoặc bỏ chọn giảm giá.');
+          discountSelect.focus();
+          return false;
+        }
+
+        // Cập nhật giá trị cuối cùng vào hidden inputs
+        amountInput.value = Math.floor(finalAmount);
+        discountIdInput.value = discountId;
+
+        return true;
+      }
+
+      // Gắn event listeners khi trang load
+      document.addEventListener('DOMContentLoaded', function() {
+        // Gắn event listener cho tất cả các input số tiền gốc
+        document.querySelectorAll('.original-amount-input').forEach(function(input) {
+          const recordId = input.getAttribute('data-record-id');
+          input.addEventListener('input', function() {
+            calculateFinalAmount(recordId);
+          });
+        });
+
+        // Gắn event listener cho tất cả các select discount
+        document.querySelectorAll('.discount-select').forEach(function(select) {
+          const recordId = select.getAttribute('data-record-id');
+          select.addEventListener('change', function() {
+            calculateFinalAmount(recordId);
+          });
+        });
+      });
+    </script>
 
     <!-- Footer -->
     <%@ include file="/includes/footer.jsp" %>

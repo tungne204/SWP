@@ -293,11 +293,11 @@
 
                     <!-- Action Buttons -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="${pageContext.request.contextPath}/manager/discount?action=list" class="btn btn-secondary">
+                        <a href="${pageContext.request.contextPath}/admin/discount?action=list" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Quay lại danh sách
                         </a>
                         <div class="d-flex gap-2">
-                            <a href="${pageContext.request.contextPath}/manager/discount?action=edit&id=${promotion.discountId}" 
+                            <a href="${pageContext.request.contextPath}/admin/discount?action=edit&id=${promotion.discountId}" 
                                class="btn btn-primary">
                                 <i class="fas fa-edit"></i> Chỉnh sửa
                             </a>
@@ -314,7 +314,7 @@
                     <div class="alert alert-warning text-center">
                         <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
                         <h5>Không tìm thấy thông tin khuyến mãi!</h5>
-                        <a href="${pageContext.request.contextPath}/manager/discount?action=list"
+                        <a href="${pageContext.request.contextPath}/admin/discount?action=list"
                            class="btn btn-primary mt-3">
                             <i class="fas fa-arrow-left"></i> Quay lại danh sách
                         </a>
@@ -341,7 +341,7 @@
                     // Create form and submit
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '${pageContext.request.contextPath}/manager/discount';
+                    form.action = '${pageContext.request.contextPath}/admin/discount';
                     
                     const actionInput = document.createElement('input');
                     actionInput.type = 'hidden';

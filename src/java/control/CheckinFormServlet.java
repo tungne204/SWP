@@ -52,6 +52,10 @@ public class CheckinFormServlet extends HttpServlet {
             return;
         }
         
+        // Load doctors list for selection
+        List<entity.Doctor> doctors = doctorDAO.getAllDoctors();
+        request.setAttribute("doctors", doctors);
+        
         // Forward to receptionist checkin.jsp page
         request.getRequestDispatcher("/receptionist/checkin.jsp").forward(request, response);
     }
@@ -245,20 +249,15 @@ public class CheckinFormServlet extends HttpServlet {
                 }
             } else {
                 // For walk-in patients, create a new appointment
-                // Get doctor ID from request, or use first available doctor as default
+                // Get doctor ID from request (required)
                 String doctorIdStr = request.getParameter("doctorId");
                 int doctorId;
                 
-                if (doctorIdStr != null && !doctorIdStr.trim().isEmpty()) {
-                    doctorId = Integer.parseInt(doctorIdStr);
-                } else {
-                    // Get first available doctor as default
-                    List<entity.Doctor> doctors = doctorDAO.getAllDoctors();
-                    if (doctors == null || doctors.isEmpty()) {
-                        throw new Exception("Khong co bac si nao trong he thong. Vui long them bac si truoc khi check-in.");
-                    }
-                    doctorId = doctors.get(0).getDoctorId();
+                if (doctorIdStr == null || doctorIdStr.trim().isEmpty()) {
+                    throw new Exception("Vui long chon bac si de kham.");
                 }
+                
+                doctorId = Integer.parseInt(doctorIdStr);
                 
                 // Verify doctor exists
                 entity.Doctor doctor = doctorDAO.getDoctorById(doctorId);

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * 
  * @author System
  */
-@WebServlet(name = "DiscountManagementServlet", urlPatterns = {"/manager/discount", "/manager/promotion"})
+@WebServlet(name = "DiscountManagementServlet", urlPatterns = {"/admin/discount", "/admin/promotion"})
 public class DiscountManagementServlet extends HttpServlet {
     
     private static final Logger LOGGER = Logger.getLogger(DiscountManagementServlet.class.getName());
@@ -207,7 +207,7 @@ public class DiscountManagementServlet extends HttpServlet {
         String idStr = request.getParameter("id");
         
         if (idStr == null || idStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
             return;
         }
         
@@ -218,7 +218,7 @@ public class DiscountManagementServlet extends HttpServlet {
             if (discount == null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("errorMessage", "Không tìm thấy khuyến mãi với ID: " + discountId);
-                response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+                response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
                 return;
             }
             
@@ -228,7 +228,7 @@ public class DiscountManagementServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             HttpSession session = request.getSession();
             session.setAttribute("errorMessage", "ID khuyến mãi không hợp lệ");
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
         }
     }
     
@@ -249,7 +249,7 @@ public class DiscountManagementServlet extends HttpServlet {
         String idStr = request.getParameter("id");
         
         if (idStr == null || idStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
             return;
         }
         
@@ -304,7 +304,7 @@ public class DiscountManagementServlet extends HttpServlet {
             
             if (success) {
                 request.setAttribute("success", "Tạo khuyến mãi thành công!");
-                response.sendRedirect(request.getContextPath() + "/manager/discount?action=list&success=1");
+                response.sendRedirect(request.getContextPath() + "/admin/discount?action=list&success=1");
             } else {
                 request.setAttribute("error", "Không thể tạo khuyến mãi. Vui lòng thử lại.");
                 request.setAttribute("promotion", discount); // Keep as "promotion" for JSP compatibility
@@ -330,7 +330,7 @@ public class DiscountManagementServlet extends HttpServlet {
         }
         
         if (idStr == null || idStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
             return;
         }
         
@@ -362,7 +362,7 @@ public class DiscountManagementServlet extends HttpServlet {
             boolean success = discountDAO.updateDiscount(discount);
             
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/manager/discount?action=list&updated=1");
+                response.sendRedirect(request.getContextPath() + "/admin/discount?action=list&updated=1");
             } else {
                 request.setAttribute("error", "Không thể cập nhật khuyến mãi. Vui lòng thử lại.");
                 request.setAttribute("promotion", discount); // Keep as "promotion" for JSP compatibility
@@ -386,7 +386,7 @@ public class DiscountManagementServlet extends HttpServlet {
         String idStr = request.getParameter("id");
         
         if (idStr == null || idStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list");
             return;
         }
         
@@ -395,13 +395,13 @@ public class DiscountManagementServlet extends HttpServlet {
             boolean success = discountDAO.deleteDiscount(discountId);
             
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/manager/discount?action=list&deleted=1");
+                response.sendRedirect(request.getContextPath() + "/admin/discount?action=list&deleted=1");
             } else {
-                response.sendRedirect(request.getContextPath() + "/manager/discount?action=list&error=delete_failed");
+                response.sendRedirect(request.getContextPath() + "/admin/discount?action=list&error=delete_failed");
             }
             
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/manager/discount?action=list&error=invalid_id");
+            response.sendRedirect(request.getContextPath() + "/admin/discount?action=list&error=invalid_id");
         }
     }
     

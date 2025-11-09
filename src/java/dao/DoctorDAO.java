@@ -346,7 +346,12 @@ public class DoctorDAO extends DBContext {
     }
     // Get doctor by ID
     public Doctor getDoctorById(int doctorId) {
-        String sql = "SELECT doctor_id, user_id, experienceYears, certificate, introduce FROM Doctor WHERE doctor_id = ?";
+        // Join with User table to get username and other user info
+        String sql = "SELECT d.doctor_id, d.user_id, d.experienceYears, d.certificate, d.introduce, " +
+                     "u.username, u.email, u.phone, u.avatar " +
+                     "FROM Doctor d " +
+                     "JOIN [User] u ON d.user_id = u.user_id " +
+                     "WHERE d.doctor_id = ?";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -368,6 +373,12 @@ public class DoctorDAO extends DBContext {
                     // Handle nullable introduce
                     String intro = rs.getString("introduce");
                     doctor.setIntroduce(intro != null ? intro : "");
+                    // Set user information from join
+                    doctor.setUsername(rs.getString("username"));
+                    doctor.setEmail(rs.getString("email"));
+                    doctor.setPhone(rs.getString("phone"));
+                    String avatar = rs.getString("avatar");
+                    doctor.setAvatar(avatar != null ? avatar : "");
                     return doctor;
                 }
             }

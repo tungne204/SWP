@@ -114,7 +114,7 @@
             color: white;
             padding: 20px 30px;
             display: grid;
-            grid-template-columns: 80px 2fr 120px 180px 200px 120px 200px;
+            grid-template-columns: 80px 2fr 120px 150px 180px 200px 120px 200px;
             gap: 15px;
             font-weight: 600;
             font-size: 14px;
@@ -123,7 +123,7 @@
         
         .queue-item {
             display: grid;
-            grid-template-columns: 80px 2fr 120px 180px 200px 120px 200px;
+            grid-template-columns: 80px 2fr 120px 150px 180px 200px 120px 200px;
             gap: 15px;
             padding: 20px 30px;
             border-bottom: 1px solid #e2e8f0;
@@ -365,7 +365,7 @@
         @media (max-width: 1200px) {
             .queue-list-header,
             .queue-item {
-                grid-template-columns: 60px 1.5fr 100px 150px 180px 100px 180px;
+                grid-template-columns: 60px 1.5fr 100px 130px 150px 180px 100px 180px;
                 gap: 10px;
                 font-size: 13px;
             }
@@ -481,6 +481,7 @@
                         <div>STT</div>
                         <div>Họ Tên Bệnh Nhân</div>
                         <div>Mã BN</div>
+                        <div>Bác Sĩ</div>
                         <div>Trạng Thái</div>
                         <div>Thời Gian Check-in</div>
                         <div>Loại</div>
@@ -507,6 +508,29 @@
                                     
                                     <div data-label="Mã BN: ">
                                         <strong>ID: ${queueDetail.patient.patientId}</strong>
+                                    </div>
+                                    
+                                    <div data-label="Bác Sĩ: ">
+                                        <c:choose>
+                                            <c:when test="${not empty queueDetail.doctor && not empty queueDetail.doctor.username}">
+                                                <div style="font-weight: 600; color: #1e293b;">
+                                                    👨‍⚕️ ${queueDetail.doctor.username}
+                                                </div>
+                                                <c:if test="${not empty queueDetail.doctor.experienceYears && queueDetail.doctor.experienceYears > 0}">
+                                                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                                                        ${queueDetail.doctor.experienceYears} năm kinh nghiệm
+                                                    </div>
+                                                </c:if>
+                                            </c:when>
+                                            <c:when test="${not empty queueDetail.appointment && not empty queueDetail.appointment.doctorName}">
+                                                <div style="font-weight: 600; color: #1e293b;">
+                                                    👨‍⚕️ ${queueDetail.appointment.doctorName}
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span style="color: #94a3b8; font-style: italic;">Chưa chỉ định</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                     
                                     <div data-label="Trạng Thái: ">
@@ -698,7 +722,6 @@
     <script>
         function markReady(queueId) {
             try {
-                const roomNumber = prompt('Nhập phòng khám (tuỳ chọn):');
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'patient-queue?action=markReady';
@@ -707,11 +730,6 @@
                 q.name = 'queueId';
                 q.value = queueId;
                 form.appendChild(q);
-                const r = document.createElement('input');
-                r.type = 'hidden';
-                r.name = 'roomNumber';
-                r.value = roomNumber || '';
-                form.appendChild(r);
                 document.body.appendChild(form);
                 form.submit();
             } catch (e) {

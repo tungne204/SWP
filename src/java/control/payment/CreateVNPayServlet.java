@@ -83,6 +83,7 @@ public class CreateVNPayServlet extends HttpServlet {
         String recordIdStr = req.getParameter("recordId");     // có thể gửi cả 2
         String appointmentIdStr = req.getParameter("appointmentId");
         String amountStr = req.getParameter("amount");          // VND (đơn vị số)
+        String discountIdStr = req.getParameter("discountId");  // Discount ID (optional)
 
         if (amountStr == null || amountStr.isEmpty()) {
             resp.sendError(400, "Thiếu amount");
@@ -108,6 +109,15 @@ public class CreateVNPayServlet extends HttpServlet {
             }
 
             long amountVND = Long.parseLong(amountStr);
+            Integer discountId = null;
+            if (discountIdStr != null && !discountIdStr.trim().isEmpty()) {
+                try {
+                    discountId = Integer.parseInt(discountIdStr);
+                } catch (NumberFormatException e) {
+                    // Invalid discount ID, ignore it
+                    discountId = null;
+                }
+            }
             
             // Lấy thông tin bệnh nhân và đơn thuốc
             PaymentDAO.PatientInfo patientInfo = paymentDAO.getPatientInfoByAppointmentId(appointmentId);
@@ -159,7 +169,7 @@ public class CreateVNPayServlet extends HttpServlet {
             String payUrl = VNPayConfig.VNP_PAY_URL + "?" + query + "&vnp_SecureHash=" + secureHash;
 
             if (!paymentDAO.existsByTxnRef(vnp_TxnRef)) {
-                paymentDAO.createPending(appointmentId, orderInfo, amountVND, vnp_TxnRef, payUrl);
+                paymentDAO.createPending(appointmentId, orderInfo, amountVND, vnp_TxnRef, payUrl, discountId);
             }
 
             resp.sendRedirect(payUrl);
