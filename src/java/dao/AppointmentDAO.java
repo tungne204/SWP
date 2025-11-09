@@ -145,6 +145,39 @@ public class AppointmentDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    // Create a new appointment with String status and return the generated appointment ID
+    public int createAppointmentWithStatus(Appointment appointment) {
+        String sql = "INSERT INTO Appointment (patient_id, doctor_id, date_time, status) VALUES (?, ?, ?, ?)";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, appointment.getPatientId());
+            ps.setInt(2, appointment.getDoctorId());
+            ps.setTimestamp(3, new java.sql.Timestamp(appointment.getDateTime().getTime()));
+            
+            // Use String status directly
+            String status = appointment.getStatus();
+            if (status == null || status.trim().isEmpty()) {
+                status = "Pending";
+            }
+            ps.setString(4, status);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                // Get the generated appointment ID
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if creation failed
+    }
 
     // Update appointment status
     public void updateAppointmentStatus(int appointmentId, boolean status) {
@@ -246,7 +279,7 @@ public class AppointmentDAO extends DBContext {
                      "p.patient_id, p.full_name as patient_full_name, p.dob as patient_dob, " +
                      "p.address as patient_address, p.insurance_info as patient_insurance_info, " +
                      "pr.parent_id, pr.parentname, pr.id_info, " +
-                     "d.doctor_id, u.username as doctor_name, d.specialty " +
+                     "d.doctor_id, u.username as doctor_name " +
                      "FROM Appointment a " +
                      "JOIN Patient p ON a.patient_id = p.patient_id " +
                      "LEFT JOIN Parent pr ON p.parent_id = pr.parent_id " +
@@ -282,7 +315,7 @@ public class AppointmentDAO extends DBContext {
                     // Doctor info
                     appointmentDetail.setDoctorId(rs.getInt("doctor_id"));
                     appointmentDetail.setDoctorName(rs.getString("doctor_name"));
-                    appointmentDetail.setDoctorSpecialty(rs.getString("specialty"));
+                    appointmentDetail.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                     
                     appointments.add(appointmentDetail);
                 }
@@ -305,7 +338,7 @@ public class AppointmentDAO extends DBContext {
                      "p.patient_id, p.full_name as patient_full_name, p.dob as patient_dob, " +
                      "p.address as patient_address, p.insurance_info as patient_insurance_info, " +
                      "pr.parent_id, pr.parentname, pr.id_info, " +
-                     "d.doctor_id, u.username as doctor_name, d.specialty " +
+                     "d.doctor_id, u.username as doctor_name " +
                      "FROM Appointment a " +
                      "JOIN Patient p ON a.patient_id = p.patient_id " +
                      "LEFT JOIN Parent pr ON p.parent_id = pr.parent_id " +
@@ -341,7 +374,7 @@ public class AppointmentDAO extends DBContext {
                     // Doctor info
                     appointmentDetail.setDoctorId(rs.getInt("doctor_id"));
                     appointmentDetail.setDoctorName(rs.getString("doctor_name"));
-                    appointmentDetail.setDoctorSpecialty(rs.getString("specialty"));
+                    appointmentDetail.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                     
                     appointments.add(appointmentDetail);
                 }
@@ -374,7 +407,7 @@ public class AppointmentDAO extends DBContext {
                     "p.full_name as patient_name, p.dob as patient_dob, " +
                     "p.address as patient_address, p.insurance_info, " +
                     "pa.parentname as parent_name, " +
-                    "u.username as doctor_name, d.specialty as doctor_specialty, " +
+                    "u.username as doctor_name, " +
                     "mr.record_id, mr.diagnosis " +
                     "FROM Appointment a " +
                     "JOIN Patient p ON a.patient_id = p.patient_id " +
@@ -405,7 +438,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setPatientInsurance(rs.getString("insurance_info"));
                 apt.setParentName(rs.getString("parent_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
-                apt.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                apt.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                 
                 // Check medical report
                 int recordId = rs.getInt("record_id");
@@ -428,7 +461,7 @@ public class AppointmentDAO extends DBContext {
                     "p.full_name as patient_name, p.dob as patient_dob, " +
                     "p.address as patient_address, p.insurance_info, " +
                     "pa.parentname as parent_name, " +
-                    "u.username as doctor_name, d.specialty as doctor_specialty, " +
+                    "u.username as doctor_name, " +
                     "mr.record_id, mr.diagnosis " +
                     "FROM Appointment a " +
                     "JOIN Patient p ON a.patient_id = p.patient_id " +
@@ -460,7 +493,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setPatientInsurance(rs.getString("insurance_info"));
                 apt.setParentName(rs.getString("parent_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
-                apt.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                apt.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                 
                 int recordId = rs.getInt("record_id");
                 apt.setHasMedicalReport(!rs.wasNull());
@@ -481,7 +514,7 @@ public class AppointmentDAO extends DBContext {
                     "p.full_name as patient_name, p.dob as patient_dob, " +
                     "p.address as patient_address, p.insurance_info, " +
                     "pa.parentname as parent_name, " +
-                    "u.username as doctor_name, d.specialty as doctor_specialty, " +
+                    "u.username as doctor_name, " +
                     "mr.record_id, mr.diagnosis " +
                     "FROM Appointment a " +
                     "JOIN Patient p ON a.patient_id = p.patient_id " +
@@ -503,7 +536,9 @@ public class AppointmentDAO extends DBContext {
                 apt.setPatientId(rs.getInt("patient_id"));
                 apt.setDoctorId(rs.getInt("doctor_id"));
                 apt.setDateTime(rs.getTimestamp("date_time"));
-                apt.setStatus(rs.getBoolean("status"));
+                // Handle status as String (NVARCHAR) - not Boolean
+                String statusStr = rs.getString("status");
+                apt.setStatus(statusStr != null ? statusStr : "Pending");
                 
                 apt.setPatientName(rs.getString("patient_name"));
                 apt.setPatientDob(rs.getString("patient_dob"));
@@ -511,7 +546,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setPatientInsurance(rs.getString("insurance_info"));
                 apt.setParentName(rs.getString("parent_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
-                apt.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                apt.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                 
                 int recordId = rs.getInt("record_id");
                 apt.setHasMedicalReport(!rs.wasNull());
@@ -554,7 +589,7 @@ public class AppointmentDAO extends DBContext {
                     "p.full_name as patient_name, p.dob as patient_dob, " +
                     "p.address as patient_address, p.insurance_info, " +
                     "pa.parentname as parent_name, " +
-                    "u.username as doctor_name, d.specialty as doctor_specialty " +
+                    "u.username as doctor_name " +
                     "FROM Appointment a " +
                     "JOIN Patient p ON a.patient_id = p.patient_id " +
                     "LEFT JOIN Parent pa ON p.parent_id = pa.parent_id " +
@@ -584,7 +619,7 @@ public class AppointmentDAO extends DBContext {
                 apt.setPatientInsurance(rs.getString("insurance_info"));
                 apt.setParentName(rs.getString("parent_name"));
                 apt.setDoctorName(rs.getString("doctor_name"));
-                apt.setDoctorSpecialty(rs.getString("doctor_specialty"));
+                apt.setDoctorSpecialty(""); // specialty column doesn't exist in Doctor table
                 
                 apt.setHasMedicalReport(false);
                 

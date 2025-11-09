@@ -21,6 +21,7 @@ public class CheckinFormServlet extends HttpServlet {
     private PatientDAO patientDAO;
     private AppointmentDAO appointmentDAO;
     private ParentDAO parentDAO;
+    private DoctorDAO doctorDAO;
 
     @Override
     public void init() throws ServletException {
@@ -29,6 +30,7 @@ public class CheckinFormServlet extends HttpServlet {
         patientDAO = new PatientDAO();
         appointmentDAO = new AppointmentDAO();
         parentDAO = new ParentDAO();
+        doctorDAO = new DoctorDAO();
     }
 
     @Override
@@ -213,12 +215,13 @@ public class CheckinFormServlet extends HttpServlet {
             
             Date checkInTime = new Date();
             int priority = 0;
+            Integer appointmentId = null;
             
             // If this is a booked patient, get appointment ID and calculate priority
             if ("booked".equals(patientType)) {
                 String appointmentIdStr = request.getParameter("appointmentId");
                 if (appointmentIdStr != null && !appointmentIdStr.trim().isEmpty()) {
-                    int appointmentId = Integer.parseInt(appointmentIdStr);
+                    appointmentId = Integer.parseInt(appointmentIdStr);
                     patientQueue.setAppointmentId(appointmentId);
                     
                     // Get appointment details to check appointment time
@@ -240,6 +243,45 @@ public class CheckinFormServlet extends HttpServlet {
                     // Update appointment status to "Confirmed"
                     appointmentDAO.updateAppointmentStatus(appointmentId, "Confirmed");
                 }
+            } else {
+                // For walk-in patients, create a new appointment
+                // Get doctor ID from request, or use first available doctor as default
+                String doctorIdStr = request.getParameter("doctorId");
+                int doctorId;
+                
+                if (doctorIdStr != null && !doctorIdStr.trim().isEmpty()) {
+                    doctorId = Integer.parseInt(doctorIdStr);
+                } else {
+                    // Get first available doctor as default
+                    List<entity.Doctor> doctors = doctorDAO.getAllDoctors();
+                    if (doctors == null || doctors.isEmpty()) {
+                        throw new Exception("Khong co bac si nao trong he thong. Vui long them bac si truoc khi check-in.");
+                    }
+                    doctorId = doctors.get(0).getDoctorId();
+                }
+                
+                // Verify doctor exists
+                entity.Doctor doctor = doctorDAO.getDoctorById(doctorId);
+                if (doctor == null) {
+                    throw new Exception("Bac si khong ton tai trong he thong.");
+                }
+                
+                // Create new appointment for walk-in patient
+                Appointment newAppointment = new Appointment();
+                newAppointment.setPatientId(patientId);
+                newAppointment.setDoctorId(doctorId);
+                newAppointment.setDateTime(checkInTime); // Use current time as appointment time
+                newAppointment.setStatus("Confirmed"); // Set status as Confirmed for walk-in patients
+                
+                // Create appointment in database and get the generated appointment ID
+                appointmentId = appointmentDAO.createAppointmentWithStatus(newAppointment);
+                
+                if (appointmentId == -1) {
+                    throw new Exception("Khong the tao appointment cho benh nhan walk-in.");
+                }
+                
+                // Link appointment to queue entry
+                patientQueue.setAppointmentId(appointmentId);
             }
             
             patientQueue.setQueueNumber(nextQueueNumber);

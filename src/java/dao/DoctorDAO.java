@@ -214,7 +214,7 @@ public class DoctorDAO extends DBContext {
     }
     // Get doctor by ID
     public Doctor getDoctorById(int doctorId) {
-        String sql = "SELECT * FROM Doctor WHERE doctor_id = ?";
+        String sql = "SELECT doctor_id, user_id, experienceYears, certificate, introduce FROM Doctor WHERE doctor_id = ?";
         
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -226,7 +226,16 @@ public class DoctorDAO extends DBContext {
                     Doctor doctor = new Doctor();
                     doctor.setDoctorId(rs.getInt("doctor_id"));
                     doctor.setUserId(rs.getInt("user_id"));
-                    doctor.setSpecialty(rs.getString("specialty"));
+                    doctor.setSpecialty(""); // specialty column doesn't exist in Doctor table
+                    // Handle nullable experienceYears
+                    int expYears = rs.getInt("experienceYears");
+                    doctor.setExperienceYears(rs.wasNull() ? 0 : expYears);
+                    // Handle nullable certificate
+                    String cert = rs.getString("certificate");
+                    doctor.setCertificate(cert != null ? cert : "");
+                    // Handle nullable introduce
+                    String intro = rs.getString("introduce");
+                    doctor.setIntroduce(intro != null ? intro : "");
                     return doctor;
                 }
             }
