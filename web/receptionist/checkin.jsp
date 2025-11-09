@@ -322,7 +322,7 @@
                         <!-- Header -->
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="text-xl font-semibold">Đăng Ký Bệnh Nhân</h5>
+                                <h5 class="text-xl font-semibold">Đăng Ký Bệnh Nhân Mới</h5>
                             </div>
                             <div class="card-body">
                                 <!-- Error message display -->
@@ -345,22 +345,7 @@
 
                                 <form action="<c:url value="/receptionist/checkin-form"/>" method="post">
                                 <input type="hidden" name="action" value="checkin">
-
-                                <div class="form-group">
-                                    <label class="form-label">Loại Bệnh Nhân</label>
-                                    <div class="radio-group">
-                                        <div class="radio-item">
-                                            <input class="form-check-input" type="radio" name="patientType" id="walkin"
-                                                value="walkin" checked>
-                                            <label class="form-check-label" for="walkin">Bệnh Nhân Trực Tiếp</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input class="form-check-input" type="radio" name="patientType" id="booked"
-                                                value="booked">
-                                            <label class="form-check-label" for="booked">Bệnh Nhân Đặt Lịch</label>
-                                        </div>
-                                    </div>
-                                </div>
+                                <input type="hidden" name="patientType" value="walkin">
 
                                 <!-- Section for walk-in patients -->
                                 <div id="walkinSection">
@@ -410,48 +395,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Section for booked patients -->
-                                <div id="bookedSection" style="display: none;">
-                                    <div class="search-section">
-                                        <h6 class="font-semibold text-gray-800 mb-3">Tìm Kiếm Bệnh Nhân Đặt Lịch</h6>
-                                        <div class="search-controls">
-                                            <input type="text" class="search-input" id="searchInput"
-                                                placeholder="Tìm theo: Mã đặt lịch, SĐT, CCCD phụ huynh, Tên phụ huynh, Tên bệnh nhân">
-                                            <button type="button" class="search-btn" id="searchBtn">
-                                                <i class="fas fa-search"></i> Tìm Kiếm
-                                            </button>
-                                        </div>
-
-                                        <!-- Appointment Results List -->
-                                        <div id="appointmentResults" style="display: none; margin-top: 15px;">
-                                            <h6 class="font-semibold text-gray-800 mb-3">Kết Quả Tìm Kiếm</h6>
-                                            <div id="appointmentList" class="appointment-list"></div>
-                                        </div>
-
-                                        <!-- Selected Appointment Info -->
-                                        <div class="patient-info" id="patientInfo" style="display: none;">
-                                            <h6 class="font-semibold text-gray-800 mb-2">Thông Tin Đã Chọn</h6>
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <div><strong>Mã BN:</strong> <span id="displayPatientId">-</span></div>
-                                                <div><strong>Họ Tên:</strong> <span id="displayPatientName">-</span></div>
-                                                <div><strong>Phụ Huynh:</strong> <span id="displayParentName">-</span></div>
-                                                <div><strong>Mã Lịch Hẹn:</strong> <span id="displayAppointmentId">-</span></div>
-                                                <div><strong>Bác Sĩ:</strong> <span id="displayDoctorName">-</span></div>
-                                                <div><strong>Thời Gian:</strong> <span id="displayDateTime">-</span></div>
-                                            </div>
-                                            <input type="hidden" id="hiddenPatientId" name="patientId">
-                                            <input type="hidden" id="hiddenAppointmentId" name="appointmentId">
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
                                 <div class="flex gap-3">
                                     <button type="submit" class="btn btn-primary flex-1">
                                         <i class="fas fa-user-plus"></i> Đăng Ký Bệnh Nhân
                                     </button>
-                                    <a href="<c:url value="/receptionist/waiting-screen.jsp"/>" class="btn btn-secondary flex-1 text-center">
+                                    <a href="<c:url value="/receptionist"/>" class="btn btn-secondary flex-1 text-center">
                                         <i class="fas fa-arrow-left"></i> Quay Lại
                                     </a>
                                 </div>
@@ -464,187 +412,14 @@
             </div>
 
             <script>
-                // Set context path for AJAX calls
-                const contextPath = '<c:url value="/"/>'.replace(/\/$/, '');
-                
-                // Function to toggle required attribute
-                function toggleRequiredFields(section, isRequired) {
-                    const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
-                    inputs.forEach(input => {
-                        if (isRequired) {
-                            input.setAttribute('required', 'required');
-                        } else {
-                            input.removeAttribute('required');
-                        }
-                    });
-                }
-
-                // Hiển thị/ẩn các section dựa trên loại bệnh nhân
-                document.querySelectorAll('input[name="patientType"]').forEach(radio => {
-                    radio.addEventListener('change', function () {
-                        const walkinSection = document.getElementById('walkinSection');
-                        const bookedSection = document.getElementById('bookedSection');
-
-                        if (this.value === 'booked') {
-                            walkinSection.style.display = 'none';
-                            bookedSection.style.display = 'block';
-                            // Remove required from walk-in fields
-                            toggleRequiredFields(walkinSection, false);
-                            // Reset walk-in form fields
-                            walkinSection.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
-                                if (input.name !== 'action') {
-                                    input.value = '';
-                                }
-                            });
-                        } else {
-                            walkinSection.style.display = 'block';
-                            bookedSection.style.display = 'none';
-                            // Add required back to walk-in fields
-                            toggleRequiredFields(walkinSection, true);
-                            // Reset booked section
-                            document.getElementById('searchInput').value = '';
-                            document.getElementById('appointmentResults').style.display = 'none';
-                            document.getElementById('patientInfo').style.display = 'none';
-                            selectedAppointment = null;
-                        }
-                    });
-                });
-
-                // Set focus to patient name field on page load and initialize required fields
+                // Set focus to patient name field on page load
                 document.addEventListener('DOMContentLoaded', function () {
                     const patientNameField = document.getElementById('patientName');
                     if (patientNameField) {
                         patientNameField.focus();
                     }
-                    
-                    // Initialize required fields based on default selection (walkin)
-                    const walkinSection = document.getElementById('walkinSection');
-                    if (walkinSection && walkinSection.style.display !== 'none') {
-                        toggleRequiredFields(walkinSection, true);
-                    }
                 });
 
-                // Search functionality for booked patients using AJAX
-                let selectedAppointment = null;
-
-                function searchAppointments() {
-                    const keyword = document.getElementById('searchInput').value.trim();
-                    const appointmentResults = document.getElementById('appointmentResults');
-                    const appointmentList = document.getElementById('appointmentList');
-                    const patientInfo = document.getElementById('patientInfo');
-
-                    if (!keyword) {
-                        alert('Vui lòng nhập từ khóa tìm kiếm');
-                        return;
-                    }
-
-                    // Show loading
-                    appointmentList.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Đang tìm kiếm...</div>';
-                    appointmentResults.style.display = 'block';
-                    patientInfo.style.display = 'none';
-
-                    // Reset selected appointment
-                    selectedAppointment = null;
-
-                    // Make AJAX request
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', contextPath + '/receptionist/search-appointment?keyword=' + encodeURIComponent(keyword), true);
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4) {
-                            if (xhr.status === 200) {
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-                                    displayAppointmentResults(response.appointments);
-                                } catch (e) {
-                                    console.error('Error parsing JSON:', e);
-                                    appointmentList.innerHTML = '<div class="alert alert-danger">Có lỗi xảy ra khi tìm kiếm</div>';
-                                }
-                            } else {
-                                appointmentList.innerHTML = '<div class="alert alert-danger">Không thể kết nối đến server</div>';
-                            }
-                        }
-                    };
-                    xhr.send();
-                }
-
-                function displayAppointmentResults(appointments) {
-                    const appointmentList = document.getElementById('appointmentList');
-                    const appointmentResults = document.getElementById('appointmentResults');
-
-                    if (!appointments || appointments.length === 0) {
-                        appointmentList.innerHTML = '<div class="alert alert-danger">Không tìm thấy lịch hẹn nào</div>';
-                        appointmentResults.style.display = 'block';
-                        return;
-                    }
-
-                    let html = '';
-                    appointments.forEach(function (apt) {
-                        html += '<div class="appointment-item" data-appointment-id="' + apt.appointmentId + 
-                                '" data-patient-id="' + apt.patientId + '">';
-                        html += '<div class="appointment-item-header">';
-                        html += '<span class="appointment-id">Mã LH: #' + apt.appointmentId + '</span>';
-                        html += '<span class="appointment-date">' + apt.dateTime + '</span>';
-                        html += '</div>';
-                        html += '<div class="appointment-details">';
-                        html += '<div><strong>Bệnh nhân:</strong> ' + (apt.patientName || '-') + '</div>';
-                        html += '<div><strong>Phụ huynh:</strong> ' + (apt.parentName || '-') + '</div>';
-                        html += '<div><strong>Bác sĩ:</strong> ' + (apt.doctorName || '-') + ' - ' + (apt.doctorSpecialty || '') + '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                    });
-
-                    appointmentList.innerHTML = html;
-                    appointmentResults.style.display = 'block';
-
-                    // Add click handlers to appointment items
-                    document.querySelectorAll('.appointment-item').forEach(function (item) {
-                        item.addEventListener('click', function () {
-                            // Remove selected class from all items
-                            document.querySelectorAll('.appointment-item').forEach(function (i) {
-                                i.classList.remove('selected');
-                            });
-
-                            // Add selected class to clicked item
-                            this.classList.add('selected');
-
-                            // Get appointment data
-                            const appointmentId = this.getAttribute('data-appointment-id');
-                            const patientId = this.getAttribute('data-patient-id');
-                            const appointment = appointments.find(function (apt) {
-                                return apt.appointmentId == appointmentId;
-                            });
-
-                            selectedAppointment = appointment;
-                            displaySelectedAppointment(appointment);
-                        });
-                    });
-                }
-
-                function displaySelectedAppointment(appointment) {
-                    document.getElementById('displayPatientId').textContent = appointment.patientId || '-';
-                    document.getElementById('displayPatientName').textContent = appointment.patientName || '-';
-                    document.getElementById('displayParentName').textContent = appointment.parentName || '-';
-                    document.getElementById('displayAppointmentId').textContent = appointment.appointmentId || '-';
-                    document.getElementById('displayDoctorName').textContent = appointment.doctorName || '-';
-                    document.getElementById('displayDateTime').textContent = appointment.dateTime || '-';
-
-                    // Set hidden fields
-                    document.getElementById('hiddenPatientId').value = appointment.patientId;
-                    document.getElementById('hiddenAppointmentId').value = appointment.appointmentId;
-
-                    // Show patient info section
-                    document.getElementById('patientInfo').style.display = 'block';
-                }
-
-                // Search button click handler
-                document.getElementById('searchBtn').addEventListener('click', searchAppointments);
-
-                // Allow search on Enter key
-                document.getElementById('searchInput').addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        document.getElementById('searchBtn').click();
-                    }
-                });
 
                 // CCCD validation
                 document.getElementById('parentCccd').addEventListener('input', function (e) {
@@ -666,30 +441,16 @@
 
                 // Form submission validation
                 document.querySelector('form').addEventListener('submit', function (e) {
-                    const patientType = document.querySelector('input[name="patientType"]:checked').value;
-                    
-                    // Validate booked patient
-                    if (patientType === 'booked') {
-                        const hiddenPatientId = document.getElementById('hiddenPatientId');
-                        const hiddenAppointmentId = document.getElementById('hiddenAppointmentId');
-                        
-                        if (!hiddenPatientId.value || !hiddenAppointmentId.value) {
-                            e.preventDefault();
-                            alert('Vui lòng chọn một lịch hẹn từ kết quả tìm kiếm');
-                            return false;
-                        }
-                    } else {
-                        // Validate walk-in patient
-                        const cccdInput = document.getElementById('parentCccd');
-                        const cccdValue = cccdInput.value;
-                        const cccdPattern = /^[0-9]{9,12}$/;
+                    // Validate walk-in patient
+                    const cccdInput = document.getElementById('parentCccd');
+                    const cccdValue = cccdInput.value;
+                    const cccdPattern = /^[0-9]{9,12}$/;
 
-                        if (cccdValue && !cccdPattern.test(cccdValue)) {
-                            e.preventDefault();
-                            alert('Số CCCD phải có từ 9 đến 12 chữ số và chỉ chứa số');
-                            cccdInput.focus();
-                            return false;
-                        }
+                    if (cccdValue && !cccdPattern.test(cccdValue)) {
+                        e.preventDefault();
+                        alert('Số CCCD phải có từ 9 đến 12 chữ số và chỉ chứa số');
+                        cccdInput.focus();
+                        return false;
                     }
                 });
             </script>

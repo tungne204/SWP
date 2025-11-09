@@ -61,13 +61,28 @@ public class AppointmentStatusServlet extends HttpServlet {
             int appointmentId = Integer.parseInt(req.getParameter("id"));
             String newStatus = req.getParameter("status");  
 
-            // Update appointment status
-            appointmentDAO.updateStatus(appointmentId, newStatus);
+            // Get current appointment to check if status is changing from "Confirmed" to "Waiting"
+            // Must get BEFORE updating status to check the current status
+            Appointment currentAppointment = mainAppointmentDAO.getById(appointmentId);
+            String currentStatus = currentAppointment != null ? currentAppointment.getStatus() : null;
 
-            // If status is "Checkin", automatically add patient to queue
-            if ("Checkin".equals(newStatus)) {
-                addPatientToQueueFromAppointment(appointmentId, req);
+            // If status is changing from "Confirmed" to "Waiting", add patient to queue first
+            // Then update appointment status
+            if ("Waiting".equals(newStatus) && "Confirmed".equals(currentStatus)) {
+                try {
+                    addPatientToQueueFromAppointment(appointmentId, req);
+                } catch (Exception queueException) {
+                    // If adding to queue fails, don't update appointment status
+                    // Error message is already set in addPatientToQueueFromAppointment
+                    req.getSession().setAttribute("errorMessage", 
+                        "Khong the them benh nhan vao hang cho: " + queueException.getMessage());
+                    resp.sendRedirect("Appointment-List");
+                    return;
+                }
             }
+
+            // Update appointment status after successfully adding to queue (if needed)
+            appointmentDAO.updateStatus(appointmentId, newStatus);
 
             resp.sendRedirect("Appointment-List");
         } catch (Exception e) {
@@ -78,7 +93,7 @@ public class AppointmentStatusServlet extends HttpServlet {
     }
 
     /**
-     * Add patient to queue when appointment status changes to "Checkin"
+     * Add patient to queue when appointment status changes from "Confirmed" to "Waiting"
      * Logic similar to CheckinFormServlet for booked patients
      */
     private void addPatientToQueueFromAppointment(int appointmentId, HttpServletRequest req) throws Exception {

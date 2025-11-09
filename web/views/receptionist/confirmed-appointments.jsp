@@ -357,6 +357,12 @@
                             class="btn btn-secondary"
                             >🔄 Reset</a
                           >
+                          <a
+                            href="${pageContext.request.contextPath}/receptionist/checkin-form"
+                            class="btn btn-success"
+                            style="background-color: #28a745; color: white;"
+                            >➕ Đăng Ký Bệnh Nhân Mới</a
+                          >
                         </div>
                         <input type="hidden" name="page" value="1" id="pageInput" />
                       </form>

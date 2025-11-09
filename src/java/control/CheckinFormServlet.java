@@ -271,7 +271,7 @@ public class CheckinFormServlet extends HttpServlet {
                 newAppointment.setPatientId(patientId);
                 newAppointment.setDoctorId(doctorId);
                 newAppointment.setDateTime(checkInTime); // Use current time as appointment time
-                newAppointment.setStatus("Confirmed"); // Set status as Confirmed for walk-in patients
+                newAppointment.setStatus("Waiting"); // Set status as Waiting for walk-in patients
                 
                 // Create appointment in database and get the generated appointment ID
                 appointmentId = appointmentDAO.createAppointmentWithStatus(newAppointment);

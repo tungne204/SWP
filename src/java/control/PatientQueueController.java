@@ -390,6 +390,22 @@ public class PatientQueueController extends HttpServlet {
             throws ServletException, IOException {
         
         try {
+            // Check if user is logged in and is a doctor (roleId = 2)
+            HttpSession session = request.getSession(false);
+            User user = (session != null) ? (User) session.getAttribute("acc") : null;
+            
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/Login.jsp");
+                return;
+            }
+            
+            // Only doctors (roleId = 2) can start consultations
+            if (user.getRoleId() != 2) {
+                request.getSession().setAttribute("errorMessage", "Chi co bac si moi co the bat dau kham benh.");
+                response.sendRedirect(request.getContextPath() + "/patient-queue?action=view");
+                return;
+            }
+            
             int queueId = Integer.parseInt(request.getParameter("queueId"));
             
             // Assign consultation room (get from request or auto-assign)
@@ -420,26 +436,15 @@ public class PatientQueueController extends HttpServlet {
             Consultation consultation = new Consultation();
             consultation.setPatientId(patientQueue.getPatientId());
             
-            // Get doctor ID from session or request
-            HttpSession session = request.getSession();
-            Integer doctorId = (Integer) session.getAttribute("doctorId");
-            if (doctorId == null) {
-                // If not in session, try to get from request
-                String doctorIdStr = request.getParameter("doctorId");
-                if (doctorIdStr != null) {
-                    doctorId = Integer.parseInt(doctorIdStr);
-                }
-            }
+            // Get doctor ID from the logged-in user (who is a doctor)
+            Doctor doctor = doctorDAO.getDoctorByUserId(user.getUserId());
+            Integer doctorId;
             
-            // If still no doctor ID found, get the first available doctor
-            if (doctorId == null) {
-                List<Doctor> doctors = doctorDAO.getAllDoctors();
-                if (!doctors.isEmpty()) {
-                    doctorId = doctors.get(0).getDoctorId();
-                } else {
-                    // No doctors in database - this is a critical error
-                    throw new IllegalStateException("No doctors found in database. Cannot create consultation.");
-                }
+            if (doctor != null) {
+                doctorId = doctor.getDoctorId();
+            } else {
+                // If doctor not found for this user, this is an error
+                throw new IllegalStateException("Doctor record not found for user ID: " + user.getUserId());
             }
             
             consultation.setDoctorId(doctorId);

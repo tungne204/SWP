@@ -150,7 +150,7 @@
                             <select name="status" class="border p-2 rounded-md">
                                 <option value="all">Tất cả</option>
                                 <option value="confirmed" ${status=='confirmed' ? 'selected' : ''}>Đã xác nhận</option>
-                                <option value="checkin" ${status=='checkin' ? 'selected' : ''}>Đã check-in</option>
+                                <option value="waiting" ${status=='waiting' ? 'selected' : ''}>Đang chờ</option>
                                 <option value="pending" ${status=='pending' ? 'selected' : ''}>Chờ xác nhận</option>
                                 <option value="cancelled" ${status=='cancelled' ? 'selected' : ''}>Đã hủy</option>
                                 <option value="completed" ${status=='completed' ? 'selected' : ''}>Đã khám</option>
@@ -208,11 +208,11 @@
                                                     <c:when test="${a.status == 'Confirmed'}">
                                                         <span class="px-2 py-1 rounded-full text-white bg-green-500">Đã xác nhận</span>
                                                     </c:when>
-                                                    <c:when test="${a.status == 'Checkin'}">
-                                                        <span class="px-2 py-1 rounded-full text-white bg-cyan-500">Đã check-in</span>
-                                                    </c:when>
                                                     <c:when test="${a.status == 'Pending'}">
                                                         <span class="px-2 py-1 rounded-full text-white bg-yellow-500">Chờ xác nhận</span>
+                                                    </c:when>
+                                                    <c:when test="${a.status == 'Waiting'}">
+                                                        <span class="px-2 py-1 rounded-full text-white bg-cyan-500">Đang chờ</span>
                                                     </c:when>
                                                     <c:when test="${a.status == 'Cancelled'}">
                                                         <span class="px-2 py-1 rounded-full text-white bg-red-500">Đã hủy</span>
@@ -243,7 +243,7 @@
                                                         <select name="status" class="border rounded-md p-1 text-sm">
                                                             <option value="Pending" ${a.status=='Pending' ? 'selected' : ''}>Chờ xác nhận</option>
                                                             <option value="Confirmed" ${a.status=='Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
-                                                            <option value="Checkin" ${a.status=='Checkin' ? 'selected' : ''}>Đã check-in</option>
+                                                            <option value="Waiting" ${a.status=='Waiting' ? 'selected' : ''}>Đang chờ</option>
                                                             <option value="Cancelled" ${a.status=='Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                                             <option value="Completed" ${a.status=='Completed' ? 'selected' : ''}>Đã khám</option>
                                                             <option value="In Progress" ${a.status=='In Progress' ? 'selected' : ''}>Đang khám</option>

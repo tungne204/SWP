@@ -547,14 +547,17 @@
                                                     <i class="fas fa-door-open"></i>
                                                     Chuẩn Bị Khám
                                                 </button>
-                                                <form action="patient-queue" method="post" style="display: inline;">
-                                                    <input type="hidden" name="action" value="startConsultation">
-                                                    <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
-                                                    <button type="submit" class="action-btn btn-start">
-                                                        <i class="fas fa-play"></i>
-                                                        Bắt Đầu Khám
-                                                    </button>
-                                                </form>
+                                                <%-- Chỉ hiển thị nút "Bắt Đầu Khám" cho bác sĩ (roleId = 2) --%>
+                                                <c:if test="${sessionScope.acc.roleId == 2}">
+                                                    <form action="patient-queue" method="post" style="display: inline;">
+                                                        <input type="hidden" name="action" value="startConsultation">
+                                                        <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
+                                                        <button type="submit" class="action-btn btn-start">
+                                                            <i class="fas fa-play"></i>
+                                                            Bắt Đầu Khám
+                                                        </button>
+                                                    </form>
+                                                </c:if>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'In Consultation'}">
                                                 <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
@@ -571,14 +574,17 @@
                                                 </a>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Ready for Examination'}">
-                                                <form action="patient-queue" method="post" style="display: inline;">
-                                                    <input type="hidden" name="action" value="startConsultation">
-                                                    <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
-                                                    <button type="submit" class="action-btn btn-start">
-                                                        <i class="fas fa-play"></i>
-                                                        Bắt Đầu Khám
-                                                    </button>
-                                                </form>
+                                                <%-- Chỉ hiển thị nút "Bắt Đầu Khám" cho bác sĩ (roleId = 2) --%>
+                                                <c:if test="${sessionScope.acc.roleId == 2}">
+                                                    <form action="patient-queue" method="post" style="display: inline;">
+                                                        <input type="hidden" name="action" value="startConsultation">
+                                                        <input type="hidden" name="queueId" value="${queueDetail.queue.queueId}">
+                                                        <button type="submit" class="action-btn btn-start">
+                                                            <i class="fas fa-play"></i>
+                                                            Bắt Đầu Khám
+                                                        </button>
+                                                    </form>
+                                                </c:if>
                                             </c:when>
                                             <c:when test="${queueDetail.queue.status == 'Ready for Follow-up'}">
                                                 <a href="patient-queue?action=consultation&queueId=${queueDetail.queue.queueId}"
