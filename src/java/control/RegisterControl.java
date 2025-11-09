@@ -66,19 +66,31 @@ public class RegisterControl extends HttpServlet {
         }
 
         // ✅ Kiểm tra email tồn tại trong database
-        if (dao.checkEmailExists(email)) {
-            request.setAttribute("error", "Email đã tồn tại!");
-            request.getRequestDispatcher("Register.jsp").forward(request, response);
-            return;
+        boolean emailExists = dao.checkEmailExists(email);
+        boolean emailVerified = false;
+        
+        if (emailExists) {
+            // Kiểm tra xem email đã được verify chưa
+            emailVerified = dao.isEmailVerified(email);
+            
+            if (emailVerified) {
+                // Email đã tồn tại và đã được verify -> không cho đăng ký lại
+                request.setAttribute("error", "Email đã tồn tại và đã được xác thực!");
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                return;
+            } else {
+                // Email tồn tại nhưng chưa verify -> cập nhật thông tin và tạo code mới
+                dao.updateUnverifiedUser(username, password, email, phone);
+            }
+        } else {
+            // Email chưa tồn tại -> tạo user mới
+            dao.registerWithEmailVerification(username, password, email, phone);
         }
-
-        // ✅ Tạo user với trạng thái chưa verified
-        dao.registerWithEmailVerification(username, password, email, phone);
         
         // ✅ Tạo mã verification code 6 số
         String verificationCode = EmailValidator.generateVerificationCode();
         
-        // ✅ Lưu verification code vào database
+        // ✅ Lưu verification code vào database (cập nhật cho cả user mới và user chưa verify)
         dao.saveEmailVerificationCode(email, verificationCode);
         
         // ✅ Gửi email với verification code

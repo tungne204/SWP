@@ -48,12 +48,15 @@ public class VerifyEmailServlet extends HttpServlet {
         String email = (String) session.getAttribute("pendingEmail");
         UserDAO dao = new UserDAO();
         
-        // Validate verification code
-        if (code == null || code.isEmpty()) {
+        // Validate verification code - trim whitespace
+        if (code == null || code.trim().isEmpty()) {
             request.setAttribute("error", "Please enter the verification code.");
             request.getRequestDispatcher("VerifyEmail.jsp").forward(request, response);
             return;
         }
+        
+        // Trim code to remove any whitespace
+        code = code.trim();
         
         // Check if code is valid
         if (dao.verifyEmailCode(email, code)) {

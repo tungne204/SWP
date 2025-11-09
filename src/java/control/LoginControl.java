@@ -65,7 +65,7 @@ public class LoginControl extends HttpServlet {
                     break;
             }
         } else {
-            request.setAttribute("error", "Invalid email or password!");
+            request.setAttribute("error", "Sai email hoặc password!");
             request.getRequestDispatcher("Login.jsp").forward(request, response);
         }
     }
