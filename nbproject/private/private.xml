@@ -2,6 +2,15 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/SWP391-2/SWP/web/views/medicalassistant/test-form.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/appointments/create-appointment.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/AppointmentServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/doctor/examination-form.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/PatientServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/DoctorServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/MedicalAssistantServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/appointments/appointment-list.jsp</file>
+        </group>
     </open-files>
 </project-private>

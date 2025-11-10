@@ -321,7 +321,7 @@ public class AppointmentDAO extends DBContext {
     // Tạo test result
     public boolean createTestResult(TestResult testResult) {
         String sql = "INSERT INTO TestResult (record_id, test_type, result, date, "
-                + "consultation_id) VALUES (?, ?, ?, ?, ?)";
+                + "consultation_id, image_path) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, testResult.getRecordId());
@@ -333,6 +333,7 @@ public class AppointmentDAO extends DBContext {
             } else {
                 ps.setNull(5, Types.INTEGER);
             }
+            ps.setString(6, testResult.getImagePath());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -358,7 +359,9 @@ public class AppointmentDAO extends DBContext {
                 test.setTestType(rs.getString("test_type"));
                 test.setResult(rs.getString("result"));
                 test.setDate(rs.getDate("date"));
-                test.setConsultationId(rs.getInt("consultation_id"));
+                Integer consultationId = rs.getObject("consultation_id", Integer.class);
+                test.setConsultationId(consultationId);
+                test.setImagePath(rs.getString("image_path"));
                 list.add(test);
             }
         } catch (SQLException e) {

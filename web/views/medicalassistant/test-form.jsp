@@ -205,16 +205,23 @@ User acc = (User) session.getAttribute("acc"); %>
         border-radius: 8px;
         margin-bottom: 15px;
         border-left: 4px solid #3498db;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
       }
 
       .main-content .container .test-item h4 {
         color: #2c3e50;
         margin-bottom: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       .main-content .container .test-item p {
         margin: 5px 0;
         color: #555;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       .main-content .container .alert {
@@ -283,6 +290,46 @@ User acc = (User) session.getAttribute("acc"); %>
           updateCharCount();
         }
       });
+
+      function previewImage(input) {
+        const preview = document.getElementById("imagePreview");
+        const previewImg = document.getElementById("previewImg");
+        const file = input.files[0];
+
+        if (file) {
+          // Validate file type
+          if (!file.type.startsWith("image/")) {
+            alert("Vui lòng chọn file ảnh!");
+            input.value = "";
+            preview.style.display = "none";
+            return;
+          }
+
+          // Validate file size (10MB)
+          if (file.size > 10 * 1024 * 1024) {
+            alert("Kích thước file quá lớn! Tối đa 10MB.");
+            input.value = "";
+            preview.style.display = "none";
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            previewImg.src = e.target.result;
+            preview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.style.display = "none";
+        }
+      }
+
+      function removeImage() {
+        const input = document.getElementById("testImage");
+        const preview = document.getElementById("imagePreview");
+        input.value = "";
+        preview.style.display = "none";
+      }
     </script>
   </head>
   <body class="index-page">
@@ -346,6 +393,7 @@ User acc = (User) session.getAttribute("acc"); %>
                   method="post"
                   action="${pageContext.request.contextPath}/appointments"
                   onsubmit="return validateForm()"
+                  enctype="multipart/form-data"
                 >
                   <input type="hidden" name="action" value="submitTest" />
                   <input
@@ -406,6 +454,68 @@ User acc = (User) session.getAttribute("acc"); %>
                     </small>
                   </div>
 
+                  <div class="form-group">
+                    <label for="testImage"
+                      >Ảnh kết quả xét nghiệm (Tùy chọn)</label
+                    >
+                    <input
+                      type="file"
+                      id="testImage"
+                      name="testImage"
+                      accept="image/*"
+                      style="
+                        width: 100%;
+                        padding: 12px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        transition: border 0.3s;
+                      "
+                      onchange="previewImage(this)"
+                    />
+                    <small
+                      style="
+                        display: block;
+                        margin-top: 5px;
+                        color: #6c757d;
+                        font-size: 12px;
+                      "
+                    >
+                      Chấp nhận: JPG, PNG, GIF (Tối đa 10MB)
+                    </small>
+                    <div
+                      id="imagePreview"
+                      style="margin-top: 15px; display: none"
+                    >
+                      <img
+                        id="previewImg"
+                        src=""
+                        alt="Preview"
+                        style="
+                          max-width: 100%;
+                          max-height: 300px;
+                          border-radius: 8px;
+                          border: 2px solid #e0e0e0;
+                        "
+                      />
+                      <button
+                        type="button"
+                        onclick="removeImage()"
+                        style="
+                          margin-top: 10px;
+                          padding: 8px 15px;
+                          background: #dc3545;
+                          color: white;
+                          border: none;
+                          border-radius: 5px;
+                          cursor: pointer;
+                        "
+                      >
+                        Xóa ảnh
+                      </button>
+                    </div>
+                  </div>
+
                   <div class="alert alert-warning">
                     <strong>⚠️ Quan trọng:</strong> Sau khi gửi kết quả xét
                     nghiệm này, bệnh nhân sẽ tự động được chuyển lại hàng chờ để
@@ -438,7 +548,48 @@ User acc = (User) session.getAttribute("acc"); %>
                           />
                         </p>
                         <p><strong>Kết quả:</strong></p>
-                        <p style="white-space: pre-wrap">${test.result}</p>
+                        <p
+                          style="
+                            white-space: pre-wrap;
+                            word-wrap: break-word;
+                            overflow-wrap: break-word;
+                            word-break: break-word;
+                            max-width: 100%;
+                          "
+                        >
+                          ${test.result}
+                        </p>
+                        <c:if test="${not empty test.imagePath}">
+                          <div style="margin-top: 15px">
+                            <p><strong>📷 Ảnh kết quả:</strong></p>
+                            <img
+                              src="${pageContext.request.contextPath}/${test.imagePath}"
+                              alt="Kết quả xét nghiệm ${test.testType}"
+                              onerror="this.onerror=null; this.src=''; this.style.display='none'; this.nextElementSibling.style.display='block';"
+                              onclick="window.open('${pageContext.request.contextPath}/${test.imagePath}', '_blank')"
+                              style="
+                                cursor: pointer;
+                                max-width: 100%;
+                                max-height: 300px;
+                                border-radius: 5px;
+                                border: 2px solid #e0e0e0;
+                                margin-top: 10px;
+                              "
+                            />
+                            <p
+                              style="
+                                display: none;
+                                color: #dc3545;
+                                margin-top: 10px;
+                                padding: 10px;
+                                background: #fff3cd;
+                                border-radius: 5px;
+                              "
+                            >
+                              ⚠️ Không thể tải ảnh. Đường dẫn: ${test.imagePath}
+                            </p>
+                          </div>
+                        </c:if>
                       </div>
                     </c:forEach>
                   </div>

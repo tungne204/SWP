@@ -17,6 +17,7 @@ public class TestResult {
     private String result;
     private Date date;
     private Integer consultationId;
+    private String imagePath;
     
     // Constructor
     public TestResult() {}
@@ -40,5 +41,10 @@ public class TestResult {
     public Integer getConsultationId() { return consultationId; }
     public void setConsultationId(Integer consultationId) { 
         this.consultationId = consultationId; 
+    }
+    
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { 
+        this.imagePath = imagePath; 
     }
 }

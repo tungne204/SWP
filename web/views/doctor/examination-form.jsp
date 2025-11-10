@@ -70,6 +70,8 @@
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 overflow: hidden;
                 margin-bottom: 20px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .header {
@@ -95,6 +97,8 @@
 
             .main-content .container .content {
                 padding: 30px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .form-group {
@@ -248,27 +252,38 @@
                 border-radius: 8px;
                 margin-bottom: 15px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
             }
 
             .main-content .container .test-result-item h4 {
                 color: #2c3e50;
                 margin-bottom: 10px;
                 font-size: 16px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item p {
                 margin: 5px 0;
                 color: #555;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-type {
                 font-weight: bold;
                 color: #1977cc;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-date {
                 color: #7f8c8d;
                 font-size: 13px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-result-content {
@@ -278,6 +293,43 @@
                 border-radius: 5px;
                 white-space: pre-wrap;
                 word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .main-content .container .test-result-item .test-image {
+                margin-top: 15px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                border: 2px solid #e0e0e0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .main-content .container .test-result-item .test-image img {
+                max-width: 100%;
+                max-height: 500px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: transform 0.3s;
+                display: block;
+                margin: 10px auto 0;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+
+            .main-content .container .test-result-item .test-image img:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+
+            .main-content .container .test-result-item .test-image-label {
+                font-weight: bold;
+                color: #1977cc;
+                margin-bottom: 10px;
+                display: block;
+                font-size: 14px;
             }
         </style>
         <script>
@@ -404,9 +456,9 @@
                 </c:if>
 
                 <c:if test="${appointment.status == 'In Progress' || appointment.status == 'Waiting'}">
-                    <!-- Hiển thị kết quả xét nghiệm nếu có -->
+                    <!-- Hiển thị kết quả xét nghiệm nếu có - ĐẶT TRƯỚC FORM -->
                     <c:if test="${not empty testResults}">
-                        <div class="test-results-section">
+                        <div class="test-results-section" style="margin-bottom: 30px;">
                             <h3>📋 Kết quả xét nghiệm</h3>
                             <c:forEach var="testResult" items="${testResults}">
                                 <div class="test-result-item">
@@ -421,6 +473,24 @@
                                         <strong>Kết quả:</strong><br/>
                                         ${testResult.result}
                                     </div>
+                                    <c:choose>
+                                        <c:when test="${not empty testResult.imagePath}">
+                                            <div class="test-image">
+                                                <span class="test-image-label">📷 Ảnh kết quả xét nghiệm:</span>
+                                                <img src="${pageContext.request.contextPath}/${testResult.imagePath}" 
+                                                     alt="Kết quả xét nghiệm ${testResult.testType}"
+                                                     onerror="this.onerror=null; this.src=''; this.style.display='none'; this.nextElementSibling.style.display='block';"
+                                                     onclick="window.open('${pageContext.request.contextPath}/${testResult.imagePath}', '_blank')"
+                                                     style="cursor: pointer; max-width: 100%; max-height: 500px; border-radius: 5px; display: block; margin-top: 10px;" />
+                                                <p style="display: none; color: #dc3545; margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                                                    ⚠️ Không thể tải ảnh. Đường dẫn: ${testResult.imagePath}
+                                                </p>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Debug: Hiển thị nếu không có ảnh -->
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </c:forEach>
                         </div>
