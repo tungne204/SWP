@@ -3,14 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391-2/SWP/web/views/medicalassistant/test-form.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/appointments/create-appointment.jsp</file>
             <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/AppointmentServlet.java</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/dao/appointments/AppointmentDAO.java</file>
+            <file>file:/D:/SWP391-2/SWP/web/views/appointments/medical-record.jsp</file>
             <file>file:/D:/SWP391-2/SWP/web/views/doctor/examination-form.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/PatientServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/DoctorServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/MedicalAssistantServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/appointments/appointment-list.jsp</file>
+            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/ReceptionistServlet.java</file>
         </group>
     </open-files>
 </project-private>

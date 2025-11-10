@@ -631,6 +631,59 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
     
+    // Lấy appointments đã hoàn thành (status = 'Completed')
+    public List<Appointment> getCompletedByDoctorId(int doctorId) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT a.appointment_id, a.patient_id, a.doctor_id, a.date_time, a.status, " +
+                    "p.full_name as patient_name, p.dob as patient_dob, " +
+                    "p.address as patient_address, p.insurance_info, " +
+                    "pa.parentname as parent_name, " +
+                    "u.username as doctor_name, " +
+                    "mr.record_id " +
+                    "FROM Appointment a " +
+                    "JOIN Patient p ON a.patient_id = p.patient_id " +
+                    "LEFT JOIN Parent pa ON p.parent_id = pa.parent_id " +
+                    "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                    "JOIN [User] u ON d.user_id = u.user_id " +
+                    "LEFT JOIN MedicalReport mr ON a.appointment_id = mr.appointment_id " +
+                    "WHERE a.doctor_id = ? AND a.status = N'Completed' " +
+                    "ORDER BY a.date_time DESC";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, doctorId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Appointment apt = new Appointment();
+                apt.setAppointmentId(rs.getInt("appointment_id"));
+                apt.setPatientId(rs.getInt("patient_id"));
+                apt.setDoctorId(rs.getInt("doctor_id"));
+                apt.setDateTime(rs.getTimestamp("date_time"));
+                apt.setStatus("Completed");
+                
+                apt.setPatientName(rs.getString("patient_name"));
+                apt.setPatientDob(rs.getString("patient_dob"));
+                apt.setPatientAddress(rs.getString("patient_address"));
+                apt.setPatientInsurance(rs.getString("insurance_info"));
+                apt.setParentName(rs.getString("parent_name"));
+                apt.setDoctorName(rs.getString("doctor_name"));
+                apt.setDoctorSpecialty("");
+                
+                // Check if has medical report
+                int recordId = rs.getInt("record_id");
+                apt.setHasMedicalReport(recordId > 0);
+                apt.setRecordId(recordId > 0 ? recordId : null);
+                
+                list.add(apt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
     /**
      * Search appointments for check-in by keyword
      * Search criteria: appointment ID, patient name, parent name, parent CCCD, phone number

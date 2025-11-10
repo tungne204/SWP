@@ -415,6 +415,12 @@
                         <c:remove var="message" scope="session"/>
                         <c:remove var="messageType" scope="session"/>
                     </c:if>
+                    
+                    <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-error">
+                            ${errorMessage}
+                        </div>
+                    </c:if>
 
                     <div class="info-box">
                         <p><strong>📌 Thông tin quan trọng:</strong></p>
@@ -434,29 +440,38 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="patientName">Họ và tên bệnh nhân <span class="required">*</span></label>
-                                    <input type="text" id="patientName" name="patientName" placeholder="Nhập họ và tên đầy đủ" required>
+                                    <input type="text" id="patientName" name="patientName" 
+                                           value="${param.patientName}" 
+                                           placeholder="Nhập họ và tên đầy đủ" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="patientDob">Ngày sinh <span class="required">*</span></label>
-                                    <input type="date" id="patientDob" name="patientDob" required>
+                                    <input type="date" id="patientDob" name="patientDob" 
+                                           value="${param.patientDob}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="patientPhone">Số điện thoại <span class="required">*</span></label>
-                                    <input type="tel" id="patientPhone" name="patientPhone" placeholder="Nhập số điện thoại" required>
+                                    <input type="tel" id="patientPhone" name="patientPhone" 
+                                           value="${param.patientPhone}" 
+                                           placeholder="Nhập số điện thoại" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="parentName">Phụ huynh / Người giám hộ</label>
-                                    <input type="text" id="parentName" name="parentName" placeholder="Nhập tên phụ huynh hoặc người giám hộ" required>
+                                    <input type="text" id="parentName" name="parentName" 
+                                           value="${param.parentName}" 
+                                           placeholder="Nhập tên phụ huynh hoặc người giám hộ">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 18px;">
                                 <label for="patientAddress">Địa chỉ <span class="required">*</span></label>
                                 <textarea id="patientAddress" name="patientAddress" required
-                                          placeholder="Nhập địa chỉ hiện tại"></textarea>
+                                          placeholder="Nhập địa chỉ hiện tại">${param.patientAddress}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="insuranceInfo">Thông tin bảo hiểm</label>
-                                <input type="text" id="insuranceInfo" name="insuranceInfo" placeholder="Nhập thông tin bảo hiểm (nếu có)">
+                                <input type="text" id="insuranceInfo" name="insuranceInfo" 
+                                       value="${param.insuranceInfo}" 
+                                       placeholder="Nhập thông tin bảo hiểm (nếu có)">
                             </div>
                         </div>
 
@@ -467,7 +482,7 @@
                                 <label for="symptoms">Symptoms (Triệu chứng)</label>
                                 <textarea id="symptoms" name="symptoms" 
                                           placeholder="Vui lòng mô tả các triệu chứng hoặc lý do khám bệnh... (Please describe symptoms or reason for visit...)"
-                                          maxlength="400"></textarea>
+                                          maxlength="400">${param.symptoms}</textarea>
                                 <small id="symptomsCharCount" style="display: block; margin-top: 5px; color: #6c757d; font-size: 12px;">
                                     0 / 400 ký tự
                                 </small>
@@ -480,7 +495,8 @@
                                 <c:when test="${not empty doctors}">
                                     <c:forEach var="doctor" items="${doctors}">
                                         <label class="doctor-card">
-                                            <input type="radio" name="doctorId" value="${doctor.doctorId}">
+                                            <input type="radio" name="doctorId" value="${doctor.doctorId}"
+                                                   <c:if test="${param.doctorId == doctor.doctorId}">checked</c:if>>
                                             <c:if test="${not empty doctor.avatar}">
                                                 <img src="${pageContext.request.contextPath}/${doctor.avatar}" 
                                                      alt="${doctor.username}" class="doctor-avatar">
@@ -522,7 +538,8 @@
                                 <label for="appointmentDate">
                                     Ngày khám <span class="required">*</span>
                                 </label>
-                                <input type="date" id="appointmentDate" name="appointmentDate" required>
+                                <input type="date" id="appointmentDate" name="appointmentDate" 
+                                       value="${param.appointmentDate}" required>
                             </div>
 
                             <div class="form-group">
@@ -530,6 +547,7 @@
                                     Giờ khám <span class="required">*</span>
                                 </label>
                                 <input type="time" id="appointmentTime" name="appointmentTime" 
+                                       value="${param.appointmentTime}" 
                                        min="08:00" max="17:00" step="1800" required>
                             </div>
                         </div>

@@ -218,10 +218,17 @@ public class AppointmentServlet extends HttpServlet {
                 }
                 // Load patient information để hiển thị tên bệnh nhân
                 Patient patient = patientDAO.getPatientWithUserInfo(appt.getPatientId());
+                
+                // Load lịch sử khám bệnh và xét nghiệm của bệnh nhân
+                List<MedicalReport> medicalHistory = appointmentDAO.getMedicalHistoryByPatientId(appt.getPatientId(), appointmentId);
+                List<TestResult> testHistory = appointmentDAO.getTestHistoryByPatientId(appt.getPatientId(), appointmentId);
+                
                 request.setAttribute("appointment", appt);
                 request.setAttribute("patient", patient);
                 request.setAttribute("medicalReport", report);
                 request.setAttribute("testResults", testResults);
+                request.setAttribute("medicalHistory", medicalHistory);
+                request.setAttribute("testHistory", testHistory);
                 request.getRequestDispatcher("/views/doctor/examination-form.jsp")
                        .forward(request, response);
                 return;
@@ -253,6 +260,69 @@ public class AppointmentServlet extends HttpServlet {
                 request.getRequestDispatcher("/views/medicalassistant/test-form.jsp")
                        .forward(request, response);
                 return;
+            }
+            
+            // /appointments/medical-record/{id} (Print medical record - Doctor only, completed appointments)
+            if (path.startsWith("/medical-record/") && parts.length >= 3) {
+                try {
+                    Integer appointmentId = parseIntOrNull(parts[2]);
+                    if (appointmentId == null) {
+                        backWithMsg(request, response, "Invalid appointment id!", "error");
+                        return;
+                    }
+                    
+                    Appointment appt = appointmentDAO.getAppointmentById(appointmentId);
+                    if (appt == null) {
+                        backWithMsg(request, response, "Appointment not found!", "error");
+                        return;
+                    }
+                    
+                    // Kiểm tra quyền truy cập - chỉ Doctor được in hồ sơ bệnh án
+                    if (acc.getRoleId() != 2 || !doctorOwnsAppointment(acc, appt)) {
+                        backWithMsg(request, response, "Access denied! Only the attending doctor can view medical records.", "error");
+                        return;
+                    }
+                    
+                    // Load medical report
+                    MedicalReport report = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
+                    if (report == null) {
+                        backWithMsg(request, response, "No medical report found for this appointment!", "error");
+                        return;
+                    }
+                    
+                    // Load test results nếu có
+                    List<TestResult> testResults = null;
+                    if (report.getRecordId() > 0) {
+                        testResults = appointmentDAO.getTestResultsByRecordId(report.getRecordId());
+                    }
+                    
+                    // Load patient information
+                    Patient patient = patientDAO.getPatientWithUserInfo(appt.getPatientId());
+                    if (patient == null) {
+                        backWithMsg(request, response, "Patient information not found!", "error");
+                        return;
+                    }
+                    
+                    // Load doctor information
+                    Doctor doctor = doctorDAO.getDoctorById(appt.getDoctorId());
+                    if (doctor == null) {
+                        backWithMsg(request, response, "Doctor information not found!", "error");
+                        return;
+                    }
+                    
+                    request.setAttribute("appointment", appt);
+                    request.setAttribute("patient", patient);
+                    request.setAttribute("doctor", doctor);
+                    request.setAttribute("medicalReport", report);
+                    request.setAttribute("testResults", testResults);
+                    request.getRequestDispatcher("/views/appointments/medical-record.jsp")
+                           .forward(request, response);
+                    return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    backWithMsg(request, response, "Error loading medical record: " + e.getMessage(), "error");
+                    return;
+                }
             }
         }
 
@@ -354,7 +424,7 @@ public class AppointmentServlet extends HttpServlet {
             String phone = nvl(request.getParameter("patientPhone")).trim();
 
             if (isBlank(patientName) || isBlank(dobStr) || isBlank(address) || isBlank(phone)) {
-                backWithMsg(request, response, "Please provide patient name, date of birth, address and phone!", "error");
+                forwardToFormWithError(request, response, "Vui lòng cung cấp đầy đủ thông tin bệnh nhân (tên, ngày sinh, địa chỉ và số điện thoại)!");
                 return;
             }
 
@@ -362,12 +432,12 @@ public class AppointmentServlet extends HttpServlet {
             try {
                 dobDate = Date.valueOf(dobStr);
             } catch (IllegalArgumentException ex) {
-                backWithMsg(request, response, "Invalid date of birth format!", "error");
+                forwardToFormWithError(request, response, "Định dạng ngày sinh không hợp lệ!");
                 return;
             }
 
             if (dobDate.after(new Date(System.currentTimeMillis()))) {
-                backWithMsg(request, response, "Date of birth must be in the past!", "error");
+                forwardToFormWithError(request, response, "Ngày sinh phải là ngày trong quá khứ!");
                 return;
             }
 
@@ -386,12 +456,12 @@ public class AppointmentServlet extends HttpServlet {
                 );
             } catch (Exception ex) {
                 ex.printStackTrace();
-                backWithMsg(request, response, "Failed to create or find patient record!", "error");
+                forwardToFormWithError(request, response, "Có lỗi xảy ra khi tạo hồ sơ bệnh nhân!");
                 return;
             }
 
             if (patientId == null) {
-                backWithMsg(request, response, "Failed to create patient record!", "error");
+                forwardToFormWithError(request, response, "Không thể tạo hồ sơ bệnh nhân!");
                 return;
             }
 
@@ -403,7 +473,7 @@ public class AppointmentServlet extends HttpServlet {
             if (isBlank(timeStr)) timeStr = nvl(request.getParameter("appointmentTime"));
 
             if (doctorId == null || isBlank(dateStr) || isBlank(timeStr)) {
-                backWithMsg(request, response, "Please choose doctor, date and time!", "error");
+                forwardToFormWithError(request, response, "Vui lòng chọn bác sĩ, ngày và giờ khám!");
                 return;
             }
 
@@ -413,17 +483,17 @@ public class AppointmentServlet extends HttpServlet {
                 sdf.setLenient(false);
                 ts = new java.sql.Timestamp(sdf.parse(dateStr + " " + timeStr).getTime());
             } catch (Exception ex) {
-                backWithMsg(request, response, "Invalid date/time format!", "error");
+                forwardToFormWithError(request, response, "Định dạng ngày/giờ không hợp lệ!");
                 return;
             }
 
             if (ts.before(new java.util.Date())) {
-                backWithMsg(request, response, "Appointment time must be in the future!", "error");
+                forwardToFormWithError(request, response, "Ngày và giờ khám phải trong tương lai!");
                 return;
             }
 
             if (!appointmentDAO.isDoctorAvailable(doctorId, ts)) {
-                backWithMsg(request, response, "Selected doctor is not available at that time!", "error");
+                forwardToFormWithError(request, response, "Bác sĩ đã có lịch hẹn vào thời gian này! Vui lòng chọn thời gian khác.");
                 return;
             }
 
@@ -431,7 +501,7 @@ public class AppointmentServlet extends HttpServlet {
             
             // Validate symptoms length (max 400 characters)
             if (symptoms != null && symptoms.length() > 400) {
-                backWithMsg(request, response, "Triệu chứng quá dài! Tối đa 400 ký tự. Hiện tại: " + symptoms.length() + " ký tự.", "error");
+                forwardToFormWithError(request, response, "Triệu chứng quá dài! Tối đa 400 ký tự. Hiện tại: " + symptoms.length() + " ký tự.");
                 return;
             }
             
@@ -443,8 +513,8 @@ public class AppointmentServlet extends HttpServlet {
             a.setSymptoms(isBlank(symptoms) ? null : symptoms);
 
             boolean ok = appointmentDAO.createAppointment(a);
-            backWithMsg(request, response, ok ? "Appointment created! Please wait for confirmation."
-                                              : "Create failed!", ok ? "success" : "error");
+            backWithMsg(request, response, ok ? "Đặt lịch hẹn thành công! Vui lòng chờ xác nhận từ lễ tân."
+                                              : "Đặt lịch hẹn thất bại!", ok ? "success" : "error");
             return;
         }
         // ================== END: PATIENT CREATE ==================
@@ -566,7 +636,16 @@ public class AppointmentServlet extends HttpServlet {
                         appointmentDAO.updateMedicalReport(report);
                     }
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED.getValue());
-                    backWithMsg(request, response, ok ? "Examination completed!" : "Complete failed!", ok ? "success" : "error");
+                    
+                    if (ok) {
+                        // Lưu thời gian hoàn thành khám vào session
+                        request.getSession().setAttribute("examinationCompletedTime", new java.util.Date());
+                        sessionMessage(request, "Examination completed successfully! Redirecting to medical record...", "success");
+                        // Chuyển đến trang in hồ sơ bệnh án
+                        response.sendRedirect(request.getContextPath() + "/appointments/medical-record/" + appointmentId);
+                    } else {
+                        backWithMsg(request, response, "Complete failed!", "error");
+                    }
                     return;
                 }
                 break;
@@ -674,7 +753,7 @@ public class AppointmentServlet extends HttpServlet {
                     tr.setDate(new java.sql.Date(System.currentTimeMillis()));
                     tr.setImagePath(imagePath);
                     boolean saved = appointmentDAO.createTestResult(tr);
-                    boolean statusUpdated = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.WAITING.getValue());
+                    boolean statusUpdated = appointmentDAO.updateAppointmentStatusFromTestingToWaiting(appointmentId);
                     backWithMsg(request, response,
                             (saved && statusUpdated) ? "Test submitted. Patient returned to queue."
                                                      : "Failed to submit test!",
@@ -710,6 +789,19 @@ public class AppointmentServlet extends HttpServlet {
     private void backWithMsg(HttpServletRequest req, HttpServletResponse res, String msg, String type) throws IOException {
         sessionMessage(req, msg, type);
         res.sendRedirect(req.getContextPath() + "/appointments");
+    }
+    
+    private void forwardToFormWithError(HttpServletRequest req, HttpServletResponse res, String msg) throws ServletException, IOException {
+        // Preserve form data
+        req.setAttribute("formData", req.getParameterMap());
+        req.setAttribute("errorMessage", msg);
+        
+        // Load doctors list for form
+        req.setAttribute("doctors", doctorDAO.getAllDoctors());
+        req.setAttribute("pageTitle", "Book New Appointment");
+        
+        // Forward to create form
+        req.getRequestDispatcher("/views/appointments/create-appointment.jsp").forward(req, res);
     }
 
     private boolean doctorOwnsAppointment(User acc, Appointment appt) {

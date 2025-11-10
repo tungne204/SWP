@@ -302,8 +302,7 @@ public class MedicalAssistantServlet extends HttpServlet {
         test.setImagePath(imagePath);                  // <-- set image path
 
         boolean testSaved = appointmentDAO.createTestResult(test);
-        boolean statusUpdated = appointmentDAO.updateAppointmentStatus(
-                appointmentId, AppointmentStatus.WAITING.getValue());
+        boolean statusUpdated = appointmentDAO.updateAppointmentStatusFromTestingToWaiting(appointmentId);
 
         if (testSaved && statusUpdated) {
             sessionMessage(request, "Test result submitted successfully! Patient moved to waiting queue.", "success");

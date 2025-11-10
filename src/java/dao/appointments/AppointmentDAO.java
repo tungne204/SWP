@@ -23,11 +23,7 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getAppointmentsByDoctorUserIdAndStatus(int userId, String status) {
         List<Appointment> list = new ArrayList<>();
 
-        // Nếu đang load hàng đợi WAITING: sort theo waiting_since DESC (mới vào queue đứng đầu)
-        String orderBy = "Waiting".equalsIgnoreCase(status)
-                ? "ORDER BY CASE WHEN a.waiting_since IS NULL THEN 1 ELSE 0 END, a.waiting_since DESC, a.date_time ASC"
-                : "ORDER BY a.date_time DESC";
-
+        // Sắp xếp: appointment quay lại từ Testing (có waiting_since) lên đầu, check-in lần đầu (waiting_since NULL) theo ID
         String sql = """
         SELECT a.*, 
                p.full_name AS patient_name,
@@ -37,7 +33,11 @@ public class AppointmentDAO extends DBContext {
         LEFT JOIN Patient p ON a.patient_id = p.patient_id
         LEFT JOIN [User] u ON d.user_id = u.user_id
         WHERE d.user_id = ? AND a.status = ?
-    """ + " " + orderBy;
+        ORDER BY 
+            CASE WHEN a.waiting_since IS NOT NULL THEN 0 ELSE 1 END,
+            a.waiting_since DESC,
+            a.appointment_id ASC
+    """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -182,15 +182,33 @@ public class AppointmentDAO extends DBContext {
     public boolean updateAppointmentStatus(int appointmentId, String newStatus) {
         String sql = """
         UPDATE Appointment
-        SET status = ?,
-            waiting_since = CASE WHEN ? = 'Waiting' THEN GETDATE() ELSE waiting_since END
+        SET status = ?
         WHERE appointment_id = ?
     """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newStatus);
-            ps.setString(2, newStatus); // dùng 2 lần trong CASE
-            ps.setInt(3, appointmentId);
+            ps.setInt(2, appointmentId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    // Cập nhật status từ Testing về Waiting (cho medical assistant hoàn thành xét nghiệm)
+    public boolean updateAppointmentStatusFromTestingToWaiting(int appointmentId) {
+        String sql = """
+        UPDATE Appointment
+        SET status = 'Waiting',
+            waiting_since = GETDATE()
+        WHERE appointment_id = ? AND status = 'Testing'
+    """;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -551,11 +569,16 @@ public class AppointmentDAO extends DBContext {
             params.add(dateTo);
         }
         
-        // Order by
-        sql.append("ORDER BY ");
-        sql.append("  CASE WHEN a.date_time >= GETDATE() THEN 0 ELSE 1 END, ");
-        sql.append("  CASE WHEN a.date_time >= GETDATE() THEN a.date_time END ASC, ");
-        sql.append("  CASE WHEN a.date_time < GETDATE() THEN a.date_time END DESC ");
+        // Order by - logic khác nhau cho từng role
+        if (roleId == 2) { // Doctor - ưu tiên appointment quay lại từ Testing
+            sql.append("ORDER BY ");
+            sql.append("  CASE WHEN a.waiting_since IS NOT NULL THEN 0 ELSE 1 END, ");
+            sql.append("  a.waiting_since DESC, ");
+            sql.append("  a.appointment_id ASC ");
+        } else {
+            // Các role khác - sắp xếp theo appointment_id
+            sql.append("ORDER BY a.appointment_id ASC ");
+        }
         
         // Paging
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -705,5 +728,90 @@ public class AppointmentDAO extends DBContext {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    
+    // Lấy lịch sử medical reports của bệnh nhân (chỉ các appointments đã completed, trừ appointment hiện tại)
+    public List<MedicalReport> getMedicalHistoryByPatientId(int patientId, int excludeAppointmentId) {
+        List<MedicalReport> list = new ArrayList<>();
+        String sql = "SELECT mr.*, a.date_time, u.username AS doctor_name " +
+                     "FROM MedicalReport mr " +
+                     "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
+                     "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                     "JOIN [User] u ON d.user_id = u.user_id " +
+                     "WHERE a.patient_id = ? AND a.status = 'Completed' AND a.appointment_id != ? " +
+                     "AND mr.is_final = 1 " +
+                     "ORDER BY a.date_time DESC";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setInt(2, excludeAppointmentId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                MedicalReport report = new MedicalReport();
+                report.setRecordId(rs.getInt("record_id"));
+                report.setAppointmentId(rs.getInt("appointment_id"));
+                report.setDiagnosis(rs.getString("diagnosis"));
+                report.setPrescription(rs.getString("prescription"));
+                report.setTestRequest(rs.getBoolean("test_request"));
+                report.setConsultationId(rs.getInt("consultation_id"));
+                report.setFinal(rs.getBoolean("is_final"));
+                report.setRequestedTestType(rs.getString("requested_test_type"));
+                report.setTestRequestedAt(rs.getTimestamp("test_requested_at"));
+                Integer docId = rs.getObject("requested_by_doctor_id", Integer.class);
+                report.setRequestedByDoctorId(docId);
+                // Set thêm thông tin để hiển thị
+                report.setExaminationDate(rs.getTimestamp("date_time"));
+                report.setDoctorName(rs.getString("doctor_name"));
+                list.add(report);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+    
+    // Lấy lịch sử test results của bệnh nhân (từ tất cả các appointments đã completed)
+    public List<TestResult> getTestHistoryByPatientId(int patientId, int excludeAppointmentId) {
+        List<TestResult> list = new ArrayList<>();
+        String sql = "SELECT tr.*, a.date_time, u.username AS doctor_name " +
+                     "FROM TestResult tr " +
+                     "JOIN MedicalReport mr ON tr.record_id = mr.record_id " +
+                     "JOIN Appointment a ON mr.appointment_id = a.appointment_id " +
+                     "JOIN Doctor d ON a.doctor_id = d.doctor_id " +
+                     "JOIN [User] u ON d.user_id = u.user_id " +
+                     "WHERE a.patient_id = ? AND a.status = 'Completed' AND a.appointment_id != ? " +
+                     "ORDER BY tr.date DESC";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setInt(2, excludeAppointmentId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                TestResult test = new TestResult();
+                test.setTestId(rs.getInt("test_id"));
+                test.setRecordId(rs.getInt("record_id"));
+                test.setTestType(rs.getString("test_type"));
+                test.setResult(rs.getString("result"));
+                test.setDate(rs.getDate("date"));
+                Integer consultationId = rs.getObject("consultation_id", Integer.class);
+                test.setConsultationId(consultationId);
+                test.setImagePath(rs.getString("image_path"));
+                // Set thêm thông tin để hiển thị
+                test.setExaminationDate(rs.getTimestamp("date_time"));
+                test.setDoctorName(rs.getString("doctor_name"));
+                list.add(test);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 }
