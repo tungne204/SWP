@@ -22,6 +22,10 @@ public class MedicalReport {
     private String requestedTestType;   // + getter/setter
     private java.sql.Timestamp testRequestedAt;  // optional
     private Integer requestedByDoctorId;
+    
+    // Thêm các trường để hiển thị lịch sử
+    private java.sql.Timestamp examinationDate;
+    private String doctorName;
 
     // Constructor
     public MedicalReport() {
@@ -115,5 +119,21 @@ public class MedicalReport {
 
     public void setFinal(boolean isFinal) {
         this.isFinal = isFinal;
+    }
+
+    public Timestamp getExaminationDate() {
+        return examinationDate;
+    }
+
+    public void setExaminationDate(Timestamp examinationDate) {
+        this.examinationDate = examinationDate;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
     }
 }

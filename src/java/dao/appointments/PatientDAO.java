@@ -258,7 +258,7 @@ public class PatientDAO extends DBContext {
     }
     
     /**
-     * Tìm patient đã tồn tại dựa trên fullName, dob, và phone
+     * Tìm patient đã tồn tại dựa trên fullName, dob trong cùng tài khoản (user_id)
      * Nếu không tìm thấy, tạo patient mới
      * @param fullName Tên bệnh nhân
      * @param dob Ngày sinh
@@ -276,54 +276,31 @@ public class PatientDAO extends DBContext {
             conn = getConnection();
             conn.setAutoCommit(false);
             
-            // Tìm patient đã tồn tại với thông tin khớp
-            // Tìm theo fullName, dob, và address (hoặc phone từ User table nếu có)
-            String findSql = "SELECT TOP 1 p.patient_id FROM Patient p "
-                    + "LEFT JOIN [User] u ON p.user_id = u.user_id "
-                    + "WHERE p.full_name = ? AND p.dob = ? "
-                    + "AND (p.address = ? OR (u.phone = ? AND u.phone IS NOT NULL))";
-            
+            // Tìm patient đã tồn tại trong cùng tài khoản với cùng tên và ngày sinh
+            // Chỉ tìm theo fullName, dob và user_id
             Integer patientId = null;
-            Integer existingUserId = null;
-            try (PreparedStatement ps = conn.prepareStatement(findSql)) {
-                ps.setString(1, fullName);
-                if (dob != null) {
-                    ps.setDate(2, dob);
-                } else {
-                    ps.setNull(2, Types.DATE);
-                }
-                ps.setString(3, address);
-                ps.setString(4, phone);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        patientId = rs.getInt("patient_id");
-                    }
-                }
-            }
             
-            // Nếu tìm thấy patient đã tồn tại, kiểm tra và cập nhật user_id nếu cần
-            if (patientId != null && userId != null && userId > 0) {
-                String checkUserIdSql = "SELECT user_id FROM Patient WHERE patient_id = ?";
-                try (PreparedStatement ps = conn.prepareStatement(checkUserIdSql)) {
-                    ps.setInt(1, patientId);
+            if (userId != null && userId > 0) {
+                String findSql = "SELECT TOP 1 p.patient_id FROM Patient p "
+                        + "WHERE p.user_id = ? AND p.full_name = ? AND p.dob = ?";
+                
+                try (PreparedStatement ps = conn.prepareStatement(findSql)) {
+                    ps.setInt(1, userId);
+                    ps.setString(2, fullName);
+                    if (dob != null) {
+                        ps.setDate(3, dob);
+                    } else {
+                        ps.setNull(3, Types.DATE);
+                    }
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) {
-                            Object userIdObj = rs.getObject("user_id");
-                            if (userIdObj == null) {
-                                // Patient chưa có user_id, cập nhật
-                                String updateUserIdSql = "UPDATE Patient SET user_id = ? WHERE patient_id = ?";
-                                try (PreparedStatement updatePs = conn.prepareStatement(updateUserIdSql)) {
-                                    updatePs.setInt(1, userId);
-                                    updatePs.setInt(2, patientId);
-                                    updatePs.executeUpdate();
-                                }
-                            }
+                            patientId = rs.getInt("patient_id");
                         }
                     }
                 }
             }
             
-            // Nếu không tìm thấy, tạo patient mới
+            // Nếu không tìm thấy patient trong cùng tài khoản, tạo patient mới
             if (patientId == null) {
                 Integer parentId = null;
                 

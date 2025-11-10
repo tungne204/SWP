@@ -314,6 +314,9 @@ public class AppointmentServlet extends HttpServlet {
                 case "pending":
                     listPending(request, response, doctorId);
                     break;
+                case "completed":
+                    listCompleted(request, response, doctorId);
+                    break;
                 default:
                     listAppointments(request, response, doctorId);
                     break;
@@ -385,6 +388,16 @@ public class AppointmentServlet extends HttpServlet {
         List<Appointment> appointments = dao.getPendingByDoctorId(doctorId);
         request.setAttribute("appointments", appointments);
         request.setAttribute("viewType", "pending");
+        request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
+    }
+    
+    // ✅ Hiển thị appointments đã hoàn thành (status = Completed)
+    private void listCompleted(HttpServletRequest request, HttpServletResponse response, int doctorId)
+            throws ServletException, IOException {
+
+        List<Appointment> appointments = dao.getCompletedByDoctorId(doctorId);
+        request.setAttribute("appointments", appointments);
+        request.setAttribute("viewType", "completed");
         request.getRequestDispatcher("doctor/appointment-list.jsp").forward(request, response);
     }
     

@@ -224,11 +224,15 @@ public class DoctorServlet extends HttpServlet {
                 appointmentId, AppointmentStatus.COMPLETED.getValue());
 
         if (success) {
-            sessionMessage(request, "Examination completed successfully!", "success");
+            // Lưu thời gian hoàn thành khám vào session
+            request.getSession().setAttribute("examinationCompletedTime", new java.util.Date());
+            sessionMessage(request, "Examination completed successfully! Redirecting to medical record...", "success");
+            // Chuyển đến trang in hồ sơ bệnh án
+            response.sendRedirect(request.getContextPath() + "/appointments/medical-record/" + appointmentId);
         } else {
             sessionMessage(request, "Failed to complete examination!", "error");
+            response.sendRedirect(request.getContextPath() + "/doctor");
         }
-        response.sendRedirect(request.getContextPath() + "/doctor");
     }
 
     // Hiển thị thông báo session
