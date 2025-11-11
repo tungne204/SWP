@@ -79,7 +79,8 @@
             <label for="email" class="form-label">Địa chỉ email</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" 
+                       value="<%= request.getParameter("email") != null ? request.getParameter("email") : "" %>" required>
             </div>
         </div>
 
@@ -88,7 +89,8 @@
             <label for="password" class="form-label">Mật khẩu</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" 
+                value="<%= request.getParameter("password") != null ? request.getParameter("password") : "" %>" required>
             </div>
         </div>
 
