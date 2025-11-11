@@ -730,6 +730,26 @@ public class AppointmentDAO extends DBContext {
         return false;
     }
     
+    // Đếm số bệnh nhân đang chờ (status = 'Waiting') của một bác sĩ
+    public int countWaitingPatientsByDoctorId(int doctorId) {
+        String sql = "SELECT COUNT(*) FROM Appointment " +
+                     "WHERE doctor_id = ? AND status = 'Waiting'";
+        
+        try (Connection conn = getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, doctorId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+    
     // Lấy lịch sử medical reports của bệnh nhân (chỉ các appointments đã completed, trừ appointment hiện tại)
     public List<MedicalReport> getMedicalHistoryByPatientId(int patientId, int excludeAppointmentId) {
         List<MedicalReport> list = new ArrayList<>();

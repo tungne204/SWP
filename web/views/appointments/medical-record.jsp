@@ -335,7 +335,7 @@ User acc = (User) session.getAttribute("acc"); %>
           <i class="fas fa-print"></i> In hồ sơ bệnh án
         </button>
         <a
-          href="${pageContext.request.contextPath}/appointments/detail/${appointment.appointmentId}"
+          href="${pageContext.request.contextPath}/appointments"
           class="btn btn-back"
         >
           <i class="fas fa-arrow-left"></i> Quay lại
