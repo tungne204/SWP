@@ -31,6 +31,8 @@
             border-radius: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .main .container .header {
@@ -75,6 +77,8 @@
         
         .main .container .content {
             padding: 40px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .main .container .section {
@@ -157,18 +161,28 @@
             padding: 20px;
             border-radius: 10px;
             margin-top: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
         
         .main .container .medical-box h4 {
             color: #2e7d32;
             margin-bottom: 10px;
             font-size: 16px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .main .container .medical-box p {
             color: #1b5e20;
             white-space: pre-wrap;
             line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            max-width: 100%;
+            overflow: hidden;
         }
         
         .main .container .timeline {
@@ -360,14 +374,14 @@
                     <c:if test="${not empty medicalReport.diagnosis}">
                         <div class="medical-box">
                             <h4>Chẩn đoán</h4>
-                            <p>${medicalReport.diagnosis}</p>
+                            <p style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; max-width: 100%;">${medicalReport.diagnosis}</p>
                         </div>
                     </c:if>
                     
                     <c:if test="${not empty medicalReport.prescription}">
                         <div class="medical-box" style="background: #e3f2fd; border-left-color: #1977cc;">
                             <h4 style="color: #2c4964;">Đơn thuốc</h4>
-                            <p style="color: #2c4964;">${medicalReport.prescription}</p>
+                            <p style="color: #2c4964; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; max-width: 100%; white-space: pre-wrap;">${medicalReport.prescription}</p>
                         </div>
                     </c:if>
                     
@@ -387,8 +401,8 @@
                         🧪 Kết quả xét nghiệm
                     </div>
                     <c:forEach var="testResult" items="${testResults}">
-                        <div class="medical-box" style="background: #f3e5f5; border-left-color: #9c27b0; margin-bottom: 15px;">
-                            <h4 style="color: #6a1b9a; margin-bottom: 10px;">
+                        <div class="medical-box" style="background: #f3e5f5; border-left-color: #9c27b0; margin-bottom: 15px; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;">
+                            <h4 style="color: #6a1b9a; margin-bottom: 10px; word-wrap: break-word; overflow-wrap: break-word;">
                                 ${testResult.testType}
                                 <c:if test="${not empty testResult.date}">
                                     <span style="font-size: 12px; font-weight: normal; color: #9c27b0;">
@@ -396,9 +410,47 @@
                                     </span>
                                 </c:if>
                             </h4>
-                            <p style="color: #4a148c; white-space: pre-wrap; line-height: 1.6;">
+                            <p style="color: #4a148c; white-space: pre-wrap; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; max-width: 100%; overflow: hidden;">
                                 ${testResult.result}
                             </p>
+                            <c:if test="${not empty testResult.imagePath}">
+                                <div style="margin-top: 15px;">
+                                    <p style="color: #6a1b9a; font-weight: bold; margin-bottom: 10px;">📷 Ảnh kết quả xét nghiệm:</p>
+                                    <img
+                                        src="${pageContext.request.contextPath}/${testResult.imagePath}"
+                                        alt="Kết quả xét nghiệm ${testResult.testType}"
+                                        onerror="this.onerror=null; this.src=''; this.style.display='none'; this.nextElementSibling.style.display='block';"
+                                        onclick="window.open('${pageContext.request.contextPath}/${testResult.imagePath}', '_blank')"
+                                        style="
+                                            cursor: pointer;
+                                            max-width: 100%;
+                                            max-height: 400px;
+                                            border-radius: 8px;
+                                            border: 2px solid #9c27b0;
+                                            margin-top: 10px;
+                                            display: block;
+                                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                                            transition: transform 0.2s;
+                                        "
+                                        onmouseover="this.style.transform='scale(1.02)'"
+                                        onmouseout="this.style.transform='scale(1)'"
+                                    />
+                                    <p
+                                        style="
+                                            display: none;
+                                            color: #dc3545;
+                                            margin-top: 10px;
+                                            padding: 10px;
+                                            background: #fff3cd;
+                                            border-radius: 5px;
+                                            word-wrap: break-word;
+                                            overflow-wrap: break-word;
+                                        "
+                                    >
+                                        ⚠️ Không thể tải ảnh. Đường dẫn: ${testResult.imagePath}
+                                    </p>
+                                </div>
+                            </c:if>
                         </div>
                     </c:forEach>
                 </div>

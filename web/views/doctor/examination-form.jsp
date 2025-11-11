@@ -70,6 +70,8 @@
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 overflow: hidden;
                 margin-bottom: 20px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .header {
@@ -95,6 +97,8 @@
 
             .main-content .container .content {
                 padding: 30px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .form-group {
@@ -248,27 +252,38 @@
                 border-radius: 8px;
                 margin-bottom: 15px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
             }
 
             .main-content .container .test-result-item h4 {
                 color: #2c3e50;
                 margin-bottom: 10px;
                 font-size: 16px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item p {
                 margin: 5px 0;
                 color: #555;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-type {
                 font-weight: bold;
                 color: #1977cc;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-date {
                 color: #7f8c8d;
                 font-size: 13px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .main-content .container .test-result-item .test-result-content {
@@ -278,6 +293,148 @@
                 border-radius: 5px;
                 white-space: pre-wrap;
                 word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .main-content .container .test-result-item .test-image {
+                margin-top: 15px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                border: 2px solid #e0e0e0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .main-content .container .test-result-item .test-image img {
+                max-width: 100%;
+                max-height: 500px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: transform 0.3s;
+                display: block;
+                margin: 10px auto 0;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+
+            .main-content .container .test-result-item .test-image img:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+
+            .main-content .container .test-result-item .test-image-label {
+                font-weight: bold;
+                color: #1977cc;
+                margin-bottom: 10px;
+                display: block;
+                font-size: 14px;
+            }
+            
+            /* History sections */
+            .main-content .container .history-section {
+                margin-bottom: 30px;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid #dee2e6;
+            }
+            
+            .main-content .container .history-header {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                padding: 15px 20px;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #dee2e6;
+                transition: background 0.3s;
+            }
+            
+            .main-content .container .history-header:hover {
+                background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            }
+            
+            .main-content .container .history-header h3 {
+                margin: 0;
+                color: #2c3e50;
+                font-size: 18px;
+                font-weight: 600;
+            }
+            
+            .main-content .container .history-header .toggle-icon {
+                font-size: 20px;
+                color: #1977cc;
+                transition: transform 0.3s;
+            }
+            
+            .main-content .container .history-header .toggle-icon.rotated {
+                transform: rotate(180deg);
+            }
+            
+            .main-content .container .history-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+            
+            .main-content .container .history-content.show {
+                max-height: 2000px;
+                transition: max-height 0.5s ease-in;
+            }
+            
+            .main-content .container .history-body {
+                padding: 20px;
+                background: white;
+            }
+            
+            .main-content .container .history-item {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                border-left: 4px solid #1977cc;
+            }
+            
+            .main-content .container .history-item:last-child {
+                margin-bottom: 0;
+            }
+            
+            .main-content .container .history-item-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #dee2e6;
+            }
+            
+            .main-content .container .history-item-date {
+                font-weight: bold;
+                color: #1977cc;
+            }
+            
+            .main-content .container .history-item-doctor {
+                color: #6c757d;
+                font-size: 14px;
+            }
+            
+            .main-content .container .history-item-content {
+                color: #2c3e50;
+                line-height: 1.6;
+            }
+            
+            .main-content .container .history-item-label {
+                font-weight: 600;
+                color: #495057;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+            
+            .main-content .container .no-history {
+                text-align: center;
+                padding: 30px;
+                color: #6c757d;
+                font-style: italic;
             }
         </style>
         <script>
@@ -289,6 +446,13 @@
                 testType.disabled = !opened;
                 if (!opened)
                     testType.value = '';
+            }
+            
+            function toggleHistory(historyId) {
+                const content = document.getElementById(historyId);
+                const icon = document.getElementById(historyId + '-icon');
+                content.classList.toggle('show');
+                icon.classList.toggle('rotated');
             }
 
             // Validate dựa trên nút submit
@@ -393,6 +557,81 @@
 
 
             <div class="content">
+                <!-- LỊCH SỬ KHÁM BỆNH VÀ XÉT NGHIỆM -->
+                <c:if test="${not empty medicalHistory || not empty testHistory}">
+                    <!-- Lịch sử đơn thuốc -->
+                    <c:if test="${not empty medicalHistory}">
+                        <div class="history-section">
+                            <div class="history-header" onclick="toggleHistory('medicalHistoryContent')">
+                                <h3>📋 Lịch sử khám bệnh (${medicalHistory.size()} lần khám)</h3>
+                                <span class="toggle-icon" id="medicalHistoryContent-icon">▼</span>
+                            </div>
+                            <div class="history-content" id="medicalHistoryContent">
+                                <div class="history-body">
+                                    <c:forEach var="history" items="${medicalHistory}">
+                                        <div class="history-item">
+                                            <div class="history-item-header">
+                                                
+                                                <span class="history-item-doctor">
+                                                    Bác sĩ: ${history.doctorName}
+                                                </span>
+                                            </div>
+                                            <div class="history-item-content">
+                                                <div class="history-item-label">Chẩn đoán:</div>
+                                                <div>${history.diagnosis}</div>
+                                                
+                                                <c:if test="${not empty history.prescription}">
+                                                    <div class="history-item-label">Đơn thuốc:</div>
+                                                    <div style="white-space: pre-wrap;">${history.prescription}</div>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                    
+                    <!-- Lịch sử xét nghiệm -->
+                    <c:if test="${not empty testHistory}">
+                        <div class="history-section">
+                            <div class="history-header" onclick="toggleHistory('testHistoryContent')">
+                                <h3>🧪 Lịch sử xét nghiệm (${testHistory.size()} kết quả)</h3>
+                                <span class="toggle-icon" id="testHistoryContent-icon">▼</span>
+                            </div>
+                            <div class="history-content" id="testHistoryContent">
+                                <div class="history-body">
+                                    <c:forEach var="test" items="${testHistory}">
+                                        <div class="history-item">
+                                            <div class="history-item-header">
+                                                
+                                                <span class="history-item-doctor">
+                                                    Bác sĩ: ${test.doctorName}
+                                                </span>
+                                            </div>
+                                            <div class="history-item-content">
+                                                <div class="history-item-label">Loại xét nghiệm: ${test.testType}</div>
+                                                <div class="history-item-label">Kết quả:</div>
+                                                <div style="white-space: pre-wrap; background: white; padding: 10px; border-radius: 5px;">${test.result}</div>
+                                                
+                                                <c:if test="${not empty test.imagePath}">
+                                                    <div class="history-item-label" style="margin-top: 15px;">Ảnh kết quả:</div>
+                                                    <img src="${pageContext.request.contextPath}/${test.imagePath}" 
+                                                         alt="Kết quả xét nghiệm ${test.testType}"
+                                                         style="max-width: 100%; max-height: 300px; border-radius: 5px; margin-top: 10px; cursor: pointer;"
+                                                         onclick="window.open('${pageContext.request.contextPath}/${test.imagePath}', '_blank')"
+                                                         onerror="this.style.display='none';" />
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:if>
+                <!-- KẾT THÚC LỊCH SỬ -->
+                
                 <c:if test="${appointment.status == 'Waiting'}">
                     <form method="post" action="${pageContext.request.contextPath}/appointments">
                         <input type="hidden" name="action" value="start">
@@ -404,9 +643,9 @@
                 </c:if>
 
                 <c:if test="${appointment.status == 'In Progress' || appointment.status == 'Waiting'}">
-                    <!-- Hiển thị kết quả xét nghiệm nếu có -->
+                    <!-- Hiển thị kết quả xét nghiệm nếu có - ĐẶT TRƯỚC FORM -->
                     <c:if test="${not empty testResults}">
-                        <div class="test-results-section">
+                        <div class="test-results-section" style="margin-bottom: 30px;">
                             <h3>📋 Kết quả xét nghiệm</h3>
                             <c:forEach var="testResult" items="${testResults}">
                                 <div class="test-result-item">
@@ -421,6 +660,24 @@
                                         <strong>Kết quả:</strong><br/>
                                         ${testResult.result}
                                     </div>
+                                    <c:choose>
+                                        <c:when test="${not empty testResult.imagePath}">
+                                            <div class="test-image">
+                                                <span class="test-image-label">📷 Ảnh kết quả xét nghiệm:</span>
+                                                <img src="${pageContext.request.contextPath}/${testResult.imagePath}" 
+                                                     alt="Kết quả xét nghiệm ${testResult.testType}"
+                                                     onerror="this.onerror=null; this.src=''; this.style.display='none'; this.nextElementSibling.style.display='block';"
+                                                     onclick="window.open('${pageContext.request.contextPath}/${testResult.imagePath}', '_blank')"
+                                                     style="cursor: pointer; max-width: 100%; max-height: 500px; border-radius: 5px; display: block; margin-top: 10px;" />
+                                                <p style="display: none; color: #dc3545; margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                                                    ⚠️ Không thể tải ảnh. Đường dẫn: ${testResult.imagePath}
+                                                </p>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Debug: Hiển thị nếu không có ảnh -->
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </c:forEach>
                         </div>

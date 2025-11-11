@@ -575,6 +575,14 @@
                                                                                     </button>
                                                                                 </form>
                                                                             </c:if>
+                                                                            <c:if test="${apt.status == 'Completed'}">
+                                                                                <a
+                                                                                    class="btn btn-primary"
+                                                                                    href="${pageContext.request.contextPath}/appointments/medical-record/${apt.appointmentId}"
+                                                                                    target="_blank"
+                                                                                    >📄 In hồ sơ bệnh án</a
+                                                                                >
+                                                                            </c:if>
                                                                         </c:if>
 
                                                                         <!-- Medical Assistant -->

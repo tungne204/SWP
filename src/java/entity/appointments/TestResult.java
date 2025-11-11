@@ -17,6 +17,11 @@ public class TestResult {
     private String result;
     private Date date;
     private Integer consultationId;
+    private String imagePath;
+    
+    // Thêm các trường để hiển thị lịch sử
+    private java.sql.Timestamp examinationDate;
+    private String doctorName;
     
     // Constructor
     public TestResult() {}
@@ -40,5 +45,20 @@ public class TestResult {
     public Integer getConsultationId() { return consultationId; }
     public void setConsultationId(Integer consultationId) { 
         this.consultationId = consultationId; 
+    }
+    
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { 
+        this.imagePath = imagePath; 
+    }
+    
+    public java.sql.Timestamp getExaminationDate() { return examinationDate; }
+    public void setExaminationDate(java.sql.Timestamp examinationDate) { 
+        this.examinationDate = examinationDate; 
+    }
+    
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { 
+        this.doctorName = doctorName; 
     }
 }
