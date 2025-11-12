@@ -651,11 +651,11 @@ public class AppointmentServlet extends HttpServlet {
                     if (ok) {
                         // Lưu thời gian hoàn thành khám vào session
                         request.getSession().setAttribute("examinationCompletedTime", new java.util.Date());
-                        sessionMessage(request, "Examination completed successfully! Redirecting to medical record...", "success");
+                        sessionMessage(request, "Hoàn tất khám bệnh thành công! Hồ sơ bệnh án đã được tạo.", "success");
                         // Chuyển đến trang in hồ sơ bệnh án
                         response.sendRedirect(request.getContextPath() + "/appointments/medical-record/" + appointmentId);
                     } else {
-                        backWithMsg(request, response, "Complete failed!", "error");
+                        backWithMsg(request, response, "Hoàn tất khám thất bại!", "error");
                     }
                     return;
                 }

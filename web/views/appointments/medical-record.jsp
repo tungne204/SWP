@@ -316,6 +316,66 @@ User acc = (User) session.getAttribute("acc"); %>
           justify-content: center;
         }
       }
+
+      /* Animation for message */
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Success/Error message styles */
+      .alert-message {
+        max-width: 21cm;
+        margin: 0 auto 20px auto;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideDown 0.3s ease-out;
+      }
+
+      .alert-message.success {
+        background: linear-gradient(135deg, #f0fff4 0%, #d4edda 100%);
+        border-left: 5px solid #28a745;
+      }
+
+      .alert-message.error {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+        border-left: 5px solid #dc3545;
+      }
+
+      .alert-message .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .alert-message.success .alert-icon {
+        font-size: 24px;
+        color: #28a745;
+      }
+
+      .alert-message.error .alert-icon {
+        font-size: 24px;
+        color: #dc3545;
+      }
+
+      .alert-message.success .alert-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #155724;
+      }
+
+      .alert-message.error .alert-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #721c24;
+      }
     </style>
   </head>
 
@@ -341,6 +401,18 @@ User acc = (User) session.getAttribute("acc"); %>
           <i class="fas fa-arrow-left"></i> Quay lại
         </a>
       </div>
+
+      <!-- Display success/error message -->
+      <c:if test="${not empty sessionScope.message}">
+        <div class="alert-message ${sessionScope.messageType eq 'error' ? 'error' : 'success'} no-print">
+          <div class="alert-content">
+            <i class="fas ${sessionScope.messageType eq 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} alert-icon"></i>
+            <span class="alert-text">${sessionScope.message}</span>
+          </div>
+        </div>
+        <c:remove var="message" scope="session"/>
+        <c:remove var="messageType" scope="session"/>
+      </c:if>
 
       <div class="medical-record-container">
         <!-- Header -->
