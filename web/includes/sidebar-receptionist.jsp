@@ -73,31 +73,7 @@
 <div class="sidebar-fixed">
   <nav class="sidebar-nav">
     <!-- Dashboard Section -->
-    <div class="nav-section">
-      <br />
-      <br />
-      <div class="nav-section-title">Bảng điều khiển</div>
-      <div class="nav-item">
-        <a href="${pageContext.request.contextPath}/" class="nav-link">
-          <i class="bi bi-speedometer2"></i>
-          <span class="nav-link-text">Trang tổng quan</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- Patient Management -->
-    <div class="nav-section">
-      <div class="nav-section-title">Quản lý bệnh nhân</div>
-      <div class="nav-item">
-        <a
-          href="${pageContext.request.contextPath}/receptionist"
-          class="nav-link"
-        >
-          <i class="bi bi-person-plus"></i>
-          <span class="nav-link-text">Tiếp nhận bệnh nhân</span>
-        </a>
-      </div>
-    </div>
+    
 
     <!-- Appointments -->
     <div class="nav-section">

@@ -208,6 +208,15 @@ public class ReceptionistServlet extends HttpServlet {
             }
 
             int patientId = appointment.getPatientId();
+            int doctorId = appointment.getDoctorId();
+            
+            // Kiểm tra số lượng bệnh nhân đang chờ của bác sĩ
+            int waitingCount = appointmentDAO.countWaitingPatientsByDoctorId(doctorId);
+            if (waitingCount >= 10) {
+                sessionMessage(request, "Khong the check-in! Bac si da co " + waitingCount + " benh nhan dang cho (toi da 10 nguoi).", "error");
+                response.sendRedirect(request.getContextPath() + "/receptionist");
+                return;
+            }
 
             // Check if patient is already in queue today
             if (patientQueueDAO.isPatientInQueueToday(patientId)) {

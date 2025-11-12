@@ -549,8 +549,19 @@ public class AppointmentServlet extends HttpServlet {
                         backWithMsg(request, response, "Only CONFIRMED can be checked in!", "error");
                         return;
                     }
+                    
+                    // Kiểm tra số lượng bệnh nhân đang chờ của bác sĩ
+                    int doctorId = appt.getDoctorId();
+                    int waitingCount = appointmentDAO.countWaitingPatientsByDoctorId(doctorId);
+                    if (waitingCount >= 10) {
+                        backWithMsg(request, response, "Khong the check-in! Bac si da co " + waitingCount + " benh nhan dang cho (toi da 10 nguoi).", "error");
+                        return;
+                    }
+                    
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.WAITING.getValue());
-                    backWithMsg(request, response, ok ? "Patient checked in!" : "Check-in failed!", ok ? "success" : "error");
+                    // Redirect về trang appointments với statusFilter=Confirmed để tiếp tục xem danh sách Confirmed
+                    sessionMessage(request, ok ? "Patient checked in!" : "Check-in failed!", ok ? "success" : "error");
+                    response.sendRedirect(request.getContextPath() + "/appointments?statusFilter=Confirmed");
                     return;
                 }
                 break;
@@ -640,11 +651,11 @@ public class AppointmentServlet extends HttpServlet {
                     if (ok) {
                         // Lưu thời gian hoàn thành khám vào session
                         request.getSession().setAttribute("examinationCompletedTime", new java.util.Date());
-                        sessionMessage(request, "Examination completed successfully! Redirecting to medical record...", "success");
+                        sessionMessage(request, "Hoàn tất khám bệnh thành công! Hồ sơ bệnh án đã được tạo.", "success");
                         // Chuyển đến trang in hồ sơ bệnh án
                         response.sendRedirect(request.getContextPath() + "/appointments/medical-record/" + appointmentId);
                     } else {
-                        backWithMsg(request, response, "Complete failed!", "error");
+                        backWithMsg(request, response, "Hoàn tất khám thất bại!", "error");
                     }
                     return;
                 }

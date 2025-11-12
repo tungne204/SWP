@@ -432,6 +432,13 @@
                                                         class="btn btn-secondary"
                                                         >🔄 Đặt lại</a
                                                     >
+                                                    <c:if test="${roleId == 5}">
+                                                        <a
+                                                            href="${pageContext.request.contextPath}/receptionist/checkin-form"
+                                                            class="btn btn-primary"
+                                                            >➕ Đăng Ký Bệnh Nhân Mới</a
+                                                        >
+                                                    </c:if>
                                                 </div>
                                                 <input type="hidden" name="page" value="1" id="pageInput" />
                                             </form>
