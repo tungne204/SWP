@@ -3,6 +3,8 @@ package control.appointments;
 import dao.appointments.AppointmentDAO;
 import dao.appointments.DoctorDAO;
 import dao.appointments.PatientDAO;
+import dao.PatientQueueDAO;
+import dao.ParentDAO;
 import entity.User;
 import entity.appointments.Appointment;
 import entity.appointments.AppointmentStatus;
@@ -10,6 +12,10 @@ import entity.appointments.Doctor;
 import entity.appointments.MedicalReport;
 import entity.appointments.Patient;
 import entity.appointments.TestResult;
+import entity.PatientQueue;
+import entity.Parent;
+import socket.PatientQueueWebSocket;
+import util.QueueUpdateUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -36,12 +42,18 @@ public class AppointmentServlet extends HttpServlet {
     private AppointmentDAO appointmentDAO;
     private DoctorDAO doctorDAO;
     private PatientDAO patientDAO;
+    private PatientQueueDAO patientQueueDAO;
+    private dao.PatientDAO mainPatientDAO;
+    private ParentDAO parentDAO;
 
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
         doctorDAO = new DoctorDAO();
         patientDAO = new PatientDAO();
+        patientQueueDAO = new PatientQueueDAO();
+        mainPatientDAO = new dao.PatientDAO();
+        parentDAO = new ParentDAO();
     }
     
     private File findProjectRoot() {
@@ -559,6 +571,18 @@ public class AppointmentServlet extends HttpServlet {
                     }
                     
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.WAITING.getValue());
+                    
+                    if (ok) {
+                        // Add patient to queue when appointment status changes from Confirmed to Waiting
+                        try {
+                            addPatientToQueueFromAppointment(appointmentId, appt);
+                        } catch (Exception e) {
+                            System.err.println("Error adding patient to queue: " + e.getMessage());
+                            e.printStackTrace();
+                            // Continue even if queue addition fails - appointment status is already updated
+                        }
+                    }
+                    
                     // Redirect về trang appointments với statusFilter=Confirmed để tiếp tục xem danh sách Confirmed
                     sessionMessage(request, ok ? "Patient checked in!" : "Check-in failed!", ok ? "success" : "error");
                     response.sendRedirect(request.getContextPath() + "/appointments?statusFilter=Confirmed");
@@ -579,6 +603,14 @@ public class AppointmentServlet extends HttpServlet {
                     }
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.IN_PROGRESS.getValue());
                     if (ok) {
+                        // Update queue status to "In Consultation" if patient is in queue
+                        try {
+                            updateQueueStatusForAppointment(appointmentId, "In Consultation");
+                        } catch (Exception e) {
+                            System.err.println("Error updating queue status: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                        
                         MedicalReport existing = appointmentDAO.getMedicalReportByAppointmentId(appointmentId);
                         if (existing == null) {
                             MedicalReport r = new MedicalReport();
@@ -613,6 +645,17 @@ public class AppointmentServlet extends HttpServlet {
                         appointmentDAO.updateMedicalReport(report);
                     }
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.TESTING.getValue());
+                    
+                    if (ok) {
+                        // Update queue status to "Awaiting Lab Results" if patient is in queue
+                        try {
+                            updateQueueStatusForAppointment(appointmentId, "Awaiting Lab Results");
+                        } catch (Exception e) {
+                            System.err.println("Error updating queue status: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                    
                     backWithMsg(request, response, ok ? "Test request sent!" : "Failed to request test!", ok ? "success" : "error");
                     return;
                 }
@@ -649,6 +692,14 @@ public class AppointmentServlet extends HttpServlet {
                     boolean ok = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED.getValue());
                     
                     if (ok) {
+                        // Update queue status to "Completed" if patient is in queue
+                        try {
+                            updateQueueStatusForAppointment(appointmentId, "Completed");
+                        } catch (Exception e) {
+                            System.err.println("Error updating queue status: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                        
                         // Lưu thời gian hoàn thành khám vào session
                         request.getSession().setAttribute("examinationCompletedTime", new java.util.Date());
                         sessionMessage(request, "Hoàn tất khám bệnh thành công! Hồ sơ bệnh án đã được tạo.", "success");
@@ -765,6 +816,17 @@ public class AppointmentServlet extends HttpServlet {
                     tr.setImagePath(imagePath);
                     boolean saved = appointmentDAO.createTestResult(tr);
                     boolean statusUpdated = appointmentDAO.updateAppointmentStatusFromTestingToWaiting(appointmentId);
+                    
+                    if (statusUpdated) {
+                        // Update queue status to "Ready for Follow-up" if patient is in queue
+                        try {
+                            updateQueueStatusForAppointment(appointmentId, "Ready for Follow-up");
+                        } catch (Exception e) {
+                            System.err.println("Error updating queue status: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                    
                     backWithMsg(request, response,
                             (saved && statusUpdated) ? "Test submitted. Patient returned to queue."
                                                      : "Failed to submit test!",
@@ -797,6 +859,111 @@ public class AppointmentServlet extends HttpServlet {
     }
 
     // ===== Helpers =====
+    
+    /**
+     * Add patient to queue when appointment is confirmed
+     * Similar logic to CheckinFormServlet for booked patients
+     */
+    private void addPatientToQueueFromAppointment(int appointmentId, entity.appointments.Appointment appointment) throws Exception {
+        int patientId = appointment.getPatientId();
+        
+        // Check if patient is already in queue today
+        if (patientQueueDAO.isPatientInQueueToday(patientId)) {
+            // Patient is already in queue, skip adding
+            return;
+        }
+        
+        // Get the highest queue number to assign next number
+        List<PatientQueue> allQueue = patientQueueDAO.getAllPatientsInQueue();
+        int nextQueueNumber = 1;
+        if (!allQueue.isEmpty()) {
+            nextQueueNumber = allQueue.get(0).getQueueNumber() + 1;
+            for (PatientQueue pq : allQueue) {
+                if (pq.getQueueNumber() >= nextQueueNumber) {
+                    nextQueueNumber = pq.getQueueNumber() + 1;
+                }
+            }
+        }
+        
+        // Create new patient queue entry
+        PatientQueue patientQueue = new PatientQueue();
+        patientQueue.setPatientId(patientId);
+        patientQueue.setAppointmentId(appointmentId);
+        
+        java.util.Date checkInTime = new java.util.Date();
+        int priority = 0;
+        
+        // Calculate priority based on appointment time
+        if (appointment.getDateTime() != null) {
+            java.util.Date appointmentTime = new java.util.Date(appointment.getDateTime().getTime());
+            long timeDifference = appointmentTime.getTime() - checkInTime.getTime();
+            long minutesDifference = timeDifference / (60 * 1000); // Convert to minutes
+            
+            // Only give priority if check-in is within 30 minutes before appointment time
+            // and not after appointment time
+            if (minutesDifference >= 0 && minutesDifference <= 30) {
+                priority = 1; // High priority
+            } else {
+                priority = 0; // Normal priority (too early or too late)
+            }
+        }
+        
+        patientQueue.setQueueNumber(nextQueueNumber);
+        patientQueue.setQueueType("Booked");
+        patientQueue.setStatus("Waiting");
+        patientQueue.setPriority(priority);
+        patientQueue.setCheckInTime(checkInTime);
+        patientQueue.setUpdatedTime(new java.util.Date());
+        
+        // Add patient to queue
+        patientQueueDAO.addPatientToQueue(patientQueue);
+        
+        // Broadcast WebSocket update for new patient in queue
+        try {
+            entity.Patient patient = mainPatientDAO.getPatientById(patientId);
+            if (patient != null) {
+                Parent parent = null;
+                if (patient.getParentId() != null) {
+                    parent = parentDAO.getParentById(patient.getParentId());
+                }
+                String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, patientQueue, parent);
+                PatientQueueWebSocket.broadcastQueueUpdate("patient_added", patientJson);
+            }
+        } catch (Exception e) {
+            System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Update queue status when appointment status changes
+     */
+    private void updateQueueStatusForAppointment(int appointmentId, String newQueueStatus) throws Exception {
+        PatientQueue patientQueue = patientQueueDAO.getPatientQueueByAppointmentId(appointmentId);
+        if (patientQueue != null) {
+            // Update queue status
+            patientQueueDAO.updatePatientQueueStatus(patientQueue.getQueueId(), newQueueStatus);
+            
+            // Broadcast WebSocket update for status change
+            try {
+                entity.Patient patient = mainPatientDAO.getPatientById(patientQueue.getPatientId());
+                if (patient != null) {
+                    // Get updated queue entry
+                    PatientQueue updatedQueue = patientQueueDAO.getPatientQueueById(patientQueue.getQueueId());
+                    if (updatedQueue != null) {
+                        Parent parent = null;
+                        if (patient.getParentId() != null) {
+                            parent = parentDAO.getParentById(patient.getParentId());
+                        }
+                        String patientJson = QueueUpdateUtil.createPatientQueueJson(patient, updatedQueue, parent);
+                        PatientQueueWebSocket.broadcastQueueUpdate("status_changed", patientJson);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error broadcasting WebSocket update: " + e.getMessage());
+            }
+        }
+    }
+    
     private void backWithMsg(HttpServletRequest req, HttpServletResponse res, String msg, String type) throws IOException {
         sessionMessage(req, msg, type);
         res.sendRedirect(req.getContextPath() + "/appointments");
