@@ -212,4 +212,35 @@ public class PatientQueueDAO extends DBContext {
         }
         return false;
     }
+    
+    // Get patient queue by appointment ID
+    public PatientQueue getPatientQueueByAppointmentId(int appointmentId) {
+        String sql = "SELECT * FROM PatientQueue WHERE appointment_id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, appointmentId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    PatientQueue patientQueue = new PatientQueue();
+                    patientQueue.setQueueId(rs.getInt("queue_id"));
+                    patientQueue.setPatientId(rs.getInt("patient_id"));
+                    patientQueue.setAppointmentId(rs.getObject("appointment_id", Integer.class));
+                    patientQueue.setQueueNumber(rs.getInt("queue_number"));
+                    patientQueue.setQueueType(rs.getString("queue_type"));
+                    patientQueue.setStatus(rs.getString("status"));
+                    patientQueue.setPriority(rs.getInt("priority"));
+                    patientQueue.setRoomNumber(rs.getString("room_number"));
+                    patientQueue.setCheckInTime(rs.getTimestamp("check_in_time"));
+                    patientQueue.setUpdatedTime(rs.getTimestamp("updated_time"));
+                    return patientQueue;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

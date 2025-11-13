@@ -323,23 +323,24 @@
                                             <div class="info-item">
                                                 <div class="info-label">Thời Gian Đăng Ký</div>
                                                 <div class="info-value">
-                                                    <fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm"/>
-                                                </div>
-                                            </div>
-                                            <div class="info-item">
-                                                <div class="info-label">Phòng Khám</div>
-                                                <div class="info-value">
                                                     <c:choose>
-                                                        <c:when test="${not empty queueDetail.queue.roomNumber}">${queueDetail.queue.roomNumber}</c:when>
+                                                        <c:when test="${not empty queueDetail.queue.checkInTime}">
+                                                            <fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm" type="time"/>
+                                                        </c:when>
                                                         <c:otherwise>-</c:otherwise>
                                                     </c:choose>
                                                 </div>
                                             </div>
                                             <div class="info-item">
-                                                <div class="info-label">SĐT Phụ Huynh</div>
+                                                <div class="info-label">Bác Sĩ Khám</div>
                                                 <div class="info-value">
                                                     <c:choose>
-                                                        <c:when test="${not empty queueDetail.parent.idInfo}">${queueDetail.parent.idInfo}</c:when>
+                                                        <c:when test="${not empty queueDetail.doctor && not empty queueDetail.doctor.username}">
+                                                            ${queueDetail.doctor.username}
+                                                        </c:when>
+                                                        <c:when test="${not empty queueDetail.appointment && not empty queueDetail.appointment.doctorName}">
+                                                            ${queueDetail.appointment.doctorName}
+                                                        </c:when>
                                                         <c:otherwise>-</c:otherwise>
                                                     </c:choose>
                                                 </div>
@@ -348,7 +349,20 @@
                                                 <div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>
                                                 <div class="info-value">
                                                     <c:choose>
-                                                        <c:when test="${not empty queueDetail.parent.parentname}">${queueDetail.parent.parentname}</c:when>
+                                                        <c:when test="${not empty queueDetail.parent && not empty queueDetail.parent.parentname}">
+                                                            ${queueDetail.parent.parentname}
+                                                        </c:when>
+                                                        <c:otherwise>-</c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">SĐT Phụ Huynh</div>
+                                                <div class="info-value">
+                                                    <c:choose>
+                                                        <c:when test="${not empty queueDetail.parent && not empty queueDetail.parent.idInfo}">
+                                                            ${queueDetail.parent.idInfo}
+                                                        </c:when>
                                                         <c:otherwise>-</c:otherwise>
                                                     </c:choose>
                                                 </div>
@@ -395,23 +409,24 @@
                                                     <div class="info-item">
                                                         <div class="info-label">Thời Gian Đăng Ký</div>
                                                         <div class="info-value">
-                                                            <fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm"/>
-                                                        </div>
-                                                    </div>
-                                                    <div class="info-item">
-                                                        <div class="info-label">Phòng Khám</div>
-                                                        <div class="info-value">
                                                             <c:choose>
-                                                                <c:when test="${not empty queueDetail.queue.roomNumber}">${queueDetail.queue.roomNumber}</c:when>
+                                                                <c:when test="${not empty queueDetail.queue.checkInTime}">
+                                                                    <fmt:formatDate value="${queueDetail.queue.checkInTime}" pattern="HH:mm" type="time"/>
+                                                                </c:when>
                                                                 <c:otherwise>-</c:otherwise>
                                                             </c:choose>
                                                         </div>
                                                     </div>
                                                     <div class="info-item">
-                                                        <div class="info-label">Số CCCD người giám hộ</div>
+                                                        <div class="info-label">Bác Sĩ Khám</div>
                                                         <div class="info-value">
                                                             <c:choose>
-                                                                <c:when test="${not empty queueDetail.parent.idInfo}">${queueDetail.parent.idInfo}</c:when>
+                                                                <c:when test="${not empty queueDetail.doctor && not empty queueDetail.doctor.username}">
+                                                                    ${queueDetail.doctor.username}
+                                                                </c:when>
+                                                                <c:when test="${not empty queueDetail.appointment && not empty queueDetail.appointment.doctorName}">
+                                                                    ${queueDetail.appointment.doctorName}
+                                                                </c:when>
                                                                 <c:otherwise>-</c:otherwise>
                                                             </c:choose>
                                                         </div>
@@ -420,7 +435,20 @@
                                                         <div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>
                                                         <div class="info-value">
                                                             <c:choose>
-                                                                <c:when test="${not empty queueDetail.parent.parentname}">${queueDetail.parent.parentname}</c:when>
+                                                                <c:when test="${not empty queueDetail.parent && not empty queueDetail.parent.parentname}">
+                                                                    ${queueDetail.parent.parentname}
+                                                                </c:when>
+                                                                <c:otherwise>-</c:otherwise>
+                                                            </c:choose>
+                                                        </div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">SĐT Phụ Huynh</div>
+                                                        <div class="info-value">
+                                                            <c:choose>
+                                                                <c:when test="${not empty queueDetail.parent && not empty queueDetail.parent.idInfo}">
+                                                                    ${queueDetail.parent.idInfo}
+                                                                </c:when>
                                                                 <c:otherwise>-</c:otherwise>
                                                             </c:choose>
                                                         </div>
@@ -692,28 +720,34 @@
                 '</div>';
             const item2 = document.createElement('div');
             item2.className = 'info-item';
+            const checkInTime = (queue && queue.checkInTime) ? formatTime(queue.checkInTime) : '-';
             item2.innerHTML = '<div class="info-label">Thời Gian Đăng Ký</div>' +
-                '<div class="info-value">' + formatTime(queue.checkInTime) + '</div>';
+                '<div class="info-value">' + checkInTime + '</div>';
             info.appendChild(item1);
             info.appendChild(item2);
-            const itemRoom = document.createElement('div');
-            itemRoom.className = 'info-item';
-            const room = (queue && queue.roomNumber && String(queue.roomNumber).trim().length > 0) ? queue.roomNumber : '-';
-            itemRoom.innerHTML = '<div class="info-label">Phòng Khám</div>' +
-                '<div class="info-value">' + room + '</div>';
-            info.appendChild(itemRoom);
-            const item3 = document.createElement('div');
-            item3.className = 'info-item';
-            const parentPhone = (parent && parent.idInfo && String(parent.idInfo).trim().length > 0) ? parent.idInfo : '-';
-            item3.innerHTML = '<div class="info-label">Số CCCD người giám hộ</div>' +
-                '<div class="info-value">' + parentPhone + '</div>';
+            const itemDoctor = document.createElement('div');
+            itemDoctor.className = 'info-item';
+            let doctorName = '-';
+            if (data.doctor && data.doctor.username) {
+                doctorName = data.doctor.username;
+            } else if (data.appointment && data.appointment.doctorName) {
+                doctorName = data.appointment.doctorName;
+            }
+            itemDoctor.innerHTML = '<div class="info-label">Bác Sĩ Khám</div>' +
+                '<div class="info-value">' + doctorName + '</div>';
+            info.appendChild(itemDoctor);
             const item4 = document.createElement('div');
             item4.className = 'info-item';
             const parentName = (parent && parent.parentname && String(parent.parentname).trim().length > 0) ? parent.parentname : '-';
             item4.innerHTML = '<div class="info-label">Tên Phụ Huynh/Người Giám Hộ</div>' +
                 '<div class="info-value">' + parentName + '</div>';
-            info.appendChild(item3);
             info.appendChild(item4);
+            const item5 = document.createElement('div');
+            item5.className = 'info-item';
+            const parentPhone = (parent && parent.idInfo && String(parent.idInfo).trim().length > 0) ? parent.idInfo : '-';
+            item5.innerHTML = '<div class="info-label">SĐT Phụ Huynh</div>' +
+                '<div class="info-value">' + parentPhone + '</div>';
+            info.appendChild(item5);
 
             const badge = document.createElement('div');
             badge.className = 'status-badge ' + meta.cls;

@@ -94,15 +94,6 @@
       <div class="nav-section-title">Quản lý hàng chờ</div>
       <div class="nav-item">
         <a
-          href="${pageContext.request.contextPath}/patient-queue"
-          class="nav-link"
-        >
-          <i class="bi bi-people"></i>
-          <span class="nav-link-text">Màn hình chờ</span>
-        </a>
-      </div>
-      <div class="nav-item">
-        <a
           href="${pageContext.request.contextPath}/patient-queue?action=public-view"
           class="nav-link"
           target="_blank"
