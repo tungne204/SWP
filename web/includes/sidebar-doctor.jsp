@@ -69,7 +69,7 @@
     <div class="sidebar-fixed">
         <nav class="sidebar-nav">
             <!-- Bảng điều khiển -->
-            <div class="nav-section">
+<!--            <div class="nav-section">
                 <div class="nav-section-title">Bảng điều khiển</div>
                 <div class="nav-item">
                     <a href="${pageContext.request.contextPath}/" class="nav-link">
@@ -77,7 +77,7 @@
                         <span class="nav-link-text">Trang tổng quan</span>
                     </a>
                 </div>
-            </div>
+            </div>-->
 
             <!-- Appointments -->
             <div class="nav-section">
