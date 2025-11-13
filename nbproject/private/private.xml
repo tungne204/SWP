@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/payment/CreateVNPayServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/AppointmentServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/dao/appointments/AppointmentDAO.java</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/appointments/medical-record.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/web/views/doctor/examination-form.jsp</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/appointments/ReceptionistServlet.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/context/DBContext.java</file>
-            <file>file:/D:/SWP391-2/SWP/src/java/control/payment/ListMedicalReportsServlet.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/util/PasswordUtil.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Change_password.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/control/RegisterControl.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/dao/UserDAO.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/src/java/util/EmailValidator.java</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Login.jsp</file>
+            <file>file:/D:/Tải/SWPFIX/SWP/web/Register.jsp</file>
         </group>
     </open-files>
 </project-private>
