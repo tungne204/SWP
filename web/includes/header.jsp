@@ -96,57 +96,75 @@
         <h1 class="sitename">Medilab</h1>
       </a>
 
-      <!-- Nav -->
+      <!-- Navigation -->
       <nav id="navmenu" class="navmenu">
         <ul class="d-flex align-items-center list-unstyled mb-0">
-          <li>
-            <a href="${pageContext.request.contextPath}/">Trang chủ</a>
-          </li>
-          <li>
-            <a href="${pageContext.request.contextPath}/doctorList">Bác Sĩ</a>
-          </li>
-          <!-- Hiển thị menu "Cuộc hẹn của tôi" cho Patient (roleId = 3) -->
+          <li><a href="${pageContext.request.contextPath}/">Trang chủ</a></li>
+          <li><a href="${pageContext.request.contextPath}/doctorList">Bác Sĩ</a></li>
+
           <% if (acc != null && acc.getRoleId() == 3) { %>
-          <li>
-            <a href="${pageContext.request.contextPath}/appointments">Cuộc hẹn của tôi</a>
-          </li>
+            <li><a href="${pageContext.request.contextPath}/appointments">Cuộc hẹn của tôi</a></li>
+            <li><a href="${pageContext.request.contextPath}/medical-report">Đơn thuốc của tôi</a></li>
           <% } %>
-          <% if (acc != null && acc.getRoleId() == 3) { %>
-          <li>
-            <a href="${pageContext.request.contextPath}/medical-report">Đơn thuốc của tôi</a>
-          </li>
-          <% } %>
-          <li>
-            <a href="${pageContext.request.contextPath}/blog">Blog</a>
-          </li>
-          <li>
-            <a href="${pageContext.request.contextPath}/contact">Liên hệ</a>
-          </li>
+
+          <li><a href="${pageContext.request.contextPath}/blog">Blog</a></li>
+          <li><a href="${pageContext.request.contextPath}/contact">Liên hệ</a></li>
         </ul>
       </nav>
 
-      <!-- Login / Dropdown -->
+      <!-- Login / User Dropdown -->
       <% if (acc == null) { %>
+
         <div class="d-flex gap-2 align-items-center">
-          <a class="cta-btn d-none d-sm-block btn btn-outline-light" href="${pageContext.request.contextPath}/Register">Đăng Ký</a>
-          <a class="cta-btn d-none d-sm-block btn btn-light" href="${pageContext.request.contextPath}/Login">Đăng Nhập</a>
+          <a class="cta-btn d-none d-sm-block btn btn-outline-light" 
+             href="${pageContext.request.contextPath}/Register">Đăng Ký</a>
+          <a class="cta-btn d-none d-sm-block btn btn-light" 
+             href="${pageContext.request.contextPath}/Login">Đăng Nhập</a>
         </div>
+
       <% } else { %>
+
         <div class="dropdown ms-4">
-          <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" 
-                  id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="<%= acc.getAvatar() != null && !acc.getAvatar().isEmpty() ? acc.getAvatar() : request.getContextPath() + "/assets/img/avata.jpg" %>" 
-                 alt="Avatar" class="user-avatar me-2">
+          <button class="btn btn-light dropdown-toggle d-flex align-items-center"
+                  type="button" id="userMenu" data-bs-toggle="dropdown">
+
+            <%
+    String avatar = acc.getAvatar();
+    String avatarUrl;
+
+    if (avatar != null && !avatar.isEmpty()) {
+
+        // Nếu URL là link tuyệt đối (Google, Facebook, Cloud ...)
+        if (avatar.startsWith("http://") || avatar.startsWith("https://")) {
+            avatarUrl = avatar; // giữ nguyên
+        } else {
+            // Ảnh lưu trong dự án: assets/img/avatars/xxx.webp
+            avatarUrl = request.getContextPath() + "/" + avatar;
+        }
+
+    } else {
+        // fallback avatar mặc định
+        avatarUrl = request.getContextPath() + "/assets/img/avata.jpg";
+    }
+%>
+
+<img src="<%= avatarUrl %>" alt="Avatar" class="user-avatar me-2">
+
             Hello, <%= acc.getUsername() %>
+
           </button>
+
           <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenu">
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/viewProfile">Hồ sơ cá nhân</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Change_password">Đổi mật khẩu</a></li>
-            
+
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
+
+            <li><a class="dropdown-item text-danger" 
+                   href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
           </ul>
         </div>
+
       <% } %>
 
     </div>

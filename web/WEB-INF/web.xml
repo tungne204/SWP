@@ -3,11 +3,11 @@
     <!-- VNPay config (fallback khi không set biến môi trường) -->
     <context-param>
         <param-name>VNP_TMN_CODE</param-name>
-        <param-value>4YUP19I4</param-value>
+        <param-value>UYP6EQX7</param-value>
     </context-param>
     <context-param>
         <param-name>VNP_HASH_SECRET</param-name>
-        <param-value>MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX</param-value>
+        <param-value>3YHPTL9CFK3UDW35X1027EM281Q8N9IB</param-value>
     </context-param>
     <context-param>
         <param-name>VNP_RETURN_URL</param-name>
