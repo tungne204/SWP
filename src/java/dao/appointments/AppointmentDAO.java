@@ -574,7 +574,7 @@ public class AppointmentDAO extends DBContext {
         if (roleId == 2) { // Doctor - ưu tiên appointment quay lại từ Testing
             sql.append("ORDER BY ");
             sql.append("  CASE WHEN a.waiting_since IS NOT NULL THEN 0 ELSE 1 END, ");
-            sql.append("  a.waiting_since DESC, ");
+            sql.append("  a.waiting_since ASC, ");
             sql.append("  a.appointment_id ASC ");
         } else {
             // Các role khác - sắp xếp theo appointment_id
