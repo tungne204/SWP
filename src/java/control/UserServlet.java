@@ -6,17 +6,30 @@ import dao.ListUser.RoleDAO;
 import dao.ListUser.UserDAO;
 import dao.DoctorDAO;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 @WebServlet(name = "UserServlet", urlPatterns = {"/admin/users"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
+    maxFileSize = 1024 * 1024 * 5,        // 5MB
+    maxRequestSize = 1024 * 1024 * 10     // 10MB
+)
 public class UserServlet extends HttpServlet {
 
     private UserDAO userDAO;
@@ -213,6 +226,25 @@ public class UserServlet extends HttpServlet {
         String password = trimOrNull(request.getParameter("password"));
         String confirm = trimOrNull(request.getParameter("confirm"));
 
+        // Lưu các giá trị đã nhập để hiển thị lại khi có lỗi
+        request.setAttribute("inputUsername", username);
+        request.setAttribute("inputEmail", email);
+        request.setAttribute("inputPhone", phone);
+        
+        // Nếu là staff, lưu cả roleId và các thông tin doctor
+        if ("staff".equals(group)) {
+            String roleIdStr = request.getParameter("roleId");
+            // Convert roleId sang Integer để so sánh đúng trong JSP
+            try {
+                Integer inputRoleId = Integer.parseInt(roleIdStr);
+                request.setAttribute("inputRoleId", inputRoleId);
+            } catch (NumberFormatException e) {
+                request.setAttribute("inputRoleId", roleIdStr); // Fallback về String nếu không parse được
+            }
+            request.setAttribute("inputExperienceYears", request.getParameter("experienceYears"));
+            request.setAttribute("inputIntroduce", request.getParameter("introduce"));
+        }
+
         // Validate cơ bản
         if (username == null || email == null || password == null || confirm == null) {
             setMessage(request, false, "", "Vui lòng điền đủ thông tin bắt buộc!");
@@ -299,11 +331,6 @@ public class UserServlet extends HttpServlet {
             // Nếu role là Doctor, tự động tạo Doctor record với đầy đủ profile
             Role selectedRole = roleDAO.getRoleById(roleId);
             if (selectedRole != null && "Doctor".equals(selectedRole.getRoleName())) {
-                String specialty = trimOrNull(request.getParameter("specialty"));
-                if (specialty == null || specialty.isEmpty()) {
-                    specialty = "General Medicine"; // Mặc định nếu không nhập
-                }
-                
                 // Lấy thông tin profile doctor
                 String experienceYearsStr = trimOrNull(request.getParameter("experienceYears"));
                 Integer experienceYears = null;
@@ -318,12 +345,23 @@ public class UserServlet extends HttpServlet {
                     }
                 }
                 
-                String certificate = trimOrNull(request.getParameter("certificate"));
+                // Xử lý file upload certificate
+                String certificatePath = null;
+                try {
+                    Part certificateFilePart = request.getPart("certificateFile");
+                    if (certificateFilePart != null && certificateFilePart.getSize() > 0) {
+                        certificatePath = saveCertificateFile(certificateFilePart);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error uploading certificate file: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                
                 String introduce = trimOrNull(request.getParameter("introduce"));
                 
-                // Tạo Doctor record với đầy đủ thông tin
+                // Tạo Doctor record với đầy đủ thông tin (không có specialty)
                 boolean doctorCreated = doctorDAO.insertDoctorWithProfile(
-                    newId, specialty, experienceYears, certificate, introduce
+                    newId, null, experienceYears, certificatePath, introduce
                 );
                 
                 if (!doctorCreated) {
@@ -381,6 +419,51 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("roles", roles);
         }
         request.getRequestDispatcher("/admin/userForm.jsp").forward(request, response);
+    }
+
+    // ============= NEW: Lưu file certificate =============
+    private String saveCertificateFile(Part filePart) throws IOException {
+        String fileName = getFileName(filePart);
+        if (fileName == null || fileName.isEmpty()) {
+            return null;
+        }
+
+        // Tạo tên file unique
+        String fileExtension = "";
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0) {
+            fileExtension = fileName.substring(dotIndex);
+        }
+        String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
+
+        // Đường dẫn lưu file
+        String uploadDir = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "certificates";
+        File uploadDirFile = new File(uploadDir);
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+
+        String filePath = uploadDir + File.separator + uniqueFileName;
+
+        // Lưu file
+        try (InputStream input = filePart.getInputStream()) {
+            Files.copy(input, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // Trả về relative path để lưu vào database
+        return "uploads/certificates/" + uniqueFileName;
+    }
+
+    private String getFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        if (contentDisposition != null) {
+            for (String token : contentDisposition.split(";")) {
+                if (token.trim().startsWith("filename")) {
+                    return token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -191,15 +191,19 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                 <c:param name="group" value="${group}" />
               </c:url>
 
-              <form method="post" action="${postUrl}">
+              <form
+                method="post"
+                action="${postUrl}"
+                enctype="multipart/form-data"
+              >
                 <div class="form-row">
                   <div class="col">
                     <label>Username *</label>
-                    <input type="text" name="username" required />
+                    <input type="text" name="username" value="${inputUsername}" required />
                   </div>
                   <div class="col">
                     <label>Email *</label>
-                    <input type="email" name="email" required />
+                    <input type="email" name="email" value="${inputEmail}" required />
                   </div>
                 </div>
 
@@ -210,6 +214,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                       type="text"
                       name="phone"
                       id="phone"
+                      value="${inputPhone}"
                       placeholder="Ví dụ: 0912345678 hoặc +84912345678"
                     />
                     <div class="hint">
@@ -236,6 +241,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                             <option
                               value="${r.roleId}"
                               data-role-name="${r.roleName}"
+                              <c:if test="${not empty inputRoleId and inputRoleId == r.roleId}">selected</c:if>
                             >
                               ${r.roleName}
                             </option>
@@ -257,30 +263,27 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
                 <!-- Field doctor profile chỉ hiển thị khi chọn role Doctor -->
                 <c:if test="${group eq 'staff'}">
+                  <c:set var="isDoctorSelected" value="false" />
+                  <c:forEach var="r" items="${roles}">
+                    <c:if test="${r.roleName eq 'Doctor' and inputRoleId eq r.roleId}">
+                      <c:set var="isDoctorSelected" value="true" />
+                    </c:if>
+                  </c:forEach>
                   <div
-                    class="form-row"
-                    style="margin-top: 12px; display: none"
-                    id="specialtyRow"
+                    class="form-row doctor-profile-row"
+                    <c:choose>
+                      <c:when test="${isDoctorSelected}">style="margin-top: 12px; display: flex"</c:when>
+                      <c:otherwise>style="margin-top: 12px; display: none"</c:otherwise>
+                    </c:choose>
+                    id="doctorProfileRow"
                   >
-                    <div class="col">
-                      <label>Chuyên khoa *</label>
-                      <input
-                        type="text"
-                        name="specialty"
-                        id="specialty"
-                        placeholder="Ví dụ: Nhi khoa, Tim mạch, ..."
-                      />
-                      <div class="hint">
-                        Chỉ áp dụng cho bác sĩ. Để trống sẽ mặc định là "General
-                        Medicine"
-                      </div>
-                    </div>
                     <div class="col">
                       <label>Số năm kinh nghiệm</label>
                       <input
                         type="number"
                         name="experienceYears"
                         id="experienceYears"
+                        value="${inputExperienceYears}"
                         min="0"
                         max="50"
                         placeholder="Ví dụ: 5"
@@ -289,30 +292,35 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                         Số năm kinh nghiệm làm việc (có thể để trống)
                       </div>
                     </div>
-                  </div>
-
-                  <div
-                    class="form-row"
-                    style="margin-top: 12px; display: none"
-                    id="doctorProfileRow"
-                  >
                     <div class="col">
-                      <label>Chứng chỉ</label>
+                      <label>Chứng chỉ (File)</label>
                       <input
-                        type="text"
-                        name="certificate"
-                        id="certificate"
-                        placeholder="Ví dụ: Bác sĩ Nội khoa, Tiến sĩ Y khoa, ..."
+                        type="file"
+                        name="certificateFile"
+                        id="certificateFile"
+                        accept=".pdf,.jpg,.jpeg,.png"
                       />
                       <div class="hint">
-                        Chứng chỉ, bằng cấp của bác sĩ (có thể để trống)
+                        Tải lên file chứng chỉ (PDF, JPG, PNG). Có thể để trống
                       </div>
+                      <div
+                        id="fileError"
+                        style="
+                          color: #dc3545;
+                          font-size: 0.875rem;
+                          margin-top: 4px;
+                          display: none;
+                        "
+                      ></div>
                     </div>
                   </div>
 
                   <div
-                    class="form-row"
-                    style="margin-top: 12px; display: none"
+                    class="form-row doctor-introduce-row"
+                    <c:choose>
+                      <c:when test="${isDoctorSelected}">style="margin-top: 12px; display: flex"</c:when>
+                      <c:otherwise>style="margin-top: 12px; display: none"</c:otherwise>
+                    </c:choose>
                     id="doctorIntroduceRow"
                   >
                     <div class="col" style="flex: 1 1 100%">
@@ -330,7 +338,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                           font-family: inherit;
                           resize: vertical;
                         "
-                      ></textarea>
+                      >${inputIntroduce}</textarea>
                       <div class="hint">
                         Thông tin giới thiệu về bác sĩ (có thể để trống)
                       </div>
@@ -378,39 +386,67 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
       crossorigin="anonymous"
     ></script>
 
+    <c:if test="${group eq 'staff'}">
     <script>
        // Hiển thị/ẩn field doctor profile khi chọn role Doctor
-       <c:if test="${group eq 'staff'}">
        document.addEventListener('DOMContentLoaded', function() {
            const roleSelect = document.getElementById('roleId');
-           const specialtyRow = document.getElementById('specialtyRow');
            const doctorProfileRow = document.getElementById('doctorProfileRow');
            const doctorIntroduceRow = document.getElementById('doctorIntroduceRow');
-           const specialtyInput = document.getElementById('specialty');
            const experienceYearsInput = document.getElementById('experienceYears');
-           const certificateInput = document.getElementById('certificate');
+           const certificateFileInput = document.getElementById('certificateFile');
            const introduceInput = document.getElementById('introduce');
+           const fileError = document.getElementById('fileError');
+           
+           // Kiểm tra xem có giá trị từ server không (sau validation lỗi)
+           const hasServerInput = '${inputRoleId}' !== '';
 
            function toggleDoctorFields() {
                const selectedOption = roleSelect.options[roleSelect.selectedIndex];
                const roleName = selectedOption.getAttribute('data-role-name');
 
                if (roleName === 'Doctor') {
-                   specialtyRow.style.display = 'flex';
                    doctorProfileRow.style.display = 'flex';
                    doctorIntroduceRow.style.display = 'flex';
-                   specialtyInput.setAttribute('required', 'required');
                } else {
-                   specialtyRow.style.display = 'none';
                    doctorProfileRow.style.display = 'none';
                    doctorIntroduceRow.style.display = 'none';
-                   specialtyInput.removeAttribute('required');
-                   // Xóa giá trị khi ẩn
-                   specialtyInput.value = '';
-                   if (experienceYearsInput) experienceYearsInput.value = '';
-                   if (certificateInput) certificateInput.value = '';
-                   if (introduceInput) introduceInput.value = '';
+                   // Chỉ xóa giá trị nếu không có input từ server (không phải reload sau validation lỗi)
+                   if (!hasServerInput) {
+                       if (experienceYearsInput) experienceYearsInput.value = '';
+                       if (certificateFileInput) certificateFileInput.value = '';
+                       if (introduceInput) introduceInput.value = '';
+                       if (fileError) fileError.style.display = 'none';
+                   }
                }
+           }
+
+           // Validate file size và type
+           if (certificateFileInput) {
+               certificateFileInput.addEventListener('change', function() {
+                   const file = this.files[0];
+                   if (file) {
+                       // Kiểm tra kích thước file (max 5MB)
+                       const maxSize = 5 * 1024 * 1024; // 5MB
+                       if (file.size > maxSize) {
+                           fileError.textContent = 'File quá lớn! Kích thước tối đa là 5MB.';
+                           fileError.style.display = 'block';
+                           this.value = '';
+                           return;
+                       }
+                       
+                       // Kiểm tra loại file
+                       const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                       if (!allowedTypes.includes(file.type)) {
+                           fileError.textContent = 'Định dạng file không hợp lệ! Chỉ chấp nhận PDF, JPG, PNG.';
+                           fileError.style.display = 'block';
+                           this.value = '';
+                           return;
+                       }
+                       
+                       fileError.style.display = 'none';
+                   }
+               });
            }
 
            // Kiểm tra khi trang load
@@ -419,7 +455,10 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
            // Lắng nghe sự kiện thay đổi role
            roleSelect.addEventListener('change', toggleDoctorFields);
        });
-       </c:if>
+    </script>
+    </c:if>
+    
+    <script>
 
       // Validate số điện thoại real-time
       document.addEventListener('DOMContentLoaded', function() {
